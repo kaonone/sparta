@@ -8,7 +8,8 @@ import "@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol
 
 contract Base is Ownable {
 
-    function initialize() public initializer  Int{
+    function initialize() public initializer {
         Ownable.initialize(msg.sender);
     }
+
 }
