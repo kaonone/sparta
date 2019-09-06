@@ -4,6 +4,7 @@ import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
 
 contract Core is CoreInterface, Base {
+
     /* Short description */
     string  public name;
     string  public description;
@@ -26,10 +27,11 @@ contract Core is CoreInterface, Base {
      */
 
     function initialize(string memory _name, string memory _description) public initializer {
+
+        Base.initialize();
+
         name         = _name;
         description  = _description;
         founder      = msg.sender;
-
-        Base.initialize();
     }
 }
