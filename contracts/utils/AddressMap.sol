@@ -34,6 +34,7 @@ library AddressMap {
     function get(Data storage _data, string memory _key) public view returns (address)
     { return _data.valueOf[keccak256(abi.encodePacked(_key))]; }
 
+
     /** Get key of element
      * @param _data is an map storage ref
      * @param _item is a item
