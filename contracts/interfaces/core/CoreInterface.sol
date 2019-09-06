@@ -3,28 +3,31 @@ pragma solidity ^0.5.0;
 contract CoreInterface {
 
     /* Module manipulation events */
+
     event ModuleAdded(address indexed module);
+
     event ModuleRemoved(address indexed module);
+
     event ModuleReplaced(address indexed from, address indexed to);
 
 
     /* Functions */
 
-    function contains(address _module) view returns (bool);
+    function contains(address _module)  public view returns (bool);
 
-    function size() view returns (uint);
+    function size() public view returns (uint);
 
-    function isConstant(mstring _name) view returns (bool);
+    function isConstant(string memory _name) public view returns (bool);
 
-    function get(string _name) view returns (address);
+    function get(string memory _name)  public view returns (address);
 
-    function getName(address _module) view returns (string);
+    function getName(address _module)  public view returns (string memory);
 
-    function first() view returns (address);
+    function first() public view returns (address);
 
-    function next(address _current) view returns (address);
+    function next(address _current)  public view returns (address);
 
-    function set(string _name, address _module, string _abi, bool _constant);
+    function set(string memory  _name, address _module, string memory _abi, bool _constant) public;
 
-    function remove(string _name);
+    function remove(string memory _name) public;
 }
