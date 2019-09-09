@@ -2,6 +2,7 @@ pragma solidity ^0.5.0;
 
 import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
+import "../utils/AddressMap.sol";
 
 contract Core is CoreInterface, Base {
 
@@ -10,6 +11,11 @@ contract Core is CoreInterface, Base {
     string  public description;
     address public founder;
 
+    /* Modules map */
+    AddressMap.Data modules;
+
+
+    using AddressMap for AddressMap.Data;
 
     /* Module constant mapping */
     mapping(bytes32 => bool) is_constant;
