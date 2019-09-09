@@ -8,6 +8,8 @@ import "@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol
 
 contract Base is Ownable {
 
+    address constant  ZERO_ADDRESS = address(0);
+
     function initialize() public initializer {
         Ownable.initialize(msg.sender);
     }

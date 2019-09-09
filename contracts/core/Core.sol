@@ -14,7 +14,7 @@ contract Core is CoreInterface, Base {
     /* Modules map */
     AddressMap.Data modules;
 
-
+    using AddressList for AddressList.Data;
     using AddressMap for AddressMap.Data;
 
     /* Module constant mapping */
@@ -66,7 +66,7 @@ contract Core is CoreInterface, Base {
      * @param _name is a module name
      * @return `true` when module have permanent name
      */
-    function isConstant(string _name) public view returns (bool)
+    function isConstant(string memory _name) public view returns (bool)
     {
         return is_constant[keccak256(abi.encodePacked(_name))];
     }
@@ -76,7 +76,7 @@ contract Core is CoreInterface, Base {
      * @param _name is module name
      * @return module address
      */
-    function get(string _name) public view returns (address)
+    function get(string memory _name) public view returns (address)
     {
         return modules.get(_name);
     }
@@ -86,7 +86,7 @@ contract Core is CoreInterface, Base {
      * @param _module is a module address
      * @return module name
      */
-    function getName(address _module) public view returns (string)
+    function getName(address _module) public view returns (string memory)
     {
         return modules.keyOf[_module];
     }
@@ -117,16 +117,16 @@ contract Core is CoreInterface, Base {
      * @param _abi node interface URI
      * @param _constant have a `true` value when you create permanent name of module
      */
-    function set(string _name, address _module, string _abi, bool _constant) public onlyOwner {
+    function set(string memory _name, address _module, string  memory _abi, bool _constant) public onlyOwner {
 
 
         require(isConstant(_name), "is not module name");
 
         // Notify
-        if (modules.get(_name) != 0)
-            ModuleReplaced(modules.get(_name), _module);
+        if (modules.get(_name) != ZERO_ADDRESS)
+            emit ModuleReplaced(modules.get(_name), _module);
         else
-            ModuleAdded(_module);
+            emit ModuleAdded(_module);
 
         // Set module in the map
         modules.set(_name, _module);
@@ -135,19 +135,19 @@ contract Core is CoreInterface, Base {
         abiOf[_module] = _abi;
 
         // Register constant flag
-        is_constant[sha3(_name)] = _constant;
+        is_constant[keccak256(abi.encodePacked(_name))] = _constant;
     }
 
     /**
      * @dev Remove module by name
      * @param _name module name
      */
-    function remove(string _name)  public onlyOwner {
+    function remove(string memory _name)  public onlyOwner {
 
         require(isConstant(_name), "is not module name");
 
         // Notify
-        ModuleRemoved(modules.get(_name));
+        emit ModuleRemoved(modules.get(_name));
 
         // Remove module
         modules.remove(_name);
