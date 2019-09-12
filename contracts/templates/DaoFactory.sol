@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "./Factory.sol";
-import "./FactoryCore.sol";
+import "../factory/Factory.sol";
+import "../factory/FactoryCore.sol";
 
 contract DaoFactory is Factory {
     function create(string memory _name, string memory _description)  public returns (address) {
