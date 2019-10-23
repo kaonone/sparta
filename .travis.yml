@@ -4,6 +4,7 @@ cache:
     - node_modules
 
 install:
+ - yarn install
  - yarn global add solhint
  
 notifications:
