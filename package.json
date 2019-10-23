@@ -13,7 +13,7 @@
         "analyze": "npx truffle run verify",
         "coverage": "scripts/coverage.sh"
     },
-    "devDependencies": {
+    "dependencies": {
         "@types/mocha": "^5.2.5",
         "@types/node": "^10.12.2",
         "truffle-typings": "^1.0.7",
@@ -21,9 +21,7 @@
         "ts-node": "^7.0.1",
         "tslint": "5.11.0",
         "typechain": "^0.3.21",
-        "typescript": "3.0.1"
-    },
-    "dependencies": {
+        "typescript": "3.0.1",
         "@0x/typescript-typings": "^4.3.0",
         "@codechecks/client": "^0.1.10",
         "@openzeppelin/cli": "^2.5.3",

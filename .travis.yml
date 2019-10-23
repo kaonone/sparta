@@ -11,6 +11,7 @@ cash:
   yarn: true
 
 install:
+ - yarn
  - yarn global add solhint
  
 notifications:
