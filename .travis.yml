@@ -9,9 +9,8 @@ before_install: # if "install" is overridden
 
 cash:
   yarn: true
-  
+
 install:
- - yarn install
  - yarn global add solhint
  
 notifications:
