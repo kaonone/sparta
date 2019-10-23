@@ -8,17 +8,13 @@ install:
  
 notifications:
   email: true
+  slack: akropolisio:q9lFKpyTHVdsNQ8JD3sA6VQP
 
 node_js:
   - '10.15.3'
 
 script: 
-    yarn lint
-    yarn coverage
-    yarn test-gas
+    yarn lint && yarn coverage && yarn test-gas
 
 after_success:
   - cat coverage/lcov.info | npx coveralls
-
-notifications:
-  slack: akropolisio:q9lFKpyTHVdsNQ8JD3sA6VQP
