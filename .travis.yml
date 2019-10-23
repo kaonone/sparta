@@ -1,0 +1,29 @@
+language: node_js
+cache:
+  directories:
+    - node_modules
+
+install:
+ - yarn install
+ - yarn global add solhint
+ 
+notifications:
+  email: true
+
+node_js:
+  - '10.15.3'
+
+env:
+  - TASK=lint
+  - TASK=coverage
+  - TASK=test-gas
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: TASK=test-gas
+
+script: "npm run $TASK"
+
+after_success:
+  - cat coverage/lcov.info | npx coveralls

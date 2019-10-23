@@ -1,50 +1,47 @@
 {
-  "name": "AkropolisOS",
-  "version": "0.0.1",
-  "description": "DAO Framework",
-  "main": "index.js",
-  "scripts": {
-    "build-contracts": "openzeppelin compile",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    //"pre-push": "cd client && npm run pre-push",
-    //"pre-commit": "cd client && npm run pre-commit"
-  },
-  //"husky": {
-    //"hooks": {
-      //"pre-push": "npm run pre-push",
-      //"pre-commit": "npm run pre-commit"
-    //}
-  //},
-  //"repository": {
-  //  "type": "git",
-  //  "url": "git+https://github.com/OpenZeppelin/starter-kit-gsn"
-  //},
-  "keywords": [
-    "openzeppelin",
-    "truffle",
-    "react",
-    "dapp",
-    "infura",
-    "metamask",
-    "web3",
-    "ganache",
-    "web3js",
-    "ethereum",
-    "smart-contracts"
-  ],
-  "author": "Alexander Mazaletskiy <am@akropolis.io>",
-  "license": "MIT",
-  "dependencies": {
-    "@openzeppelin/contracts-ethereum-package": "^2.2.3",
-    "@openzeppelin/upgrades": "^2.5.3",
-    "dotenv": "^6.2.0",
-    "truffle-hdwallet-provider": "^1.0.3"
-  },
-  "devDependencies": {
-    "@openzeppelin/cli": "^2.5.3",
-    "@openzeppelin/gsn-helpers": "^0.1.9",
-    "chai": "^4.2.0",
-    "husky": "^3.0.4",
-    "openzeppelin-test-helpers": "^0.4.3"
-  }
+    "name": "akropolis-pool",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "generate": "npx truffle compile && typechain --target truffle './build/**/*.json'",
+        "prepare": "yarn generate",
+        "test": "scripts/test.sh",
+        "test-gas": "GAS_REPORTER=true yarn test && npx codechecks",
+        "tsc": "tsc --noEmit",
+        "lint": "solhint -c .solhint.json contracts/**/*.sol",
+        "analyze": "npx truffle run verify",
+        "coverage": "scripts/coverage.sh"
+    },
+    "devDependencies": {
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^10.12.2",
+        "truffle-typings": "^1.0.7",
+        "ts-generator": "^0.0.8",
+        "ts-node": "^7.0.1",
+        "tslint": "5.11.0",
+        "typechain": "^0.3.21",
+        "typescript": "3.0.1"
+    },
+    "dependencies": {
+        "@0x/typescript-typings": "^4.3.0",
+        "@codechecks/client": "^0.1.10",
+        "@openzeppelin/cli": "^2.5.3",
+        "@openzeppelin/test-helpers": "^0.5.3",
+        "@openzeppelin/upgrades": "^2.5.3",
+        "coveralls": "^3.0.7",
+        "dotenv": "^8.2.0",
+        "eth-gas-reporter": "^0.2.12",
+        "ethereum-types": "^2.1.6",
+        "ganache-cli": "^6.7.0",
+        "istanbul": "^0.4.5",
+        "lodash": "^4.17.11",
+        "open-cli": "^5.0.0",
+        "shx": "^0.3.2",
+        "solidity-coverage": "0.7.0-beta.0",
+        "truffle": "^5.0.41",
+        "truffle-security": "^1.6.1",
+        "web3-provider-engine": "^15.0.3",
+        "web3-utils": "^1.2.1"
+    }
 }
