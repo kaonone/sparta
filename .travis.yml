@@ -27,3 +27,6 @@ script: "npm run $TASK"
 
 after_success:
   - cat coverage/lcov.info | npx coveralls
+
+notifications:
+  slack: akropolisio:q9lFKpyTHVdsNQ8JD3sA6VQP
