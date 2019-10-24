@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
 import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
@@ -54,7 +54,7 @@ contract Core is CoreInterface, Base {
         // Remove module
         modules.remove(_name);
     }
-    
+
     /**
      * @dev Fast module exist check
      * @param _module is a module address
