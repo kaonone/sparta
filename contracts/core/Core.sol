@@ -40,6 +40,30 @@ contract Core is CoreInterface, Base {
         founder = msg.sender;
     }
 
+    /**
+     * @dev Set new module for given name
+     * @param _name infrastructure node name
+     * @param _module infrastructure node address
+     * @param _abi node interface URI
+     * @param _constant have a `true` value when you create permanent name of module
+     */
+    function set(string _name, address _module, string _abi, bool _constant) public onlyOwner {
+        
+        require(isConstant(_name), "is not module name");
+
+        // Notify
+        if (modules.get(_name) != 0)
+            ModuleReplaced(modules.get(_name), _module);
+        else
+            ModuleAdded(_module);
+ 
+        // Set module in the map
+        modules.set(_name, _module);
+
+        // Register constant flag 
+        is_constant[sha3(_name)] = _constant;
+    }
+
      /**
      * @dev Remove module by name
      * @param _name module name

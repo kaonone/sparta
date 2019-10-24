@@ -1,6 +1,6 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
-import "@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol";
+import "@openzeppelin/upgrades/contracts/ownership/Ownable.sol";
 
 /*
     Base contract for all modules

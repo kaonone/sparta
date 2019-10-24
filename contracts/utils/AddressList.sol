@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 /**
  * @dev Double linked list with address items
  */
@@ -16,10 +16,14 @@ library AddressList {
     }
 
     function first(Data storage _data)  public view returns (address)
-    { return _data.head; }
+    { 
+        return _data.head; 
+    }
 
     function last(Data storage _data)  public view returns (address)
-    { return _data.tail; }
+    { 
+        return _data.tail; 
+    }
 
     /**
      * @dev Chec list for element
@@ -28,7 +32,9 @@ library AddressList {
      * @return `true` when element in list
      */
     function contains(Data storage _data, address _item)  public view returns (bool)
-    { return _data.isContain[_item]; }
+    { 
+        return _data.isContain[_item]; 
+    }
 
     /**
      * @dev Next element of list
@@ -37,7 +43,9 @@ library AddressList {
      * @return next elemen of list
      */
     function next(Data storage _data, address _item)  public view returns (address)
-    { return _data.nextOf[_item]; }
+    { 
+        return _data.nextOf[_item]; 
+    }
 
     /**
      * @dev Previous element of list
@@ -46,7 +54,9 @@ library AddressList {
      * @return previous element of list
      */
     function prev(Data storage _data, address _item) public view returns (address)
-    { return _data.prevOf[_item]; }
+    { 
+        return _data.prevOf[_item]; 
+    }
 
     /**
      * @dev Append element to end of list

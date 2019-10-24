@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
 import "../factory/Factory.sol";
 import "../factory/FactoryCore.sol";
