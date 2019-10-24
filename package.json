@@ -11,7 +11,8 @@
         "tsc": "tsc --noEmit",
         "lint": "solhint -c .solhint.json contracts/**/*.sol",
         "analyze": "npx truffle run verify",
-        "coverage": "scripts/coverage.sh"
+        "coverage": "scripts/coverage.sh",
+        "deploy": "scripts/deploy.sh"
     },
     "dependencies": {
         "@types/mocha": "^5.2.5",
