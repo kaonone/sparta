@@ -12,7 +12,6 @@ contract Factory is Base {
     /* Addresses builded contracts at sender */
     mapping(address => address[]) public getContractsOf;
 
-
     function initialize() public initializer {
         Base.initialize();
     }

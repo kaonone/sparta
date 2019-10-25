@@ -186,6 +186,11 @@
     web3 "1.2.1"
     web3-utils "1.2.0"
 
+"@openzeppelin/contracts-ethereum-package@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-ethereum-package/-/contracts-ethereum-package-2.3.0.tgz#c89b5484f7d7c88bc134b41f589eac5a0319de02"
+  integrity sha512-voAH5uPmfZ0bpMHV6JgXoaWqkp0YIMmAino04nvJWso4S9di/rrWr8nnJB+b5bwQEz06u1rN9O3nXM9vIiHBlw==
+
 "@openzeppelin/resolver-engine-core@^0.3.3":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@openzeppelin/resolver-engine-core/-/resolver-engine-core-0.3.3.tgz#d03f08fbe86ea6a002276c7ab2b6a643b99dd5a7"
