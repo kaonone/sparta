@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 /**
  * @dev Double linked list with address items
  */
@@ -14,39 +14,6 @@ library AddressList {
         mapping(address => address) nextOf;
         mapping(address => address) prevOf;
     }
-
-    function first(Data storage _data)  public view returns (address)
-    { return _data.head; }
-
-    function last(Data storage _data)  public view returns (address)
-    { return _data.tail; }
-
-    /**
-     * @dev Chec list for element
-     * @param _data is list storage ref
-     * @param _item is an element
-     * @return `true` when element in list
-     */
-    function contains(Data storage _data, address _item)  public view returns (bool)
-    { return _data.isContain[_item]; }
-
-    /**
-     * @dev Next element of list
-     * @param _data is list storage ref
-     * @param _item is current element of list
-     * @return next elemen of list
-     */
-    function next(Data storage _data, address _item)  public view returns (address)
-    { return _data.nextOf[_item]; }
-
-    /**
-     * @dev Previous element of list
-     * @param _data is list storage ref
-     * @param _item is current element of list
-     * @return previous element of list
-     */
-    function prev(Data storage _data, address _item) public view returns (address)
-    { return _data.prevOf[_item]; }
 
     /**
      * @dev Append element to end of list
@@ -82,9 +49,9 @@ library AddressList {
                 _data.tail = _item;
             }
 
-            _data.nextOf[_to]    = _item;
-            _data.prevOf[_item]  = _to;
-            _data.nextOf[_item]  = nextTo;
+            _data.nextOf[_to] = _item;
+            _data.prevOf[_item] = _to;
+            _data.nextOf[_item] = nextTo;
         }
         _data.isContain[_item] = true;
         ++_data.length;
@@ -122,9 +89,9 @@ library AddressList {
                 _data.head = _item;
             }
 
-            _data.prevOf[_item]  = prevTo;
-            _data.nextOf[_item]  = _to;
-            _data.prevOf[_to]    = _item;
+            _data.prevOf[_item] = prevTo;
+            _data.nextOf[_item] = _to;
+            _data.prevOf[_to] = _item;
         }
         _data.isContain[_item] = true;
         ++_data.length;
@@ -206,5 +173,48 @@ library AddressList {
         } else {
             append(_data, _b, prevA);
         }
+    }
+
+    function first(Data storage _data)  public view returns (address)
+    { 
+        return _data.head; 
+    }
+
+    function last(Data storage _data)  public view returns (address)
+    { 
+        return _data.tail; 
+    }
+
+    /**
+     * @dev Chec list for element
+     * @param _data is list storage ref
+     * @param _item is an element
+     * @return `true` when element in list
+     */
+    function contains(Data storage _data, address _item)  public view returns (bool)
+    { 
+        return _data.isContain[_item]; 
+    }
+
+    /**
+     * @dev Next element of list
+     * @param _data is list storage ref
+     * @param _item is current element of list
+     * @return next elemen of list
+     */
+    function next(Data storage _data, address _item)  public view returns (address)
+    { 
+        return _data.nextOf[_item]; 
+    }
+
+    /**
+     * @dev Previous element of list
+     * @param _data is list storage ref
+     * @param _item is current element of list
+     * @return previous element of list
+     */
+    function prev(Data storage _data, address _item) public view returns (address)
+    { 
+        return _data.prevOf[_item]; 
     }
 }

@@ -1,6 +1,6 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
-import '../core/Core.sol';
+import "../core/Core.sol";
 
 library FactoryCore {
 

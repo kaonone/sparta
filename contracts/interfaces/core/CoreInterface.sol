@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
 contract CoreInterface {
 
@@ -13,6 +13,11 @@ contract CoreInterface {
 
     /* Functions */
 
+    
+    function set(string memory  _name, address _module, string memory _abi, bool _constant) public;
+
+    function remove(string memory _name) public;
+    
     function contains(address _module)  public view returns (bool);
 
     function size() public view returns (uint);
@@ -26,8 +31,4 @@ contract CoreInterface {
     function first() public view returns (address);
 
     function next(address _current)  public view returns (address);
-
-    function set(string memory  _name, address _module, string memory _abi, bool _constant) public;
-
-    function remove(string memory _name) public;
 }

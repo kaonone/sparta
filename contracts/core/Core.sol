@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.12;
 
 import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
@@ -31,16 +31,53 @@ contract Core is CoreInterface, Base {
      * @param _name is a DAO name
      * @param _description is a short DAO description
      */
-
     function initialize(string memory _name, string memory _description) public initializer {
 
         Base.initialize();
 
-        name         = _name;
-        description  = _description;
-        founder      = msg.sender;
+        name = _name;
+        description = _description;
+        founder = msg.sender;
     }
 
+    /**
+     * @dev Set new module for given name
+     * @param _name infrastructure node name
+     * @param _module infrastructure node address
+     * @param _abi node interface URI
+     * @param _constant have a `true` value when you create permanent name of module
+     */
+    function set(string memory _name, address _module, string memory _abi, bool _constant) public onlyOwner {
+        
+        require(isConstant(_name), "is not module name");
+
+        // Notify
+        if (modules.get(_name) != ZERO_ADDRESS)
+            emit ModuleReplaced(modules.get(_name), _module);
+        else
+            emit ModuleAdded(_module);
+ 
+        // Set module in the map
+        modules.set(_name, _module);
+
+        // Register constant flag 
+        is_constant[keccak256(abi.encodePacked(_name))] = _constant;
+    }
+
+     /**
+     * @dev Remove module by name
+     * @param _name module name
+     */
+    function remove(string memory _name)  public onlyOwner {
+
+        require(isConstant(_name), "is not module name");
+
+        // Notify
+        emit ModuleRemoved(modules.get(_name));
+
+        // Remove module
+        modules.remove(_name);
+    }
 
     /**
      * @dev Fast module exist check
@@ -110,46 +147,4 @@ contract Core is CoreInterface, Base {
         return modules.items.next(_current);
     }
 
-    /**
-     * @dev Set new module for given name
-     * @param _name infrastructure node name
-     * @param _module infrastructure node address
-     * @param _abi node interface URI
-     * @param _constant have a `true` value when you create permanent name of module
-     */
-    function set(string memory _name, address _module, string  memory _abi, bool _constant) public onlyOwner {
-
-
-        require(isConstant(_name), "is not module name");
-
-        // Notify
-        if (modules.get(_name) != ZERO_ADDRESS)
-            emit ModuleReplaced(modules.get(_name), _module);
-        else
-            emit ModuleAdded(_module);
-
-        // Set module in the map
-        modules.set(_name, _module);
-
-        // Register module abi
-        abiOf[_module] = _abi;
-
-        // Register constant flag
-        is_constant[keccak256(abi.encodePacked(_name))] = _constant;
-    }
-
-    /**
-     * @dev Remove module by name
-     * @param _name module name
-     */
-    function remove(string memory _name)  public onlyOwner {
-
-        require(isConstant(_name), "is not module name");
-
-        // Notify
-        emit ModuleRemoved(modules.get(_name));
-
-        // Remove module
-        modules.remove(_name);
-    }
 }
