@@ -44,10 +44,9 @@ contract Core is CoreInterface, Base {
      * @dev Set new module for given name
      * @param _name infrastructure node name
      * @param _module infrastructure node address
-     * @param _abi node interface URI
      * @param _constant have a `true` value when you create permanent name of module
      */
-    function set(string memory _name, address _module, string memory _abi, bool _constant) public onlyOwner {
+    function set(string memory _name, address _module, bool _constant) public onlyOwner {
         
         require(isConstant(_name), "is not module name");
 

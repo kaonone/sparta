@@ -14,7 +14,7 @@ contract CoreInterface {
     /* Functions */
 
     
-    function set(string memory  _name, address _module, string memory _abi, bool _constant) public;
+    function set(string memory  _name, address _module,  bool _constant) public;
 
     function remove(string memory _name) public;
     
