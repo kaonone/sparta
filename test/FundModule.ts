@@ -1,4 +1,4 @@
-import { CoreContract, CoreInstance, FundsModuleInstance } from '../types/truffle-contracts/index';
+import { CoreContract, CoreInstance, FundsModuleInstance, CompoundModuleInstance } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
@@ -10,9 +10,10 @@ const FundsModule = artifacts.require("FundsModule");
 
 const CompoundModule = artifacts.require("CompoundModule");
 
-contract("CoreFactory", async ([_, owner, ...otherAccounts]) => {
+contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
     let pool: CoreInstance;
     let funds: FundsModuleInstance; 
+    let compound: CompoundModuleInstance;
   
     beforeEach(async () => {
         pool = await Core.new();
@@ -28,7 +29,11 @@ contract("CoreFactory", async ([_, owner, ...otherAccounts]) => {
     });
   
     it("should get next module", async () => {
-      await pool.set("funds", funds.address, true, { from: owner });  
-      (await pool.contains(funds.address)).should.equal(true);
+        compound = await CompoundModule.new();
+        await compound.initialize({ from: owner });  
+        await pool.set("funds", funds.address, true, { from: owner }); 
+        
+        await pool.set("compound", compound.address, true, { from: owner });
+        (await pool.contains(compound.address)).should.equal(true);
     });
 });

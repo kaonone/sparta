@@ -40,7 +40,7 @@ library AddressList {
         if (_data.head == ZERO_ADDRESS) {
             _data.head = _data.tail = _item;
         } else {
-            require(!_data.isContain[_to], " ");
+            require(_data.isContain[_to], " ");
 
             address  nextTo = _data.nextOf[_to];
             if (nextTo != ZERO_ADDRESS) {
@@ -80,7 +80,7 @@ library AddressList {
         if (_data.head == ZERO_ADDRESS) {
             _data.head = _data.tail = _item;
         } else {
-            require(!_data.isContain[_to], "Unable to contain double element");
+            require(_data.isContain[_to], "Unable to contain double element");
 
             address  prevTo = _data.prevOf[_to];
             if (prevTo != ZERO_ADDRESS) {
