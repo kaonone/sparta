@@ -12,7 +12,6 @@ declare global {
       require(name: "Base"): TruffleContracts.BaseContract;
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
-      require(name: "Core"): TruffleContracts.CoreContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "Counter_V0"): TruffleContracts.Counter_V0Contract;
       require(name: "Counter_V1"): TruffleContracts.Counter_V1Contract;
@@ -20,6 +19,7 @@ declare global {
       require(name: "Factory"): TruffleContracts.FactoryContract;
       require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
+      require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;

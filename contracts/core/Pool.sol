@@ -4,7 +4,7 @@ import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
 import "../utils/AddressMap.sol";
 
-contract Core is Base, CoreInterface {
+contract Pool is Base, CoreInterface {
 
     /* Short description */
     string  public name;

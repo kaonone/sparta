@@ -1,16 +1,16 @@
-import { CoreContract, CoreInstance} from "../types/truffle-contracts/index";
+import { PoolContract, PoolInstance} from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 
-const Core = artifacts.require("Core");
+const Pool = artifacts.require("Pool");
 
-contract("CoreFactory", async ([_, owner,  wallet1, wallet2, wallet3, wallet4, wallet5]) => {
-    let pool: CoreInstance;
+contract("Pool", async ([_, owner,  wallet1, wallet2, wallet3, wallet4, wallet5]) => {
+    let pool: PoolInstance;
   
     beforeEach(async () => {
-        pool = await Core.new();
+        pool = await Pool.new();
         await pool.initialize();
         await pool.setMetadata("creditPool", "Great Pool");
     });

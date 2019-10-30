@@ -1,21 +1,21 @@
-import { CoreContract, CoreInstance, PoolFactoryInstance } from "../types/truffle-contracts/index";
+import { PoolContract, PoolInstance, PoolFactoryInstance } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 
 const PoolFactory = artifacts.require("PoolFactory");
-const Core = artifacts.require("Core");
+const Pool = artifacts.require("Pool");
 contract("PoolFactory", async ([_, owner, ...otherAccounts]) => {
   let poolFactory: PoolFactoryInstance;
-  let pool: CoreInstance;
+  let pool: PoolInstance;
   
   beforeEach(async () => {
       poolFactory = await PoolFactory.new();
       await poolFactory.initialize({ from: owner });
       await poolFactory.create("creditPool", "Greate Pool");
       const poolAddress = await poolFactory.getLastContract();
-      pool = await Core.at(poolAddress)
+      pool = await Pool.at(poolAddress)
   });
 
   it("should have proper owner", async () => {

@@ -1,22 +1,22 @@
-import { CoreContract, CoreInstance, FundsModuleInstance, CompoundModuleInstance } from "../types/truffle-contracts/index";
+import { CompoundModuleInstance, FundsModuleInstance, PoolContract, PoolInstance } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 
-const Core = artifacts.require("Core");
+const Pool = artifacts.require("Pool");
 
 const FundsModule = artifacts.require("FundsModule");
 
 const CompoundModule = artifacts.require("CompoundModule");
 
 contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
-    let pool: CoreInstance;
+    let pool: PoolInstance;
     let funds: FundsModuleInstance; 
     let compound: CompoundModuleInstance;
   
     beforeEach(async () => {
-        pool = await Core.new();
+        pool = await Pool.new();
         await pool.initialize();
 
         funds = await FundsModule.new();
