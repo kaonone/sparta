@@ -34,6 +34,6 @@ contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
         await pool.set("funds", funds.address, true); 
         
         await pool.set("compound", compound.address, true);
-        (await pool.contains(compound.address)).should.equal(true);
+        (await pool.next(funds.address)).should.equal(compound.address);
     });
 });

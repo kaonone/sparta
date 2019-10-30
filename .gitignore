@@ -76,3 +76,4 @@ coverage
 bin/*
 build/*
 artifacts/*
+coverage.json
