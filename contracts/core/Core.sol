@@ -44,7 +44,7 @@ contract Core is Base, CoreInterface {
      */
     function set(string memory _name, address _module, bool _constant) public onlyOwner {
         
-        require(isConstant(_name), "is not module name");
+        require(!isConstant(_name), "is not module name");
 
         // Notify
         if (modules.get(_name) != ZERO_ADDRESS)

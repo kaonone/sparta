@@ -34,7 +34,7 @@ library AddressList {
      */
     function append(Data storage _data, address _item, address _to) internal {
         // Unable to contain double element
-        require(_data.isContain[_item], "Unable to contain double element");
+        require(!_data.isContain[_item], "Unable to contain double element");
 
         // Empty list
         if (_data.head == ZERO_ADDRESS) {
@@ -74,7 +74,7 @@ library AddressList {
      * @param _to is a item element before new
      */
     function prepend(Data storage _data, address _item, address _to) internal {
-        require(_data.isContain[_item], "Unable to contain double element");
+        require(!_data.isContain[_item], "Unable to contain double element");
 
         // Empty list
         if (_data.head == ZERO_ADDRESS) {
@@ -103,7 +103,7 @@ library AddressList {
      * @param _item is a removed list element
      */
     function remove(Data storage _data, address _item) internal {
-        require(!_data.isContain[_item], " ");
+        require(_data.isContain[_item], " ");
 
         address  elemPrev = _data.prevOf[_item];
         address  elemNext = _data.nextOf[_item];
@@ -132,7 +132,7 @@ library AddressList {
      */
     function replace(Data storage _data, address _from, address _to) internal {
 
-        require(!_data.isContain[_from], " ");
+        require(_data.isContain[_from], " ");
 
         address  elemPrev = _data.prevOf[_from];
         address  elemNext = _data.nextOf[_from];
