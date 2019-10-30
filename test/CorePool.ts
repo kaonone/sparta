@@ -6,17 +6,18 @@ const should = require("chai").should();
 
 const Core = artifacts.require("Core");
 
-contract("CoreFactory", async ([_, owner, ...otherAccounts]) => {
+contract("CoreFactory", async ([_, owner,  wallet1, wallet2, wallet3, wallet4, wallet5]) => {
     let pool: CoreInstance;
   
     beforeEach(async () => {
         pool = await Core.new();
-        await pool.initialize({ from: owner });
+        await pool.initialize();
         await pool.setMetadata("creditPool", "Great Pool");
     });
 
     it("should have proper owner", async () => {
-        (await pool.owner()).should.equal(owner);
+        const address = await pool.owner();
+        (await pool.founder()).should.equal(address);
     });
     
     it("should have proper name", async () => {

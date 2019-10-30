@@ -13,7 +13,7 @@
     "sourceMap": true,
     "skipLibCheck":true,
     "lib": ["es2015", "esnext.asynciterable"],
-    "typeRoots": ["./node_modules/@0x/typescript-typings/types", "./node_modules/@types", "types/"]
+    "typeRoots": ["./node_modules/@types/web3", "./node_modules/@0x/typescript-typings/types", "./node_modules/@types", "types/"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "example", "build"]
