@@ -4,7 +4,7 @@ import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
 import "../utils/AddressMap.sol";
 
-contract Core is CoreInterface, Base {
+contract Core is Base, CoreInterface {
 
     /* Short description */
     string  public name;
@@ -25,19 +25,15 @@ contract Core is CoreInterface, Base {
      *      the contract interface contains source URI
      */
     mapping(address => string) public abiOf;
-
-    /**
-     * @dev DAO constructor
-     * @param _name is a DAO name
-     * @param _description is a short DAO description
-     */
-    function initialize(string memory _name, string memory _description) public initializer {
-
+    
+    function initialize() public initializer {
         Base.initialize();
+        founder = msg.sender;
+    }
 
+    function setMetadata(string memory _name, string  memory _description) public {
         name = _name;
         description = _description;
-        founder = msg.sender;
     }
 
     /**

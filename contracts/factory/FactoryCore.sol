@@ -4,11 +4,11 @@ import "../core/Core.sol";
 
 library FactoryCore {
 
-    function create(string memory _name, string memory _description) public returns (Core)
+    function create(string memory _name, string memory _description) internal returns (Core)
     {
         Core c = new Core();
-        c.initialize(_name, _description);
-
+        c.initialize();
+        c.setMetadata(_name, _description);
         return c;
     }
 }

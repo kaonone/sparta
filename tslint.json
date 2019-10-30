@@ -17,6 +17,7 @@
         "ban-types":false,
         "callable-types":false,
         "max-line-length": [true, 240],
+        "no-trailing-whitespace": false,
         "variable-name": {
             "options": [
               "check-format",

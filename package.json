@@ -39,7 +39,8 @@
         "ts-generator": "^0.0.8",
         "ts-node": "^7.0.1",
         "tslint": "5.11.0",
-        "typechain": "^0.3.21",
+        "typechain": "1.0.3",
+        "typechain-target-truffle": "^1.0.0",
         "typescript": "3.0.1",
         "web3-provider-engine": "^15.0.3",
         "web3-utils": "^1.2.1"

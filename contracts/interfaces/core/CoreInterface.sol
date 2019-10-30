@@ -13,8 +13,10 @@ contract CoreInterface {
 
     /* Functions */
 
-    
-    function set(string memory  _name, address _module,  bool _constant) public;
+
+    function set(string memory  _name, address _module, bool _constant) public;
+
+    function setMetadata(string memory _name, string  memory _description) public;
 
     function remove(string memory _name) public;
     
