@@ -7,7 +7,7 @@ library FactoryCore {
     function create(string memory _name, string memory _description) internal returns (Pool)
     {
         Pool c = new Pool();
-        c.initialize();
+        c.initialize(msg.sender);
         c.setMetadata(_name, _description);
         return c;
     }

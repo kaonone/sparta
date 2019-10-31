@@ -26,8 +26,8 @@ contract Pool is Base, CoreInterface {
      */
     mapping(address => string) public abiOf;
     
-    function initialize() public initializer {
-        Base.initialize();
+    function initialize(address sender)public initializer {
+        Base.initialize(sender);
         founder = msg.sender;
     }
 
@@ -36,6 +36,10 @@ contract Pool is Base, CoreInterface {
         description = _description;
     }
 
+    function test() public {
+
+    }
+    
     /**
      * @dev Set new module for given name
      * @param _name infrastructure node name

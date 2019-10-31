@@ -24,7 +24,7 @@ start_ganache() {
     echo "Using in-process ganache-core provider for coverage"
     return
   else
-    npx ganache-cli --gasLimit 0xfffffffffff --networkId 1234 --port "$ganache_port" > /dev/null &
+    npx ganache-cli --gasLimit 0xfffffffffff -e 10000000 --port "$ganache_port" > /dev/null &
   fi
 
   ganache_pid=$!

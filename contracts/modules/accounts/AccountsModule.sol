@@ -4,7 +4,7 @@ import "../../common/Base.sol";
 
 contract AccountsModule is Base {
 
-    function initialize() public initializer {
-        Base.initialize();
+    function initialize(address sender) public initializer {
+        Base.initialize(sender);
     }
 }

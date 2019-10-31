@@ -14,6 +14,8 @@ contract CoreInterface {
     /* Functions */
 
 
+    function test() public;
+    
     function set(string memory  _name, address _module, bool _constant) public;
 
     function setMetadata(string memory _name, string  memory _description) public;

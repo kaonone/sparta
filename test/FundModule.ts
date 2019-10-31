@@ -17,23 +17,22 @@ contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         pool = await Pool.new();
-        await pool.initialize();
+        await pool.initialize(owner, {from: owner});
 
         funds = await FundsModule.new();
-        await funds.initialize({ from: owner });
+        await funds.initialize(owner, {from: owner});
     });
   
     it("should set module to pool", async () => {
-        await pool.set("funds", funds.address, true);  
+        await pool.set("funds", funds.address, true, {from: owner});  
         (await pool.contains(funds.address)).should.equal(true);
     });
   
     it("should get next module", async () => {
         compound = await CompoundModule.new();
-        await compound.initialize({ from: owner });  
-        await pool.set("funds", funds.address, true); 
-        
-        await pool.set("compound", compound.address, true);
+        await compound.initialize(owner, {from: owner});
+        await pool.set("funds", funds.address, true, {from: owner}); 
+        await pool.set("compound", compound.address, true, {from: owner});
         (await pool.next(funds.address)).should.equal(compound.address);
     });
 });
