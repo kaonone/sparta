@@ -23,7 +23,7 @@ async function main() {
   /* Retrieve a couple of addresses to interact with the contracts. */
   const [creatorAddress, initializerAddress] = await ZWeb3.accounts();
   /* Create a SimpleProject to interact with OpenZeppelin programmatically. */
-  const myProject = new SimpleProject("RightPlace", null, { from: creatorAddress });
+  const myProject = new SimpleProject("AkropolisOS", null, { from: creatorAddress });
 
   /* Deploy the contract with a proxy that allows upgrades. Initialize it by setting the value to 42. */
   const instance = await myProject.createProxy(Counter_v0, { initArgs: [1] })

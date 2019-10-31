@@ -7,6 +7,10 @@ yarn-error.log*
 
 coverage.json
 
+# OpenZeppelin SDK
+.openzeppelin/dev-*.json
+.openzeppelin/.session
+
 # Runtime data
 pids
 *.pid
@@ -76,3 +80,4 @@ coverage
 bin/*
 build/*
 artifacts/*
+coverage.json

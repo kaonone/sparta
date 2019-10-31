@@ -24,7 +24,7 @@ start_ganache() {
     echo "Using in-process ganache-core provider for coverage"
     return
   else
-    npx ganache-cli --gasLimit 0xfffffffffff --networkId 1234 --port "$ganache_port" > /dev/null &
+    npx ganache-cli --gasLimit 0xfffffffffff -e 10000000 --port "$ganache_port" > /dev/null &
   fi
 
   ganache_pid=$!
@@ -32,7 +32,7 @@ start_ganache() {
   echo "Waiting for ganache to launch on port "$ganache_port"..."
 
   while ! ganache_running; do
-    sleep 0.1 # wait for 1/10 of the second before checking again
+    sleep 1 # wait for 1/10 of the second before checking again
   done
 
   echo "Ganache launched!"

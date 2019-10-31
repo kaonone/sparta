@@ -1,14 +1,14 @@
 pragma solidity ^0.5.12;
 
-import "../core/Core.sol";
+import "../core/Pool.sol";
 
 library FactoryCore {
 
-    function create(string memory _name, string memory _description) public returns (Core)
+    function create(string memory _name, string memory _description) internal returns (Pool)
     {
-        Core c = new Core();
-        c.initialize(_name, _description);
-
+        Pool c = new Pool();
+        c.initialize(msg.sender);
+        c.setMetadata(_name, _description);
         return c;
     }
 }

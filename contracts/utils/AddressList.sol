@@ -20,7 +20,7 @@ library AddressList {
      * @param _data is list storage ref
      * @param _item is a new list element
      */
-    function append(Data storage _data, address _item) public
+    function append(Data storage _data, address _item) internal
     {
         append(_data, _item, _data.tail);
     }
@@ -32,15 +32,15 @@ library AddressList {
      * @param _to is a item element before new
      * @notice gas usage < 100000
      */
-    function append(Data storage _data, address _item, address _to) public {
+    function append(Data storage _data, address _item, address _to) internal {
         // Unable to contain double element
-        require(_data.isContain[_item], "Unable to contain double element");
+        require(!_data.isContain[_item], "Unable to contain double element");
 
         // Empty list
         if (_data.head == ZERO_ADDRESS) {
             _data.head = _data.tail = _item;
         } else {
-            require(!_data.isContain[_to], " ");
+            require(_data.isContain[_to], " ");
 
             address  nextTo = _data.nextOf[_to];
             if (nextTo != ZERO_ADDRESS) {
@@ -62,7 +62,7 @@ library AddressList {
      * @param _data is list storage ref
      * @param _item is a new list element
      */
-    function prepend(Data storage _data, address _item) public
+    function prepend(Data storage _data, address _item) internal
     {
         prepend(_data, _item, _data.head);
     }
@@ -73,14 +73,14 @@ library AddressList {
      * @param _item is a new list element
      * @param _to is a item element before new
      */
-    function prepend(Data storage _data, address _item, address _to) public {
-        require(_data.isContain[_item], "Unable to contain double element");
+    function prepend(Data storage _data, address _item, address _to) internal {
+        require(!_data.isContain[_item], "Unable to contain double element");
 
         // Empty list
         if (_data.head == ZERO_ADDRESS) {
             _data.head = _data.tail = _item;
         } else {
-            require(!_data.isContain[_to], "Unable to contain double element");
+            require(_data.isContain[_to], "Unable to contain double element");
 
             address  prevTo = _data.prevOf[_to];
             if (prevTo != ZERO_ADDRESS) {
@@ -102,8 +102,8 @@ library AddressList {
      * @param _data is list storage ref
      * @param _item is a removed list element
      */
-    function remove(Data storage _data, address _item) public {
-        require(!_data.isContain[_item], " ");
+    function remove(Data storage _data, address _item) internal {
+        require(_data.isContain[_item], " ");
 
         address  elemPrev = _data.prevOf[_item];
         address  elemNext = _data.nextOf[_item];
@@ -130,9 +130,9 @@ library AddressList {
      * @param _from is old element
      * @param _to is a new element
      */
-    function replace(Data storage _data, address _from, address _to) public {
+    function replace(Data storage _data, address _from, address _to) internal {
 
-        require(!_data.isContain[_from], " ");
+        require(_data.isContain[_from], " ");
 
         address  elemPrev = _data.prevOf[_from];
         address  elemNext = _data.nextOf[_from];
@@ -160,7 +160,7 @@ library AddressList {
      * @param _a is a first element
      * @param _b is a second element
      */
-    function swap(Data storage _data, address _a, address _b) public {
+    function swap(Data storage _data, address _a, address _b) internal {
         require(!_data.isContain[_a] || !_data.isContain[_b], " ");
 
         address prevA = _data.prevOf[_a];
@@ -175,12 +175,12 @@ library AddressList {
         }
     }
 
-    function first(Data storage _data)  public view returns (address)
+    function first(Data storage _data)  internal view returns (address)
     { 
         return _data.head; 
     }
 
-    function last(Data storage _data)  public view returns (address)
+    function last(Data storage _data)  internal view returns (address)
     { 
         return _data.tail; 
     }
@@ -191,7 +191,7 @@ library AddressList {
      * @param _item is an element
      * @return `true` when element in list
      */
-    function contains(Data storage _data, address _item)  public view returns (bool)
+    function contains(Data storage _data, address _item)  internal view returns (bool)
     { 
         return _data.isContain[_item]; 
     }
@@ -202,7 +202,7 @@ library AddressList {
      * @param _item is current element of list
      * @return next elemen of list
      */
-    function next(Data storage _data, address _item)  public view returns (address)
+    function next(Data storage _data, address _item)  internal view returns (address)
     { 
         return _data.nextOf[_item]; 
     }
@@ -213,7 +213,7 @@ library AddressList {
      * @param _item is current element of list
      * @return previous element of list
      */
-    function prev(Data storage _data, address _item) public view returns (address)
+    function prev(Data storage _data, address _item) internal view returns (address)
     { 
         return _data.prevOf[_item]; 
     }

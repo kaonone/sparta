@@ -4,7 +4,7 @@ import "../common/Base.sol";
 import "../interfaces/core/CoreInterface.sol";
 import "../utils/AddressMap.sol";
 
-contract Core is CoreInterface, Base {
+contract Pool is Base, CoreInterface {
 
     /* Short description */
     string  public name;
@@ -25,31 +25,30 @@ contract Core is CoreInterface, Base {
      *      the contract interface contains source URI
      */
     mapping(address => string) public abiOf;
-
-    /**
-     * @dev DAO constructor
-     * @param _name is a DAO name
-     * @param _description is a short DAO description
-     */
-    function initialize(string memory _name, string memory _description) public initializer {
-
-        Base.initialize();
-
-        name = _name;
-        description = _description;
+    
+    function initialize(address sender)public initializer {
+        Base.initialize(sender);
         founder = msg.sender;
     }
 
+    function setMetadata(string memory _name, string  memory _description) public {
+        name = _name;
+        description = _description;
+    }
+
+    function test() public {
+
+    }
+    
     /**
      * @dev Set new module for given name
      * @param _name infrastructure node name
      * @param _module infrastructure node address
-     * @param _abi node interface URI
      * @param _constant have a `true` value when you create permanent name of module
      */
-    function set(string memory _name, address _module, string memory _abi, bool _constant) public onlyOwner {
+    function set(string memory _name, address _module, bool _constant) public onlyOwner {
         
-        require(isConstant(_name), "is not module name");
+        require(!isConstant(_name), "is not module name");
 
         // Notify
         if (modules.get(_name) != ZERO_ADDRESS)
