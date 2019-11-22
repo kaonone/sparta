@@ -15,11 +15,15 @@ contract Base is Initializable, Ownable {
         Ownable.initialize(sender);
     }
 
-    function encodingFunctionSignature() public pure returns(bytes4)
+    function executingBySignature(
+        address recipient,
+        string memory _functionSignature,
+        bytes memory _parameters
+    ) public
     {
-        bytes4 encodedSignature = bytes4(keccak256("aFunction(string,uint256)"));
-        return encodedSignature;
+        (bool success, bytes memory data) = recipient.call(abi.encodeWithSignature(_functionSignature, _parameters));
+        require(success,
+            "Execution failed"
+        );
     }
-
-    
 }
