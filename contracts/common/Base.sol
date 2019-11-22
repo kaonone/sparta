@@ -15,4 +15,11 @@ contract Base is Initializable, Ownable {
         Ownable.initialize(sender);
     }
 
+    function encodingFunctionSignature() public pure returns(bytes4)
+    {
+        bytes4 encodedSignature = bytes4(keccak256("aFunction(string,uint256)"));
+        return encodedSignature;
+    }
+
+    
 }
