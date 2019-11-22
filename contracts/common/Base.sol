@@ -19,7 +19,7 @@ contract Base is Initializable, Ownable {
         string memory _functionSignature,
         bytes memory _parameters) public
     {
-         (bool success, bytes memory data) = address(this).call(abi.encodeWithSignature(_functionSignature, _parameters));
+        (bool success, bytes memory data) = address(this).call(abi.encodeWithSignature(_functionSignature, _parameters));
         require(success,
             "Execution failed"
         );
