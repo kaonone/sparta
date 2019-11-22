@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
 
 import "../../common/Base.sol";
+import "../../interfaces/curve/CurveInterface.sol";
 
 contract CurveModule is Base {
 
@@ -8,5 +9,5 @@ contract CurveModule is Base {
         Base.initialize(sender);
     }
 
-    
+
 }

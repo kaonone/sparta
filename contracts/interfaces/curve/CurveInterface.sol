@@ -18,4 +18,18 @@ interface IBondingCurve {
         external
         view
         returns (uint256);
+
+    function calculatePurchase(
+        uint256 _totalSupply,
+        uint256 _poolBalance,
+        uint256 _reserveRatio,
+        uint256 _amount
+    ) external pure returns (uint256);
+
+    function calculateSale(
+        uint256 _totalSupply,
+        uint256 _poolBalance,
+        uint256 _reserveRatio,
+        uint256 _amount
+    ) external pure returns (uint256);
 }
