@@ -1,7 +1,7 @@
 pragma solidity ^0.5.12;
 
 import "../../common/Base.sol";
-import "../../interfaces/curve/CurveInterface.sol";
+import "../../token/ptokens/PToken.sol";
 
 contract CurveModule is Base {
 
