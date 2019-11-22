@@ -15,6 +15,16 @@ contract Base is Initializable, Ownable {
         Ownable.initialize(sender);
     }
 
+    function selfExecutingBySignature(
+        string memory _functionSignature,
+        bytes memory _parameters) public
+    {
+         (bool success, bytes memory data) = address(this).call(abi.encodeWithSignature(_functionSignature, _parameters));
+        require(success,
+            "Execution failed"
+        );
+    }
+
     function executingBySignature(
         address recipient,
         string memory _functionSignature,
