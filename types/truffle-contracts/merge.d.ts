@@ -23,7 +23,7 @@ declare global {
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
-      require(name: "pToken"): TruffleContracts.pTokenContract;
+      require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;
     }

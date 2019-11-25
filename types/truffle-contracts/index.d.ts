@@ -73,8 +73,8 @@ export interface PoolFactoryContract
   "new"(meta?: Truffle.TransactionDetails): Promise<PoolFactoryInstance>;
 }
 
-export interface pTokenContract extends Truffle.Contract<pTokenInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<pTokenInstance>;
+export interface PTokenContract extends Truffle.Contract<PTokenInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<PTokenInstance>;
 }
 
 export interface TokenModuleContract
@@ -1390,7 +1390,7 @@ export interface PoolFactoryInstance extends Truffle.ContractInstance {
   };
 }
 
-export interface pTokenInstance extends Truffle.ContractInstance {
+export interface PTokenInstance extends Truffle.ContractInstance {
   addMinter: {
     (
       account: string | BigNumber,
