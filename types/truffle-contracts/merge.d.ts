@@ -16,11 +16,14 @@ declare global {
       require(name: "Counter_V0"): TruffleContracts.Counter_V0Contract;
       require(name: "Counter_V1"): TruffleContracts.Counter_V1Contract;
       require(name: "Counter"): TruffleContracts.CounterContract;
+      require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
       require(name: "Factory"): TruffleContracts.FactoryContract;
       require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
+      require(name: "IBondingCurve"): TruffleContracts.IBondingCurveContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
+      require(name: "pToken"): TruffleContracts.pTokenContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;
     }
