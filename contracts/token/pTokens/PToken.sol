@@ -6,14 +6,14 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burn
 import "../../common/Base.sol";
 
 /**
- * @notice pToken contract mock
+ * @notice PToken contract mock
  */
-contract pToken is Base, ERC20Detailed, ERC20Mintable, ERC20Burnable {
+contract PToken is Base, ERC20Detailed, ERC20Mintable, ERC20Burnable {
 
-    function initialize() public initializer {
-    	Base.initialize(msg.sender);
+    function initialize(address sender) public initializer {
+    	Base.initialize(sender);
     	ERC20Detailed.initialize("pToken for DAI", "pDAI", 18);
-    	ERC20Mintable.initialize(msg.sender);
+    	ERC20Mintable.initialize(sender);
     }
 
 }
