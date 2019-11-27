@@ -15,20 +15,20 @@ contract("TestTS", async ([_, owner, ...otherAccounts]) => {
 
     it("web3.utils should be available", async () => {
         let t = web3.utils.toWei('1', 'ether');
-        console.log(t);
+        //console.log(t);
     });
 
-    // it("BN should be mapped to bn.js", async () => {
-    //     let t = new BN('1');
-    //     let r = t.add(new BN('2'));    //There is no add() in BigNumber.js
-    //     console.log('1 + 2 = ',r.toNumber());
-    // });
-    // it("Result of contract call should be BN, not BigNumber", async () => {
-    //     let val = 16;
-    //     let t = await isqrt.sqrtBabylonian(val);
-    //     console.log('sqrtBabylonian('+val+') = ', t)
-    //     let r = t.add(new BN('2'));    //There is no add() in BigNumber.js
-    //     console.log(val+' + 2 = ',r.toNumber());
-    // });
+    it("BN should be mapped to bn.js", async () => {
+        let t = new BN('1');
+        let r = t.add(new BN('2'));    //There is no add() in BigNumber.js
+        //console.log('1 + 2 = ',r.toNumber());
+    });
+    it("Result of contract call should be BN, not BigNumber", async () => {
+        let val = 16;
+        let t = await isqrt.sqrtBabylonian(val);
+        //console.log('sqrtBabylonian('+val+') = ', t)
+        let r = t.add(new BN('2'));    //There is no add() in BigNumber.js
+        //console.log('sqrt('+val+') + 2 = ',r.toNumber());
+    });
 
 });
