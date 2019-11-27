@@ -4,33 +4,35 @@ const {BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-he
 // tslint:disable-next-line:no-var-requires
 var should = require("chai").should;
 var expect = require("chai").expect;
+const w3random = require("./utils/w3random");
 
 const TestSQRT = artifacts.require("TestSQRT");
 
 contract("ISQRT", async ([_, owner, ...otherAccounts]) => {
     let instance: TestSQRTInstance;
     //let testRnd = new BN('1296000000000000000000'); 
-    let testRnd = getRandomBN();
+    //let testRnd = new BN('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE');//constants.MAX_UINT256;
+    let testRnd = w3random.bn();
   
     beforeEach(async () => {
         instance = await TestSQRT.new();
     });
 
-    it("should calculate sqrt2 - testing gas usage", async () => {
-        let receipt = await instance.setSqrt2(testRnd);
+    it("should calculate sqrtBitByBit: gas usage", async () => {
+        let receipt = await instance.setSqrtBitByBit(testRnd);
         let sqrt = await instance.sqrt();
         //console.log('sqrt2('+testRnd.toString()+') = '+sqrt.toString());
     });
-    it("should calculate sqrtB - testing gas usage", async () => {
-        let receipt = await instance.setSqrtB(testRnd);
+    it("should calculate sqrtBabylonian: gas usage", async () => {
+        let receipt = await instance.setSqrtBabylonian(testRnd);
         let sqrt = await instance.sqrt();
         //console.log('sqrtB('+testRnd.toString()+') = '+sqrt.toString());
     });
     
-    it("should calculate correct sqrt2", async () => {
+    it("should calculate correct sqrtBitByBit", async () => {
         //let x = new BN('1296');
-        let x = getRandomBN();
-        let r:any = await instance.sqrt2(x);
+        let x = w3random.bn();
+        let r:any = await instance.sqrtBitByBit(x);
         //console.log('sqrt2('+x.toString()+') = '+r.toString());
         let rsq = r.mul(r);
         let r1 = r.add(new BN(1));
@@ -39,10 +41,10 @@ contract("ISQRT", async ([_, owner, ...otherAccounts]) => {
         expect(rsq1).to.be.bignumber.gt(x);
     });
 
-    it("should calculate correct sqrtB", async () => {
+    it("should calculate correct sqrtBabylonian", async () => {
         //let x = new BN('1296');
-        let x = getRandomBN();
-        let r:any = await instance.sqrtB(x);
+        let x = w3random.bn();
+        let r:any = await instance.sqrtBabylonian(x);
         //console.log('sqrtB('+x.toString()+') = '+r.toString());
         let rsq = r.mul(r);
         let r1 = r.add(new BN(1));
@@ -50,9 +52,5 @@ contract("ISQRT", async ([_, owner, ...otherAccounts]) => {
         expect(await rsq).to.be.bignumber.lte(x);
         expect(await rsq1).to.be.bignumber.gt(x);
     });
-    function getRandomBN() {
-        let w3:any = web3;
-        return new BN(w3.utils.randomHex(32));
-    }
 
 });

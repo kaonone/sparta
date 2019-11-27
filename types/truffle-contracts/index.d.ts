@@ -2677,7 +2677,7 @@ export interface PTokenInstance extends Truffle.ContractInstance {
 export interface TestSQRTInstance extends Truffle.ContractInstance {
   sqrt(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  setSqrt2: {
+  setSqrtBitByBit: {
     (
       x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
@@ -2696,7 +2696,7 @@ export interface TestSQRTInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  setSqrtB: {
+  setSqrtBabylonian: {
     (
       x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
@@ -2715,12 +2715,12 @@ export interface TestSQRTInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  sqrt2(
+  sqrtBitByBit(
     x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BigNumber>;
 
-  sqrtB(
+  sqrtBabylonian(
     x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BigNumber>;

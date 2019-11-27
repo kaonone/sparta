@@ -7,19 +7,19 @@ contract TestSQRT {
     
     uint256 public sqrt;
 
-    function setSqrt2(uint256 x) external {
-        sqrt = x.isqrt2();
+    function setSqrtBitByBit(uint256 x) external {
+        sqrt = x.isqrtBitByBit();
     }
 
-    function setSqrtB(uint256 x) external {
+    function setSqrtBabylonian(uint256 x) external {
         sqrt = x.sqrtBabylonian();
     }
 
-    function sqrt2(uint256 x) pure public returns(uint256){
-        return x.isqrt2();
+    function sqrtBitByBit(uint256 x) pure public returns(uint256){
+        return x.isqrtBitByBit();
     }
 
-    function sqrtB(uint256 x) pure public returns(uint256){
+    function sqrtBabylonian(uint256 x) pure public returns(uint256){
         return x.sqrtBabylonian();
     }
 
