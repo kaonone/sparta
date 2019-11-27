@@ -16,22 +16,22 @@ contract("ISQRT", async ([_, owner, ...otherAccounts]) => {
         instance = await TestSQRT.new();
     });
 
-    it("should calculate sqrt2", async () => {
+    it("should calculate sqrt2 - testing gas usage", async () => {
         let receipt = await instance.setSqrt2(testRnd);
         let sqrt = await instance.sqrt();
-        console.log('isqrt('+testRnd.toString()+') = '+sqrt.toString());
+        //console.log('sqrt2('+testRnd.toString()+') = '+sqrt.toString());
     });
-    it("should calculate sqrtB", async () => {
+    it("should calculate sqrtB - testing gas usage", async () => {
         let receipt = await instance.setSqrtB(testRnd);
         let sqrt = await instance.sqrt();
-        console.log('isqrt('+testRnd.toString()+') = '+sqrt.toString());
+        //console.log('sqrtB('+testRnd.toString()+') = '+sqrt.toString());
     });
     
-    it("should calculate correct sqrt", async () => {
+    it("should calculate correct sqrt2", async () => {
         //let x = new BN('1296');
         let x = getRandomBN();
         let r:any = await instance.sqrt2(x);
-        console.log('isqrt('+x.toString()+') = '+r.toString());
+        //console.log('sqrt2('+x.toString()+') = '+r.toString());
         let rsq = r.mul(r);
         let r1 = r.add(new BN(1));
         let rsq1 = r1.mul(r1);
@@ -43,7 +43,7 @@ contract("ISQRT", async ([_, owner, ...otherAccounts]) => {
         //let x = new BN('1296');
         let x = getRandomBN();
         let r:any = await instance.sqrtB(x);
-        console.log('sqrtB('+x.toString()+') = '+r.toString());
+        //console.log('sqrtB('+x.toString()+') = '+r.toString());
         let rsq = r.mul(r);
         let r1 = r.add(new BN(1));
         let rsq1 = r1.mul(r1);
