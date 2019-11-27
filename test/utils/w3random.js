@@ -6,7 +6,7 @@ function interval(min=0, max=1, units='wei') {
     return new BN(Web3.utils.toWei(String(rnd), units));
 }
 function bn(bytes=32){
-    return new BN(Web3.utils.randomHex(bytes));    
+    return new BN(Web3.utils.randomHex(bytes).substr(2), 16);
 }
 
 module.exports = {
