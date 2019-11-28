@@ -15,12 +15,14 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     let curveA:number, curveB:number, withdrawFee:number; //Curve parameters (constants)
   
     beforeEach(async () => {
-        curve = await BondingCurve.new();
-        curveA = (await curve.CURVE_A()).toNumber();
-        curveB = (await curve.CURVE_B()).toNumber();
-        let withdrawFeePercent = (await curve.WITHDRAW_FEE_PERCENT()).toNumber();
+        curveA = 1;
+        curveB = 1;
+        let withdrawFeePercent = 5;
         let percentDivider = 100;
         withdrawFee = withdrawFeePercent/percentDivider;
+
+        curve = await BondingCurve.new();
+        curve.initialize(curveA, curveB, withdrawFeePercent);
     });
 
     it("should correctly calculate curve", async () => {
