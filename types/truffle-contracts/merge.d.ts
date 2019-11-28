@@ -27,6 +27,7 @@ declare global {
       require(name: "IBondingCurve"): TruffleContracts.IBondingCurveContract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
+      require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
