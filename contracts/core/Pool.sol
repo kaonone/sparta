@@ -35,11 +35,7 @@ contract Pool is Base, CoreInterface {
         name = _name;
         description = _description;
     }
-
-    function test() public {
-
-    }
-    
+      
     /**
      * @dev Set new module for given name
      * @param _name infrastructure node name
@@ -145,5 +141,9 @@ contract Pool is Base, CoreInterface {
     {
         return modules.items.next(_current);
     }
+
+    function test() public pure returns (uint256) {
+        return 2;
+    } 
 
 }
