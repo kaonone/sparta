@@ -4,7 +4,7 @@ pragma solidity ^0.5.12;
  * @title Bonding Curve Interface
  * @dev A bonding curve is a method for continous token minting / burning.
  */
-interface IBondingCurve {
+interface ICurveModule {
 
     event CurvedMint(address indexed sender, uint256 amount, uint256 deposit);
     event CurvedBurn(address indexed sender, uint256 amount, uint256 reimbursement);

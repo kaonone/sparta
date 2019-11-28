@@ -1,10 +1,9 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
-import "../../interfaces/curve/IBondingCurve.sol";
 import "../../utils/ISQRT.sol";
 
-contract BondingCurve is Initializable/*, IBondingCurve*/  {
+contract BondingCurve is Initializable  {
     using ISQRT for uint256;
 
     uint256 public constant CURVE_A = 1;
@@ -18,7 +17,7 @@ contract BondingCurve is Initializable/*, IBondingCurve*/  {
      * Deposit is the size of the deposit, 
      * dx is the number of pTokens tokens received.
      */
-    function calculatePurchase(
+    function calculateEnter(
         uint256 liquidAssets,
         uint256 debtCommitments,
         uint256 amount
@@ -30,11 +29,10 @@ contract BondingCurve is Initializable/*, IBondingCurve*/  {
      * dx = (1+d)*(f(L) - f(L - Whidraw))
      * L is the volume of liquid assets
      */
-    function calculateSale(
+    function calculateExit(
         uint256 liquidAssets,
         uint256 amount
     ) external pure returns (uint256) {
-        require(liquidAssets > amount, "BondingCurve: can not withdraw more than available");
         uint256 fldiff = curveFunction(liquidAssets) - curveFunction(liquidAssets - amount);
         return (1*PERCENT_DIVIDER+WITHDRAW_FEE_PERCENT)*fldiff/PERCENT_DIVIDER;
     }

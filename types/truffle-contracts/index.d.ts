@@ -84,6 +84,11 @@ export interface IBondingCurveContract
   "new"(meta?: Truffle.TransactionDetails): Promise<IBondingCurveInstance>;
 }
 
+export interface ICurveModuleContract
+  extends Truffle.Contract<ICurveModuleInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<ICurveModuleInstance>;
+}
+
 export interface IERC20Contract extends Truffle.Contract<IERC20Instance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<IERC20Instance>;
 }
@@ -333,14 +338,14 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
 
   WITHDRAW_FEE_PERCENT(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  calculatePurchase(
+  calculateEnter(
     liquidAssets: number | BN | string,
     debtCommitments: number | BN | string,
     amount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateSale(
+  calculateExit(
     liquidAssets: number | BN | string,
     amount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -765,14 +770,14 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 
   WITHDRAW_FEE_PERCENT(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  calculatePurchase(
+  calculateEnter(
     liquidAssets: number | BN | string,
     debtCommitments: number | BN | string,
     amount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateSale(
+  calculateExit(
     liquidAssets: number | BN | string,
     amount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -1732,6 +1737,34 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface IBondingCurveInstance extends Truffle.ContractInstance {
+  calculateCurveMint(
+    amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculateCurveBurn(
+    amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculatePurchase(
+    _totalSupply: number | BN | string,
+    _poolBalance: number | BN | string,
+    _reserveRatio: number | BN | string,
+    _amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculateSale(
+    _totalSupply: number | BN | string,
+    _poolBalance: number | BN | string,
+    _reserveRatio: number | BN | string,
+    _amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+}
+
+export interface ICurveModuleInstance extends Truffle.ContractInstance {
   calculateCurveMint(
     amount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
