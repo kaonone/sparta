@@ -20,7 +20,7 @@ contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
         await pool.initialize(owner, {from: owner});
 
         funds = await FundsModule.new();
-        await funds.initialize(owner, {from: owner});
+        await funds.initialize(owner, constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, {from: owner});
     });
   
     it("should set module to pool", async () => {
