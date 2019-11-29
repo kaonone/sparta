@@ -12,7 +12,8 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         curveModule = await CurveModule.new();
-        await curveModule.initialize(owner, {from: owner});
+        let cm:any = curveModule;
+        await cm.methods['initialize(address)'](owner, {from: owner});    //Workaround for typechain issue with method overloading
     });
 
 
