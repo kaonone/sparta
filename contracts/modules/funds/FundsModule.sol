@@ -45,6 +45,7 @@ contract FundsModule is Module, IFundsModule {
         require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Deposit of liquid token failed");
         uint pAmount = calculatePoolEnter(amount);
         require(pToken.mint(_msgSender(), pAmount), "FundsModule: Mint of pToken failed");
+        emit Deposit(_msgSender(), amount, pAmount);
     }
 
     /**
@@ -55,6 +56,7 @@ contract FundsModule is Module, IFundsModule {
         uint pAmount = calculatePoolExit(amount);
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
         require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Withdraw of liquid token failed");
+        emit Withdraw(_msgSender(), amount, pAmount);
     }
 
     /**
