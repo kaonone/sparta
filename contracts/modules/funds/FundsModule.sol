@@ -10,69 +10,88 @@ contract FundsModule is Module, IFundsModule {
     IERC20 public liquidToken;
     PToken public pToken;
 
+    struct DebtProposal {
+        uint256 amount; // Amount of proposed credit (in liquid token)
+        mapping(address => uint256) pledges;    //Map of all user pledges (this value will not change after proposal )
+    }
+
+    struct DebtAmount {
+        bool initialized;   //If !initialized, we need first load amount from DebtProposal
+        uint256 amount;     //Amount of pTokens stored by Funds for this Debt. Locked + unlocked. 
+    }
+
+    struct Debt {
+        uint256 proposal;   // Index of DebtProposal in adress's proposal list
+        uint256 amount;     // Current amount of debt (in liquid token). If 0 - debt is fully paid
+        mapping(address => DebtAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
+    }
+
+    mapping(address=>DebtProposal[]) debtProposals;
+    mapping(address=>Debt[]) debts;
+
+    uint256 public totalDebts;  //Sum of all debts amounts
+
     function initialize(address sender, address _pool, IERC20 _liquidToken, PToken _pToken) public initializer {
         Module.initialize(sender, _pool);
         liquidToken = _liquidToken;
         pToken = _pToken;
     }
 
-    /**
+    /*
      * @notice Deposit amount of liquidToken and mint pTokens
-     * @param sender Address of Capital provider
      * @param amount Amount of liquid tokens to invest
-     */
-    function deposit(address sender, uint256 amount) public {
-        require(liquidToken.transferFrom(sender, address(this), amount), "FundsModule: Deposit of liquid token failed");
+     */ 
+    function deposit(uint256 amount) public {
+        require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Deposit of liquid token failed");
         uint pAmount = calculatePoolEnter(amount);
-        require(pToken.mint(sender, pAmount), "FundsModule: Mint of pToken failed");
+        require(pToken.mint(_msgSender(), pAmount), "FundsModule: Mint of pToken failed");
     }
 
     /**
      * @notice Withdraw amount of liquidToken and burn pTokens
-     * @param sender Address of Capital provider
      * @param amount Amount of liquid tokens to withdraw
      */
-    function withdraw(address sender, uint256 amount) public {
+    function withdraw(uint256 amount) public {
         uint pAmount = calculatePoolExit(amount);
-        pToken.burnFrom(sender, pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
-        require(liquidToken.transferFrom(sender, address(this), amount), "FundsModule: Withdraw of liquid token failed");
+        pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
+        require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Withdraw of liquid token failed");
     }
 
     /**
-     * @notice Borrow amount of liquidToken and lock pTokens
-     * @param sender Address of Borrower
+     * @notice Create DebtProposal
      * @param amount Amount of liquid tokens to borrow
+     * @return Index of created DebtProposal
      */
-    function borrow(address sender, uint256 amount) public {
+    function createDebtProposal(uint256 amount) public returns(uint256){
+    }
+
+    /**
+     * @notice Execute DebtProposal
+     * @dev Creates Debt using data of DebtProposal
+     * @param proposal Index of DebtProposal
+     * @return Index of created Debt
+     */
+    function executeDebtProposal(uint256 proposal) public returns(uint256){
     }
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens
-     * @param sender Address of Borrower
      * @param amount Amount of liquid tokens to repay
+     * @param debt Index of Debt
      */
-    function repay(address sender, uint256 amount) public {
+    function repay(uint256 amount, uint256 debt) public {
     }
 
-    function getTotalLiquidAssets() public view returns(uint256) {
+    function totalLiquidAssets() public view returns(uint256) {
         return liquidToken.balanceOf(address(this));
     }
 
-    function getTotalDebtCommitments() public view returns(uint256) {
-        return 0;
-    }
-
     function calculatePoolEnter(uint256 amount) internal view returns(uint256) {
-        ICurveModule curveModule = getCurveModule();
-        uint256 liquidAssets = getTotalLiquidAssets();
-        uint256 debtCommitments = getTotalDebtCommitments();
-        return curveModule.calculateEnter(liquidAssets, debtCommitments, amount);
+        return getCurveModule().calculateEnter(totalLiquidAssets(), totalDebts, amount);
     }
 
     function calculatePoolExit(uint256 amount) internal view returns(uint256) {
-        ICurveModule curveModule = getCurveModule();
-        uint256 liquidAssets = getTotalLiquidAssets();
-        return curveModule.calculateExit(liquidAssets, amount);
+        return getCurveModule().calculateExit(totalLiquidAssets(), amount);
     }
 
     function getCurveModule() private view returns(ICurveModule) {
