@@ -21,7 +21,7 @@ contract Factory is Base {
     * @return last address contract
     */
     function getLastContract() public view returns (address) {
-        address[] storage sender_contracts = getContractsOf[msg.sender];
+        address[] storage sender_contracts = getContractsOf[_msgSender()];
         return sender_contracts[sender_contracts.length - 1];
     }
 }

@@ -79,11 +79,6 @@ export interface FundsModuleContract
   "new"(meta?: Truffle.TransactionDetails): Promise<FundsModuleInstance>;
 }
 
-export interface IBondingCurveContract
-  extends Truffle.Contract<IBondingCurveInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<IBondingCurveInstance>;
-}
-
 export interface ICurveModuleContract
   extends Truffle.Contract<ICurveModuleInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<ICurveModuleInstance>;
@@ -1668,34 +1663,6 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   getTotalDebtCommitments(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
-export interface IBondingCurveInstance extends Truffle.ContractInstance {
-  calculateCurveMint(
-    amount: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  calculateCurveBurn(
-    amount: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  calculatePurchase(
-    _totalSupply: number | BN | string,
-    _poolBalance: number | BN | string,
-    _reserveRatio: number | BN | string,
-    _amount: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  calculateSale(
-    _totalSupply: number | BN | string,
-    _poolBalance: number | BN | string,
-    _reserveRatio: number | BN | string,
-    _amount: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-}
-
 export interface ICurveModuleInstance extends Truffle.ContractInstance {
   calculateEnter(
     liquidAssets: number | BN | string,
@@ -2233,33 +2200,6 @@ export interface PoolInstance extends Truffle.ContractInstance {
 }
 
 export interface PoolFactoryInstance extends Truffle.ContractInstance {
-  executingBySignature: {
-    (
-      recipient: string | BN,
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      recipient: string | BN,
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      recipient: string | BN,
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      recipient: string | BN,
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
-  };
-
   getContractsOf(
     arg0: string | BN,
     arg1: number | BN | string,
@@ -2297,29 +2237,6 @@ export interface PoolFactoryInstance extends Truffle.ContractInstance {
     call(txDetails?: Truffle.TransactionDetails): Promise<void>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
-  };
-
-  selfExecutingBySignature: {
-    (
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      _functionSignature: string,
-      _parameters: string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
   };
 
   transferOwnership: {
