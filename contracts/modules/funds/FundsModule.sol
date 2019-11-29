@@ -55,7 +55,7 @@ contract FundsModule is Base, IFundsModule {
     }
 
     function getTotalLiquidAssets() public view returns(uint256) {
-        return 0;
+        return liquidToken.balanceOf(address(this));
     }
 
     function getTotalDebtCommitments() public view returns(uint256) {
