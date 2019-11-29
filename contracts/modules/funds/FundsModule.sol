@@ -62,14 +62,14 @@ contract FundsModule is Base, IFundsModule {
         return 0;
     }
 
-    function calculatePoolEnter(uint256 amount) internal returns(uint256) {
+    function calculatePoolEnter(uint256 amount) internal view returns(uint256) {
         ICurveModule curveModule = getCurveModule();
         uint256 liquidAssets = getTotalLiquidAssets();
         uint256 debtCommitments = getTotalDebtCommitments();
         return curveModule.calculateEnter(liquidAssets, debtCommitments, amount);
     }
 
-    function calculatePoolExit(uint256 amount) internal returns(uint256) {
+    function calculatePoolExit(uint256 amount) internal view returns(uint256) {
         ICurveModule curveModule = getCurveModule();
         uint256 liquidAssets = getTotalLiquidAssets();
         return curveModule.calculateExit(liquidAssets, amount);
