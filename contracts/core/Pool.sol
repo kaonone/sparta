@@ -28,7 +28,7 @@ contract Pool is Base, CoreInterface {
     
     function initialize(address sender)public initializer {
         Base.initialize(sender);
-        founder = msg.sender;
+        founder = _msgSender();
     }
 
     function setMetadata(string memory _name, string  memory _description) public {
