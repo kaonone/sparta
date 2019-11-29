@@ -29,6 +29,7 @@ declare global {
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
+      require(name: "Module"): TruffleContracts.ModuleContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;

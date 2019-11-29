@@ -8,8 +8,6 @@ const Pool = artifacts.require("Pool");
 
 const FundsModule = artifacts.require("FundsModule");
 
-const CompoundModule = artifacts.require("CompoundModule");
-
 contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
@@ -20,19 +18,7 @@ contract("FundsModule", async ([_, owner, ...otherAccounts]) => {
         await pool.initialize(owner, {from: owner});
 
         funds = await FundsModule.new();
-        await funds.initialize(owner, constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, {from: owner});
+        await (<any> funds).methods['initialize(address,address)'](owner, constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, {from: owner});
     });
   
-    it("should set module to pool", async () => {
-        await pool.set("funds", funds.address, true, {from: owner});  
-        (await pool.contains(funds.address)).should.equal(true);
-    });
-  
-    it("should get next module", async () => {
-        compound = await CompoundModule.new();
-        await compound.initialize(owner, {from: owner});
-        await pool.set("funds", funds.address, true, {from: owner}); 
-        await pool.set("compound", compound.address, true, {from: owner});
-        (await pool.next(funds.address)).should.equal(compound.address);
-    });
 });
