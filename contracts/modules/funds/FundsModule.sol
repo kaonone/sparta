@@ -22,6 +22,9 @@ contract FundsModule is Base, IFundsModule {
      * @param amount Amount of liquid tokens to invest
      */
     function deposit(address sender, uint256 amount) public {
+        require(liquidToken.transferFrom(sender, address(this), amount), "FundsModule: Deposit of liquid token failed");
+        uint pAmount = calculatePoolEnter(amount);
+        require(pToken.mint(sender, pAmount), "FundsModule: Mint of pToken failed");
     }
 
     /**
@@ -30,6 +33,9 @@ contract FundsModule is Base, IFundsModule {
      * @param amount Amount of liquid tokens to withdraw
      */
     function withdraw(address sender, uint256 amount) public {
+        uint pAmount = calculatePoolExit(amount);
+        pToken.burnFrom(sender, pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
+        require(liquidToken.transferFrom(sender, address(this), amount), "FundsModule: Withdraw of liquid token failed");
     }
 
     /**
