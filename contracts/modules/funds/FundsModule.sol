@@ -56,7 +56,7 @@ contract FundsModule is Module, IFundsModule {
     function withdraw(uint256 amount) public {
         uint pAmount = calculatePoolExit(amount);
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
-        require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Withdraw of liquid token failed");
+        require(liquidToken.transfer(_msgSender(), amount), "FundsModule: Withdraw of liquid token failed");
         emit Withdraw(_msgSender(), amount, pAmount);
     }
 

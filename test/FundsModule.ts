@@ -60,8 +60,26 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let lpBalance = await pToken.balanceOf(liquidityProvider);
         expect(lpBalance).to.be.bignumber.gt('0');
     });
-    // it('should allow withdraw if no debts', async () => {
-    // });
+    it('should allow withdraw if no debts', async () => {
+        let depositWei = w3random.interval(1000, 100000, 'ether');
+        await funds.deposit(depositWei, {from: liquidityProvider});
+        let lBalance = await lToken.balanceOf(liquidityProvider);
+        let pBalance = await pToken.balanceOf(liquidityProvider);
+
+        let withdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
+        pToken.approve(funds.address, pBalance, {from: liquidityProvider});
+        // console.log('lToken balance', lBalance.toString());
+        // console.log('pToken balance', pBalance.toString());
+        // console.log('withdrawWei', withdrawWei.toString());
+        let receipt = await funds.withdraw(withdrawWei, {from: liquidityProvider});
+        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'liquidTokenAmount':withdrawWei});
+        let lBalance2 = await lToken.balanceOf(liquidityProvider);
+        let pBalance2 = await pToken.balanceOf(liquidityProvider);
+        // console.log('lToken balanc2', lBalance2.toString());
+        // console.log('pToken balanc2', pBalance2.toString());
+        expect(lBalance2.sub(withdrawWei)).to.be.bignumber.equal(lBalance);
+        expect(pBalance2).to.be.bignumber.lt(pBalance);
+    });
 
     // it('should not allow deposit if there are debts', async () => {
     // });
