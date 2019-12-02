@@ -33,6 +33,9 @@ declare global {
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
+      require(
+        name: "TestLiquidToken"
+      ): TruffleContracts.TestLiquidTokenContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;

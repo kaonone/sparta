@@ -15,15 +15,15 @@ contract FundsModule is Module, IFundsModule {
         mapping(address => uint256) pledges;    //Map of all user pledges (this value will not change after proposal )
     }
 
-    struct DebtAmount {
+    struct PledgeAmount {
         bool initialized;   //If !initialized, we need first load amount from DebtProposal
-        uint256 amount;     //Amount of pTokens stored by Funds for this Debt. Locked + unlocked. 
+        uint256 amount;     //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
     }
 
     struct Debt {
         uint256 proposal;   // Index of DebtProposal in adress's proposal list
         uint256 amount;     // Current amount of debt (in liquid token). If 0 - debt is fully paid
-        mapping(address => DebtAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
+        mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
     }
 
     mapping(address=>DebtProposal[]) debtProposals;
@@ -42,6 +42,7 @@ contract FundsModule is Module, IFundsModule {
      * @param amount Amount of liquid tokens to invest
      */ 
     function deposit(uint256 amount) public {
+        require(!hasActiveDebts(_msgSender()), "FundsModule: Deposits forbidden if address has active debts");
         require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Deposit of liquid token failed");
         uint pAmount = calculatePoolEnter(amount);
         require(pToken.mint(_msgSender(), pAmount), "FundsModule: Mint of pToken failed");
@@ -86,6 +87,15 @@ contract FundsModule is Module, IFundsModule {
 
     function totalLiquidAssets() public view returns(uint256) {
         return liquidToken.balanceOf(address(this));
+    }
+
+    function hasActiveDebts(address sender) internal view returns(bool) {
+        //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
+        Debt[] storage userDebts = debts[sender];
+        for (uint256 i=0; i < userDebts.length; i++){
+            if (userDebts[i].amount == 0) return true;
+        }
+        return false;
     }
 
     function calculatePoolEnter(uint256 amount) internal view returns(uint256) {
