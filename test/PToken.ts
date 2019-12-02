@@ -13,8 +13,7 @@ contract("PToken", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         pToken = await PToken.new();
-        let pt:any = pToken;
-        let receipt = pt.methods['initialize(address)'](owner, {from: owner});
+        let receipt = (<any> pToken).methods['initialize(address)'](owner, {from: owner});
     });
 
     it("should be mintable by owner", async () => {

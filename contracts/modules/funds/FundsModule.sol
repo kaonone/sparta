@@ -4,14 +4,14 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ICurveModule.sol";
 import "../../token/pTokens/PToken.sol";
-import "../../common/Base.sol";
+import "../../common/Module.sol";
 
-contract FundsModule is Base, IFundsModule {
+contract FundsModule is Module, IFundsModule {
     IERC20 public liquidToken;
     PToken public pToken;
 
-    function initialize(address sender, IERC20 _liquidToken, PToken _pToken) public initializer {
-        Base.initialize(sender);
+    function initialize(address sender, address _pool, IERC20 _liquidToken, PToken _pToken) public initializer {
+        Module.initialize(sender, _pool);
         liquidToken = _liquidToken;
         pToken = _pToken;
     }

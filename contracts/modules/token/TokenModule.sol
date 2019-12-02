@@ -1,10 +1,10 @@
 pragma solidity ^0.5.12;
 
-import "../../common/Base.sol";
+import "../../common/Module.sol";
 
-contract TokenModule is Base {
+contract TokenModule is Module {
 
-    function initialize(address sender) public initializer {
-        Base.initialize(sender);
+    function initialize(address sender, address _pool) public initializer {
+        Module.initialize(sender, _pool);
     }
 }
