@@ -25,7 +25,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: TestLiquidTokenInstance;
-  
+
     beforeEach(async () => {
         //Setup system contracts
         pool = await Pool.new();
@@ -86,8 +86,26 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
     // it('should not allow withdraw if there are debts', async () => {
     // });
 
-    // it('should create several debt proposals and lock user tokens', async () => {
-    // });
+    it('should create several debt proposals and take user pTokens', async () => {
+        //Prepare Fund
+        let depositWei = w3random.interval(1000, 100000, 'ether');
+        await funds.deposit(depositWei, {from: liquidityProvider});
+
+        //Prepare Borrower account
+        let debtWei = w3random.interval(100, 200, 'ether');
+        let debtPWei = await curve.calculateExit((await funds.totalLiquidAssets()), debtWei);
+        pToken.transfer(borrower, debtPWei.div(new BN('2')), {from: liquidityProvider})
+        pToken.approve(funds.address, debtPWei, {from: borrower});
+
+        //Create Debt Proposal
+        let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
+        expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':'0', 'liquidTokenAmount':debtWei});
+        let proposals = await funds.debtProposals(borrower, 0);
+        //console.log(proposals);
+
+
+
+    });
     // it('should create pledge in debt proposal', async () => {
     // });
     // it('should withdraw pledge in debt proposal', async () => {

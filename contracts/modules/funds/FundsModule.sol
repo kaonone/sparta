@@ -10,9 +10,16 @@ contract FundsModule is Module, IFundsModule {
     IERC20 public liquidToken;
     PToken public pToken;
 
+    struct DebtPledge {
+        uint256 senderIndex;  //Index of pledge sender in the array
+        uint256 lAmount;      //Amount of liquid tokens, covered by this pledge
+        uint256 pAmount;      //Amount of pTokens locked for this pledge
+    }
+
     struct DebtProposal {
-        uint256 amount; // Amount of proposed credit (in liquid token)
-        mapping(address => uint256) pledges;    //Map of all user pledges (this value will not change after proposal )
+        uint256 amount;             //Amount of proposed credit (in liquid token)
+        mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
+        address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
     }
 
     struct PledgeAmount {
@@ -26,8 +33,8 @@ contract FundsModule is Module, IFundsModule {
         mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
     }
 
-    mapping(address=>DebtProposal[]) debtProposals;
-    mapping(address=>Debt[]) debts;
+    mapping(address=>DebtProposal[]) public debtProposals;
+    mapping(address=>Debt[]) public debts;
 
     uint256 public totalDebts;  //Sum of all debts amounts
 
@@ -54,7 +61,7 @@ contract FundsModule is Module, IFundsModule {
      * @param amount Amount of liquid tokens to withdraw
      */
     function withdraw(uint256 amount) public {
-        uint pAmount = calculatePoolExit(amount);
+        uint256 pAmount = calculatePoolExit(amount);
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
         require(liquidToken.transfer(_msgSender(), amount), "FundsModule: Withdraw of liquid token failed");
         emit Withdraw(_msgSender(), amount, pAmount);
@@ -66,6 +73,65 @@ contract FundsModule is Module, IFundsModule {
      * @return Index of created DebtProposal
      */
     function createDebtProposal(uint256 amount) public returns(uint256){
+        uint256 pAmount = calculatePoolExit(amount)/2;  //50% of loan should be covered by borrower's pTokens
+        require(pToken.transferFrom(_msgSender(), address(this), pAmount));
+        debtProposals[_msgSender()].push(DebtProposal({
+            amount: amount,
+            supporters: new address[](0)
+        }));
+        emit DebtProposalCreated(_msgSender(), debtProposals[_msgSender()].length-1, amount, pAmount);
+        DebtProposal storage p = debtProposals[_msgSender()][debtProposals[_msgSender()].length-1];
+        p.supporters.push(_msgSender());
+        p.pledges[_msgSender()] = DebtPledge({
+            senderIndex: p.supporters.length-1,
+            lAmount: amount/2,
+            pAmount: pAmount
+        });
+    }
+    /**
+     * @notice Calculates how many tokens are not yet covered by borrower or supporters
+     * @param borrower Borrower address
+     * @param proposal Proposal index
+     * @return tuple of amounts of liquid tokens and pTokens currently required to fully cover proposal
+     */
+    function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256, uint256){
+        DebtProposal storage p = debtProposals[borrower][proposal];
+        uint256 covered = 0;
+        for(uint256 i = 0; i < p.supporters.length; i++){
+            address s = p.supporters[i];
+            covered += p.pledges[s].lAmount;
+        }
+        if(covered == p.amount){
+            return (0,0);
+        }
+        assert(covered < p.amount);
+        uint256 lAmount =  p.amount - covered;
+        return (lAmount, calculatePoolExit(lAmount));
+    }
+
+    /**
+     * @notice Add pledge to DebtProposal
+     * @param amount Amount of liquid tokens to  cover by this pledge
+     * @return Index of created DebtProposal
+     */
+    function addPledge(address borrower, uint256 proposal, uint256 amount) public {
+        DebtProposal storage p = debtProposals[borrower][proposal];
+        (uint256 rlAmount, uint256 rpAmount) = getRequiredPledge(borrower, proposal);
+        if(amount > rlAmount) amount = rlAmount;
+        uint256 pAmount = calculatePoolExit(amount);
+        require(pToken.transferFrom(_msgSender(), address(this), pAmount));
+        if(p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
+            p.supporters.push(_msgSender());
+            p.pledges[_msgSender()] = DebtPledge({
+                senderIndex: p.supporters.length-1,
+                lAmount: amount,
+                pAmount: pAmount
+            });
+        }else{
+            p.pledges[_msgSender()].lAmount += amount;
+            p.pledges[_msgSender()].pAmount += pAmount;
+        }
+        emit PledgeAdded(_msgSender(), borrower, proposal, pAmount);
     }
 
     /**

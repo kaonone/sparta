@@ -1488,6 +1488,18 @@ export interface FactoryInstance extends Truffle.ContractInstance {
 }
 
 export interface FundsModuleInstance extends Truffle.ContractInstance {
+  debtProposals(
+    arg0: string | BN,
+    arg1: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  debts(
+    arg0: string | BN,
+    arg1: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN]>;
+
   getModuleAddress(
     module: string,
     txDetails?: Truffle.TransactionDetails
