@@ -9,8 +9,9 @@ interface IFundsModule {
     event Deposit(address sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event Withdraw(address sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event DebtProposalCreated(address sender, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event PledgeAdded(address sender, address borrower, uint256 proposal, uint256 pTokenAmount);
-    event DebtProposalExecuted(address sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event PledgeAdded(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event PledgeWithdrawn(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event DebtProposalExecuted(address sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount);
     event Repay(address sender, uint256 debt, uint256 liquidTokenAmount, uint256 pTokenAmount);
 
     /*

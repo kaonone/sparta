@@ -20,6 +20,7 @@ contract FundsModule is Module, IFundsModule {
         uint256 amount;             //Amount of proposed credit (in liquid token)
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
+        bool executed;              //If Debt is created for this proposal
     }
 
     struct PledgeAmount {
@@ -77,7 +78,8 @@ contract FundsModule is Module, IFundsModule {
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
             amount: amount,
-            supporters: new address[](0)
+            supporters: new address[](0),
+            executed: false
         }));
         emit DebtProposalCreated(_msgSender(), debtProposals[_msgSender()].length-1, amount, pAmount);
         DebtProposal storage p = debtProposals[_msgSender()][debtProposals[_msgSender()].length-1];
@@ -96,6 +98,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256){
         DebtProposal storage p = debtProposals[borrower][proposal];
+        if(p.executed) return 0;
         uint256 covered = 0;
         for(uint256 i = 0; i < p.supporters.length; i++){
             address s = p.supporters[i];
@@ -107,11 +110,13 @@ contract FundsModule is Module, IFundsModule {
 
     /**
      * @notice Add pledge to DebtProposal
+     * @param borrower Address of borrower
+     * @param proposal Index of borroers's proposal
      * @param amount Amount of liquid tokens to  cover by this pledge
-     * @return Index of created DebtProposal
      */
     function addPledge(address borrower, uint256 proposal, uint256 amount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
+        require(!p.executed, "FundsModule: DebtProposal is already executed");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
         if(amount > rlAmount) amount = rlAmount;
         uint256 pAmount = calculatePoolExit(amount);
@@ -127,7 +132,22 @@ contract FundsModule is Module, IFundsModule {
             p.pledges[_msgSender()].lAmount += amount;
             p.pledges[_msgSender()].pAmount += pAmount;
         }
-        emit PledgeAdded(_msgSender(), borrower, proposal, pAmount);
+        emit PledgeAdded(_msgSender(), borrower, proposal, amount, pAmount);
+    }
+
+    /**
+     * @notice Withdraw pledge from DebtProposal
+     * @param borrower Address of borrower
+     * @param proposal Index of borrowers's proposal
+     * @param amount Amount of pTokens to withdraw
+     */
+    function withdrawPledge(address borrower, uint256 proposal, uint256 amount) public {
+        DebtProposal storage p = debtProposals[borrower][proposal];
+        require(!p.executed, "FundsModule: DebtProposal is already executed");
+        uint256 lAmount = 0; 
+        uint256 pAmount = 0; 
+        //TODO fix this
+        emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
     /**
@@ -137,6 +157,19 @@ contract FundsModule is Module, IFundsModule {
      * @return Index of created Debt
      */
     function executeDebtProposal(uint256 proposal) public returns(uint256){
+        DebtProposal storage p = debtProposals[_msgSender()][proposal];
+        require(getRequiredPledge(_msgSender(), proposal) == 0, "FundsModule: DebtProposal is not fully funded");
+        require(!p.executed, "FundsModule: DebtProposal is already executed");
+        debts[_msgSender()].push(Debt({
+            proposal: proposal,
+            amount: p.amount
+        }));
+        // We do not initialize pledges map here to save gas!
+        // Instead we check PledgeAmount.initialized field and do lazy initialization
+        p.executed = true;
+        uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
+        liquidToken.transfer(_msgSender(), p.amount);
+        emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.amount);
     }
 
     /**
