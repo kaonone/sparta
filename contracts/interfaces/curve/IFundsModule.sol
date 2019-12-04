@@ -6,13 +6,14 @@ pragma solidity ^0.5.12;
  */
 interface IFundsModule {
 
-    event Deposit(address sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event Withdraw(address sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event DebtProposalCreated(address sender, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event PledgeAdded(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event PledgeWithdrawn(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event DebtProposalExecuted(address sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount);
-    event Repay(address sender, uint256 debt, uint256 liquidTokenAmount);
+    event Deposit(address indexed sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event Withdraw(address indexed sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount);
+    event Repay(address indexed sender, uint256 debt, uint256 liquidTokenAmount);
+    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 debt, uint256 pTokenAmount);
 
     /*
      * @notice Deposit amount of liquidToken and mint pTokens

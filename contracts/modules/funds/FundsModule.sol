@@ -25,7 +25,7 @@ contract FundsModule is Module, IFundsModule {
 
     struct PledgeAmount {
         bool initialized;   //If !initialized, we need first load amount from DebtProposal
-        uint256 amount;     //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
+        uint256 pAmount;     //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
     }
 
     struct Debt {
@@ -77,21 +77,24 @@ contract FundsModule is Module, IFundsModule {
      */
     function createDebtProposal(uint256 amount) public returns(uint256){
         require(amount > 0, "FundsModule: DebtProposal amount should not be 0");
-        uint256 pAmount = calculatePoolExit(amount)/2;  //50% of loan should be covered by borrower's pTokens
+        uint256 lAmount = amount/2; //50% of loan should be covered by borrower's pTokens
+        uint256 pAmount = calculatePoolExit(lAmount);  
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
             amount: amount,
             supporters: new address[](0),
             executed: false
         }));
-        emit DebtProposalCreated(_msgSender(), debtProposals[_msgSender()].length-1, amount, pAmount);
-        DebtProposal storage p = debtProposals[_msgSender()][debtProposals[_msgSender()].length-1];
+        uint256 proposalIndex = debtProposals[_msgSender()].length-1;
+        emit DebtProposalCreated(_msgSender(), proposalIndex, amount, pAmount);
+        DebtProposal storage p = debtProposals[_msgSender()][proposalIndex];
         p.supporters.push(_msgSender());
         p.pledges[_msgSender()] = DebtPledge({
-            senderIndex: p.supporters.length-1,
-            lAmount: amount/2,
+            senderIndex: 0,
+            lAmount: lAmount,
             pAmount: pAmount
         });
+        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, lAmount, pAmount);
     }
     /**
      * @notice Calculates how many tokens are not yet covered by borrower or supporters
@@ -214,6 +217,25 @@ contract FundsModule is Module, IFundsModule {
      * @param debt Index of borrowers's debt
      */
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
+        Debt storage dbt = debts[_msgSender()][debt];
+        DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
+        require(proposal.amount > 0 && proposal.executed, "FundsModule: Debt not founs DebtProposal not found");
+        // uint256 repaid = proposal.amount - debt.amount;
+        // assert(repaid <= proposal.amount);
+
+        DebtPledge storage dp = proposal.pledges[_msgSender()];
+        PledgeAmount storage pa = dbt.pledges[_msgSender()];
+        if(!pa.initialized){
+            pa.pAmount = dp.pAmount;
+            pa.initialized = true;
+        }
+        uint256 senderPartOfUnpaidLToken = dbt.amount * dp.lAmount / proposal.amount;
+        uint256 senderPartOfLockedPToken = calculatePoolEnter(senderPartOfUnpaidLToken);
+        require(senderPartOfLockedPToken < pa.pAmount, "FundsModule: Nothing to withdraw");
+        uint256 withdrawPAmount = pa.pAmount - senderPartOfLockedPToken;
+        pToken.transfer(_msgSender(), withdrawPAmount);
+        emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, withdrawPAmount);
+
 
     }
 
