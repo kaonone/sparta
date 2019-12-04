@@ -159,6 +159,7 @@ contract FundsModule is Module, IFundsModule {
         }
         pledge.pAmount -= pAmount;
         pledge.lAmount -= lAmount;
+        pToken.transfer(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
