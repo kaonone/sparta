@@ -139,14 +139,26 @@ contract FundsModule is Module, IFundsModule {
      * @notice Withdraw pledge from DebtProposal
      * @param borrower Address of borrower
      * @param proposal Index of borrowers's proposal
-     * @param amount Amount of pTokens to withdraw
+     * @param pAmount Amount of pTokens to withdraw
      */
-    function withdrawPledge(address borrower, uint256 proposal, uint256 amount) public {
+    function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(!p.executed, "FundsModule: DebtProposal is already executed");
-        uint256 lAmount = 0; 
-        uint256 pAmount = 0; 
-        //TODO fix this
+        DebtPledge storage pledge = p.pledges[_msgSender()];
+        require(pAmount <= pledge.pAmount, "FundsModule: Can not withdraw more then locked");
+        uint256 lAmount; 
+        if (pAmount == pledge.pAmount) {
+            lAmount = pledge.lAmount;
+        } else {
+            // pAmount < pledge.pAmount
+            lAmount = pledge.lAmount * pAmount / pledge.pAmount;
+            assert(lAmount < pledge.lAmount);
+        }
+        if(_msgSender() == borrower){
+            require(pledge.lAmount - lAmount >= p.amount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
+        }
+        pledge.pAmount -= pAmount;
+        pledge.lAmount -= lAmount;
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 

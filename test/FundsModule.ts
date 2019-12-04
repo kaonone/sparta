@@ -116,6 +116,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
     // });
     // it('should withdraw pledge in debt proposal', async () => {
     // });
+    // it('should not allow borrower withdraw too much of his pledge', async () => {
+    // });
     // it('should borrow for successful debt proposal', async () => {
     // });
     // it('should repay debt', async () => {
