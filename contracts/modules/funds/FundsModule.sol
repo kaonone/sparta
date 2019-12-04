@@ -50,6 +50,7 @@ contract FundsModule is Module, IFundsModule {
      * @param amount Amount of liquid tokens to invest
      */ 
     function deposit(uint256 amount) public {
+        require(amount > 0, "FundsModule: amount should not be 0");
         require(!hasActiveDebts(_msgSender()), "FundsModule: Deposits forbidden if address has active debts");
         require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Deposit of liquid token failed");
         uint pAmount = calculatePoolEnter(amount);
@@ -62,6 +63,7 @@ contract FundsModule is Module, IFundsModule {
      * @param amount Amount of liquid tokens to withdraw
      */
     function withdraw(uint256 amount) public {
+        require(amount > 0, "FundsModule: amount should not be 0");
         uint256 pAmount = calculatePoolExit(amount);
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
         require(liquidToken.transfer(_msgSender(), amount), "FundsModule: Withdraw of liquid token failed");
@@ -74,6 +76,7 @@ contract FundsModule is Module, IFundsModule {
      * @return Index of created DebtProposal
      */
     function createDebtProposal(uint256 amount) public returns(uint256){
+        require(amount > 0, "FundsModule: DebtProposal amount should not be 0");
         uint256 pAmount = calculatePoolExit(amount)/2;  //50% of loan should be covered by borrower's pTokens
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
@@ -116,6 +119,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function addPledge(address borrower, uint256 proposal, uint256 amount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
+        require(p.amount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
         if(amount > rlAmount) amount = rlAmount;
@@ -143,6 +147,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
+        require(p.amount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         DebtPledge storage pledge = p.pledges[_msgSender()];
         require(pAmount <= pledge.pAmount, "FundsModule: Can not withdraw more then locked");
@@ -159,7 +164,7 @@ contract FundsModule is Module, IFundsModule {
         }
         pledge.pAmount -= pAmount;
         pledge.lAmount -= lAmount;
-        pToken.transfer(_msgSender(), pAmount);
+        require(pToken.transfer(_msgSender(), pAmount));
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
@@ -171,6 +176,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function executeDebtProposal(uint256 proposal) public returns(uint256){
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
+        require(p.amount > 0, "FundsModule: DebtProposal not found");
         require(getRequiredPledge(_msgSender(), proposal) == 0, "FundsModule: DebtProposal is not fully funded");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         debts[_msgSender()].push(Debt({
@@ -181,16 +187,34 @@ contract FundsModule is Module, IFundsModule {
         // Instead we check PledgeAmount.initialized field and do lazy initialization
         p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
-        liquidToken.transfer(_msgSender(), p.amount);
+        totalDebts += p.amount;
+        require(liquidToken.transfer(_msgSender(), p.amount));
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.amount);
     }
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens
-     * @param amount Amount of liquid tokens to repay
      * @param debt Index of Debt
+     * @param amount Amount of liquid tokens to repay
      */
-    function repay(uint256 amount, uint256 debt) public {
+    function repay(uint256 debt, uint256 amount) public {
+        Debt storage d = debts[_msgSender()][debt];
+        require(d.amount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
+        require(amount <= d.amount, "FundsModule: can not repay more then debt.amount");
+        DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
+        require(p.amount > 0, "FundsModule: DebtProposal not found");
+        require(liquidToken.transferFrom(_msgSender(), address(this), amount)); //TODO Think of reentrancy here. Which operation should be first?
+        totalDebts -= p.amount;
+        d.amount -= amount;
+        emit Repay(_msgSender(), debt, amount);
+    }
+    /**
+     * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt)
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     */
+    function withdrawUnlockedPledge(address borrower, uint256 debt) public {
+
     }
 
     function totalLiquidAssets() public view returns(uint256) {

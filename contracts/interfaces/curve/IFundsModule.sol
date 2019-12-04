@@ -12,7 +12,7 @@ interface IFundsModule {
     event PledgeAdded(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event PledgeWithdrawn(address sender, address borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event DebtProposalExecuted(address sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount);
-    event Repay(address sender, uint256 debt, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event Repay(address sender, uint256 debt, uint256 liquidTokenAmount);
 
     /*
      * @notice Deposit amount of liquidToken and mint pTokens
@@ -43,8 +43,8 @@ interface IFundsModule {
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens
-     * @param amount Amount of liquid tokens to repay
      * @param debt Index of Debt
+     * @param amount Amount of liquid tokens to repay
      */
-    function repay(uint256 amount, uint256 debt) external;
+    function repay(uint256 debt, uint256 amount) external;
 }
