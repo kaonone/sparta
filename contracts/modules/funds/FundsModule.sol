@@ -92,21 +92,17 @@ contract FundsModule is Module, IFundsModule {
      * @notice Calculates how many tokens are not yet covered by borrower or supporters
      * @param borrower Borrower address
      * @param proposal Proposal index
-     * @return tuple of amounts of liquid tokens and pTokens currently required to fully cover proposal
+     * @return amounts of liquid tokens currently required to fully cover proposal
      */
-    function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256, uint256){
+    function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256){
         DebtProposal storage p = debtProposals[borrower][proposal];
         uint256 covered = 0;
         for(uint256 i = 0; i < p.supporters.length; i++){
             address s = p.supporters[i];
             covered += p.pledges[s].lAmount;
         }
-        if(covered == p.amount){
-            return (0,0);
-        }
-        assert(covered < p.amount);
-        uint256 lAmount =  p.amount - covered;
-        return (lAmount, calculatePoolExit(lAmount));
+        assert(covered <= p.amount);
+        return  p.amount - covered;
     }
 
     /**
@@ -116,7 +112,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function addPledge(address borrower, uint256 proposal, uint256 amount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
-        (uint256 rlAmount, uint256 rpAmount) = getRequiredPledge(borrower, proposal);
+        uint256 rlAmount= getRequiredPledge(borrower, proposal);
         if(amount > rlAmount) amount = rlAmount;
         uint256 pAmount = calculatePoolExit(amount);
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));

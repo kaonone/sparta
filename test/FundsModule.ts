@@ -94,16 +94,22 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         //Prepare Borrower account
         let debtWei = w3random.interval(100, 200, 'ether');
         let debtPWei = await curve.calculateExit((await funds.totalLiquidAssets()), debtWei);
-        pToken.transfer(borrower, debtPWei.div(new BN('2')), {from: liquidityProvider})
+        pToken.transfer(borrower, debtPWei.div(new BN(2)).add(new BN(1)), {from: liquidityProvider}); //TODO find out why +1 required
         pToken.approve(funds.address, debtPWei, {from: borrower});
+
+        // console.log('Funds', funds.address);
+        // console.log('Borrower', borrower);
+        // console.log('debtWei', debtWei.toString());
+        // console.log('debtPWei', debtPWei.toString());
+        // console.log('Borrower pBalance', (await pToken.balanceOf(borrower)).toString());
 
         //Create Debt Proposal
         let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
         expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':'0', 'liquidTokenAmount':debtWei});
-        let proposals = await funds.debtProposals(borrower, 0);
+        //let proposals = await funds.debtProposals(borrower, 0);
         //console.log(proposals);
 
-
+        //TODO Add more proposals
 
     });
     // it('should create pledge in debt proposal', async () => {
