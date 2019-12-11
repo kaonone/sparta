@@ -50,8 +50,13 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     it("should match curve and inverse curve", async () => {
         let xWei = w3random.interval(1, 100000, 'ether');
         let cWei = await curve.curveFunction(xWei);
-        let icWei = await curve.curveFunction(cWei);
-        expect(icWei).to.be.bignumber.equal(xWei);
+        let icWei = await curve.inverseCurveFunction(cWei);
+        expect(icWei.sub(xWei)).to.be.bignumber.lt(new BN(10).pow(new BN(-1*COMPARE_PRECISION)));
+
+        let x = Number(web3.utils.fromWei(xWei));
+        let c = curveFunction(x);
+        let ic = inverseCurveFunction(c);
+        expect(roundP(ic)).to.be.equal(roundP(x));
     });
     it("should correctly calculate enter", async () => {
         let amountWei = w3random.interval(1, 100000, 'ether');
