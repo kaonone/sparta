@@ -37,31 +37,15 @@ contract BondingCurve is Initializable  {
      * dx is the number of pTokens tokens received.
      * @param liquidAssets Liquid assets in Pool
      * @param debtCommitments Debt commitments
-     * @param amount Amount of liquidTokens to deposit
+     * @param lAmount Amount of liquidTokens to deposit
      * @return Amount of pTokens to mint/unlock
      */
     function calculateEnter(
         uint256 liquidAssets,
         uint256 debtCommitments,
-        uint256 amount
+        uint256 lAmount
     ) public view returns (uint256) {
-        return curveFunction(liquidAssets+debtCommitments+amount) - curveFunction(liquidAssets+debtCommitments);
-    }
-
-    /**
-     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * Withdraw = L-g(x-x(1+d))
-     * L is the volume of liquid assets
-     * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount of pTokens to withdraw
-     * @return Amount of pTokens to burn/lock
-     */
-    function calculateExit(
-        uint256 liquidAssets,
-        uint256 amount
-    ) public view returns (uint256) {
-        uint256 pdiff = amount - amount*(1*PERCENT_DIVIDER+withdrawFeePercent)/PERCENT_DIVIDER;
-        return liquidAssets - inverseCurveFunction(pdiff);
+        return curveFunction(liquidAssets+debtCommitments+lAmount) - curveFunction(liquidAssets+debtCommitments);
     }
 
     /**
@@ -69,15 +53,39 @@ contract BondingCurve is Initializable  {
      * dx = (1+d)*(f(L) - f(L - Whidraw))
      * L is the volume of liquid assets
      * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount of liquid tokens to withdraw
+     * @param lAmount Amount of liquid tokens to withdraw
      * @return Amount of pTokens to burn/lock
      */
-    function calculateExitByLiquidToken(
+    function calculateExit(
         uint256 liquidAssets,
-        uint256 amount
+        uint256 lAmount
     ) public view returns (uint256) {
-        uint256 fldiff = curveFunction(liquidAssets) - curveFunction(liquidAssets - amount);
+        uint256 fL = curveFunction(liquidAssets);
+        uint256 fLW = curveFunction(liquidAssets - lAmount);
+        assert(fL >= fLW);
+        uint256 fldiff =  fL - fLW;
         return (1*PERCENT_DIVIDER+withdrawFeePercent)*fldiff/PERCENT_DIVIDER;
+    }
+
+    /**
+     * @notice Calculates amount of liquid tokens one can withdraw from the pool when pTokens are burned/locked
+     * Withdraw = L-g(x-dx(1+d))
+     * x = f(L) 
+     * dx - amount of pTokens taken from user
+     * Withdraw - amount of liquid token which should be sent to user
+     * @param liquidAssets Liquid assets in Pool
+     * @param pAmount Amount of pTokens to withdraw
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculateExitInverse(
+        uint256 liquidAssets,
+        uint256 pAmount
+    ) public view returns (uint256) {
+        uint256 x = curveFunction(liquidAssets);
+        uint256 pdiff = x - pAmount*(1*PERCENT_DIVIDER+withdrawFeePercent)/PERCENT_DIVIDER;
+        uint256 ldiff = inverseCurveFunction(pdiff);
+        assert(liquidAssets >= ldiff);
+        return liquidAssets - ldiff;
     }
 
     /**

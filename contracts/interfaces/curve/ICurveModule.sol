@@ -9,25 +9,25 @@ interface ICurveModule {
      * @notice Calculates amount of pTokens to mint
      * @param liquidAssets Liquid assets in Pool
      * @param debtCommitments Debt commitments
-     * @param amount Amount of liquidTokens to deposit
+     * @param lAmount Amount of liquidTokens to deposit
      * @return Amount of pTokens to mint/unlock
      */
-    function calculateEnter(uint256 liquidAssets, uint256 debtCommitments, uint256 amount) external view returns (uint256);
+    function calculateEnter(uint256 liquidAssets, uint256 debtCommitments, uint256 lAmount) external view returns (uint256);
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
      * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount of pTokens to withdraw
+     * @param lAmount Amount of liquid tokens to withdraw
      * @return Amount of pTokens to burn/lock
      */
-    function calculateExit(uint256 liquidAssets, uint256 amount) external view returns (uint256);
-
+    function calculateExit(uint256 liquidAssets, uint256 lAmount) external view returns (uint256);
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
      * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount of liquid tokens to withdraw
+     * @param pAmount Amount of pTokens to withdraw
      * @return Amount of pTokens to burn/lock
      */
-    function calculateExitByLiquidToken(uint256 liquidAssets, uint256 amount) external view returns (uint256);
+    function calculateExitInverse(uint256 liquidAssets, uint256 pAmount) external view returns (uint256);
+
 }

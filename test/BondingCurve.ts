@@ -6,7 +6,7 @@ const should = require("chai").should;
 const expect = require("chai").expect;
 const w3random = require("./utils/w3random");
 const round10 = require("./utils/roundTools").round10;
-const COMPARE_PRECISION = 7;
+const COMPARE_PRECISION = -6;
 
 const BondingCurve = artifacts.require("BondingCurve");
 
@@ -26,7 +26,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     });
 
     it("should correctly calculate curve", async () => {
-        let sWei = w3random.interval(1, 1000000000, 'ether');
+        let sWei = w3random.interval(1, 100000, 'ether');
         let s = Number(web3.utils.fromWei(sWei));
         //console.log("s = ", s, sWei.toString());
         let resultWei = await curve.curveFunction(sWei);
@@ -37,20 +37,26 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         expect(roundP(result)).to.equal(roundP(expected));
     });
     it("should correctly calculate inverse curve", async () => {
-        let sWei = w3random.interval(1, 1000000000, 'ether');
-        let s = Number(web3.utils.fromWei(sWei));
-        //console.log("s = ", s, sWei.toString());
-        let resultWei = await curve.inverseCurveFunction(sWei);
+        let xWei = w3random.interval(1, 100000, 'ether');
+        let x = Number(web3.utils.fromWei(xWei));
+        //console.log("x = ", x, xWei.toString());
+        let resultWei = await curve.inverseCurveFunction(xWei);
         let result = Number(web3.utils.fromWei(resultWei));
         //console.log("result = ", result, resultWei.toString());
-        let expected = inverseCurveFunction(s);
+        let expected = inverseCurveFunction(x);
         //console.log("expected = ", expected);
         expect(roundP(result)).to.equal(roundP(expected));
     });
+    it("should match curve and inverse curve", async () => {
+        let xWei = w3random.interval(1, 100000, 'ether');
+        let cWei = await curve.curveFunction(xWei);
+        let icWei = await curve.curveFunction(cWei);
+        expect(icWei).to.be.bignumber.equal(xWei);
+    });
     it("should correctly calculate enter", async () => {
         let amountWei = w3random.interval(1, 100000, 'ether');
-        let liquidAssetsWei = w3random.interval(1, 1000000000, 'ether');
-        let debtCommitmentsWei = w3random.interval(1, 1000000000, 'ether');
+        let liquidAssetsWei = w3random.interval(1, 1000000, 'ether');
+        let debtCommitmentsWei = w3random.interval(1, 1000000, 'ether');
 
         let amount = Number(web3.utils.fromWei(amountWei));
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
@@ -75,31 +81,55 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         expect(roundP(result)).to.equal(roundP(expected));
     });
 
-    // it("should correctly calculate exit by pToken", async () => {
-    //     let amountWei = w3random.interval(1, 100000, 'ether');
-    //     let liquidAssetsWei = w3random.interval(1, 1000000000,'ether');
+    it("should correctly calculate exit by pToken amount", async () => {
+        let pAmountWei = w3random.interval(1, 100000, 'ether');
+        let pAmount = Number(web3.utils.fromWei(pAmountWei));
 
-    //     let amount = Number(web3.utils.fromWei(amountWei));
-    //     let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
-
-    //     let resultWei = await curve.calculateExitByLiquidToken(liquidAssetsWei, amountWei);
-    //     let result = Number(web3.utils.fromWei(resultWei));
-    //     let expected = curveExit(liquidAssets, amount);
-    //     expect(roundP(result)).to.equal(roundP(expected));
-    // });
-
-    it("should correctly calculate exit by liquid token", async () => {
-        let amountWei = w3random.interval(1, 100000, 'ether');
-        let liquidAssetsWei = w3random.interval(1, 1000000000,'ether');
-
-        let amount = Number(web3.utils.fromWei(amountWei));
+        let liquidAssetsWei = w3random.interval(100000, 1000000,'ether');
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
 
-        let resultWei = await curve.calculateExitByLiquidToken(liquidAssetsWei, amountWei);
-        let result = Number(web3.utils.fromWei(resultWei));
-        let expected = curveExit(liquidAssets, amount);
-        expect(roundP(result)).to.equal(roundP(expected));
+        let expected = curveExitInverse(liquidAssets, pAmount);
+        console.log('expected', expected);
+
+
+        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, pAmountWei);
+        let lAmount = Number(web3.utils.fromWei(lAmountWei));
+        expect(roundP(lAmount)).to.equal(roundP(expected));
     });
+
+    it("should correctly calculate exit by liquid token amount", async () => {
+        let lAmountWei = w3random.interval(1, 100000, 'ether');
+        let lAmount = Number(web3.utils.fromWei(lAmountWei));
+
+        let liquidAssetsWei = w3random.interval(100000, 1000000,'ether');
+        let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
+
+        let pAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
+        let pAmount = Number(web3.utils.fromWei(pAmountWei));
+        let expected = curveExit(liquidAssets, lAmount);
+        expect(roundP(pAmount)).to.equal(roundP(expected));
+    });
+
+
+    it("should calculate exit by liquid token and by pToken with same results", async () => {
+        let liquidAssetsWei = w3random.interval(1, 1000000,'ether');
+        let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
+
+        let pAmountWei = w3random.interval(1, 100000, 'ether');
+        let pAmount = Number(web3.utils.fromWei(pAmountWei));
+
+        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, pAmountWei);
+        let lAmount = Number(web3.utils.fromWei(lAmountWei));
+
+        let epAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
+        let epAmount = Number(web3.utils.fromWei(epAmountWei));
+
+        console.log('pAmount  = ', pAmountWei.toString(), pAmount);
+        console.log('lAmount  = ', lAmountWei.toString(), lAmount);
+        console.log('epAmount = ', epAmountWei.toString(), epAmount);
+        expect(roundP(epAmount)).to.equal(roundP(pAmount));
+    });
+
 
     function roundP(x:number):number {
         return round10(x, COMPARE_PRECISION);
@@ -155,5 +185,19 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     function curveExit(L:number, x:number): number {
         let d = withdrawFee;
         return (1+d) * (curveFunction(L) - curveFunction (L - x));
+    }
+
+    /**
+     * Calculate amount of DAI to whithdraw when pTokens sent
+     * L - liquid assets in Pool
+     * d - withdraw fee
+     * dx - Amount of pToken sent
+     *
+     * Withdraw = L-g(x-dx(1+d))
+     * x = f(L) 
+     */
+    function curveExitInverse(L:number, dx:number): number {
+        let d = withdrawFee;
+        return L - inverseCurveFunction(curveFunction(L) - dx*(1+d));
     }
 });

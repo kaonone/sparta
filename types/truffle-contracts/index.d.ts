@@ -277,19 +277,19 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
   calculateEnter(
     liquidAssets: number | BN | string,
     debtCommitments: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExit(
     liquidAssets: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateExitByLiquidToken(
+  calculateExitInverse(
     liquidAssets: number | BN | string,
-    amount: number | BN | string,
+    pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
@@ -700,19 +700,19 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   calculateEnter(
     liquidAssets: number | BN | string,
     debtCommitments: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExit(
     liquidAssets: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateExitByLiquidToken(
+  calculateExitInverse(
     liquidAssets: number | BN | string,
-    amount: number | BN | string,
+    pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
@@ -1791,13 +1791,19 @@ export interface ICurveModuleInstance extends Truffle.ContractInstance {
   calculateEnter(
     liquidAssets: number | BN | string,
     debtCommitments: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExit(
     liquidAssets: number | BN | string,
-    amount: number | BN | string,
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculateExitInverse(
+    liquidAssets: number | BN | string,
+    pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 }
