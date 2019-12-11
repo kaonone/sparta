@@ -1529,7 +1529,7 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
-  liquidToken(txDetails?: Truffle.TransactionDetails): Promise<string>;
+  lToken(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -1623,19 +1623,23 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   withdraw: {
     (
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1669,25 +1673,29 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     (
       borrower: string | BN,
       proposal: number | BN | string,
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       borrower: string | BN,
       proposal: number | BN | string,
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       borrower: string | BN,
       proposal: number | BN | string,
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       borrower: string | BN,
       proposal: number | BN | string,
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };

@@ -7,7 +7,7 @@ import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract FundsModule is Module, IFundsModule {
-    IERC20 public liquidToken;
+    IERC20 public lToken;
     PToken public pToken;
 
     struct DebtPledge {
@@ -17,7 +17,7 @@ contract FundsModule is Module, IFundsModule {
     }
 
     struct DebtProposal {
-        uint256 amount;             //Amount of proposed credit (in liquid token)
+        uint256 lAmount;             //Amount of proposed credit (in liquid token)
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
         bool executed;              //If Debt is created for this proposal
@@ -30,44 +30,48 @@ contract FundsModule is Module, IFundsModule {
 
     struct Debt {
         uint256 proposal;   // Index of DebtProposal in adress's proposal list
-        uint256 amount;     // Current amount of debt (in liquid token). If 0 - debt is fully paid
+        uint256 lAmount;     // Current amount of debt (in liquid token). If 0 - debt is fully paid
         mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
     mapping(address=>Debt[]) public debts;
 
-    uint256 public totalDebts;  //Sum of all debts amounts
+    uint256 public totalDebts;  //Sum of all debts amounts (in liquid tokens)
 
-    function initialize(address sender, address _pool, IERC20 _liquidToken, PToken _pToken) public initializer {
+    function initialize(address sender, address _pool, IERC20 _lToken, PToken _pToken) public initializer {
         Module.initialize(sender, _pool);
-        liquidToken = _liquidToken;
+        lToken = _lToken;
         pToken = _pToken;
     }
 
     /*
-     * @notice Deposit amount of liquidToken and mint pTokens
-     * @param amount Amount of liquid tokens to invest
+     * @notice Deposit amount of lToken and mint pTokens
+     * @param lAmount Amount of liquid tokens to invest
+     * @param pAmountMin Minimal amout of pTokens suitable for sender
      */ 
-    function deposit(uint256 amount) public {
-        require(amount > 0, "FundsModule: amount should not be 0");
+    function deposit(uint256 lAmount, uint256 pAmountMin) public {
+        require(lAmount > 0, "FundsModule: amount should not be 0");
         require(!hasActiveDebts(_msgSender()), "FundsModule: Deposits forbidden if address has active debts");
-        require(liquidToken.transferFrom(_msgSender(), address(this), amount), "FundsModule: Deposit of liquid token failed");
-        uint pAmount = calculatePoolEnter(amount);
+        require(lToken.transferFrom(_msgSender(), address(this), lAmount), "FundsModule: Deposit of liquid token failed");
+        uint pAmount = calculatePoolEnter(lAmount);
+        require(pAmount >= pAmountMin, "FundsModule: Minimal amount is too high");
         require(pToken.mint(_msgSender(), pAmount), "FundsModule: Mint of pToken failed");
-        emit Deposit(_msgSender(), amount, pAmount);
+        emit Deposit(_msgSender(), lAmount, pAmount);
     }
 
     /**
-     * @notice Withdraw amount of liquidToken and burn pTokens
-     * @param amount Amount of liquid tokens to withdraw
+     * @notice Withdraw amount of lToken and burn pTokens
+     * @param pAmount Amount of pTokens to send
+     * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
-    function withdraw(uint256 amount) public {
-        require(amount > 0, "FundsModule: amount should not be 0");
-        uint256 pAmount = calculatePoolExit(amount);
+    function withdraw(uint256 pAmount, uint256 lAmountMin) public {
+        require(pAmount > 0, "FundsModule: amount should not be 0");
+        uint256 lAmount = calculatePoolExitInverse(pAmount);
+        require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
-        require(liquidToken.transfer(_msgSender(), amount), "FundsModule: Withdraw of liquid token failed");
-        emit Withdraw(_msgSender(), amount, pAmount);
+        require(lToken.transfer(_msgSender(), lAmount), "FundsModule: Withdraw of liquid token failed");
+        emit Withdraw(_msgSender(), lAmount, pAmount);
     }
 
     /**
@@ -81,7 +85,7 @@ contract FundsModule is Module, IFundsModule {
         uint256 pAmount = calculatePoolExit(lAmount);  
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
-            amount: amount,
+            lAmount: amount,
             supporters: new address[](0),
             executed: false
         }));
@@ -110,36 +114,46 @@ contract FundsModule is Module, IFundsModule {
             address s = p.supporters[i];
             covered += p.pledges[s].lAmount;
         }
-        assert(covered <= p.amount);
-        return  p.amount - covered;
+        assert(covered <= p.lAmount);
+        return  p.lAmount - covered;
     }
 
     /**
      * @notice Add pledge to DebtProposal
      * @param borrower Address of borrower
      * @param proposal Index of borroers's proposal
-     * @param amount Amount of liquid tokens to  cover by this pledge
+     * @param pAmount Amount of pTokens to use as collateral
+     * @param lAmountMin Minimal amount of liquid tokens to cover by this pledge
+     * 
+     * There is a case, when pAmount is too high for this debt, in this case only part of pAmount will be used.
+     * In such edge case we may return less then lAmountMin, but price limit lAmountMin/pAmount will be honored.
      */
-    function addPledge(address borrower, uint256 proposal, uint256 amount) public {
+    function addPledge(address borrower, uint256 proposal, uint256 pAmount, uint256 lAmountMin) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.amount > 0, "FundsModule: DebtProposal not found");
+        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
+        uint256 lAmount = calculatePoolExitInverse(pAmount);
+        require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
-        if(amount > rlAmount) amount = rlAmount;
-        uint256 pAmount = calculatePoolExit(amount);
+        if(lAmount > rlAmount){
+            uint256 pAmountOld = pAmount;
+            lAmount = rlAmount;
+            pAmount = calculatePoolExit(lAmount);
+            assert(pAmount <= pAmountOld);
+        } 
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         if(p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
             p.supporters.push(_msgSender());
             p.pledges[_msgSender()] = DebtPledge({
                 senderIndex: p.supporters.length-1,
-                lAmount: amount,
+                lAmount: lAmount,
                 pAmount: pAmount
             });
         }else{
-            p.pledges[_msgSender()].lAmount += amount;
+            p.pledges[_msgSender()].lAmount += lAmount;
             p.pledges[_msgSender()].pAmount += pAmount;
         }
-        emit PledgeAdded(_msgSender(), borrower, proposal, amount, pAmount);
+        emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
     /**
@@ -150,7 +164,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.amount > 0, "FundsModule: DebtProposal not found");
+        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         DebtPledge storage pledge = p.pledges[_msgSender()];
         require(pAmount <= pledge.pAmount, "FundsModule: Can not withdraw more then locked");
@@ -163,7 +177,7 @@ contract FundsModule is Module, IFundsModule {
             assert(lAmount < pledge.lAmount);
         }
         if(_msgSender() == borrower){
-            require(pledge.lAmount - lAmount >= p.amount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
+            require(pledge.lAmount - lAmount >= p.lAmount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
         }
         pledge.pAmount -= pAmount;
         pledge.lAmount -= lAmount;
@@ -179,36 +193,36 @@ contract FundsModule is Module, IFundsModule {
      */
     function executeDebtProposal(uint256 proposal) public returns(uint256){
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        require(p.amount > 0, "FundsModule: DebtProposal not found");
+        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
         require(getRequiredPledge(_msgSender(), proposal) == 0, "FundsModule: DebtProposal is not fully funded");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         debts[_msgSender()].push(Debt({
             proposal: proposal,
-            amount: p.amount
+            lAmount: p.lAmount
         }));
         // We do not initialize pledges map here to save gas!
         // Instead we check PledgeAmount.initialized field and do lazy initialization
         p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
-        totalDebts += p.amount;
-        require(liquidToken.transfer(_msgSender(), p.amount));
-        emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.amount);
+        totalDebts += p.lAmount;
+        require(lToken.transfer(_msgSender(), p.lAmount));
+        emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
     }
 
     /**
-     * @notice Repay amount of liquidToken and unlock pTokens
+     * @notice Repay amount of lToken and unlock pTokens
      * @param debt Index of Debt
      * @param amount Amount of liquid tokens to repay
      */
     function repay(uint256 debt, uint256 amount) public {
         Debt storage d = debts[_msgSender()][debt];
-        require(d.amount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
-        require(amount <= d.amount, "FundsModule: can not repay more then debt.amount");
+        require(d.lAmount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
+        require(amount <= d.lAmount, "FundsModule: can not repay more then debt.lAmount");
         DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
-        require(p.amount > 0, "FundsModule: DebtProposal not found");
-        require(liquidToken.transferFrom(_msgSender(), address(this), amount)); //TODO Think of reentrancy here. Which operation should be first?
-        totalDebts -= p.amount;
-        d.amount -= amount;
+        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
+        require(lToken.transferFrom(_msgSender(), address(this), amount)); //TODO Think of reentrancy here. Which operation should be first?
+        totalDebts -= p.lAmount;
+        d.lAmount -= amount;
         emit Repay(_msgSender(), debt, amount);
     }
     /**
@@ -219,7 +233,7 @@ contract FundsModule is Module, IFundsModule {
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
         Debt storage dbt = debts[_msgSender()][debt];
         DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
-        require(proposal.amount > 0 && proposal.executed, "FundsModule: Debt not founs DebtProposal not found");
+        require(proposal.lAmount > 0 && proposal.executed, "FundsModule: Debt not founs DebtProposal not found");
         // uint256 repaid = proposal.amount - debt.amount;
         // assert(repaid <= proposal.amount);
 
@@ -229,7 +243,7 @@ contract FundsModule is Module, IFundsModule {
             pa.pAmount = dp.pAmount;
             pa.initialized = true;
         }
-        uint256 senderPartOfUnpaidLToken = dbt.amount * dp.lAmount / proposal.amount;
+        uint256 senderPartOfUnpaidLToken = dbt.lAmount * dp.lAmount / proposal.lAmount;
         uint256 senderPartOfLockedPToken = calculatePoolEnter(senderPartOfUnpaidLToken);
         require(senderPartOfLockedPToken < pa.pAmount, "FundsModule: Nothing to withdraw");
         uint256 withdrawPAmount = pa.pAmount - senderPartOfLockedPToken;
@@ -240,24 +254,28 @@ contract FundsModule is Module, IFundsModule {
     }
 
     function totalLiquidAssets() public view returns(uint256) {
-        return liquidToken.balanceOf(address(this));
+        return lToken.balanceOf(address(this));
     }
 
     function hasActiveDebts(address sender) internal view returns(bool) {
         //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
         Debt[] storage userDebts = debts[sender];
         for (uint256 i=0; i < userDebts.length; i++){
-            if (userDebts[i].amount == 0) return true;
+            if (userDebts[i].lAmount == 0) return true;
         }
         return false;
     }
 
-    function calculatePoolEnter(uint256 amount) internal view returns(uint256) {
-        return getCurveModule().calculateEnter(totalLiquidAssets(), totalDebts, amount);
+    function calculatePoolEnter(uint256 lAmount) internal view returns(uint256) {
+        return getCurveModule().calculateEnter(totalLiquidAssets(), totalDebts, lAmount);
     }
 
-    function calculatePoolExit(uint256 amount) internal view returns(uint256) {
-        return getCurveModule().calculateExit(totalLiquidAssets(), amount);
+    function calculatePoolExit(uint256 lAmount) internal view returns(uint256) {
+        return getCurveModule().calculateExit(totalLiquidAssets(), lAmount);
+    }
+
+    function calculatePoolExitInverse(uint256 pAmount) internal view returns(uint256) {
+        return getCurveModule().calculateExitInverse(totalLiquidAssets(), pAmount);
     }
 
     function getCurveModule() private view returns(ICurveModule) {
