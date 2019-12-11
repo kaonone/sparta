@@ -287,8 +287,19 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  calculateExitByLiquidToken(
+    liquidAssets: number | BN | string,
+    amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   curveFunction(
     s: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  inverseCurveFunction(
+    x: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 }
@@ -699,6 +710,12 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  calculateExitByLiquidToken(
+    liquidAssets: number | BN | string,
+    amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   curveB(txDetails?: Truffle.TransactionDetails): Promise<BN>;
@@ -712,6 +729,11 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     module: string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
+
+  inverseCurveFunction(
+    x: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 

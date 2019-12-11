@@ -257,7 +257,7 @@ contract FundsModule is Module, IFundsModule {
     }
 
     function calculatePoolExit(uint256 amount) internal view returns(uint256) {
-        return getCurveModule().calculateExit(totalLiquidAssets(), amount);
+        return getCurveModule().calculateExitByLiquidToken(totalLiquidAssets(), amount);
     }
 
     function getCurveModule() private view returns(ICurveModule) {

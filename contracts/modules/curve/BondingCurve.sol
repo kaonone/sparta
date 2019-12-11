@@ -37,7 +37,7 @@ contract BondingCurve is Initializable  {
      * dx is the number of pTokens tokens received.
      * @param liquidAssets Liquid assets in Pool
      * @param debtCommitments Debt commitments
-     * @param amount Amount to deposit
+     * @param amount Amount of liquidTokens to deposit
      * @return Amount of pTokens to mint/unlock
      */
     function calculateEnter(
@@ -50,13 +50,29 @@ contract BondingCurve is Initializable  {
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * dx = (1+d)*(f(L) - f(L - Whidraw))
+     * Withdraw = L-g(x-x(1+d))
      * L is the volume of liquid assets
      * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount to whidraw
+     * @param amount Amount of pTokens to withdraw
      * @return Amount of pTokens to burn/lock
      */
     function calculateExit(
+        uint256 liquidAssets,
+        uint256 amount
+    ) public view returns (uint256) {
+        uint256 pdiff = amount - amount*(1*PERCENT_DIVIDER+withdrawFeePercent)/PERCENT_DIVIDER;
+        return liquidAssets - inverseCurveFunction(pdiff);
+    }
+
+    /**
+     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
+     * dx = (1+d)*(f(L) - f(L - Whidraw))
+     * L is the volume of liquid assets
+     * @param liquidAssets Liquid assets in Pool
+     * @param amount Amount of liquid tokens to withdraw
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculateExitByLiquidToken(
         uint256 liquidAssets,
         uint256 amount
     ) public view returns (uint256) {
@@ -72,6 +88,14 @@ contract BondingCurve is Initializable  {
     function curveFunction(uint256 s) public view returns(uint256){
         return curve(curveA, curveB, s);
     }
+    /**
+     * @notice Calculates inversed value of Bonding Curve at a point x
+     * @param x Point to calculate curve
+     * @return Value of curve at s
+     */
+    function inverseCurveFunction(uint256 x) public view returns(uint256){
+        return inverseCurve(curveA, curveB, x);
+    }
 
     /**
      * @notice Bonding Curve function
@@ -85,6 +109,14 @@ contract BondingCurve is Initializable  {
     function curve(uint256 a, uint256 b, uint256 s) private pure returns(uint256){
         uint256 d = FIX2 * (a*a) + 4 * FIX * b * s;
         return (d.sqrt() - FIX*a)/2;
+    }
+
+    /**
+     * @notice Bonding Curve function
+     * S = g(x)=(x^2+ax)/b
+     */
+    function inverseCurve(uint256 a, uint256 b, uint256 x) private pure returns(uint256){
+        return (x*x + FIX*a*x)/FIX*b;
     }
 
 

@@ -36,6 +36,17 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         //console.log("expected = ", expected);
         expect(roundP(result)).to.equal(roundP(expected));
     });
+    it("should correctly calculate inverse curve", async () => {
+        let sWei = w3random.interval(1, 1000000000, 'ether');
+        let s = Number(web3.utils.fromWei(sWei));
+        //console.log("s = ", s, sWei.toString());
+        let resultWei = await curve.inverseCurveFunction(sWei);
+        let result = Number(web3.utils.fromWei(resultWei));
+        //console.log("result = ", result, resultWei.toString());
+        let expected = inverseCurveFunction(s);
+        //console.log("expected = ", expected);
+        expect(roundP(result)).to.equal(roundP(expected));
+    });
     it("should correctly calculate enter", async () => {
         let amountWei = w3random.interval(1, 100000, 'ether');
         let liquidAssetsWei = w3random.interval(1, 1000000000, 'ether');
@@ -63,14 +74,28 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let expected = curveEnter(liquidAssets, debtCommitments, amount);
         expect(roundP(result)).to.equal(roundP(expected));
     });
-    it("should correctly calculate exit", async () => {
+
+    // it("should correctly calculate exit by pToken", async () => {
+    //     let amountWei = w3random.interval(1, 100000, 'ether');
+    //     let liquidAssetsWei = w3random.interval(1, 1000000000,'ether');
+
+    //     let amount = Number(web3.utils.fromWei(amountWei));
+    //     let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
+
+    //     let resultWei = await curve.calculateExitByLiquidToken(liquidAssetsWei, amountWei);
+    //     let result = Number(web3.utils.fromWei(resultWei));
+    //     let expected = curveExit(liquidAssets, amount);
+    //     expect(roundP(result)).to.equal(roundP(expected));
+    // });
+
+    it("should correctly calculate exit by liquid token", async () => {
         let amountWei = w3random.interval(1, 100000, 'ether');
         let liquidAssetsWei = w3random.interval(1, 1000000000,'ether');
 
         let amount = Number(web3.utils.fromWei(amountWei));
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
 
-        let resultWei = await curve.calculateExit(liquidAssetsWei, amountWei);
+        let resultWei = await curve.calculateExitByLiquidToken(liquidAssetsWei, amountWei);
         let result = Number(web3.utils.fromWei(resultWei));
         let expected = curveExit(liquidAssets, amount);
         expect(roundP(result)).to.equal(roundP(expected));
@@ -92,6 +117,17 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let b = curveB;
         return (-1*a + Math.sqrt(a*a + 4*b*S))/2;
     }
+
+    /**
+     * Inverse Bonding curve
+     * S = g(x)=(x^2+ax)/b, a>0, b>0
+     */
+    function inverseCurveFunction(x:number): number {
+        let a = curveA;
+        let b = curveB;
+        return (x*x + a*x)/b;
+    }
+
 
     /**
      * Calculate amount of pTokens returned when DAI deposited
