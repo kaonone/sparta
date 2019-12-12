@@ -7,6 +7,8 @@ import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract FundsModule is Module, IFundsModule {
+    uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
+
     IERC20 public lToken;
     PToken public pToken;
 
@@ -18,6 +20,7 @@ contract FundsModule is Module, IFundsModule {
 
     struct DebtProposal {
         uint256 lAmount;             //Amount of proposed credit (in liquid token)
+        uint256 interest;            //Annual interest rate multiplied by INTEREST_MULTIPLIER
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
         bool executed;              //If Debt is created for this proposal
@@ -67,25 +70,28 @@ contract FundsModule is Module, IFundsModule {
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public {
         require(pAmount > 0, "FundsModule: amount should not be 0");
-        uint256 lAmount = calculatePoolExitInverse(pAmount);
-        require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
+        (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = calculatePoolExitInverse(pAmount);
+        require(lAmountU >= lAmountMin, "FundsModule: Minimal amount is too high");
         pToken.burnFrom(_msgSender(), pAmount);   //This call will revert if we have not enough allowance or sender has not enough pTokens
-        require(lToken.transfer(_msgSender(), lAmount), "FundsModule: Withdraw of liquid token failed");
-        emit Withdraw(_msgSender(), lAmount, pAmount);
+        require(lToken.transfer(_msgSender(), lAmountU), "FundsModule: Withdraw of liquid token failed");
+        require(lToken.transfer(owner(), lAmountP), "FundsModule: Withdraw of liquid token failed");
+        emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
     }
 
     /**
      * @notice Create DebtProposal
      * @param amount Amount of liquid tokens to borrow
+     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 amount) public returns(uint256){
+    function createDebtProposal(uint256 amount, uint256 interest) public returns(uint256){
         require(amount > 0, "FundsModule: DebtProposal amount should not be 0");
         uint256 lAmount = amount/2; //50% of loan should be covered by borrower's pTokens
         uint256 pAmount = calculatePoolExit(lAmount);  
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
             lAmount: amount,
+            interest: interest,
             supporters: new address[](0),
             executed: false
         }));
@@ -132,7 +138,7 @@ contract FundsModule is Module, IFundsModule {
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
-        uint256 lAmount = calculatePoolExitInverse(pAmount);
+        (uint256 lAmount,,) = calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
         if(lAmount > rlAmount){
@@ -274,7 +280,7 @@ contract FundsModule is Module, IFundsModule {
         return getCurveModule().calculateExit(totalLiquidAssets(), lAmount);
     }
 
-    function calculatePoolExitInverse(uint256 pAmount) internal view returns(uint256) {
+    function calculatePoolExitInverse(uint256 pAmount) internal view returns(uint256, uint256, uint256) {
         return getCurveModule().calculateExitInverse(totalLiquidAssets(), pAmount);
     }
 

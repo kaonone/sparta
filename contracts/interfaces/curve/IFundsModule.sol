@@ -7,7 +7,7 @@ pragma solidity ^0.5.12;
 interface IFundsModule {
 
     event Deposit(address indexed sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event Withdraw(address indexed sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
+    event Withdraw(address indexed sender, uint256 liquidTokenAmountTotal, uint256 liquidTokenAmountUser, uint256 pTokenAmount);
     event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
     event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);

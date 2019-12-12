@@ -291,7 +291,7 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
     liquidAssets: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<[BN, BN, BN]>;
 
   curveFunction(
     s: number | BN | string,
@@ -714,7 +714,7 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     liquidAssets: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<[BN, BN, BN]>;
 
   curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -1510,11 +1510,13 @@ export interface FactoryInstance extends Truffle.ContractInstance {
 }
 
 export interface FundsModuleInstance extends Truffle.ContractInstance {
+  INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   debtProposals(
     arg0: string | BN,
     arg1: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, boolean]>;
+  ): Promise<[BN, BN, boolean]>;
 
   debts(
     arg0: string | BN,
@@ -1647,18 +1649,22 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   createDebtProposal: {
     (
       amount: number | BN | string,
+      interest: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       amount: number | BN | string,
+      interest: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
     sendTransaction(
       amount: number | BN | string,
+      interest: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       amount: number | BN | string,
+      interest: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1813,7 +1819,7 @@ export interface ICurveModuleInstance extends Truffle.ContractInstance {
     liquidAssets: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<[BN, BN, BN]>;
 }
 
 export interface IERC20Instance extends Truffle.ContractInstance {

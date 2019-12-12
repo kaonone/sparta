@@ -53,7 +53,7 @@ contract BondingCurve is Initializable  {
      * dx = (f(L) - f(L - Whidraw))*(1+d)
      * L is the volume of liquid assets
      * @param liquidAssets Liquid assets in Pool
-     * @param lAmount Amount of liquid tokens to withdraw
+     * @param lAmount Amount of liquid tokens to withdraw (full: sum of withdrawU and withdrawP)
      * @return Amount of pTokens to burn/lock
      */
     function calculateExit(
@@ -63,29 +63,32 @@ contract BondingCurve is Initializable  {
         uint256 fL = curveFunction(liquidAssets);
         uint256 fLW = curveFunction(liquidAssets - lAmount);
         assert(fL >= fLW);
-        uint256 fldiff =  fL - fLW;
-        return fldiff*(1*PERCENT_DIVIDER+withdrawFeePercent)/PERCENT_DIVIDER;
+        return fL - fLW;
     }
 
     /**
      * @notice Calculates amount of liquid tokens one can withdraw from the pool when pTokens are burned/locked
-     * Withdraw = L-g(x-dx/(1+d))
-     * x = f(L) 
+     * Withdraw = L-g(x-dx)
+     * x = f(L)
      * dx - amount of pTokens taken from user
+     * WithdrawU = Withdraw*(1-d)
+     * WithdrawP = Withdraw*d
      * Withdraw - amount of liquid token which should be sent to user
      * @param liquidAssets Liquid assets in Pool
      * @param pAmount Amount of pTokens to withdraw
-     * @return Amount of pTokens to burn/lock
+     * @return Amount of liquid tokens to withdraw: total, for user, for pool
      */
     function calculateExitInverse(
         uint256 liquidAssets,
         uint256 pAmount
-    ) public view returns (uint256) {
+    ) public view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP) {
         uint256 x = curveFunction(liquidAssets);
-        uint256 pdiff = x - pAmount*PERCENT_DIVIDER/(1*PERCENT_DIVIDER+withdrawFeePercent);
+        uint256 pdiff = x - pAmount;
         uint256 ldiff = inverseCurveFunction(pdiff);
         assert(liquidAssets >= ldiff);
-        return liquidAssets - ldiff;
+        withdraw = liquidAssets - ldiff;
+        withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
+        withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
     }
 
     /**
@@ -96,7 +99,7 @@ contract BondingCurve is Initializable  {
     function curveFunction(uint256 s) public view returns(uint256){
         return curve(curveA, curveB, s);
     }
-    
+
     /**
      * @notice Calculates inversed value of Bonding Curve at a point x
      * @param x Point to calculate curve
