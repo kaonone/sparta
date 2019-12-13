@@ -80,31 +80,35 @@ contract FundsModule is Module, IFundsModule {
 
     /**
      * @notice Create DebtProposal
-     * @param amount Amount of liquid tokens to borrow
+     * @param debtLAmount Amount of debt in liquid tokens
      * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
+     * @param pAmount Amount of pTokens to use as collateral
+     * @param lAmountMin Minimal amount of liquid tokens used as collateral.
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 amount, uint256 interest) public returns(uint256){
-        require(amount > 0, "FundsModule: DebtProposal amount should not be 0");
-        uint256 lAmount = amount/2; //50% of loan should be covered by borrower's pTokens
-        uint256 pAmount = calculatePoolExit(lAmount);  
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) public returns(uint256){
+        require(debtLAmount > 0, "FundsModule: DebtProposal amount should not be 0");
+        (uint256 clAmount,,) = calculatePoolExitInverse(pAmount);
+        require(clAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
+        require(clAmount >= debtLAmount/2, "FundsModule: Less then 50% of loan is covered by borrower");
+
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
         debtProposals[_msgSender()].push(DebtProposal({
-            lAmount: amount,
+            lAmount: debtLAmount,
             interest: interest,
             supporters: new address[](0),
             executed: false
         }));
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
-        emit DebtProposalCreated(_msgSender(), proposalIndex, amount, pAmount);
+        emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest);
         DebtProposal storage p = debtProposals[_msgSender()][proposalIndex];
         p.supporters.push(_msgSender());
         p.pledges[_msgSender()] = DebtPledge({
             senderIndex: 0,
-            lAmount: lAmount,
+            lAmount: clAmount,
             pAmount: pAmount
         });
-        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, lAmount, pAmount);
+        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
     }
     /**
      * @notice Calculates how many tokens are not yet covered by borrower or supporters
@@ -179,7 +183,7 @@ contract FundsModule is Module, IFundsModule {
             lAmount = pledge.lAmount;
         } else {
             // pAmount < pledge.pAmount
-            lAmount = pledge.lAmount * pAmount / pledge.pAmount;
+            lAmount = pledge.lAmount * pAmount / pledge.pAmount; //TODO: Maybe we need to use curve here to determine lAmount?
             assert(lAmount < pledge.lAmount);
         }
         if(_msgSender() == borrower){
@@ -218,18 +222,19 @@ contract FundsModule is Module, IFundsModule {
     /**
      * @notice Repay amount of lToken and unlock pTokens
      * @param debt Index of Debt
-     * @param amount Amount of liquid tokens to repay
+     * @param lAmount Amount of liquid tokens to repay
      */
-    function repay(uint256 debt, uint256 amount) public {
+    function repay(uint256 debt, uint256 lAmount) public {
         Debt storage d = debts[_msgSender()][debt];
         require(d.lAmount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
-        require(amount <= d.lAmount, "FundsModule: can not repay more then debt.lAmount");
+        require(lAmount <= d.lAmount, "FundsModule: can not repay more then debt.lAmount");
         DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
-        require(lToken.transferFrom(_msgSender(), address(this), amount)); //TODO Think of reentrancy here. Which operation should be first?
+        require(lToken.transferFrom(_msgSender(), address(this), lAmount)); //TODO Think of reentrancy here. Which operation should be first?
         totalDebts -= p.lAmount;
-        d.lAmount -= amount;
-        emit Repay(_msgSender(), debt, amount);
+        d.lAmount -= lAmount;
+        //TODO: unlock pTokens and calculate interest part/loan part
+        emit Repay(_msgSender(), debt, lAmount);
     }
     /**
      * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt)
@@ -255,8 +260,6 @@ contract FundsModule is Module, IFundsModule {
         uint256 withdrawPAmount = pa.pAmount - senderPartOfLockedPToken;
         pToken.transfer(_msgSender(), withdrawPAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, withdrawPAmount);
-
-
     }
 
     function totalLiquidAssets() public view returns(uint256) {

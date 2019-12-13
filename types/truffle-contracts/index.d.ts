@@ -1606,19 +1606,23 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   deposit: {
     (
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1648,23 +1652,31 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   createDebtProposal: {
     (
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
       interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
       interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
     sendTransaction(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
       interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
       interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1755,22 +1767,22 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   repay: {
     (
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1913,57 +1925,77 @@ export interface IERC20Instance extends Truffle.ContractInstance {
 export interface IFundsModuleInstance extends Truffle.ContractInstance {
   deposit: {
     (
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      lAmount: number | BN | string,
+      pAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   createDebtProposal: {
     (
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
+      interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
+      interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
     sendTransaction(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
+      interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      debtLAmount: number | BN | string,
+      interest: number | BN | string,
+      pAmount: number | BN | string,
+      lAmountMin: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };

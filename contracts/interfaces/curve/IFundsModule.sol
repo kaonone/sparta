@@ -6,33 +6,37 @@ pragma solidity ^0.5.12;
  */
 interface IFundsModule {
 
-    event Deposit(address indexed sender, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event Withdraw(address indexed sender, uint256 liquidTokenAmountTotal, uint256 liquidTokenAmountUser, uint256 pTokenAmount);
-    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 liquidTokenAmount, uint256 pTokenAmount);
-    event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 liquidTokenAmount);
-    event Repay(address indexed sender, uint256 debt, uint256 liquidTokenAmount);
-    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 debt, uint256 pTokenAmount);
+    event Deposit(address indexed sender, uint256 lAmount, uint256 pAmount);
+    event Withdraw(address indexed sender, uint256 lAmountTotal, uint256 lAmountUser, uint256 pAmount);
+    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 lAmount, uint256 interest);
+    event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
+    event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
+    event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 lAmount);
+    event Repay(address indexed sender, uint256 debt, uint256 lAmount);
+    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 debt, uint256 pAmount);
 
     /*
-     * @notice Deposit amount of liquidToken and mint pTokens
-     * @param amount Amount of liquid tokens to invest
+     * @notice Deposit amount of lToken and mint pTokens
+     * @param lAmount Amount of liquid tokens to invest
+     * @param pAmountMin Minimal amout of pTokens suitable for sender
      */ 
-    function deposit(uint256 amount) external;
+    function deposit(uint256 lAmount, uint256 pAmountMin) external;
 
     /**
-     * @notice Withdraw amount of liquidToken and burn pTokens
-     * @param amount Amount of liquid tokens to withdraw
+     * @notice Withdraw amount of lToken and burn pTokens
+     * @param pAmount Amount of pTokens to send
+     * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
-    function withdraw(uint256 amount) external;
+    function withdraw(uint256 pAmount, uint256 lAmountMin) external;
 
     /**
      * @notice Create DebtProposal
-     * @param amount Amount of liquid tokens to borrow
+     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
+     * @param pAmount Amount of pTokens to use as collateral
+     * @param lAmountMin Minimal amount of liquid tokens 
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 amount) external returns(uint256);
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) external returns(uint256);
 
     /**
      * @notice Execute DebtProposal
