@@ -48,37 +48,40 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await pool.set("curve", curve.address, true, {from: owner});  
 
         //Do common tasks
-        lToken.mint(liquidityProvider, web3.utils.toWei('100000'), {from: owner});
-        await lToken.approve(funds.address, web3.utils.toWei('100000'), {from: liquidityProvider})
+        lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+        await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
 
     });
   
     it('should allow deposit if no debts', async () => {
         let amountWeiLToken = w3random.interval(1, 100000, 'ether');
-        let receipt = await funds.deposit(amountWeiLToken, {from: liquidityProvider});
+        let receipt = await funds.deposit(amountWeiLToken, '0', {from: liquidityProvider});
         let totalLiquidAssets = await lToken.balanceOf(funds.address);
-        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'liquidTokenAmount':totalLiquidAssets});
+        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':totalLiquidAssets});
         let lpBalance = await pToken.balanceOf(liquidityProvider);
         expect(lpBalance).to.be.bignumber.gt('0');
     });
     it('should allow withdraw if no debts', async () => {
-        let depositWei = w3random.interval(1000, 100000, 'ether');
-        await funds.deposit(depositWei, {from: liquidityProvider});
+        let lDepositWei = w3random.interval(1000, 100000, 'ether');
+        await funds.deposit(lDepositWei, '0', {from: liquidityProvider});
         let lBalance = await lToken.balanceOf(liquidityProvider);
         let pBalance = await pToken.balanceOf(liquidityProvider);
+        let lBalanceO = await lToken.balanceOf(owner);
 
-        let withdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
+        let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
+        let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
         pToken.approve(funds.address, pBalance, {from: liquidityProvider});
         // console.log('lToken balance', lBalance.toString());
         // console.log('pToken balance', pBalance.toString());
-        // console.log('withdrawWei', withdrawWei.toString());
-        let receipt = await funds.withdraw(withdrawWei, {from: liquidityProvider});
-        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'liquidTokenAmount':withdrawWei});
+        // console.log('lWithdrawWei', withdrawWei.toString());
+        let receipt = await funds.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
+        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
         let lBalance2 = await lToken.balanceOf(liquidityProvider);
         let pBalance2 = await pToken.balanceOf(liquidityProvider);
+        let lBalanceO2 = await lToken.balanceOf(owner);
         // console.log('lToken balanc2', lBalance2.toString());
         // console.log('pToken balanc2', pBalance2.toString());
-        expect(lBalance2.sub(withdrawWei)).to.be.bignumber.equal(lBalance);
+        expect(lBalance2.sub(lWithdrawWei).add(lBalanceO2.sub(lBalanceO))).to.be.bignumber.equal(lBalance);
         expect(pBalance2).to.be.bignumber.lt(pBalance);
     });
 
@@ -92,14 +95,18 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
 
         for(let i=0; i < 3; i++){
             //Prepare Borrower account
-            let debtWei = w3random.interval(100, 200, 'ether');
-            await prepareBorrower(debtWei);
+            let lDebtWei = w3random.interval(100, 200, 'ether');
+            let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+            let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+            await prepareBorrower(pAmountMinWei);
+
             //Create Debt Proposal
-            let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
-            expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':String(i), 'liquidTokenAmount':debtWei});
+            let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
+            expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':String(i), 'lAmount':lDebtWei});
+
             let proposals = await funds.debtProposals(borrower, i);
             //console.log(proposals);
-            expect(proposals[0]).to.be.bignumber.equal(debtWei);    //amount
+            expect(proposals[0]).to.be.bignumber.equal(lDebtWei);    //amount
             expect(proposals[1]).to.be.false;                       //executed 
         }            
     });
@@ -108,62 +115,71 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         //Prepare Borrower account
-        let debtWei = w3random.interval(100, 200, 'ether');
-        await prepareBorrower(debtWei);
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
-        let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
+        let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let pledgeWei = w3random.interval(10, 50, 'ether');
-        await prepareSupporter(pledgeWei, otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pledgeWei, {from: otherAccounts[0]});
-        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'liquidTokenAmount':pledgeWei});
+        let lPledgeWei = w3random.interval(10, 50, 'ether');
+        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
+        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0',{from: otherAccounts[0]});
+        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei[0]});
     });
     it('should withdraw pledge in debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         //Prepare Borrower account
-        let debtWei = w3random.interval(100, 200, 'ether');
-        await prepareBorrower(debtWei);
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
-        let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
+        let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let pledgeWei = w3random.interval(10, 50, 'ether');
-        await prepareSupporter(pledgeWei, otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pledgeWei, {from: otherAccounts[0]});
+        let lPledgeWei = w3random.interval(10, 50, 'ether');
+        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
+        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0', {from: otherAccounts[0]});
 
         //Withdraw pledge
         //TODO - find out problem with full pledge withraw
-        receipt = await funds.withdrawPledge(borrower, proposalIdx, pledgeWei.div(new BN(2)), {from: otherAccounts[0]});  
-        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'liquidTokenAmount':pledgeWei});
+        receipt = await funds.withdrawPledge(borrower, proposalIdx, lPledgeWei.div(new BN(2)), {from: otherAccounts[0]});  
+        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei[0]});
     });
     it('should not allow borrower withdraw too much of his pledge', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         //Prepare Borrower account
-        let debtWei = w3random.interval(100, 200, 'ether');
-        await prepareBorrower(debtWei);
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
-        let receipt = await funds.createDebtProposal(debtWei, {from: borrower});
+        let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let pledgeWei = w3random.interval(10, 50, 'ether');
-        await prepareSupporter(pledgeWei, otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pledgeWei, {from: otherAccounts[0]});
+        let lPledgeWei = w3random.interval(10, 50, 'ether');
+        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
+        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0', {from: otherAccounts[0]});
 
         //Withdraw pledge
         await expectRevert(
-            funds.withdrawPledge(borrower, proposalIdx, pledgeWei.add(new BN(1)), {from: otherAccounts[0]}),
+            funds.withdrawPledge(borrower, proposalIdx, pPledgeWei[0].add(new BN(1)), {from: otherAccounts[0]}),
             'FundsModule: Can not withdraw more then locked'
         );  
     });
@@ -180,29 +196,16 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
 
 
     async function prepareLiquidity(amountWei:BN){
-        await funds.deposit(amountWei, {from: liquidityProvider});
+        await funds.deposit(amountWei, '0', {from: liquidityProvider});
     }
-    async function prepareBorrower(debtWei:BN){
-        let liquidAssets = await funds.totalLiquidAssets();
-        let debtPWei = await curve.calculateExit(liquidAssets, debtWei);
-
-        // console.log('Funds', funds.address);
-        // console.log('Borrower', borrower);
-        // console.log('liquidAssets', liquidAssets.toString());
-        // console.log('debtWei', debtWei.toString());
-        // console.log('debtPWei', debtPWei.toString());
-        // console.log('Borrower pBalance', (await pToken.balanceOf(borrower)).toString());
-
-        await pToken.transfer(borrower, debtPWei.div(new BN(2)).add(new BN(1)), {from: liquidityProvider}); //TODO find out why +1 required
-        await pToken.approve(funds.address, debtPWei, {from: borrower});
+    async function prepareBorrower(pAmount:BN){
+        await pToken.transfer(borrower, pAmount, {from: liquidityProvider});
+        await pToken.approve(funds.address, pAmount, {from: borrower});
         //console.log('Borrower pBalance', (await pToken.balanceOf(borrower)).toString());
     }
-    async function prepareSupporter(debtWei:BN, supporter:string){
-        let liquidAssets = await funds.totalLiquidAssets();
-        let debtPWei = await curve.calculateExit(liquidAssets, debtWei);
-
-        await pToken.transfer(supporter, debtPWei, {from: liquidityProvider});
-        await pToken.approve(funds.address, debtPWei, {from: supporter});
+    async function prepareSupporter(pAmount:BN, supporter:string){
+        await pToken.transfer(supporter, pAmount, {from: liquidityProvider});
+        await pToken.approve(funds.address, pAmount, {from: supporter});
     }
 
 });

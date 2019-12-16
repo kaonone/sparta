@@ -275,15 +275,30 @@ contract FundsModule is Module, IFundsModule {
         return false;
     }
 
-    function calculatePoolEnter(uint256 lAmount) internal view returns(uint256) {
+    /**
+     * @notice Calculates how many pTokens should be given to user for increasing liquidity
+     * @param lAmount Amount of liquid tokens which will be put into the pool
+     * @return Amount of pToken which should be sent to sender
+     */
+    function calculatePoolEnter(uint256 lAmount) public view returns(uint256) {
         return getCurveModule().calculateEnter(totalLiquidAssets(), totalDebts, lAmount);
     }
 
-    function calculatePoolExit(uint256 lAmount) internal view returns(uint256) {
+    /**
+     * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
+     * @param lAmount Amount of liquid tokens which will be removed from the pool
+     * @return Amount of pToken which should be taken from sender
+     */
+    function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
         return getCurveModule().calculateExit(totalLiquidAssets(), lAmount);
     }
 
-    function calculatePoolExitInverse(uint256 pAmount) internal view returns(uint256, uint256, uint256) {
+    /**
+     * @notice Calculates how many liquid tokens should be removed from pool when decreasing liquidity
+     * @param pAmount Amount of pToken which should be taken from sender
+     * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
+     */
+    function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         return getCurveModule().calculateExitInverse(totalLiquidAssets(), pAmount);
     }
 
