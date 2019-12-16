@@ -104,10 +104,10 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
             let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
             expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':String(i), 'lAmount':lDebtWei});
 
-            let proposals = await funds.debtProposals(borrower, i);
-            //console.log(proposals);
-            expect(proposals[0]).to.be.bignumber.equal(lDebtWei);    //amount
-            expect(proposals[1]).to.be.false;                       //executed 
+            let proposal = await funds.debtProposals(borrower, i);
+            //console.log(proposal);
+            expect((<any>proposal).lAmount).to.be.bignumber.equal(lDebtWei);    //amount
+            expect((<any>proposal).executed).to.be.false;                       //executed 
         }            
     });
 
