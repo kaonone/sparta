@@ -118,6 +118,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let lDebtWei = w3random.interval(100, 200, 'ether');
         let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
         let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        // console.log('lcWei', lcWei.toString());
+        // console.log('pAmountMinWei', pAmountMinWei.toString());
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
@@ -127,10 +129,12 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
 
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
-        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
-        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0',{from: otherAccounts[0]});
-        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei[0]});
+        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
+        console.log('lPledgeWei', pPledgeWei.toString());
+        console.log('pPledgeWei', pPledgeWei.toString());
+        await prepareSupporter(pPledgeWei, otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0',{from: otherAccounts[0]});
+        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei});
     });
     it('should withdraw pledge in debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -183,7 +187,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
             'FundsModule: Can not withdraw more then locked'
         );  
     });
-    // it('should borrow for successful debt proposal', async () => {
+    // it('should execute for successful debt proposal', async () => {
     // });
     // it('should repay debt', async () => {
     // });
