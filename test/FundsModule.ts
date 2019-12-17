@@ -130,8 +130,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
-        console.log('lPledgeWei', pPledgeWei.toString());
-        console.log('pPledgeWei', pPledgeWei.toString());
+        // console.log('lPledgeWei', lPledgeWei.toString());
+        // console.log('pPledgeWei', pPledgeWei.toString());
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0',{from: otherAccounts[0]});
         expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei});
@@ -152,14 +152,16 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
 
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
-        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
-        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0', {from: otherAccounts[0]});
+        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
+        // console.log('lPledgeWei', lPledgeWei.toString());
+        // console.log('pPledgeWei', pPledgeWei.toString());
+        await prepareSupporter(pPledgeWei, otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0', {from: otherAccounts[0]});
 
         //Withdraw pledge
         //TODO - find out problem with full pledge withraw
         receipt = await funds.withdrawPledge(borrower, proposalIdx, lPledgeWei.div(new BN(2)), {from: otherAccounts[0]});  
-        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei[0]});
+        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei});
     });
     it('should not allow borrower withdraw too much of his pledge', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -177,13 +179,15 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
 
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
-        let pPledgeWei = await funds.calculatePoolExitInverse(lPledgeWei);
-        await prepareSupporter(pPledgeWei[0], otherAccounts[0]);
-        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei[0], '0', {from: otherAccounts[0]});
+        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
+        console.log('lPledgeWei', lPledgeWei.toString());
+        console.log('pPledgeWei', pPledgeWei.toString());
+        await prepareSupporter(pPledgeWei, otherAccounts[0]);
+        receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0', {from: otherAccounts[0]});
 
         //Withdraw pledge
         await expectRevert(
-            funds.withdrawPledge(borrower, proposalIdx, pPledgeWei[0].add(new BN(1)), {from: otherAccounts[0]}),
+            funds.withdrawPledge(borrower, proposalIdx, pPledgeWei.add(new BN(1)), {from: otherAccounts[0]}),
             'FundsModule: Can not withdraw more then locked'
         );  
     });
