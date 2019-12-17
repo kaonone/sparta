@@ -6,6 +6,7 @@ const should = require("chai").should;
 const expect = require("chai").expect;
 const w3random = require("./utils/w3random");
 const round10 = require("./utils/roundTools").round10;
+const expectEqualBN = require("./utils/expectEqualBN");
 const COMPARE_PRECISION = -7;
 
 const BondingCurve = artifacts.require("BondingCurve");
@@ -52,7 +53,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
             let xWei = w3random.interval(1, 100000, 'ether');
             let cWei = await curve.curveFunction(xWei);
             let icWei = await curve.inverseCurveFunction(cWei);
-            expect(icWei.sub(xWei)).to.be.bignumber.lt(new BN(10).pow(new BN(18-COMPARE_PRECISION)));
+            expectEqualBN(icWei, xWei, 18, COMPARE_PRECISION);
 
             let x = Number(web3.utils.fromWei(xWei));
             let c = curveFunction(x);

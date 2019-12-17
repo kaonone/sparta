@@ -12,8 +12,7 @@ const should = require("chai").should();
 var expect = require("chai").expect;
 const w3random = require("./utils/w3random");
 const findEventArgs = require("./utils/findEventArgs");
-const {roundBN_bits} = require("./utils/roundBN");
-const ROUND_BN_BITS = 12; //Accuracy will be <= 4096 wei
+const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
 const FundsModule = artifacts.require("FundsModule");
@@ -84,7 +83,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let elBalance = lBalance2.sub(lWithdrawWei).add(lBalanceO2.sub(lBalanceO));
         // console.log('lToken balanc2', lBalance2.toString());
         // console.log('pToken balanc2', pBalance2.toString());
-        expect(roundBN(elBalance)).to.be.bignumber.equal(roundBN(lBalance));
+        expectEqualBN(elBalance,lBalance);
         expect(pBalance2).to.be.bignumber.lt(pBalance);
     });
 
@@ -134,7 +133,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let lPledgeWei = w3random.interval(10, 50, 'ether');
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
         let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
-        expect(roundBN(elPledgeWei[0])).to.be.bignumber.equal(roundBN(lPledgeWei));
+        expectEqualBN(elPledgeWei[0],lPledgeWei);
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0',{from: otherAccounts[0]});
         expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
@@ -157,7 +156,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let lPledgeWei = w3random.interval(10, 50, 'ether');
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
         let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
-        expect(roundBN(elPledgeWei[0])).to.be.bignumber.equal(roundBN(lPledgeWei));
+        expectEqualBN(elPledgeWei[0],lPledgeWei);
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0', {from: otherAccounts[0]});
 
@@ -217,9 +216,5 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
     async function prepareSupporter(pAmount:BN, supporter:string){
         await pToken.transfer(supporter, pAmount, {from: liquidityProvider});
         await pToken.approve(funds.address, pAmount, {from: supporter});
-    }
-
-    function roundBN(v:BN):BN{
-        return roundBN_bits(v, ROUND_BN_BITS);
     }
 });
