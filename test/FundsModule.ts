@@ -12,6 +12,8 @@ const should = require("chai").should();
 var expect = require("chai").expect;
 const w3random = require("./utils/w3random");
 const findEventArgs = require("./utils/findEventArgs");
+const {roundBN_bits} = require("./utils/roundBN");
+const ROUND_BN_BITS = 12; //Accuracy will be <= 4096 wei
 
 const Pool = artifacts.require("Pool");
 const FundsModule = artifacts.require("FundsModule");
@@ -62,7 +64,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         expect(lpBalance).to.be.bignumber.gt('0');
     });
     it('should allow withdraw if no debts', async () => {
-        let lDepositWei = w3random.interval(1000, 100000, 'ether');
+        let lDepositWei = w3random.interval(2000, 100000, 'ether');
         await funds.deposit(lDepositWei, '0', {from: liquidityProvider});
         let lBalance = await lToken.balanceOf(liquidityProvider);
         let pBalance = await pToken.balanceOf(liquidityProvider);
@@ -79,9 +81,10 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let lBalance2 = await lToken.balanceOf(liquidityProvider);
         let pBalance2 = await pToken.balanceOf(liquidityProvider);
         let lBalanceO2 = await lToken.balanceOf(owner);
+        let elBalance = lBalance2.sub(lWithdrawWei).add(lBalanceO2.sub(lBalanceO));
         // console.log('lToken balanc2', lBalance2.toString());
         // console.log('pToken balanc2', pBalance2.toString());
-        expect(lBalance2.sub(lWithdrawWei).add(lBalanceO2.sub(lBalanceO))).to.be.bignumber.equal(lBalance);
+        expect(roundBN(elBalance)).to.be.bignumber.equal(roundBN(lBalance));
         expect(pBalance2).to.be.bignumber.lt(pBalance);
     });
 
@@ -130,11 +133,11 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
-        // console.log('lPledgeWei', lPledgeWei.toString());
-        // console.log('pPledgeWei', pPledgeWei.toString());
+        let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
+        expect(roundBN(elPledgeWei[0])).to.be.bignumber.equal(roundBN(lPledgeWei));
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0',{from: otherAccounts[0]});
-        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei});
+        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
     });
     it('should withdraw pledge in debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -153,15 +156,15 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         //Add Pleddge
         let lPledgeWei = w3random.interval(10, 50, 'ether');
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
-        // console.log('lPledgeWei', lPledgeWei.toString());
-        // console.log('pPledgeWei', pPledgeWei.toString());
+        let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
+        expect(roundBN(elPledgeWei[0])).to.be.bignumber.equal(roundBN(lPledgeWei));
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await funds.addPledge(borrower, proposalIdx, pPledgeWei, '0', {from: otherAccounts[0]});
 
         //Withdraw pledge
         //TODO - find out problem with full pledge withraw
         receipt = await funds.withdrawPledge(borrower, proposalIdx, pPledgeWei, {from: otherAccounts[0]});  
-        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':lPledgeWei, 'pAmount':pPledgeWei});
+        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
     });
     it('should not allow borrower withdraw too much of his pledge', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -216,4 +219,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await pToken.approve(funds.address, pAmount, {from: supporter});
     }
 
+    function roundBN(v:BN):BN{
+        return roundBN_bits(v, ROUND_BN_BITS);
+    }
 });

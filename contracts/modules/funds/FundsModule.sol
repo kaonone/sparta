@@ -88,7 +88,7 @@ contract FundsModule is Module, IFundsModule {
      */
     function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) public returns(uint256){
         require(debtLAmount > 0, "FundsModule: DebtProposal amount should not be 0");
-        (uint256 clAmount,,) = calculatePoolExitInverse(pAmount);
+        (uint256 clAmount, , ) = calculatePoolExitInverse(pAmount);
         require(clAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         require(clAmount >= debtLAmount/2, "FundsModule: Less then 50% of loan is covered by borrower");
 
@@ -110,23 +110,6 @@ contract FundsModule is Module, IFundsModule {
         });
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
     }
-    /**
-     * @notice Calculates how many tokens are not yet covered by borrower or supporters
-     * @param borrower Borrower address
-     * @param proposal Proposal index
-     * @return amounts of liquid tokens currently required to fully cover proposal
-     */
-    function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256){
-        DebtProposal storage p = debtProposals[borrower][proposal];
-        if(p.executed) return 0;
-        uint256 covered = 0;
-        for(uint256 i = 0; i < p.supporters.length; i++){
-            address s = p.supporters[i];
-            covered += p.pledges[s].lAmount;
-        }
-        assert(covered <= p.lAmount);
-        return  p.lAmount - covered;
-    }
 
     /**
      * @notice Add pledge to DebtProposal
@@ -142,24 +125,24 @@ contract FundsModule is Module, IFundsModule {
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
         require(!p.executed, "FundsModule: DebtProposal is already executed");
-        (uint256 lAmount,,) = calculatePoolExitInverse(pAmount);
+        (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
-        if(lAmount > rlAmount){
+        if (lAmount > rlAmount) {
             uint256 pAmountOld = pAmount;
             lAmount = rlAmount;
             pAmount = calculatePoolExit(lAmount);
             assert(pAmount <= pAmountOld);
         } 
         require(pToken.transferFrom(_msgSender(), address(this), pAmount));
-        if(p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
+        if (p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
             p.supporters.push(_msgSender());
             p.pledges[_msgSender()] = DebtPledge({
                 senderIndex: p.supporters.length-1,
                 lAmount: lAmount,
                 pAmount: pAmount
             });
-        }else{
+        } else {
             p.pledges[_msgSender()].lAmount += lAmount;
             p.pledges[_msgSender()].pAmount += pAmount;
         }
@@ -183,10 +166,10 @@ contract FundsModule is Module, IFundsModule {
             lAmount = pledge.lAmount;
         } else {
             // pAmount < pledge.pAmount
-            lAmount = pledge.lAmount * pAmount / pledge.pAmount; //TODO: Maybe we need to use curve here to determine lAmount?
+            lAmount = pledge.lAmount * pAmount / pledge.pAmount;
             assert(lAmount < pledge.lAmount);
         }
-        if(_msgSender() == borrower){
+        if (_msgSender() == borrower) {
             require(pledge.lAmount - lAmount >= p.lAmount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
         }
         pledge.pAmount -= pAmount;
@@ -236,6 +219,7 @@ contract FundsModule is Module, IFundsModule {
         //TODO: unlock pTokens and calculate interest part/loan part
         emit Repay(_msgSender(), debt, lAmount);
     }
+
     /**
      * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt)
      * @param borrower Address of borrower
@@ -250,7 +234,7 @@ contract FundsModule is Module, IFundsModule {
 
         DebtPledge storage dp = proposal.pledges[_msgSender()];
         PledgeAmount storage pa = dbt.pledges[_msgSender()];
-        if(!pa.initialized){
+        if (!pa.initialized) {
             pa.pAmount = dp.pAmount;
             pa.initialized = true;
         }
@@ -262,17 +246,26 @@ contract FundsModule is Module, IFundsModule {
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, withdrawPAmount);
     }
 
-    function totalLiquidAssets() public view returns(uint256) {
-        return lToken.balanceOf(address(this));
+    /**
+     * @notice Calculates how many tokens are not yet covered by borrower or supporters
+     * @param borrower Borrower address
+     * @param proposal Proposal index
+     * @return amounts of liquid tokens currently required to fully cover proposal
+     */
+    function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256){
+        DebtProposal storage p = debtProposals[borrower][proposal];
+        if (p.executed) return 0;
+        uint256 covered = 0;
+        for (uint256 i = 0; i < p.supporters.length; i++) {
+            address s = p.supporters[i];
+            covered += p.pledges[s].lAmount;
+        }
+        assert(covered <= p.lAmount);
+        return  p.lAmount - covered;
     }
 
-    function hasActiveDebts(address sender) internal view returns(bool) {
-        //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
-        Debt[] storage userDebts = debts[sender];
-        for (uint256 i=0; i < userDebts.length; i++){
-            if (userDebts[i].lAmount == 0) return true;
-        }
-        return false;
+    function totalLiquidAssets() public view returns(uint256) {
+        return lToken.balanceOf(address(this));
     }
 
     /**
@@ -300,6 +293,15 @@ contract FundsModule is Module, IFundsModule {
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         return getCurveModule().calculateExitInverse(totalLiquidAssets(), pAmount);
+    }
+
+    function hasActiveDebts(address sender) internal view returns(bool) {
+        //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
+        Debt[] storage userDebts = debts[sender];
+        for (uint256 i=0; i < userDebts.length; i++){
+            if (userDebts[i].lAmount == 0) return true;
+        }
+        return false;
     }
 
     function getCurveModule() private view returns(ICurveModule) {

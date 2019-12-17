@@ -1686,12 +1686,6 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  getRequiredPledge(
-    borrower: string | BN,
-    proposal: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   addPledge: {
     (
       borrower: string | BN,
@@ -1814,6 +1808,12 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  getRequiredPledge(
+    borrower: string | BN,
+    proposal: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   totalLiquidAssets(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
