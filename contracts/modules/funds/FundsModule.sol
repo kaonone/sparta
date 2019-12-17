@@ -8,6 +8,7 @@ import "../../common/Module.sol";
 
 contract FundsModule is Module, IFundsModule {
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
+    uint256 public constant ANNUAL_SECONDS = 365*24*60*60;  // Seconds in a year //TODO: think about leap years
 
     IERC20 public lToken;
     PToken public pToken;
@@ -32,8 +33,9 @@ contract FundsModule is Module, IFundsModule {
     }
 
     struct Debt {
-        uint256 proposal;   // Index of DebtProposal in adress's proposal list
-        uint256 lAmount;     // Current amount of debt (in liquid token). If 0 - debt is fully paid
+        uint256 proposal;       // Index of DebtProposal in adress's proposal list
+        uint256 lAmount;        // Current amount of debt (in liquid token). If 0 - debt is fully paid
+        uint256 lastPayment;    // Timestamp of last interest payment (can be timestamp of last payment or a virtual date untill which interest is paid)
         mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
     }
 
@@ -191,7 +193,8 @@ contract FundsModule is Module, IFundsModule {
         require(!p.executed, "FundsModule: DebtProposal is already executed");
         debts[_msgSender()].push(Debt({
             proposal: proposal,
-            lAmount: p.lAmount
+            lAmount: p.lAmount,
+            lastPayment: now
         }));
         // We do not initialize pledges map here to save gas!
         // Instead we check PledgeAmount.initialized field and do lazy initialization
@@ -210,14 +213,38 @@ contract FundsModule is Module, IFundsModule {
     function repay(uint256 debt, uint256 lAmount) public {
         Debt storage d = debts[_msgSender()][debt];
         require(d.lAmount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
-        require(lAmount <= d.lAmount, "FundsModule: can not repay more then debt.lAmount");
         DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
+
+        uint256 interest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        require(lAmount <= d.lAmount+interest, "FundsModule: can not repay more then debt.lAmount + interest");
+
         require(lToken.transferFrom(_msgSender(), address(this), lAmount)); //TODO Think of reentrancy here. Which operation should be first?
-        totalDebts -= p.lAmount;
-        d.lAmount -= lAmount;
-        //TODO: unlock pTokens and calculate interest part/loan part
-        emit Repay(_msgSender(), debt, lAmount);
+
+        uint256 actualInterest;
+        if (lAmount < interest) {
+            uint256 paidTime = (now - d.lastPayment) * lAmount / interest;
+            assert(d.lastPayment + paidTime <= now);
+            d.lastPayment += paidTime;
+            actualInterest = lAmount;
+        } else {
+            d.lastPayment = now;
+            uint256 debtReturned = lAmount - interest;
+            d.lAmount -= debtReturned;
+            assert(totalDebts >= debtReturned);
+            totalDebts -= debtReturned;
+            actualInterest = interest;
+        }
+
+        //Mint pTokens to pay interest for supporters
+        uint256 pInterest = calculatePoolEnter(actualInterest);
+        require(pToken.mint(address(this), pInterest), "FundsModule: Mint of pToken failed");
+
+        //TODO: Think how to update supporters balance
+
+
+
+        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
     }
 
     /**
@@ -228,7 +255,7 @@ contract FundsModule is Module, IFundsModule {
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
         Debt storage dbt = debts[_msgSender()][debt];
         DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
-        require(proposal.lAmount > 0 && proposal.executed, "FundsModule: Debt not founs DebtProposal not found");
+        require(proposal.lAmount > 0 && proposal.executed, "FundsModule: DebtProposal not found");
         // uint256 repaid = proposal.amount - debt.amount;
         // assert(repaid <= proposal.amount);
 
@@ -293,6 +320,20 @@ contract FundsModule is Module, IFundsModule {
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         return getCurveModule().calculateExitInverse(totalLiquidAssets(), pAmount);
+    }
+
+    /**
+     * @notice Calculates interest amount for a debt
+     * @param debt Current amount of debt
+     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER
+     * @param prevPayment Timestamp of previous payment
+     * @param currentPayment Timestamp of current payment
+     */
+    function calculateInterestPayment(uint256 debt, uint256 interest, uint256 prevPayment, uint currentPayment) public pure returns(uint256){
+        require(prevPayment <= currentPayment, "FundsModule: prevPayment should be before currentPayment");
+        uint256 annualInterest = debt * interest / INTEREST_MULTIPLIER;
+        uint256 time = currentPayment - prevPayment;
+        return time * annualInterest/ ANNUAL_SECONDS;
     }
 
     function hasActiveDebts(address sender) internal view returns(bool) {
