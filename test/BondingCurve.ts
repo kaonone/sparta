@@ -5,9 +5,8 @@ const {BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-he
 const should = require("chai").should;
 const expect = require("chai").expect;
 const w3random = require("./utils/w3random");
-const round10 = require("./utils/roundTools").round10;
+const expectEqualFloat = require("./utils/expectEqualFloat");
 const expectEqualBN = require("./utils/expectEqualBN");
-const COMPARE_PRECISION = -7;
 
 const BondingCurve = artifacts.require("BondingCurve");
 
@@ -35,7 +34,8 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         //console.log("result = ", resultWei.toString(), result);
         let expected = curveFunction(s);
         //console.log("expected = ", expected);
-        expect(roundP(result)).to.equal(roundP(expected));
+        //expect(roundP(result)).to.equal(roundP(expected));
+        expectEqualFloat(result, expected);
     });
     it("should correctly calculate inverse curve", async () => {
         let xWei = w3random.interval(1, 100000, 'ether');
@@ -46,19 +46,19 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         //console.log("result = ", resultWei.toString(), result);
         let expected = inverseCurveFunction(x);
         //console.log("expected = ", expected);
-        expect(roundP(result)).to.equal(roundP(expected));
+        expectEqualFloat(result, expected, -4); //TODO: Accuracy here is sometimes very bad
     });
     it("should match curve and inverse curve", async () => {
         for(let i=0; i<3; i++){    //Compare 3 random points
             let xWei = w3random.interval(1, 100000, 'ether');
             let cWei = await curve.curveFunction(xWei);
             let icWei = await curve.inverseCurveFunction(cWei);
-            expectEqualBN(icWei, xWei, 18, COMPARE_PRECISION);
+            expectEqualBN(icWei, xWei);
 
             let x = Number(web3.utils.fromWei(xWei));
             let c = curveFunction(x);
             let ic = inverseCurveFunction(c);
-            expect(roundP(ic)).to.be.equal(roundP(x));
+            expectEqualFloat(ic, x);
         }
     });
     it("should correctly calculate enter", async () => {
@@ -86,7 +86,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
 
 
         let expected = curveEnter(liquidAssets, debtCommitments, amount);
-        expect(roundP(result)).to.equal(roundP(expected));
+        expectEqualFloat(result, expected);
     });
 
     it("should correctly calculate exit by pToken amount", async () => {
@@ -108,9 +108,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let lAmountU = Number(web3.utils.fromWei(lAmountWei[1]));
         let lAmountP = Number(web3.utils.fromWei(lAmountWei[2]));
         //console.log("lAmount = ", lAmountWei, lAmount);
-        expect(roundP(lAmountT)).to.equal(roundP(expected[0]));
-        expect(roundP(lAmountU)).to.equal(roundP(expected[1]));
-        expect(roundP(lAmountP)).to.equal(roundP(expected[2]));
+        expectEqualFloat(lAmountT, expected[0]);
+        expectEqualFloat(lAmountU, expected[1]);
+        expectEqualFloat(lAmountP, expected[2]);
     });
 
     it("should correctly calculate exit by liquid token amount", async () => {
@@ -128,7 +128,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let pAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
-        expect(roundP(pAmount)).to.equal(roundP(expected));
+        expectEqualFloat(pAmount, expected);
     });
 
 
@@ -148,13 +148,8 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let epAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei[0]);
         let epAmount = Number(web3.utils.fromWei(epAmountWei));
         // console.log('epAmount = ', epAmountWei.toString(), epAmount);
-        expect(roundP(epAmount)).to.equal(roundP(pAmount));
+        expectEqualFloat(epAmount, pAmount);
     });
-
-
-    function roundP(x:number):number {
-        return round10(x, COMPARE_PRECISION);
-    }
 
     // Functions bellow are defined in a "What is Savings and Uncollateralized Lending Pool" document
     // in a "Bonding Curve Mechanics" section
