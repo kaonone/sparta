@@ -50,7 +50,7 @@ contract BondingCurve is Initializable  {
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * dx = (f(L) - f(L - Whidraw))*(1+d)
+     * dx = f(L) - f(L - Whidraw)
      * L is the volume of liquid assets
      * @param liquidAssets Liquid assets in Pool
      * @param lAmount Amount of liquid tokens to withdraw (full: sum of withdrawU and withdrawP)

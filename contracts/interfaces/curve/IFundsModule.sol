@@ -49,7 +49,7 @@ interface IFundsModule {
     /**
      * @notice Repay amount of liquidToken and unlock pTokens
      * @param debt Index of Debt
-     * @param amount Amount of liquid tokens to repay
+     * @param lAmount Amount of liquid tokens to repay
      */
-    function repay(uint256 debt, uint256 amount) external;
+    function repay(uint256 debt, uint256 lAmount) external;
 }
