@@ -338,7 +338,7 @@ contract FundsModule is Module, IFundsModule {
         require(prevPayment <= currentPayment, "FundsModule: prevPayment should be before currentPayment");
         uint256 annualInterest = debt * interest / INTEREST_MULTIPLIER;
         uint256 time = currentPayment - prevPayment;
-        return time * annualInterest/ ANNUAL_SECONDS;
+        return time * annualInterest / ANNUAL_SECONDS;
     }
 
     function hasActiveDebts(address sender) internal view returns(bool) {

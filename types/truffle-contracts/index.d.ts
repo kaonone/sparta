@@ -1510,6 +1510,8 @@ export interface FactoryInstance extends Truffle.ContractInstance {
 }
 
 export interface FundsModuleInstance extends Truffle.ContractInstance {
+  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   debtProposals(
@@ -1522,7 +1524,7 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     arg0: string | BN,
     arg1: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BN, BN, BN, BN]>;
 
   getModuleAddress(
     module: string,
@@ -1590,21 +1592,29 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     (
       sender: string | BN,
       _pool: string | BN,
+      _lToken: string | BN,
+      _pToken: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       sender: string | BN,
       _pool: string | BN,
+      _lToken: string | BN,
+      _pToken: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       sender: string | BN,
       _pool: string | BN,
+      _lToken: string | BN,
+      _pToken: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       sender: string | BN,
       _pool: string | BN,
+      _lToken: string | BN,
+      _pToken: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1831,6 +1841,14 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  calculateInterestPayment(
+    debt: number | BN | string,
+    interest: number | BN | string,
+    prevPayment: number | BN | string,
+    currentPayment: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface ICurveModuleInstance extends Truffle.ContractInstance {
@@ -2042,22 +2060,22 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
   repay: {
     (
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       debt: number | BN | string,
-      amount: number | BN | string,
+      lAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
