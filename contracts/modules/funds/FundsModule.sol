@@ -8,7 +8,7 @@ import "../../common/Module.sol";
 
 contract FundsModule is Module, IFundsModule {
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
-    uint256 public constant ANNUAL_SECONDS = 365*24*60*60;  // Seconds in a year //TODO: think about leap years
+    uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
     IERC20 public lToken;
     PToken public pToken;
@@ -28,14 +28,15 @@ contract FundsModule is Module, IFundsModule {
     }
 
     struct PledgeAmount {
-        bool initialized;   //If !initialized, we need first load amount from DebtProposal
-        uint256 pAmount;     //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
+        bool initialized;           //If !initialized, we need first load amount from DebtProposal
+        uint256 pAmount;            //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
     }
 
     struct Debt {
-        uint256 proposal;       // Index of DebtProposal in adress's proposal list
-        uint256 lAmount;        // Current amount of debt (in liquid token). If 0 - debt is fully paid
-        uint256 lastPayment;    // Timestamp of last interest payment (can be timestamp of last payment or a virtual date untill which interest is paid)
+        uint256 proposal;           // Index of DebtProposal in adress's proposal list
+        uint256 lAmount;            // Current amount of debt (in liquid token). If 0 - debt is fully paid
+        uint256 lastPayment;        // Timestamp of last interest payment (can be timestamp of last payment or a virtual date untill which interest is paid)
+        uint256 pInterest;          // Amount of pTokens minted as interest for this debt
         mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
     }
 
@@ -194,7 +195,8 @@ contract FundsModule is Module, IFundsModule {
         debts[_msgSender()].push(Debt({
             proposal: proposal,
             lAmount: p.lAmount,
-            lastPayment: now
+            lastPayment: now,
+            pInterest: 0
         }));
         // We do not initialize pledges map here to save gas!
         // Instead we check PledgeAmount.initialized field and do lazy initialization
@@ -241,7 +243,7 @@ contract FundsModule is Module, IFundsModule {
         require(pToken.mint(address(this), pInterest), "FundsModule: Mint of pToken failed");
 
         //TODO: Think how to update supporters balance
-
+        d.pInterest += pInterest;
 
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
@@ -266,7 +268,10 @@ contract FundsModule is Module, IFundsModule {
             pa.initialized = true;
         }
         uint256 senderPartOfUnpaidLToken = dbt.lAmount * dp.lAmount / proposal.lAmount;
-        uint256 senderPartOfLockedPToken = calculatePoolEnter(senderPartOfUnpaidLToken);
+        uint256 senderPartOfLockedPToken = calculatePoolEnter(senderPartOfUnpaidLToken);    //TODO: replace this to calculation using locking price
+        uint256 senderPartOfPInterest    = dbt.pInterest * dp.lAmount / proposal.lAmount; 
+        //TODO: include interest to calculations
+
         require(senderPartOfLockedPToken < pa.pAmount, "FundsModule: Nothing to withdraw");
         uint256 withdrawPAmount = pa.pAmount - senderPartOfLockedPToken;
         pToken.transfer(_msgSender(), withdrawPAmount);
