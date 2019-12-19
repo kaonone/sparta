@@ -478,8 +478,6 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
     _current: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  test(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface Counter_V0Instance extends Truffle.ContractInstance {
@@ -2416,8 +2414,6 @@ export interface PoolInstance extends Truffle.ContractInstance {
     _current: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  test(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface PoolFactoryInstance extends Truffle.ContractInstance {

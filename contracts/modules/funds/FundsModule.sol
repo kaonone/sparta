@@ -27,17 +27,12 @@ contract FundsModule is Module, IFundsModule {
         bool executed;              //If Debt is created for this proposal
     }
 
-    struct PledgeAmount {
-        bool initialized;           //If !initialized, we need first load amount from DebtProposal
-        uint256 pAmount;            //Amount of pTokens stored by Funds for this pledge. Locked + unlocked. 
-    }
-
     struct Debt {
         uint256 proposal;           // Index of DebtProposal in adress's proposal list
         uint256 lAmount;            // Current amount of debt (in liquid token). If 0 - debt is fully paid
         uint256 lastPayment;        // Timestamp of last interest payment (can be timestamp of last payment or a virtual date untill which interest is paid)
         uint256 pInterest;          // Amount of pTokens minted as interest for this debt
-        mapping(address => PledgeAmount) pledges; //Map of all tokens (pledges) stored (some may be unlocked) in this debt by users.
+        mapping(address => uint256) claimedPledges;  //Amount of pTokens already claimed by supporter
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
@@ -245,37 +240,72 @@ contract FundsModule is Module, IFundsModule {
         //TODO: Think how to update supporters balance
         d.pInterest += pInterest;
 
-
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
     }
 
     /**
-     * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt)
+     * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt) + interest
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
      */
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
-        Debt storage dbt = debts[_msgSender()][debt];
+        (, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn) = calculatePledgeInfo(borrower, debt, _msgSender());
+
+        uint256 pUnlockedPlusInterest = pUnlocked + pInterest;
+        require(pUnlockedPlusInterest > pWithdrawn, "FundsModule: nothing to withdraw");
+        uint256 pAmount = pUnlockedPlusInterest - pWithdrawn;
+
+        Debt storage dbt = debts[borrower][debt];
+        dbt.claimedPledges[_msgSender()] += pAmount;
+        require(pToken.transfer(_msgSender(), pAmount));
+        emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, pAmount);
+    }
+
+    /**
+     * @notice Calculates current pledge state
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     * @param supporter Address of supporter to check. If supporter == borrower, special rules applied.
+     * @return current pledge state:
+     *      pLocked - locked pTokens
+     *      pUnlocked - unlocked pTokens (including already withdrawn)
+     *      pInterest - received interest
+     *      pWithdrawn - amount of already withdrawn pTokens
+     */
+    function calculatePledgeInfo(address borrower, uint256 debt, address supporter) view public returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
+        Debt storage dbt = debts[borrower][debt];
         DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
         require(proposal.lAmount > 0 && proposal.executed, "FundsModule: DebtProposal not found");
-        // uint256 repaid = proposal.amount - debt.amount;
-        // assert(repaid <= proposal.amount);
 
-        DebtPledge storage dp = proposal.pledges[_msgSender()];
-        PledgeAmount storage pa = dbt.pledges[_msgSender()];
-        if (!pa.initialized) {
-            pa.pAmount = dp.pAmount;
-            pa.initialized = true;
+        DebtPledge storage dp = proposal.pledges[supporter];
+
+        uint256 pPledge; uint256 lPledge;
+        if(supporter == borrower){
+            lPledge = dp.lAmount - proposal.lAmount/2;
+            pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+        }else{
+            lPledge = dp.lAmount;
+            pPledge = dp.pAmount;
         }
-        uint256 senderPartOfUnpaidLToken = dbt.lAmount * dp.lAmount / proposal.lAmount;
-        uint256 senderPartOfLockedPToken = calculatePoolEnter(senderPartOfUnpaidLToken);    //TODO: replace this to calculation using locking price
-        uint256 senderPartOfPInterest    = dbt.pInterest * dp.lAmount / proposal.lAmount; 
-        //TODO: include interest to calculations
 
-        require(senderPartOfLockedPToken < pa.pAmount, "FundsModule: Nothing to withdraw");
-        uint256 withdrawPAmount = pa.pAmount - senderPartOfLockedPToken;
-        pToken.transfer(_msgSender(), withdrawPAmount);
-        emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, withdrawPAmount);
+        pLocked = pPledge * dbt.lAmount / proposal.lAmount;
+        assert(pLocked <= pPledge);
+        pUnlocked = pPledge - pLocked;
+
+        //TODO: How many tokens to unlock for borrower? Similar as others, or unlock 50% of debt only after it is fully paid?
+        if(supporter == borrower){
+            if(dbt.lAmount == 0){
+                pLocked = 0;
+                pUnlocked = dp.pAmount;
+            }else{
+               pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+            }
+        }
+
+        pInterest    = dbt.pInterest * lPledge / proposal.lAmount; //TODO: How to calculate interest for borrower's pTokens?
+        assert(pInterest <= dbt.pInterest);
+
+        pWithdrawn = dbt.claimedPledges[supporter];
     }
 
     /**
