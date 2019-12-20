@@ -279,10 +279,11 @@ contract FundsModule is Module, IFundsModule {
 
         DebtPledge storage dp = proposal.pledges[supporter];
 
+        //Do not count 50% of debt for borrower in following calculations 
         uint256 pPledge; uint256 lPledge;
         if(supporter == borrower){
-            lPledge = dp.lAmount - proposal.lAmount/2;
-            pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+            lPledge = dp.lAmount - proposal.lAmount/2;       //Only pay interest for part of the pledge which is on top of 50% 
+            pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2); //Decrease pledge for calculations of unlocked amount
         }else{
             lPledge = dp.lAmount;
             pPledge = dp.pAmount;
@@ -292,7 +293,10 @@ contract FundsModule is Module, IFundsModule {
         assert(pLocked <= pPledge);
         pUnlocked = pPledge - pLocked;
 
-        //TODO: How many tokens to unlock for borrower? Similar as others, or unlock 50% of debt only after it is fully paid?
+        pInterest    = dbt.pInterest * lPledge / proposal.lAmount;
+        assert(pInterest <= dbt.pInterest);
+
+        //Unlock 50% of debt only after it is fully paid
         if(supporter == borrower){
             if(dbt.lAmount == 0){
                 pLocked = 0;
@@ -301,9 +305,6 @@ contract FundsModule is Module, IFundsModule {
                pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
             }
         }
-
-        pInterest    = dbt.pInterest * lPledge / proposal.lAmount; //TODO: How to calculate interest for borrower's pTokens?
-        assert(pInterest <= dbt.pInterest);
 
         pWithdrawn = dbt.claimedPledges[supporter];
     }
