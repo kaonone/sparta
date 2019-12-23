@@ -29,6 +29,8 @@ require('dotenv').config();
 
 const { toHex, toWei } = require("web3-utils");
 
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
 const mochaGasSettings = {
   reporter: 'eth-gas-reporter',
@@ -79,6 +81,10 @@ module.exports = {
       gas: 0xfffffffffff, // <-- Use this high gas value
       gasPrice: 0x01      // <-- Use this low gas price
     },
+    rinkeby: {
+      provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://rinkeby.infura.io/v3/" + infuraProjectId),
+      networkId: 4,       // Rinkeby's id
+    },
     
     // Another network with more advanced options...
     // advanced: {
@@ -116,7 +122,7 @@ module.exports = {
       version: "0.5.12",
       settings: {
         optimizer: {
-          enabled: false,
+          enabled: true,
           runs: 200,
         },
       },

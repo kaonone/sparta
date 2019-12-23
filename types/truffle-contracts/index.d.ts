@@ -1817,6 +1817,13 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  calculatePledgeInfo(
+    borrower: string | BN,
+    debt: number | BN | string,
+    supporter: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN, BN, BN]>;
+
   getRequiredPledge(
     borrower: string | BN,
     proposal: number | BN | string,
