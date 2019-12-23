@@ -1,7 +1,11 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "Pool": "Pool"
+    "Pool": "Pool",
+    "FreeDAI": "FreeDAI",
+    "PToken": "PToken",
+    "CurveModule": "CurveModule",
+    "FundsModule": "FundsModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
