@@ -12,7 +12,7 @@ contract PToken is Base, ERC20Detailed, ERC20Mintable, ERC20Burnable {
 
     function initialize(address sender) public initializer {
         Base.initialize(sender);
-        ERC20Detailed.initialize("pToken for DAI", "pDAI", 18);
+        ERC20Detailed.initialize("Akropolis Pool Token", "PTK", 18);
         ERC20Mintable.initialize(sender);
     }
 
