@@ -1,0 +1,240 @@
+{
+  "contracts": {
+    "Pool": {
+      "address": "0x062B7fb9e93C7C60351f754DC1849C09A9facC8F",
+      "constructorCode": "6080604052611bb3806100136000396000f3fe",
+      "bodyBytecodeHash": "f43b5cb55adb3b03864d72a11cdca8ec6c288250f454fa353473623a01579aac",
+      "localBytecodeHash": "f90ff6cde188d9ae09ee32c4e9902cf54757fd7974c923a4f6e8bc816ecab88e",
+      "deployedBytecodeHash": "f90ff6cde188d9ae09ee32c4e9902cf54757fd7974c923a4f6e8bc816ecab88e",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_string": {
+          "id": "t_string",
+          "kind": "elementary",
+          "label": "string"
+        },
+        "t_struct<AddressMap.Data>": {
+          "id": "t_struct<AddressMap.Data>",
+          "kind": "struct",
+          "label": "AddressMap.Data",
+          "members": [
+            {
+              "label": "valueOf",
+              "astId": 3590,
+              "type": "t_mapping<t_address>",
+              "src": "278:35:24"
+            },
+            {
+              "label": "keyOf",
+              "astId": 3594,
+              "type": "t_mapping<t_string>",
+              "src": "323:33:24"
+            },
+            {
+              "label": "items",
+              "astId": 3596,
+              "type": "t_struct<AddressList.Data>",
+              "src": "366:33:24"
+            }
+          ]
+        },
+        "t_mapping<t_address>": {
+          "id": "t_mapping<t_address>",
+          "valueType": "t_address",
+          "label": "mapping(key => address)",
+          "kind": "mapping"
+        },
+        "t_mapping<t_string>": {
+          "id": "t_mapping<t_string>",
+          "valueType": "t_string",
+          "label": "mapping(key => string)",
+          "kind": "mapping"
+        },
+        "t_struct<AddressList.Data>": {
+          "id": "t_struct<AddressList.Data>",
+          "kind": "struct",
+          "label": "AddressList.Data",
+          "members": [
+            {
+              "label": "head",
+              "astId": 3013,
+              "type": "t_address",
+              "src": "178:12:23"
+            },
+            {
+              "label": "tail",
+              "astId": 3015,
+              "type": "t_address",
+              "src": "200:12:23"
+            },
+            {
+              "label": "length",
+              "astId": 3017,
+              "type": "t_uint256",
+              "src": "222:14:23"
+            },
+            {
+              "label": "isContain",
+              "astId": 3021,
+              "type": "t_mapping<t_bool>",
+              "src": "246:37:23"
+            },
+            {
+              "label": "nextOf",
+              "astId": 3025,
+              "type": "t_mapping<t_address>",
+              "src": "293:34:23"
+            },
+            {
+              "label": "prevOf",
+              "astId": 3029,
+              "type": "t_mapping<t_address>",
+              "src": "337:34:23"
+            }
+          ]
+        },
+        "t_mapping<t_bool>": {
+          "id": "t_mapping<t_bool>",
+          "valueType": "t_bool",
+          "label": "mapping(key => bool)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
+          "label": "initialized",
+          "astId": 5017,
+          "type": "t_bool",
+          "src": "757:24:36"
+        },
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
+          "label": "initializing",
+          "astId": 5019,
+          "type": "t_bool",
+          "src": "876:25:36"
+        },
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
+          "label": "______gap",
+          "astId": 5075,
+          "type": "t_array:50<t_uint256>",
+          "src": "1951:29:36"
+        },
+        {
+          "contract": "Ownable",
+          "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
+          "label": "_owner",
+          "astId": 4266,
+          "type": "t_address",
+          "src": "526:22:30"
+        },
+        {
+          "contract": "Ownable",
+          "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
+          "label": "______gap",
+          "astId": 4379,
+          "type": "t_array:50<t_uint256>",
+          "src": "2471:29:30"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "name",
+          "astId": 379,
+          "type": "t_string",
+          "src": "209:19:5"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "description",
+          "astId": 381,
+          "type": "t_string",
+          "src": "234:26:5"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "founder",
+          "astId": 383,
+          "type": "t_address",
+          "src": "266:22:5"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "modules",
+          "astId": 385,
+          "type": "t_struct<AddressMap.Data>",
+          "src": "317:23:5"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "is_constant",
+          "astId": 395,
+          "type": "t_mapping<t_bool>",
+          "src": "468:36:5"
+        },
+        {
+          "contract": "Pool",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+          "label": "abiOf",
+          "astId": 399,
+          "type": "t_mapping<t_string>",
+          "src": "615:39:5"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "akropolis-pool/Pool": [
+      {
+        "address": "0x3dD22a8f1D8D43a7ad3B555248E496C113B0B172",
+        "version": "1.0.0",
+        "implementation": "0x062B7fb9e93C7C60351f754DC1849C09A9facC8F",
+        "admin": "0x534776AD90150df5e40CfcF18144751C449CDb51",
+        "kind": "Upgradeable"
+      }
+    ]
+  },
+  "manifestVersion": "2.2",
+  "version": "1.0.0",
+  "proxyAdmin": {
+    "address": "0x534776AD90150df5e40CfcF18144751C449CDb51"
+  }
+}
