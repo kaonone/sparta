@@ -293,7 +293,7 @@ contract FundsModule is Module, IFundsModule {
         assert(pLocked <= pPledge);
         pUnlocked = pPledge - pLocked;
 
-        pInterest    = dbt.pInterest * lPledge / proposal.lAmount;
+        pInterest = dbt.pInterest * lPledge / proposal.lAmount;
         assert(pInterest <= dbt.pInterest);
 
         //Unlock 50% of debt only after it is fully paid

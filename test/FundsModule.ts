@@ -193,8 +193,28 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
             'FundsModule: Can not withdraw more then locked'
         );  
     });
-    // it('should execute for successful debt proposal', async () => {
-    // });
+    it('should execute for successful debt proposal', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        //Prepare Borrower account
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        await prepareBorrower(pAmountMinWei);
+
+        //Create Debt Proposal
+        let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
+        let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+
+        //Add supporter
+        let lPledge = await funds.getRequiredPledge(borrower, proposalIdx);
+        let pPledge = await funds.calculatePoolExit(lPledge);
+        await prepareSupporter(pPledge, otherAccounts[0]);
+        await funds.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
+
+        receipt = await funds.executeDebtProposal(proposalIdx, {from: borrower});
+        expectEvent(receipt, 'DebtProposalExecuted', {'sender':borrower, 'proposal':String(proposalIdx), 'lAmount':lDebtWei});
+    });
     // it('should repay debt', async () => {
     // });
     // it('should partially redeem pledge from debt', async () => {
@@ -217,4 +237,27 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await pToken.transfer(supporter, pAmount, {from: liquidityProvider});
         await pToken.approve(funds.address, pAmount, {from: supporter});
     }
+
+    async function createDebt(debtAmount:BN, supporter:string){
+        //Prepare Borrower account
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        await prepareBorrower(pAmountMinWei);
+
+        //Create Debt Proposal
+        let receipt = await funds.createDebtProposal(lDebtWei, '0', pAmountMinWei, '0', {from: borrower});
+        let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+
+        //Add supporter
+        let lPledge = await funds.getRequiredPledge(borrower, proposalIdx);
+        let pPledge = await funds.calculatePoolExit(lPledge);
+        await prepareSupporter(pPledge, supporter);
+        await funds.addPledge(borrower, proposalIdx, pPledge, '0',{from: supporter});
+
+        receipt = await funds.executeDebtProposal(proposalIdx, {from: borrower});
+        let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
+        return debtIdx;
+    }
+
 });
