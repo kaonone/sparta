@@ -6,8 +6,7 @@ import "../../interfaces/curve/ICurveModule.sol";
 import "./BondingCurve.sol";
 
 
-//contract CurveModule is Base, ICurveModule, BondingCurve {
-contract CurveModule is Module, BondingCurve {
+contract CurveModule is Module, ICurveModule, BondingCurve {
     uint256 public constant CURVE_A = 1;
     uint256 public constant CURVE_B = 1;
     uint256 public constant WITHDRAW_FEE_PERCENT = 5;

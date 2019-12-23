@@ -44,13 +44,13 @@ contract Pool is Base, CoreInterface {
      */
     function set(string memory _name, address _module, bool _constant) public onlyOwner {
         
-        require(!isConstant(_name), "is not module name");
+        require(!isConstant(_name), "Pool: module address can not be replaced");
 
         // Notify
         if (modules.get(_name) != ZERO_ADDRESS)
-            emit ModuleReplaced(modules.get(_name), _module);
+            emit ModuleReplaced(_name, modules.get(_name), _module);
         else
-            emit ModuleAdded(_module);
+            emit ModuleAdded(_name, _module);
  
         // Set module in the map
         modules.set(_name, _module);
@@ -65,10 +65,10 @@ contract Pool is Base, CoreInterface {
      */
     function remove(string memory _name)  public onlyOwner {
 
-        require(isConstant(_name), "is not module name");
+        require(isConstant(_name), "Pool: module can not be removed");
 
         // Notify
-        emit ModuleRemoved(modules.get(_name));
+        emit ModuleRemoved(_name, modules.get(_name));
 
         // Remove module
         modules.remove(_name);
@@ -141,9 +141,5 @@ contract Pool is Base, CoreInterface {
     {
         return modules.items.next(_current);
     }
-
-    function test() public pure returns (uint256) {
-        return 2;
-    } 
 
 }

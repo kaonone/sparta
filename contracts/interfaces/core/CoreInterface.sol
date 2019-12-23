@@ -4,11 +4,11 @@ contract CoreInterface {
 
     /* Module manipulation events */
 
-    event ModuleAdded(address indexed module);
+    event ModuleAdded(string name, address indexed module);
 
-    event ModuleRemoved(address indexed module);
+    event ModuleRemoved(string name, address indexed module);
 
-    event ModuleReplaced(address indexed from, address indexed to);
+    event ModuleReplaced(string name, address indexed from, address indexed to);
 
 
     /* Functions */
@@ -32,6 +32,4 @@ contract CoreInterface {
     function first() public view returns (address);
 
     function next(address _current)  public view returns (address);
-
-    function test() public pure returns (uint256);
 }

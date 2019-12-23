@@ -37,31 +37,58 @@ contract BondingCurve is Initializable  {
      * dx is the number of pTokens tokens received.
      * @param liquidAssets Liquid assets in Pool
      * @param debtCommitments Debt commitments
-     * @param amount Amount to deposit
+     * @param lAmount Amount of liquidTokens to deposit
      * @return Amount of pTokens to mint/unlock
      */
     function calculateEnter(
         uint256 liquidAssets,
         uint256 debtCommitments,
-        uint256 amount
+        uint256 lAmount
     ) public view returns (uint256) {
-        return curveFunction(liquidAssets+debtCommitments+amount) - curveFunction(liquidAssets+debtCommitments);
+        return curveFunction(liquidAssets+debtCommitments+lAmount) - curveFunction(liquidAssets+debtCommitments);
     }
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * dx = (1+d)*(f(L) - f(L - Whidraw))
+     * dx = f(L) - f(L - Whidraw)
      * L is the volume of liquid assets
      * @param liquidAssets Liquid assets in Pool
-     * @param amount Amount to whidraw
+     * @param lAmount Amount of liquid tokens to withdraw (full: sum of withdrawU and withdrawP)
      * @return Amount of pTokens to burn/lock
      */
     function calculateExit(
         uint256 liquidAssets,
-        uint256 amount
+        uint256 lAmount
     ) public view returns (uint256) {
-        uint256 fldiff = curveFunction(liquidAssets) - curveFunction(liquidAssets - amount);
-        return (1*PERCENT_DIVIDER+withdrawFeePercent)*fldiff/PERCENT_DIVIDER;
+        uint256 fL = curveFunction(liquidAssets);
+        uint256 fLW = curveFunction(liquidAssets - lAmount);
+        assert(fL >= fLW);
+        return fL - fLW;
+    }
+
+    /**
+     * @notice Calculates amount of liquid tokens one can withdraw from the pool when pTokens are burned/locked
+     * Withdraw = L-g(x-dx)
+     * x = f(L)
+     * dx - amount of pTokens taken from user
+     * WithdrawU = Withdraw*(1-d)
+     * WithdrawP = Withdraw*d
+     * Withdraw - amount of liquid token which should be sent to user
+     * @param liquidAssets Liquid assets in Pool
+     * @param pAmount Amount of pTokens to withdraw
+     * @return Amount of liquid tokens to withdraw: total, for user, for pool
+     */
+    function calculateExitInverse(
+        uint256 liquidAssets,
+        uint256 pAmount
+    ) public view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP) {
+        uint256 x = curveFunction(liquidAssets);
+        uint256 pdiff = x - pAmount;
+        uint256 ldiff = inverseCurveFunction(pdiff);
+        assert(liquidAssets >= ldiff);
+        withdraw = liquidAssets - ldiff;
+        withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
+        withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
     }
 
     /**
@@ -71,6 +98,15 @@ contract BondingCurve is Initializable  {
      */
     function curveFunction(uint256 s) public view returns(uint256){
         return curve(curveA, curveB, s);
+    }
+
+    /**
+     * @notice Calculates inversed value of Bonding Curve at a point x
+     * @param x Point to calculate curve
+     * @return Value of curve at s
+     */
+    function inverseCurveFunction(uint256 x) public view returns(uint256){
+        return inverseCurve(curveA, curveB, x);
     }
 
     /**
@@ -85,6 +121,14 @@ contract BondingCurve is Initializable  {
     function curve(uint256 a, uint256 b, uint256 s) private pure returns(uint256){
         uint256 d = FIX2 * (a*a) + 4 * FIX * b * s;
         return (d.sqrt() - FIX*a)/2;
+    }
+
+    /**
+     * @notice Bonding Curve function
+     * S = g(x)=(x^2+ax)/b
+     */
+    function inverseCurve(uint256 a, uint256 b, uint256 x) private pure returns(uint256){
+        return (x*x + FIX*a*x)/FIX*b;
     }
 
 
