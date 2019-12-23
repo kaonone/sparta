@@ -272,7 +272,8 @@ contract FundsModule is Module, IFundsModule {
      *      pInterest - received interest
      *      pWithdrawn - amount of already withdrawn pTokens
      */
-    function calculatePledgeInfo(address borrower, uint256 debt, address supporter) view public returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
+    function calculatePledgeInfo(address borrower, uint256 debt, address supporter) view public 
+    returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
         DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
         require(proposal.lAmount > 0 && proposal.executed, "FundsModule: DebtProposal not found");
@@ -280,11 +281,12 @@ contract FundsModule is Module, IFundsModule {
         DebtPledge storage dp = proposal.pledges[supporter];
 
         //Do not count 50% of debt for borrower in following calculations 
-        uint256 pPledge; uint256 lPledge;
-        if(supporter == borrower){
+        uint256 pPledge;
+        uint256 lPledge;
+        if (supporter == borrower) {
             lPledge = dp.lAmount - proposal.lAmount/2;       //Only pay interest for part of the pledge which is on top of 50% 
             pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2); //Decrease pledge for calculations of unlocked amount
-        }else{
+        } else {
             lPledge = dp.lAmount;
             pPledge = dp.pAmount;
         }
@@ -297,12 +299,12 @@ contract FundsModule is Module, IFundsModule {
         assert(pInterest <= dbt.pInterest);
 
         //Unlock 50% of debt only after it is fully paid
-        if(supporter == borrower){
-            if(dbt.lAmount == 0){
+        if (supporter == borrower) {
+            if (dbt.lAmount == 0) {
                 pLocked = 0;
                 pUnlocked = dp.pAmount;
-            }else{
-               pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+            } else {
+                pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
             }
         }
 
