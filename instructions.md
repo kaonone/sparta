@@ -1,4 +1,4 @@
-# How to work with the Akropolis Pool
+# How to work with the Credit Pool system
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -40,12 +40,12 @@
 1. Call `FundsModule.deposit(lAmount, pAmountMin)` to execute exchange
 
 ### Withdraw
-Required data:
-* `pAmount` Withdraw amount, PTK
-Required conditions:
+#### Required data:
+* `pAmount`: Withdraw amount, PTK
+#### Required conditions:
 * Available liquidity `LToken.balanceOf(FundsModule.address)` is greater whan expected amount DAI
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
-Workflow:
+#### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected amount of DAI (`lAmount`). The responce has 3 values, use second one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount`, which user expect to get when deposit `pAmount` PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow exchange
@@ -54,13 +54,13 @@ Workflow:
 
 ## Credits
 ### Create Loan Request
-Required data:
-Желаемая сумма займа в DAI (debtLAmount)
-Процентная ставка (interest)
-Сумма залога в PTK (pAmount), должна быть не менее 50% от debtLAmount с учётом конвертации в DAI.
-Required conditions:
-У пользователя имеется достаточно PTK: PToken.balanceOf(userAddress) >= pAmount
-Workflow:
+#### Required data:
+* `debtLAmount`: Loan amount, DAI
+* `interest`: Interest rate, percents
+* `pAmount`: Borrower's own pledge, PTK. Should be not less than 50% оf `debtLAmount` when converted to DAI.
+#### Required conditions:
+* User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
+#### Workflow:
 Вызвать FundsModule.calculatePoolExitInverse(pAmount) для определения ожидаемой суммы залога в DAI (lAmount). В ответе три значения, использовать первое.
 Определить минимально-приемлемую сумму lAmountMin <= lAmount, которую пользователь ожидает оставить в качестве залога, отдав pAmount PTK. Можно использовать 0.
 Вызвать PToken.approve(FundsModule.address, pAmount) чтобы разрешить обмен
@@ -74,12 +74,12 @@ Workflow:
 Адрес заёмщика borrower
 Индекс заявки proposal
 Сумма залога в PTK (pAmount)
-Required conditions:
+#### Required conditions:
 Создана заявка на кредит
 Кредит ещё не выдан
 Заявка ещё не полностью заполнена обеспечением: FundsModule.getRequiredPledge(borrower, proposal) > 0
 У пользователя имеется достаточно PTK: PToken.balanceOf(userAddress) >= pAmount
-Workflow:
+#### Workflow:
 Вызвать FundsModule.calculatePoolExitInverse(pAmount) для определения ожидаемой суммы DAI (lAmount). В ответе три значения, использовать первое.
 Определить минимально-приемлемую сумму lAmountMin <= lAmount, которую пользователь ожидает получить отдав pAmount PTK. Можно использовать 0.
 Вызвать PToken.approve(FundsModule.address, pAmount) чтобы разрешить операцию.
@@ -99,27 +99,27 @@ Workflow:
 Вызвать FundsModule.withdrawPledge(borrower, proposal, pAmount) чтобы выполнить операцию
 
 ### Loan issuance
-Required data:
+#### Required data:
 Индекс заявки на кредит proposal
-Необходимые условия
+#### Required conditions:
 Создана заявка на кредит
 Заявка на кредит создана с адреса пользователя (borrower)
 Кредит ещё не выдан
 Кредит полностью обеспечен: FundsModule.getRequiredPledge(borrower, proposal) == 0
 В пуле имеется достаточная ликвидность
-Workflow:
+#### Workflow:
 Вызвать FundsModule.executeDebtProposal(proposal) чтобы выполнить операцию
 Данные необходимые для дальнейшей работы:
 Индекс займа: debtIdx из события DebtProposalExecuted.
 
 ### Loan repayment (partial or full) 
-Required data:
+#### Required data:
 Индекс займа debt
 Возвращаемая сумма в DAI (lAmount)
-Необходимые условия
+#### Required conditions:
 Займ выдан пользователю (borrower)
 Займ ещё не полностью погашен
-Workflow:
+#### Workflow:
 Вызвать LToken.approve(FundsModule.address, lAmount) чтобы разрешить операцию
 Вызвать FundsModule.repay(debt, lAmount) чтобы выполнить операцию
 
