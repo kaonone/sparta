@@ -47,7 +47,7 @@
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected amount of DAI (`lAmount`). The responce has 3 values, use second one.
-1. Determine minimum acceptable amount `lAmountMin <= lAmount`, which user expect to get when deposit `pAmount` PTK. Zero value is allowed.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI , which user expects to get when deposit `pAmount` PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow exchange
 1. Call `FundsModule.withdraw(pAmount, lAmountMin)` to execute exchange
 
@@ -61,65 +61,64 @@
 #### Required conditions:
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
-Вызвать FundsModule.calculatePoolExitInverse(pAmount) для определения ожидаемой суммы залога в DAI (lAmount). В ответе три значения, использовать первое.
-Определить минимально-приемлемую сумму lAmountMin <= lAmount, которую пользователь ожидает оставить в качестве залога, отдав pAmount PTK. Можно использовать 0.
-Вызвать PToken.approve(FundsModule.address, pAmount) чтобы разрешить обмен
-Вызвать FundsModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin) чтобы создать заявку.
-Данные необходимые для дальнейшей работы:
-Индекс заявки: proposalIndex из события DebtProposalCreated .
+1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The responce has 3 values, use first one.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI, which user expects to lock as a pledge, sending `pAmount` PTK. Zero value is allowed.
+1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
+1. Call `FundsModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
+#### Data required for future calls:
+* Proposal index: `proposalIndex` from event `DebtProposalCreated`.
 
 ### Add Pledge
 #### Required data:
-Идентификаторы заявки на кредит:
-Адрес заёмщика borrower
-Индекс заявки proposal
-Сумма залога в PTK (pAmount)
+* Loan proposal identifiers:
+  * `borrower` Address of borrower
+  * `proposal` Proposal index
+* `pAmount`  Pledge amount, PTK
 #### Required conditions:
-Создана заявка на кредит
-Кредит ещё не выдан
-Заявка ещё не полностью заполнена обеспечением: FundsModule.getRequiredPledge(borrower, proposal) > 0
-У пользователя имеется достаточно PTK: PToken.balanceOf(userAddress) >= pAmount
+* Loan proposal created
+* Loan proposal not yet executed
+* Loan proposal is not yet fully filled: `FundsModule.getRequiredPledge(borrower, proposal) > 0`
+* User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
-Вызвать FundsModule.calculatePoolExitInverse(pAmount) для определения ожидаемой суммы DAI (lAmount). В ответе три значения, использовать первое.
-Определить минимально-приемлемую сумму lAmountMin <= lAmount, которую пользователь ожидает получить отдав pAmount PTK. Можно использовать 0.
-Вызвать PToken.approve(FundsModule.address, pAmount) чтобы разрешить операцию.
-Вызвать FundsModule.addPledge(borrower, proposal, pAmount, lAmountMin) чтобы выполнить операцию.
+1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The responce has 3 values, use first one.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI, which user expects to lock as a pledge, sending `pAmount` PTK. Zero value is allowed.
+1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
+1. Call `FundsModule.addPledge(borrower, proposal, pAmount, lAmountMin)` to execute operation.
 
 ### Withdraw Pledge
 #### Required data:
-Идентификаторы заявки на кредит:
-Адрес заёмщика borrower
-Индекс заявки proposal
-Возвращаемая сумма залога в PTK (pAmount)
+* Loan proposal identifiers:
+  * `borrower` Address of borrower
+  * `proposal` Proposal index
+* `pAmount`  Amount to withdraw, PTK
 #### Required conditions:
-Создана заявка на кредит
-Кредит ещё не выдан
-Сумма внесенного пользователем залога >= pAmount
+* Loan proposal created
+* Loan proposal not yet executed
+* User pledge amount >= `pAmount`
 #### Workflow:
-Вызвать FundsModule.withdrawPledge(borrower, proposal, pAmount) чтобы выполнить операцию
+1. Call FundsModule.withdrawPledge(borrower, proposal, pAmount) to execute operation.
 
 ### Loan issuance
 #### Required data:
-Индекс заявки на кредит proposal
+`proposal` Proposal index
 #### Required conditions:
-Создана заявка на кредит
-Заявка на кредит создана с адреса пользователя (borrower)
-Кредит ещё не выдан
-Кредит полностью обеспечен: FundsModule.getRequiredPledge(borrower, proposal) == 0
-В пуле имеется достаточная ликвидность
+* Loan proposal created, user (transaction sender) is the `borrower`
+* Loan proposal not yet executed
+* Loan proposal is fully funded: `FundsModule.getRequiredPledge(borrower, proposal) == 0`
+* Pool has enough liquidity
 #### Workflow:
-Вызвать FundsModule.executeDebtProposal(proposal) чтобы выполнить операцию
-Данные необходимые для дальнейшей работы:
-Индекс займа: debtIdx из события DebtProposalExecuted.
+1. Call `FundsModule.executeDebtProposal(proposal)` to execute operation.
+#### Data required for future calls:
+* Loan index: `debtIdx` from event `DebtProposalExecuted`.
 
 ### Loan repayment (partial or full) 
 #### Required data:
-Индекс займа debt
-Возвращаемая сумма в DAI (lAmount)
+* `debt` Loan index
+* `lAmount` Repayable amount, DAI
 #### Required conditions:
-Займ выдан пользователю (borrower)
-Займ ещё не полностью погашен
+* User (transaction sender) is the borrower
+* Loan is not yet fully repaid
 #### Workflow:
-Вызвать LToken.approve(FundsModule.address, lAmount) чтобы разрешить операцию
-Вызвать FundsModule.repay(debt, lAmount) чтобы выполнить операцию
+1. Call `LToken.approve(FundsModule.address, lAmount)` to allow operation.
+1. Call `FundsModule.repay(debt, lAmount)` to execute operation.
 
