@@ -1,4 +1,4 @@
-# How to work with the Credit Pool system
+# How to work with the Akropolis Pool
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
