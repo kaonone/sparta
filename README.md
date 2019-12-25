@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/akropolisio/akropolisOS.svg?branch=develop)](https://travis-ci.org/akropolisio/akropolisOS) [![Coverage Status](https://coveralls.io/repos/github/akropolisio/akropolisOS/badge.svg?branch=develop)](https://coveralls.io/github/akropolisio/akropolisOS?branch=develop)
 
 AkropolisOS - Ethereum implementation (active development)
+AkropolisOS is a DAO framework where members of which can earn high-interest rates by providing undercollateralized loans to other members and by pooling and investing capital through various liquid DeFi instruments.
 
-AkropolisOS is a framework for DAO that helps its members earn high-interest rates by providing unsecured loans to the members and by providing capital to various liquid DeFi instruments.
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x10201BFB5E0C85f890f2c79CD1C93cb5F31e33e5`
@@ -47,8 +47,8 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 #### Required conditions:
 * All contracts are deployed
 #### Workflow:
-1. Call `FundsModule.calculatePoolEnter(lAmount)` to determine expexted PTK amount (`pAmount`)
-1. Determine minimum acceptable amount `pAmountMin <= pAmount`, which user expect to get when deposit `lAmount` DAI. Zero value is allowed.
+1. Call `FundsModule.calculatePoolEnter(lAmount)` to determine expeсted PTK amount (`pAmount`)
+1. Determine minimum acceptable amount of PTK `pAmountMin <= pAmount`, which user expects to get when deposit `lAmount` of DAI. Zero value is allowed.
 1. Call `LToken.approve(FundsModule.address, lAmount)` to allow exchange
 1. Call `FundsModule.deposit(lAmount, pAmountMin)` to execute exchange
 
@@ -56,11 +56,11 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 #### Required data:
 * `pAmount`: Withdraw amount, PTK
 #### Required conditions:
-* Available liquidity `LToken.balanceOf(FundsModule.address)` is greater whan expected amount DAI
+* Available liquidity `LToken.balanceOf(FundsModule.address)` is greater whan expected amount of DAI
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
-1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected amount of DAI (`lAmount`). The responce has 3 values, use second one.
-1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI , which user expects to get when deposit `pAmount` PTK. Zero value is allowed.
+1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected amount of DAI (`lAmount`). The response has 3 values, use the second one.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI , which user expects to get when deposit `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow exchange
 1. Call `FundsModule.withdraw(pAmount, lAmountMin)` to execute exchange
 
@@ -74,8 +74,8 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 #### Required conditions:
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
-1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The responce has 3 values, use first one.
-1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI, which user expects to lock as a pledge, sending `pAmount` PTK. Zero value is allowed.
+1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
 1. Call `FundsModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
 #### Data required for future calls:
@@ -92,9 +92,10 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 * Loan proposal not yet executed
 * Loan proposal is not yet fully filled: `FundsModule.getRequiredPledge(borrower, proposal) > 0`
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
+
 #### Workflow:
-1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The responce has 3 values, use first one.
-1. Determine minimum acceptable amount `lAmountMin <= lAmount` DAI, which user expects to lock as a pledge, sending `pAmount` PTK. Zero value is allowed.
+1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
+1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
 1. Call `FundsModule.addPledge(borrower, proposal, pAmount, lAmountMin)` to execute operation.
 
