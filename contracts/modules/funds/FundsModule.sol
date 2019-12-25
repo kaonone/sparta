@@ -126,6 +126,7 @@ contract FundsModule is Module, IFundsModule {
         (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
+        require(rlAmount > 0, "FundsModule: DebtProposal is already funded");
         if (lAmount > rlAmount) {
             uint256 pAmountOld = pAmount;
             lAmount = rlAmount;
