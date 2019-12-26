@@ -2097,6 +2097,12 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  getDebtRequiredPayments(
+    borrower: string | BN,
+    debt: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN]>;
+
   totalLiquidAssets(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   calculatePoolEnter(
@@ -2115,7 +2121,7 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   ): Promise<[BN, BN, BN]>;
 
   calculateInterestPayment(
-    debt: number | BN | string,
+    debtLAmount: number | BN | string,
     interest: number | BN | string,
     prevPayment: number | BN | string,
     currentPayment: number | BN | string,

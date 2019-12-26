@@ -6,7 +6,7 @@ import {
     TestLiquidTokenInstance, TestLiquidTokenContract
 } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
-const { BN, constants, expectEvent, expectRevert, shouldFail } = require("@openzeppelin/test-helpers");
+const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 var expect = require("chai").expect;
@@ -53,7 +53,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
 
     });
-  
     it('should allow deposit if no debts', async () => {
         let amountWeiLToken = w3random.interval(1, 100000, 'ether');
         let receipt = await funds.deposit(amountWeiLToken, '0', {from: liquidityProvider});
@@ -215,7 +214,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         receipt = await funds.executeDebtProposal(proposalIdx, {from: borrower});
         expectEvent(receipt, 'DebtProposalExecuted', {'sender':borrower, 'proposal':String(proposalIdx), 'lAmount':lDebtWei});
     });
-    it('should repay debt', async () => {
+    it('should repay debt and interest', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         let debtLAmount = w3random.interval(100, 200, 'ether');
@@ -223,9 +222,33 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let borrowerLBalance = await lToken.balanceOf(borrower);
         expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
 
-        
+        // Partial repayment
+        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        let repayLAmount = debtLAmount.div(new BN(3));
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        let receipt = await funds.repay(debtIdx, repayLAmount, {from: borrower});
+        expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
+        let debtLRequiredPayments = await funds.getDebtRequiredPayments(borrower, debtIdx);
+        expect(debtLRequiredPayments[0]).to.be.bignumber.gt(new BN(0));
+        expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));        
 
+        // Repay rest
+        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        debtLRequiredPayments = await funds.getDebtRequiredPayments(borrower, debtIdx);
+        console.log('debtLRequiredPayments', debtLRequiredPayments[0].toString(), debtLRequiredPayments[1].toString());
+        expect(debtLRequiredPayments[1]).to.be.bignumber.gt(new BN(0));
+
+        let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]);
+        await lToken.transfer(borrower, fullRepayLAmount, {from: liquidityProvider});
+        await lToken.approve(funds.address, fullRepayLAmount, {from: borrower});
+        receipt = await funds.repay(debtIdx, repayLAmount, {from: borrower});
+        expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
+
+        // debtLRequiredPayments = await funds.getDebtRequiredPayments(borrower, debtIdx);
+        // expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
+        // expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
+
     // it('should partially redeem pledge from debt', async () => {
     // });
     // it('should fully redeem pledge from fully paid debt (without partial redeem)', async () => {
@@ -254,7 +277,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
-        let receipt = await funds.createDebtProposal(debtLAmount, '0', pAmountMinWei, '0', {from: borrower});
+        let receipt = await funds.createDebtProposal(debtLAmount, '500', pAmountMinWei, '0', {from: borrower}); //500 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporter

@@ -2,7 +2,7 @@ const BN = require('bn.js');
 const Web3 = require('web3');
 
 function interval(min=0, max=1, units='wei') {
-    let rnd = min + (max-min)*Math.random();
+    let rnd = Math.round(min + (max-min)*Math.random());
     return new BN(Web3.utils.toWei(String(rnd), units));
 }
 function intervalBN(min, max) {
