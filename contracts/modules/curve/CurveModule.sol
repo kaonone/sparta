@@ -11,8 +11,8 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
     uint256 public constant CURVE_B = 1;
     uint256 public constant WITHDRAW_FEE_PERCENT = 5;
 
-    function initialize(address sender, address _pool) public initializer {
-        Module.initialize(sender, _pool);
+    function initialize(address _pool) public initializer {
+        Module.initialize(_pool);
         BondingCurve.initialize(CURVE_A, CURVE_B, WITHDRAW_FEE_PERCENT);
     }
 

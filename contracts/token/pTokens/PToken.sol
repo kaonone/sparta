@@ -10,10 +10,10 @@ import "../../common/Base.sol";
  */
 contract PToken is Base, ERC20Detailed, ERC20Mintable, ERC20Burnable {
 
-    function initialize(address sender) public initializer {
-        Base.initialize(sender);
+    function initialize() public initializer {
+        Base.initialize();
         ERC20Detailed.initialize("Akropolis Pool Token", "PTK", 18);
-        ERC20Mintable.initialize(sender);
+        ERC20Mintable.initialize(_msgSender());
     }
 
 }

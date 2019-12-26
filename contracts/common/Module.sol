@@ -9,8 +9,8 @@ import "./Base.sol";
 contract Module is Base {
     address public pool;
 
-    function initialize(address sender, address _pool) public initializer {
-        Base.initialize(sender);
+    function initialize(address _pool) public initializer {
+        Base.initialize();
         setPool(_pool);
     }
 

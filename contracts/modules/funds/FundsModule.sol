@@ -40,8 +40,8 @@ contract FundsModule is Module, IFundsModule {
 
     uint256 public totalDebts;  //Sum of all debts amounts (in liquid tokens)
 
-    function initialize(address sender, address _pool, IERC20 _lToken, PToken _pToken) public initializer {
-        Module.initialize(sender, _pool);
+    function initialize(address _pool, IERC20 _lToken, PToken _pToken) public initializer {
+        Module.initialize(_pool);
         lToken = _lToken;
         pToken = _pToken;
     }
@@ -338,8 +338,8 @@ contract FundsModule is Module, IFundsModule {
      */
     function getDebtRequiredPayments(address borrower, uint256 debt) public view returns(uint256, uint256) {
         Debt storage d = debts[borrower][debt];
-        if(d.lAmount == 0){
-            return (0,0);
+        if (d.lAmount == 0) {
+            return (0, 0);
         }
         DebtProposal storage p = debtProposals[borrower][d.proposal];
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
@@ -347,7 +347,6 @@ contract FundsModule is Module, IFundsModule {
         uint256 interest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
         return (d.lAmount, interest);
     }
-
 
     function totalLiquidAssets() public view returns(uint256) {
         return lToken.balanceOf(address(this));

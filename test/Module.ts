@@ -17,10 +17,10 @@ contract("Module", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         pool = await Pool.new();
-        await pool.initialize(owner, {from: owner});
+        await pool.initialize({from: owner});
 
         votes = await VotesModule.new();
-        await (<any> votes).methods['initialize(address,address)'](owner, pool.address, {from: owner});
+        await (<any> votes).methods['initialize(address)'](pool.address, {from: owner});
     });
   
     it("should set module to pool", async () => {
@@ -30,7 +30,7 @@ contract("Module", async ([_, owner, ...otherAccounts]) => {
   
     it("should get next module", async () => {
         compound = await CompoundModule.new();
-        await (<any> compound).methods['initialize(address,address)'](owner, pool.address, {from: owner});
+        await (<any> compound).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("votes", votes.address, true, {from: owner}); 
         await pool.set("compound", compound.address, true, {from: owner});
         (await pool.next(votes.address)).should.equal(compound.address);

@@ -11,7 +11,7 @@ contract("Pool", async ([_, owner,  wallet1, wallet2, wallet3, wallet4, wallet5]
   
     beforeEach(async () => {
         pool = await Pool.new();
-        await pool.initialize(owner, {from: owner});
+        await pool.initialize({from: owner});
         const address = await pool.owner();
         await pool.setMetadata("creditPool", "Great Pool",  {from: address});
     });

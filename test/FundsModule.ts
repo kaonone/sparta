@@ -3,7 +3,7 @@ import {
     FundsModuleContract, FundsModuleInstance, 
     CurveModuleContract, CurveModuleInstance,
     PTokenContract, PTokenInstance, 
-    TestLiquidTokenInstance, TestLiquidTokenContract
+    FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
@@ -19,33 +19,33 @@ const FundsModule = artifacts.require("FundsModule");
 const CurveModule = artifacts.require("CurveModule");
 
 const PToken = artifacts.require("PToken");
-const TestLiquidToken = artifacts.require("TestLiquidToken");
+const FreeDAI = artifacts.require("FreeDAI");
 
 contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
-    let lToken: TestLiquidTokenInstance;
+    let lToken: FreeDAIInstance;
 
     beforeEach(async () => {
         //Setup system contracts
         pool = await Pool.new();
-        await pool.initialize(owner, {from: owner});
+        await pool.initialize({from: owner});
 
-        lToken = await TestLiquidToken.new();
-        await (<any> lToken).methods['initialize(address)'](owner, {from: owner});
+        lToken = await FreeDAI.new();
+        await (<any> lToken).methods['initialize()']({from: owner});
 
         pToken = await PToken.new();
-        await (<any> pToken).methods['initialize(address)'](owner, {from: owner});
+        await (<any> pToken).methods['initialize()']({from: owner});
 
         funds = await FundsModule.new();
-        await (<any> funds).methods['initialize(address,address,address,address)'](owner, pool.address, lToken.address, pToken.address, {from: owner});
+        await (<any> funds).methods['initialize(address,address,address)'](pool.address, lToken.address, pToken.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
 
         curve = await CurveModule.new();
-        await (<any> curve).methods['initialize(address,address)'](owner, pool.address, {from: owner});
+        await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("curve", curve.address, true, {from: owner});  
 
         //Do common tasks
@@ -235,7 +235,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         // Repay rest
         await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
         debtLRequiredPayments = await funds.getDebtRequiredPayments(borrower, debtIdx);
-        console.log('debtLRequiredPayments', debtLRequiredPayments[0].toString(), debtLRequiredPayments[1].toString());
+        //console.log('debtLRequiredPayments', debtLRequiredPayments[0].toString(), debtLRequiredPayments[1].toString());
         expect(debtLRequiredPayments[1]).to.be.bignumber.gt(new BN(0));
 
         let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]);

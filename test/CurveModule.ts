@@ -12,7 +12,7 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         curveModule = await CurveModule.new();
-        await (<any> curveModule).methods['initialize(address, address)'](owner, {from: owner});
+        await (<any> curveModule).methods['initialize(address)']({from: owner});
     });
 
 

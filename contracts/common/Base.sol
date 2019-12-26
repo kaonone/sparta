@@ -11,8 +11,8 @@ import "@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol
 contract Base is Initializable, Context, Ownable {
     address constant  ZERO_ADDRESS = address(0);
 
-    function initialize(address sender) public initializer {
-        Ownable.initialize(sender);
+    function initialize() public initializer {
+        Ownable.initialize(_msgSender());
     }
 
 }
