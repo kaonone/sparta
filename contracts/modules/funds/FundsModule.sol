@@ -403,6 +403,6 @@ contract FundsModule is Module, IFundsModule {
     }
 
     function getCurveModule() private view returns(ICurveModule) {
-        return ICurveModule(getModuleAddress("curve"));
+        return ICurveModule(getModuleAddress(MODULE_CURVE));
     }
 }
