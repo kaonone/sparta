@@ -2,54 +2,80 @@ pragma solidity ^0.5.12;
 
 /**
  * @title Funds Module Interface
- * @dev Funds module is responsible for deposits, withdrawals, debt proposals, debts and repay.
+ * @dev Funds module is responsible for token transfers, provides info about current liquidity/debts and pool token price.
  */
 interface IFundsModule {
-
-    event Deposit(address indexed sender, uint256 lAmount, uint256 pAmount);
-    event Withdraw(address indexed sender, uint256 lAmountTotal, uint256 lAmountUser, uint256 pAmount);
-    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 lAmount, uint256 interest);
-    event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
-    event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
-    event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 lAmount);
-    event Repay(address indexed sender, uint256 debt, uint256 lDebtLeft, uint256 lFullPaymentAmount, uint256 lInterestPaid, uint256 newlastPayment);
-    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 debt, uint256 pAmount);
-
-    /*
-     * @notice Deposit amount of lToken and mint pTokens
-     * @param lAmount Amount of liquid tokens to invest
-     * @param pAmountMin Minimal amout of pTokens suitable for sender
-     */ 
-    function deposit(uint256 lAmount, uint256 pAmountMin) external;
+    event Status(uint256 lBalance, uint256 lDebt, uint256 pEnterPrice, uint256 pExitPrice);
 
     /**
-     * @notice Withdraw amount of lToken and burn pTokens
-     * @param pAmount Amount of pTokens to send
-     * @param lAmountMin Minimal amount of liquid tokens to withdraw
+     * @notice Deposit liquid tokens to the pool
+     * @param from Address of the user, who sends tokens. Should have enough allowance.
+     * @param amount Amount of tokens to deposit
      */
-    function withdraw(uint256 pAmount, uint256 lAmountMin) external;
+    function depositLTokens(address from, uint256 amount) external;
+    /**
+     * @notice Withdraw liquid tokens from the pool
+     * @param to Address of the user, who sends tokens. Should have enough allowance.
+     * @param amount Amount of tokens to deposit
+     */
+    function withdrawLTokens(address to, uint256 amount) external;
 
     /**
-     * @notice Create DebtProposal
-     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
-     * @param pAmount Amount of pTokens to use as collateral
-     * @param lAmountMin Minimal amount of liquid tokens 
-     * @return Index of created DebtProposal
+     * @notice Withdraw liquid tokens from the pool
+     * @param to Address of the user, who sends tokens. Should have enough allowance.
+     * @param amount Amount of tokens to deposit
+     * @param poolFee Pool fee will be sent to pool owner
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) external returns(uint256);
+    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) external;
 
     /**
-     * @notice Execute DebtProposal
-     * @dev Creates Debt using data of DebtProposal
-     * @param proposal Index of DebtProposal
-     * @return Index of created Debt
+     * @notice Deposit pool tokens to the pool
+     * @param from Address of the user, who sends tokens. Should have enough allowance.
+     * @param amount Amount of tokens to deposit
      */
-    function executeDebtProposal(uint256 proposal) external returns(uint256);
+    function depositPTokens(address from, uint256 amount) external;
 
     /**
-     * @notice Repay amount of liquidToken and unlock pTokens
-     * @param debt Index of Debt
-     * @param lAmount Amount of liquid tokens to repay
+     * @notice Withdraw pool tokens from the pool
+     * @param to Address of the user, who sends tokens. Should have enough allowance.
+     * @param amount Amount of tokens to deposit
      */
-    function repay(uint256 debt, uint256 lAmount) external;
+    function withdrawPTokens(address to, uint256 amount) external;
+
+    /**
+     * @notice Mint new PTokens
+     * @param to Address of the user, who sends tokens.
+     * @param amount Amount of tokens to mint
+     */
+    function mintPTokens(address to, uint256 amount) external;
+
+    /**
+     * @notice Burn pool tokens
+     * @param from Address of the user, whos tokens we burning. Should have enough allowance.
+     * @param amount Amount of tokens to burn
+     */
+    function burnPTokens(address from, uint256 amount) external;
+
+    /**
+     * @notice Calculates how many pTokens should be given to user for increasing liquidity
+     * @param lAmount Amount of liquid tokens which will be put into the pool
+     * @return Amount of pToken which should be sent to sender
+     */
+    function calculatePoolEnter(uint256 lAmount) external view returns(uint256);
+
+    /**
+     * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
+     * @param lAmount Amount of liquid tokens which will be removed from the pool
+     * @return Amount of pToken which should be taken from sender
+     */
+    function calculatePoolExit(uint256 lAmount) external view returns(uint256);
+
+    /**
+     * @notice Calculates how many liquid tokens should be removed from pool when decreasing liquidity
+     * @param pAmount Amount of pToken which should be taken from sender
+     * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
+     */
+    function calculatePoolExitInverse(uint256 pAmount) external view returns(uint256, uint256, uint256);
+
+
 }
