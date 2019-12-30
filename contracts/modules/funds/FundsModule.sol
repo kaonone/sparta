@@ -1,7 +1,6 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
@@ -12,7 +11,6 @@ import "./FundsOperatorRole.sol";
 contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    using SafeMath for uint256;
     IERC20 public lToken;
     PToken public pToken;
 

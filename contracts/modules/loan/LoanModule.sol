@@ -1,12 +1,15 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract LoanModule is Module, ILoanModule {
+    using SafeMath for uint256;
+
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
     uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
@@ -107,8 +110,8 @@ contract LoanModule is Module, ILoanModule {
                 pAmount: pAmount
             });
         } else {
-            p.pledges[_msgSender()].lAmount += lAmount;
-            p.pledges[_msgSender()].pAmount += pAmount;
+            p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
+            p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
         }
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -130,14 +133,14 @@ contract LoanModule is Module, ILoanModule {
             lAmount = pledge.lAmount;
         } else {
             // pAmount < pledge.pAmount
-            lAmount = pledge.lAmount * pAmount / pledge.pAmount;
+            lAmount = pledge.lAmount.mul(pAmount).div(pledge.pAmount);
             assert(lAmount < pledge.lAmount);
         }
         if (_msgSender() == borrower) {
-            require(pledge.lAmount - lAmount >= p.lAmount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
+            require(pledge.lAmount.sub(lAmount) >= p.lAmount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
         }
-        pledge.pAmount -= pAmount;
-        pledge.lAmount -= lAmount;
+        pledge.pAmount = pledge.pAmount.sub(pAmount);
+        pledge.lAmount = pledge.lAmount.sub(lAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -163,7 +166,7 @@ contract LoanModule is Module, ILoanModule {
         // Instead we check PledgeAmount.initialized field and do lazy initialization
         p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
-        lDebts += p.lAmount;
+        lDebts = lDebts.add(p.lAmount);
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
     }
@@ -180,22 +183,21 @@ contract LoanModule is Module, ILoanModule {
         require(p.lAmount > 0, "FundsModule: DebtProposal not found");
 
         uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
-        require(lAmount <= d.lAmount+lInterest, "FundsModule: can not repay more then debt.lAmount + interest");
+        require(lAmount <= d.lAmount.add(lInterest), "FundsModule: can not repay more then debt.lAmount + interest");
 
         fundsModule().depositLTokens(_msgSender(), lAmount); //TODO Think of reentrancy here. Which operation should be first?
 
         uint256 actualInterest;
         if (lAmount < lInterest) {
-            uint256 paidTime = (now - d.lastPayment) * lAmount / lInterest;
+            uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
             assert(d.lastPayment + paidTime <= now);
-            d.lastPayment += paidTime;
+            d.lastPayment = d.lastPayment.add(paidTime);
             actualInterest = lAmount;
         } else {
             d.lastPayment = now;
-            uint256 debtReturned = lAmount - lInterest;
-            d.lAmount -= debtReturned;
-            assert(lDebts >= debtReturned);
-            lDebts -= debtReturned;
+            uint256 debtReturned = lAmount.sub(lInterest);
+            d.lAmount = d.lAmount.sub(debtReturned);
+            lDebts = lDebts.sub(debtReturned);
             actualInterest = lInterest;
         }
 
@@ -203,8 +205,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 pInterest = calculatePoolEnter(actualInterest);
         fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
 
-        //TODO: Think how to update supporters balance
-        d.pInterest += pInterest;
+        d.pInterest = d.pInterest.add(pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
     }
@@ -217,12 +218,12 @@ contract LoanModule is Module, ILoanModule {
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
         (, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn) = calculatePledgeInfo(borrower, debt, _msgSender());
 
-        uint256 pUnlockedPlusInterest = pUnlocked + pInterest;
+        uint256 pUnlockedPlusInterest = pUnlocked.add(pInterest);
         require(pUnlockedPlusInterest > pWithdrawn, "FundsModule: nothing to withdraw");
-        uint256 pAmount = pUnlockedPlusInterest - pWithdrawn;
+        uint256 pAmount = pUnlockedPlusInterest.sub(pWithdrawn);
 
         Debt storage dbt = debts[borrower][debt];
-        dbt.claimedPledges[_msgSender()] += pAmount;
+        dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, pAmount);
     }
@@ -250,18 +251,20 @@ contract LoanModule is Module, ILoanModule {
         uint256 pPledge;
         uint256 lPledge;
         if (supporter == borrower) {
-            lPledge = dp.lAmount - proposal.lAmount/2;       //Only pay interest for part of the pledge which is on top of 50% 
-            pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2); //Decrease pledge for calculations of unlocked amount
+            // lPledge = dp.lAmount - proposal.lAmount/2;       //Only pay interest for part of the pledge which is on top of 50% 
+            // pPledge = dp.pAmount - (proposal.lAmount*dp.pAmount)/(dp.lAmount*2); //Decrease pledge for calculations of unlocked amount
+            lPledge = dp.lAmount.sub(proposal.lAmount/2);       //Only pay interest for part of the pledge which is on top of 50% 
+            pPledge = dp.pAmount.sub(proposal.lAmount.mul(dp.pAmount).div(dp.lAmount.mul(2))); //Decrease pledge for calculations of unlocked amount
         } else {
             lPledge = dp.lAmount;
             pPledge = dp.pAmount;
         }
 
-        pLocked = pPledge * dbt.lAmount / proposal.lAmount;
+        pLocked = pPledge.mul(dbt.lAmount).div(proposal.lAmount);
         assert(pLocked <= pPledge);
-        pUnlocked = pPledge - pLocked;
+        pUnlocked = pPledge.sub(pLocked);
 
-        pInterest = dbt.pInterest * lPledge / proposal.lAmount;
+        pInterest = dbt.pInterest.mul(lPledge).div(proposal.lAmount);
         assert(pInterest <= dbt.pInterest);
 
         //Unlock 50% of debt only after it is fully paid
@@ -270,10 +273,10 @@ contract LoanModule is Module, ILoanModule {
                 pLocked = 0;
                 pUnlocked = dp.pAmount;
             } else {
-                pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+                //pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
+                pLocked = pLocked.add(proposal.lAmount.mul(dp.pAmount).div(dp.lAmount.mul(2)));
             }
         }
-
         pWithdrawn = dbt.claimedPledges[supporter];
     }
 
@@ -289,10 +292,9 @@ contract LoanModule is Module, ILoanModule {
         uint256 covered = 0;
         for (uint256 i = 0; i < p.supporters.length; i++) {
             address s = p.supporters[i];
-            covered += p.pledges[s].lAmount;
+            covered = covered.add(p.pledges[s].lAmount);
         }
-        assert(covered <= p.lAmount);
-        return  p.lAmount - covered;
+        return  p.lAmount.sub(covered);
     }
 
     /**
@@ -345,9 +347,9 @@ contract LoanModule is Module, ILoanModule {
      */
     function calculateInterestPayment(uint256 debtLAmount, uint256 interest, uint256 prevPayment, uint currentPayment) public pure returns(uint256){
         require(prevPayment <= currentPayment, "FundsModule: prevPayment should be before currentPayment");
-        uint256 annualInterest = debtLAmount * interest / INTEREST_MULTIPLIER;
-        uint256 time = currentPayment - prevPayment;
-        return time * annualInterest / ANNUAL_SECONDS;
+        uint256 annualInterest = debtLAmount.mul(interest).div(INTEREST_MULTIPLIER);
+        uint256 time = currentPayment.sub(prevPayment);
+        return time.mul(annualInterest).div(ANNUAL_SECONDS);
     }
 
     /**
