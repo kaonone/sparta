@@ -13,7 +13,6 @@ contract LiquidityModule is Module, ILiquidityModule {
         Module.initialize(_pool);
     }
 
-    // event Test(string msg, address addr);
     /*
      * @notice Deposit amount of lToken and mint pTokens
      * @param lAmount Amount of liquid tokens to invest
@@ -21,16 +20,6 @@ contract LiquidityModule is Module, ILiquidityModule {
      */ 
     function deposit(uint256 lAmount, uint256 pAmountMin) public {
         require(lAmount > 0, "FundsModule: amount should not be 0");
-        // emit Test('loan', address(loanModule()));
-        // emit Test('funds', address(fundsModule()));
-        // emit Test('sender', address(_msgSender()));
-        // address lm = address(loanModule());
-        // if(address(lm) == address(0)){
-        //     emit Test('lm = 0', address(lm));
-        // }
-        // address sndr = _msgSender();
-        // ILoanModule(lm).hasActiveDebts(sndr);
-        // require(!hd, "FundsModule: Deposits forbidden if address has active debts");
         require(!loanModule().hasActiveDebts(_msgSender()), "FundsModule: Deposits forbidden if address has active debts");
         fundsModule().depositLTokens(_msgSender(), lAmount);
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);

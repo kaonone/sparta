@@ -53,7 +53,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         await (<any> liqm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("liquidity", liqm.address, true, {from: owner});  
 
-        loanm = await LiquidityModule.new();
+        loanm = await LoanModule.new();
         await (<any> loanm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("loan", loanm.address, true, {from: owner});  
 
@@ -68,7 +68,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
 
-    });
+    })
     it('should allow deposit if no debts', async () => {
         let amountWeiLToken = w3random.interval(1, 100000, 'ether');
         let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
@@ -306,5 +306,4 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
         return debtIdx;
     }
-
 });
