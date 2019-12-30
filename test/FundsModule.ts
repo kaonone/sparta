@@ -264,7 +264,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, ...otherA
         // expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
         // expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
-
     // it('should partially redeem pledge from debt', async () => {
     // });
     // it('should fully redeem pledge from fully paid debt (without partial redeem)', async () => {

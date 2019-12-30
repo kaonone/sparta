@@ -319,14 +319,14 @@ contract LoanModule is Module, ILoanModule {
      * @return True if sender has unpaid debts
      */
     function hasActiveDebts(address sender) public view returns(bool) {
-        return false;
-        // //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
-        // Debt[] storage userDebts = debts[sender];
-        // if(userDebts.length == 0) return false;
-        // for (uint256 i=userDebts.length-1; i >= 0; i--){ //searching in reverse order because probability to find active loan is higher for latest loans
-        //     if (userDebts[i].lAmount == 0) return true;
-        // }
         // return false;
+        //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
+        Debt[] storage userDebts = debts[sender];
+        if(userDebts.length == 0) return false;
+        for (uint256 i=userDebts.length-1; i >= 0; i--){ //searching in reverse order because probability to find active loan is higher for latest loans
+            if (userDebts[i].lAmount == 0) return true;
+        }
+        return false;
     }
 
     /**

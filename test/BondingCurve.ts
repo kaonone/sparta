@@ -128,6 +128,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let pAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
+        if(pAmount == 0){
+            console.log('zero pAmount', expected, pAmount, pAmountWei.toString(), lAmount, lAmountWei.toString(), liquidAssets, liquidAssetsWei.toString());
+        }
         expectEqualFloat(pAmount, expected);
     });
 
