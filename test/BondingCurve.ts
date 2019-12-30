@@ -53,6 +53,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
             let xWei = w3random.interval(1, 100000, 'ether');
             let cWei = await curve.curveFunction(xWei);
             let icWei = await curve.inverseCurveFunction(cWei);
+            if(icWei.eq(new BN('0'))){
+                console.log('zero icWei', icWei.toString(), cWei.toString(), xWei.toString());
+            }
             expectEqualBN(icWei, xWei);
 
             let x = Number(web3.utils.fromWei(xWei));
