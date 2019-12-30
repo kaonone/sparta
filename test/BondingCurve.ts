@@ -35,6 +35,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let expected = curveFunction(s);
         //console.log("expected = ", expected);
         //expect(roundP(result)).to.equal(roundP(expected));
+        if(result == 0){
+            console.log('zero result', result, resultWei.toString(), s, sWei.toString(), expected);
+        }
         expectEqualFloat(result, expected);
     });
     it("should correctly calculate inverse curve", async () => {
