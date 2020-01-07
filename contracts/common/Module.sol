@@ -20,7 +20,7 @@ contract Module is Base, ModuleNames {
     }
 
     function getModuleAddress(string memory module) public view returns(address){
-        require(pool != ZERO_ADDRESS, "Base: no pool");
+        require(pool != ZERO_ADDRESS, "Module: no pool");
         (bool success, bytes memory result) = pool.staticcall(abi.encodeWithSignature("get(string)", module));
         
         //Forward error from Pool contract
@@ -29,7 +29,7 @@ contract Module is Base, ModuleNames {
         }
 
         address moduleAddress = abi.decode(result, (address));
-        require(moduleAddress != ZERO_ADDRESS, "Base: requested module not found");
+        require(moduleAddress != ZERO_ADDRESS, "Module: requested module not found");
         return moduleAddress;
     }
 
