@@ -1,16 +1,12 @@
 pragma solidity ^0.5.12;
 
-import "@openzeppelin/upgrades/contracts/Initializable.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/access/Roles.sol";
+import "../../common/Role.sol";
 
-contract FundsOperatorRole is Initializable, Context {
-    using Roles for Roles.Role;
+contract FundsOperatorRole is Role {
+    string constant private ROLE_NAME = "FundsOperator";
 
     event FundsOperatorAdded(address indexed account);
     event FundsOperatorRemoved(address indexed account);
-
-    Roles.Role private _operators;
 
     function initialize(address sender) public initializer {
         if (!isFundsOperator(sender)) {
@@ -32,17 +28,21 @@ contract FundsOperatorRole is Initializable, Context {
     }
 
     function isFundsOperator(address account) public view returns (bool) {
-        return _operators.has(account);
+        return hasRole(ROLE_NAME, account);
     }
 
     function _addFundsOperator(address account) internal {
-        _operators.add(account);
+        addRole(ROLE_NAME, account);
         emit FundsOperatorAdded(account);
     }
 
     function _removeFundsOperator(address account) internal {
-        _operators.remove(account);
+        removeRole(ROLE_NAME, account);
         emit FundsOperatorRemoved(account);
+    }
+
+    function thisModuleName() view internal returns(string memory) {
+        return MODULE_FUNDS;
     }
 
 }

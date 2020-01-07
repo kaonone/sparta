@@ -40,7 +40,7 @@ contract LoanModuleStub is Module, ILoanModule {
     }
 
     function withdrawUnlockedPledge(address, uint256) public {
-        this; // silence state mutability warning
+        lDebts = lDebts; // silence state mutability warning
     }
 
     function calculatePledgeInfo(address, uint256, address) view public 

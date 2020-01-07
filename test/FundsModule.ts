@@ -1,5 +1,6 @@
 import {
     PoolContract, PoolInstance, 
+    StorageModuleContract, StorageModuleInstance, 
     FundsModuleContract, FundsModuleInstance, 
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
@@ -16,6 +17,7 @@ const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
+const StorageModule = artifacts.require("StorageModule");
 const FundsModule = artifacts.require("FundsModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
@@ -25,6 +27,7 @@ const FreeDAI = artifacts.require("FreeDAI");
 
 contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, ...otherAccounts]) => {
     let pool: PoolInstance;
+    let storage: StorageModuleInstance;
     let funds: FundsModuleInstance; 
     let loanm: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
@@ -42,6 +45,10 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize()']({from: owner});
 
+        storage = await StorageModule.new();        
+        await (<any> storage).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("storage", storage.address, true, {from: owner});  
+
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("curve", curve.address, true, {from: owner});  
@@ -51,8 +58,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await pool.set("loan", loanm.address, true, {from: owner});  
 
         funds = await FundsModule.new();
-        await (<any> funds).methods['initialize(address,address,address)'](pool.address, lToken.address, pToken.address, {from: owner});
-        await pool.set("funds", funds.address, true, {from: owner});  
+        await pool.set("funds", funds.address, true, {from: owner}); //should be executed before funds.initialize() because of Role initialization
+        let receipt = await (<any> funds).methods['initialize(address,address,address)'](pool.address, lToken.address, pToken.address, {from: owner});
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(loanm.address, {from: owner});
         await funds.addFundsOperator(tester, {from: owner});
