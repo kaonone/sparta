@@ -22,7 +22,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         withdrawFee = withdrawFeePercent/percentDivider;
 
         curve = await BondingCurve.new();
-        curve.initialize(curveA, curveB, withdrawFeePercent);
+        await curve.initialize(curveA, curveB, withdrawFeePercent);
     });
 
     it("should correctly calculate curve", async () => {
