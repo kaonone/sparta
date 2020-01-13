@@ -220,12 +220,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]);
         await lToken.transfer(borrower, fullRepayLAmount, {from: liquidityProvider});
         await lToken.approve(funds.address, fullRepayLAmount, {from: borrower});
-        receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        receipt = await loanm.repay(debtIdx, fullRepayLAmount, {from: borrower});
         expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
 
-        // debtLRequiredPayments = await funds.getDebtRequiredPayments(borrower, debtIdx);
-        // expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
-        // expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
+        debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
+        expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
     // it('should partially redeem pledge from debt', async () => {
     // });
