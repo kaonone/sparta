@@ -242,7 +242,7 @@ contract LoanModule is Module, ILoanModule {
     function calculatePledgeInfo(address borrower, uint256 debt, address supporter) view public 
     returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
-        DebtProposal storage proposal = debtProposals[_msgSender()][dbt.proposal];
+        DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
         require(proposal.lAmount > 0 && proposal.executed, "FundsModule: DebtProposal not found");
 
         DebtPledge storage dp = proposal.pledges[supporter];
