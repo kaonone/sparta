@@ -227,12 +227,107 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
         expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
-    // it('should partially redeem pledge from debt', async () => {
-    // });
-    // it('should fully redeem pledge from fully paid debt (without partial redeem)', async () => {
-    // });
-    // it('should fully redeem pledge from fully paid debt (after partial redeem)', async () => {
-    // });
+    it('should partially redeem pledge from debt', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        //console.log('Debt lAmount', web3.utils.fromWei(debtLAmount));
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+
+        //Check pledge Info
+        let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        //console.log('Before repay', pledgeInfo);
+        let pPledge = pledgeInfo[0];
+        //console.log('Pledge pAmount', web3.utils.fromWei(pPledge));
+        expect(pledgeInfo[1]).to.be.bignumber.eq('0');
+        expect(pledgeInfo[2]).to.be.bignumber.eq('0');
+        expect(pledgeInfo[3]).to.be.bignumber.eq('0');
+
+        // Partial repayment
+        let randTime = w3random.interval(30*24*60*60, 300*24*60*60);
+        //console.log('Days passed', randTime/(24*60*60));
+        await time.increase(randTime);
+        let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
+        //console.log('Repay lAmount', web3.utils.fromWei(repayLAmount));
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+
+        //Redeem unlocked pledge
+        pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        // console.log('After repay', pledgeInfo);
+        // console.log('Pledge locked', web3.utils.fromWei(pledgeInfo[0]));
+        // console.log('Pledge unlocked', web3.utils.fromWei(pledgeInfo[1]));
+        // console.log('Pledge interest', web3.utils.fromWei(pledgeInfo[2]));
+        expectEqualBN(pledgeInfo[0].add(pledgeInfo[1]), pPledge); // Locked + unlocked = full pledge
+        expect(pledgeInfo[1]).to.be.bignumber.gt('0');    // Something is unlocked
+        expect(pledgeInfo[2]).to.be.bignumber.gt('0');    // Some interest receieved
+        expect(pledgeInfo[3]).to.be.bignumber.eq('0');    // Nothing withdrawn yet
+
+        let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), });
+    });
+    it('should fully redeem pledge from fully paid debt (without partial redeem)', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        await lToken.transfer(borrower, debtLAmount.div(new BN(20)), {from: liquidityProvider});    //Transfer 5% of debtLAmount for paying interest
+
+        // Full repayment
+        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        expect(requiredPayments[0]).to.be.bignumber.eq(debtLAmount); // Debt equal to loaned amount   
+        expect(requiredPayments[1]).to.be.bignumber.gt('0');         // Some interest payment required
+        let repayLAmount = requiredPayments[0].add(requiredPayments[1]);
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+
+        //Withdraw pledge
+        let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
+    });
+    it('should fully redeem pledge from fully paid debt (after partial redeem)', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        await lToken.transfer(borrower, debtLAmount.div(new BN(20)), {from: liquidityProvider});    //Transfer 5% of debtLAmount for paying interest
+
+        // Partial repayment
+        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+
+
+        //Withdraw pledge
+        let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
+
+        // Full repayment
+        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        repayLAmount = requiredPayments[0].add(requiredPayments[1]);
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+
+        //Withdraw pledge
+        pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
+    });
     // it('should correctly calculate totalLDebts()', async () => {
     // });
 
@@ -256,7 +351,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
-        let receipt = await loanm.createDebtProposal(debtLAmount, '500', pAmountMinWei, '0', {from: borrower}); //500 means 5 percent
+        let receipt = await loanm.createDebtProposal(debtLAmount, '50', pAmountMinWei, '0', {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporter
