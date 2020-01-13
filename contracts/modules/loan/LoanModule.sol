@@ -273,6 +273,7 @@ contract LoanModule is Module, ILoanModule {
                 pLocked = 0;
                 pUnlocked = dp.pAmount;
             } else {
+                //Add 50% debt, which was previously substracted. Note, pUnlocked is already correctly calculated
                 //pLocked += (proposal.lAmount*dp.pAmount)/(dp.lAmount*2);
                 pLocked = pLocked.add(proposal.lAmount.mul(dp.pAmount).div(dp.lAmount.mul(2)));
             }
