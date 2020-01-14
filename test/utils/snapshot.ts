@@ -4,9 +4,13 @@ export default class Snapshot {
     private provider:any;
     public id = "";
 
-    constructor(provider:any){
+    private constructor(provider:any){
         this.provider = provider;
-        (async () => await this.saveSnapshot());
+    }
+    public static async create(provider:any) {
+        let snap = new Snapshot(provider);
+        await snap.saveSnapshot();
+        return snap;
     }
 
     public async revert() {
