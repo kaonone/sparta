@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
@@ -9,16 +10,19 @@ import "../../common/Module.sol";
 import "./FundsOperatorRole.sol";
 
 contract FundsModule is Module, IFundsModule, FundsOperatorRole {
+    using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    IERC20 public lToken;
-    PToken public pToken;
+    IERC20 public lToken;       //Address of liquid token
+    PToken public pToken;       //Address of PToken
+    uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
 
     function initialize(address _pool, IERC20 _lToken, PToken _pToken) public initializer {
         Module.initialize(_pool);
         FundsOperatorRole.initialize(_msgSender());
         lToken = _lToken;
         pToken = _pToken;
+        //lBalance = lToken.balanceOf(address(this)); //We do not initialize lBalance to preserve it's previous value when updgrade
     }
 
     /**
@@ -27,6 +31,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function depositLTokens(address from, uint256 amount) public onlyFundsOperator {
+        lBalance = lBalance.add(amount);
         require(lToken.transferFrom(from, address(this), amount), "FundsModule: deposit failed");
         emitStatus();
     }
@@ -47,8 +52,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param poolFee Pool fee will be sent to pool owner
      */
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
+        lBalance = lBalance.sub(amount);
         require(lToken.transfer(to, amount), "FundsModule: withdraw failed");
         if (poolFee > 0) {
+            lBalance = lBalance.sub(poolFee);
             require(lToken.transfer(owner(), poolFee), "FundsModule: fee transfer failed");
         }
         emitStatus();
@@ -91,12 +98,22 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Refund liquid tokens accidentially sent directly to this contract
+     * @param to Address of the user, who receives refund
+     * @param amount Amount of tokens to send
+     */
+    function refundLTokens(address to, uint256 amount) public onlyFundsOperator {
+        uint256 realLBalance = lToken.balanceOf(address(this));
+        require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
+        require(lToken.transfer(to, amount), "FundsModule: refund failed");
+    }
+
+    /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
      * @param lAmount Amount of liquid tokens which will be put into the pool
      * @return Amount of pToken which should be sent to sender
      */
     function calculatePoolEnter(uint256 lAmount) public view returns(uint256) {
-        uint256 lBalance = lToken.balanceOf(address(this));
         uint256 lDebts = loanModule().totalLDebts();
         return curveModule().calculateEnter(lBalance, lDebts, lAmount);
     }
@@ -107,7 +124,6 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
-        uint256 lBalance = lToken.balanceOf(address(this));
         return curveModule().calculateExit(lBalance, lAmount);
     }
 
@@ -117,12 +133,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
-        uint256 lBalance = lToken.balanceOf(address(this));
         return curveModule().calculateExitInverse(lBalance, pAmount);
     }
 
     function emitStatus() private {
-        uint256 lBalance = lToken.balanceOf(address(this));
         uint256 lDebts = loanModule().totalLDebts();
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);

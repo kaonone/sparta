@@ -67,23 +67,31 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
 
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let preTestFundsLBalanceWei = await funds.lBalance();
+        expect(preTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
         let amountWei = w3random.interval(1, 100000, 'ether');
         let receipt = await funds.depositLTokens(liquidityProvider, amountWei, {from: tester});
         let expectedPostTestLBalanceWei = preTestLBalanceWei.add(amountWei);
         expectEvent(receipt, 'Status',{'lBalance':expectedPostTestLBalanceWei});
         let postTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let postTestFundsLBalanceWei = await funds.lBalance();
+        expect(postTestFundsLBalanceWei).to.be.bignumber.equal(postTestLBalanceWei);
         expect(postTestLBalanceWei).to.be.bignumber.equal(expectedPostTestLBalanceWei);
     });    
 
     it('should withdraw LTokens', async () => {
-        await lToken.mint(funds.address, web3.utils.toWei('1000'), {from: owner});
+        await funds.depositLTokens(liquidityProvider, web3.utils.toWei('2000'), {from: tester});
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let preTestFundsLBalanceWei = await funds.lBalance();
+        expect(preTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
         let amountWei = w3random.interval(1, 1000, 'ether');
         let feeWei = w3random.interval(1, 10, 'ether');
         let receipt = await  (<any>funds).methods['withdrawLTokens(address,uint256,uint256)'](liquidityProvider, amountWei, feeWei, {from: tester});
         let expectedPostTestLBalanceWei = preTestLBalanceWei.sub(amountWei).sub(feeWei);
         expectEvent(receipt, 'Status',{'lBalance':expectedPostTestLBalanceWei});
         let postTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let postTestFundsLBalanceWei = await funds.lBalance();
+        expect(postTestFundsLBalanceWei).to.be.bignumber.equal(postTestLBalanceWei);
         expect(postTestLBalanceWei).to.be.bignumber.equal(expectedPostTestLBalanceWei);
     });    
     it('should deposit PTokens', async () => {
@@ -117,5 +125,21 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         let receipt = await funds.burnPTokens(liquidityProvider, amountWei, {from: tester});
         let expectedPostTestPBalanceWei = preTestPBalanceWei.sub(amountWei);
         let postTestPBalanceWei = await pToken.balanceOf(funds.address);
+    });    
+    it('should refund LTokens', async () => {
+        await funds.depositLTokens(liquidityProvider, web3.utils.toWei('2000'), {from: tester});
+        let preTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let preTestFundsLBalanceWei = await funds.lBalance();
+        expect(preTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
+        let amountWei = w3random.interval(1, 1000, 'ether');
+        await lToken.mint(funds.address, amountWei, {from: owner});
+        let inTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let inTestFundsLBalanceWei = await funds.lBalance();
+        expect(inTestFundsLBalanceWei.add(amountWei)).to.be.bignumber.equal(inTestLBalanceWei);
+        let receipt = await funds.refundLTokens(tester, amountWei, {from: tester});
+        let postTestLBalanceWei = await lToken.balanceOf(funds.address);
+        let postTestFundsLBalanceWei = await funds.lBalance();
+        expect(postTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
+        expect(postTestLBalanceWei).to.be.bignumber.equal(postTestFundsLBalanceWei);
     });    
 });
