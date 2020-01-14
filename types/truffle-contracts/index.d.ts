@@ -338,8 +338,6 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  MODULE_STORAGE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   getModuleAddress(
     module: string,
     txDetails?: Truffle.TransactionDetails
@@ -721,8 +719,6 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_STORAGE(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   WITHDRAW_FEE_PERCENT(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -4342,8 +4338,6 @@ export interface TokenModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  MODULE_STORAGE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   getModuleAddress(
     module: string,
     txDetails?: Truffle.TransactionDetails
@@ -4418,8 +4412,6 @@ export interface VotesModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_STORAGE(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
