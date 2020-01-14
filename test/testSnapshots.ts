@@ -7,6 +7,8 @@ import {
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
+import Snapshot from "./utils/snapshot";
+
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
@@ -15,7 +17,6 @@ var expect = require("chai").expect;
 const w3random = require("./utils/w3random");
 const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
-const snapshot = require("./utils/snapshot");
 
 
 
@@ -29,7 +30,7 @@ const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
 
 contract("TestSnapshot", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
-    let snapshotId: string;
+    let snap: Snapshot;
 
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
@@ -74,14 +75,13 @@ contract("TestSnapshot", async ([_, owner, liquidityProvider, borrower, ...other
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
         
         //Save snapshot
-        snapshotId = await snapshot.snapshot();
-        console.log('lastSnapshot', snapshotId);
+        snap = new Snapshot(web3.currentProvider);
+        console.log('lastSnapshot', snap.id);
     });
 
     beforeEach(async () => {
-        await snapshot.revert(snapshotId);
-        snapshotId = await snapshot.snapshot();
-        console.log('be lastSnapshot', snapshotId);
+        await snap.revert();
+        console.log('be lastSnapshot', snap.id);
 
         let lb = await lToken.balanceOf(liquidityProvider);
         console.log('be lb', web3.utils.fromWei(lb));
