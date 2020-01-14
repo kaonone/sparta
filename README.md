@@ -36,10 +36,6 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("curve", CurveModule.address)`
-1. FundsModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address, LToken.address, PToken.address)`
-   1. Register in pool: `Pool.set("funds", FundsModule.address)`
 1. LiquidityModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
@@ -48,6 +44,12 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("liquidity", LoanModule.address)`
+1. FundsModule
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address, LToken.address, PToken.address)`
+   1. Register in pool: `Pool.set("funds", FundsModule.address)`
+   1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
+   1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
 
 ## Liquidity
 
