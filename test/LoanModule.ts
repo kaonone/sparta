@@ -308,7 +308,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
         let borrowerLBalance = await lToken.balanceOf(borrower);
         expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
-        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 5% of debtLAmount for paying interest
+        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
 
         // Partial repayment
         await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
