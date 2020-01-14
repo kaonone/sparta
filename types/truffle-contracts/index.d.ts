@@ -2702,8 +2702,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  MODULE_STORAGE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   debtProposals(
     arg0: string | BN,
     arg1: number | BN | string,
