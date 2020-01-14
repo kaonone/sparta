@@ -73,11 +73,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         //Save snapshot
         snap = await Snapshot.create(web3.currentProvider);
-        console.log('Snapshot id', snap.id);
     })
     beforeEach(async () => {
         await snap.revert();
-        console.log('New snapshot id', snap.id);
     });
 
     it('should create several debt proposals and take user pTokens', async () => {
