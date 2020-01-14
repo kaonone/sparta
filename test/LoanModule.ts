@@ -7,6 +7,7 @@ import {
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
+import Snapshot from "./utils/snapshot";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
@@ -26,6 +27,8 @@ const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
 
 contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
+    let snap: Snapshot;
+
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
     let liqm: LiquidityModuleInstance; 
@@ -34,7 +37,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
 
-    beforeEach(async () => {
+    before(async () => {
         //Setup system contracts
         pool = await Pool.new();
         await pool.initialize({from: owner});
@@ -68,7 +71,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
 
+        //Save snapshot
+        snap = new Snapshot(web3.currentProvider);
     })
+    beforeEach(async () => {
+        await snap.revert();
+    });
 
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
