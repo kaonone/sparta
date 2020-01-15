@@ -711,11 +711,11 @@
       }
     },
     "FundsModule": {
-      "address": "0xC74ab363c2302E0B2f957664e2677e33449EA6ba",
-      "constructorCode": "60806040526120a1806100136000396000f3fe",
-      "bodyBytecodeHash": "bb05a4e8ba548230c15f459423aa47aac0a8430745e5916170b0c21f1d927037",
-      "localBytecodeHash": "ddf03d028a875709193b6b6d3135e16f837af41f4f3fcb55973df0c86cb994d0",
-      "deployedBytecodeHash": "ddf03d028a875709193b6b6d3135e16f837af41f4f3fcb55973df0c86cb994d0",
+      "address": "0x75E51b336ab1eC57456E637AAC3Aea149FaC5eA4",
+      "constructorCode": "6080604052612218806100136000396000f3fe",
+      "bodyBytecodeHash": "5286be9b29e6321c6b437334170291507dde25516091f59500e5e7e9a86ea3b4",
+      "localBytecodeHash": "a5170dd325842d647f42895b3ef9ffc32c7515f39a9d1aa1bcdf70e477b07818",
+      "deployedBytecodeHash": "a5170dd325842d647f42895b3ef9ffc32c7515f39a9d1aa1bcdf70e477b07818",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -746,7 +746,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 4929,
+              "astId": 4958,
               "type": "t_mapping<t_bool>",
               "src": "150:32:34"
             }
@@ -764,7 +764,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 6021,
+          "astId": 6050,
           "type": "t_bool",
           "src": "757:24:43"
         },
@@ -772,7 +772,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 6023,
+          "astId": 6052,
           "type": "t_bool",
           "src": "876:25:43"
         },
@@ -780,7 +780,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 6079,
+          "astId": 6108,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:43"
         },
@@ -788,7 +788,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 5270,
+          "astId": 5299,
           "type": "t_address",
           "src": "526:22:37"
         },
@@ -796,7 +796,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 5383,
+          "astId": 5412,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:37"
         },
@@ -812,7 +812,7 @@
           "contract": "FundsOperatorRole",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsOperatorRole.sol",
           "label": "_operators",
-          "astId": 1857,
+          "astId": 1886,
           "type": "t_struct<Roles.Role>",
           "src": "448:29:20"
         },
@@ -820,17 +820,25 @@
           "contract": "FundsModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
           "label": "lToken",
-          "astId": 1488,
+          "astId": 1492,
           "type": "t_address",
-          "src": "568:20:19"
+          "src": "679:20:19"
         },
         {
           "contract": "FundsModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
           "label": "pToken",
-          "astId": 1490,
+          "astId": 1494,
           "type": "t_address",
-          "src": "594:20:19"
+          "src": "737:20:19"
+        },
+        {
+          "contract": "FundsModule",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
+          "label": "lBalance",
+          "astId": 1496,
+          "type": "t_uint256",
+          "src": "789:23:19"
         }
       ],
       "warnings": {
@@ -838,7 +846,31 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "FundsOperatorRole",
+            "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsOperatorRole.sol",
+            "label": "_operators",
+            "astId": 1886,
+            "type": "t_struct<Roles.Role>",
+            "src": "448:29:20"
+          }
+        ],
+        "storageDiff": [
+          {
+            "action": "append",
+            "updated": {
+              "index": 9,
+              "contract": "FundsModule",
+              "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
+              "label": "lBalance",
+              "astId": 1496,
+              "type": "t_uint256",
+              "src": "789:23:19"
+            }
+          }
+        ]
       }
     },
     "LiquidityModule": {
@@ -1228,7 +1260,7 @@
       {
         "address": "0x82A0dcCA7F14A8eF77C8E8CC263BE6A030494e07",
         "version": "1.0.0",
-        "implementation": "0xC74ab363c2302E0B2f957664e2677e33449EA6ba",
+        "implementation": "0x75E51b336ab1eC57456E637AAC3Aea149FaC5eA4",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
