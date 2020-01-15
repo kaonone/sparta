@@ -22,7 +22,7 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 
 ## Diagrams
 ![Modules](/docs/diagram_modules.jpg)
-![User Interactions](/docs/diagram_user_interactions.jpg.jpg)
+![User Interactions](/docs/diagram_user_interactions.jpg)
 
 ## Deployment
 
