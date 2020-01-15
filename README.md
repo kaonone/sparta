@@ -21,7 +21,9 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 * [Truffle](https://www.trufflesuite.com/)
 
 ## Diagrams
+### Modules
 ![Modules](/docs/diagram_modules.jpg)
+### User Interactions
 ![User Interactions](/docs/diagram_user_interactions.jpg)
 
 ## Deployment
