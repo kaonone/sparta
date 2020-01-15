@@ -102,7 +102,7 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 #### Required conditions:
 * Loan proposal created
 * Loan proposal not yet executed
-* Loan proposal is not yet fully filled: `FundsModule.getRequiredPledge(borrower, proposal) > 0`
+* Loan proposal is not yet fully filled: `LoanModule.getRequiredPledge(borrower, proposal) > 0`
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The responce has 3 values, use first one.
