@@ -25,18 +25,30 @@ declare global {
       require(name: "Factory"): TruffleContracts.FactoryContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
       require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
+      require(
+        name: "FundsOperatorRole"
+      ): TruffleContracts.FundsOperatorRoleContract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
+      require(
+        name: "ILiquidityModule"
+      ): TruffleContracts.ILiquidityModuleContract;
+      require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
+      require(
+        name: "LiquidityModule"
+      ): TruffleContracts.LiquidityModuleContract;
+      require(name: "LoanModule"): TruffleContracts.LoanModuleContract;
+      require(name: "LoanModuleStub"): TruffleContracts.LoanModuleStubContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Module"): TruffleContracts.ModuleContract;
+      require(name: "ModuleNames"): TruffleContracts.ModuleNamesContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
-      require(
-        name: "TestLiquidToken"
-      ): TruffleContracts.TestLiquidTokenContract;
+      require(name: "Role"): TruffleContracts.RoleContract;
+      require(name: "StorageModule"): TruffleContracts.StorageModuleContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;

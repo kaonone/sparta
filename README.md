@@ -7,16 +7,24 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 
 # Testnet (Rinkeby) deployment 
-* FreeDAI: `0x10201BFB5E0C85f890f2c79CD1C93cb5F31e33e5`
-* PToken: `0xB74648101C5bD091A0b6978Bf3D51Fc4e6dc6c16`
-* Pool: `0x3dd22a8f1d8d43a7ad3b555248e496c113b0b172`
-* CurveModule: `0xbCfE092478a8F99b1C1905F7130fe70B9E1f02C4`
-* FundsModule: `0x3501d2c95F8dB9A94E0f0BCD15E2a440C71ceaE4`
+* FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
+* PToken: `0x671e51CAAAde72DfD6B6d2dEDFa102368dE74c84`
+* Pool: `0x47c1003f9542FF4fBa23d2E17f8545EDe7D6949a`
+* CurveModule: `0xC8584d1D606826Ced02c44Dc17B48f34B9Ce5d05`
+* FundsModule: `0x82A0dcCA7F14A8eF77C8E8CC263BE6A030494e07`
+* LiquidityModule: `0x2E506DaC3563CCCDB6890f20BEBf681CA5F33190`
+* LoanModule: `0x1Efcb2B253a9155Be36AddF5EaEd7f644C9C09fd`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
 * [Openzepplin Contracts](https://openzeppelin.com/contracts/)
 * [Truffle](https://www.trufflesuite.com/)
+
+## Diagrams
+### Modules
+![Modules](/docs/diagram_modules.jpg)
+### User Interactions
+![User Interactions](/docs/diagram_user_interactions.jpg)
 
 ## Deployment
 
@@ -29,15 +37,25 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
    1. Call `initialize()`
 1. Pool
    1. Deploy proxy and contract instance
-   1. Call `initialize`
+   1. Call `initialize()`
 1. CurveModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("curve", CurveModule.address)`
+1. LiquidityModule
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("liquidity", LiquidityModule.address)`
+1. LoanModule
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("loan", LoanModule.address)`
 1. FundsModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address, LToken.address, PToken.address)`
    1. Register in pool: `Pool.set("funds", FundsModule.address)`
+   1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
+   1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
 
 ## Liquidity
 
@@ -50,7 +68,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 1. Call `FundsModule.calculatePoolEnter(lAmount)` to determine expeсted PTK amount (`pAmount`)
 1. Determine minimum acceptable amount of PTK `pAmountMin <= pAmount`, which user expects to get when deposit `lAmount` of DAI. Zero value is allowed.
 1. Call `LToken.approve(FundsModule.address, lAmount)` to allow exchange
-1. Call `FundsModule.deposit(lAmount, pAmountMin)` to execute exchange
+1. Call `LiquidityModule.deposit(lAmount, pAmountMin)` to execute exchange
 
 ### Withdraw
 #### Required data:
@@ -62,7 +80,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected amount of DAI (`lAmount`). The response has 3 values, use the second one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI , which user expects to get when deposit `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow exchange
-1. Call `FundsModule.withdraw(pAmount, lAmountMin)` to execute exchange
+1. Call `LiquidityModule.withdraw(pAmount, lAmountMin)` to execute exchange
 
 
 ## Credits
@@ -77,7 +95,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
-1. Call `FundsModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
+1. Call `LoanModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
 #### Data required for future calls:
 * Proposal index: `proposalIndex` from event `DebtProposalCreated`.
 
@@ -90,14 +108,14 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 #### Required conditions:
 * Loan proposal created
 * Loan proposal not yet executed
-* Loan proposal is not yet fully filled: `FundsModule.getRequiredPledge(borrower, proposal) > 0`
+* Loan proposal is not yet fully filled: `LoanModule.getRequiredPledge(borrower, proposal) > 0`
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 
 #### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
-1. Call `FundsModule.addPledge(borrower, proposal, pAmount, lAmountMin)` to execute operation.
+1. Call `LoanModule.addPledge(borrower, proposal, pAmount, lAmountMin)` to execute operation.
 
 ### Withdraw Pledge
 #### Required data:
@@ -110,7 +128,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 * Loan proposal not yet executed
 * User pledge amount >= `pAmount`
 #### Workflow:
-1. Call FundsModule.withdrawPledge(borrower, proposal, pAmount) to execute operation.
+1. Call `LoanModule.withdrawPledge(borrower, proposal, pAmount)` to execute operation.
 
 ### Loan issuance
 #### Required data:
@@ -118,10 +136,10 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 #### Required conditions:
 * Loan proposal created, user (transaction sender) is the `borrower`
 * Loan proposal not yet executed
-* Loan proposal is fully funded: `FundsModule.getRequiredPledge(borrower, proposal) == 0`
+* Loan proposal is fully funded: `LoanModule.getRequiredPledge(borrower, proposal) == 0`
 * Pool has enough liquidity
 #### Workflow:
-1. Call `FundsModule.executeDebtProposal(proposal)` to execute operation.
+1. Call `LoanModule.executeDebtProposal(proposal)` to execute operation.
 #### Data required for future calls:
 * Loan index: `debtIdx` from event `DebtProposalExecuted`.
 
@@ -134,5 +152,5 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 * Loan is not yet fully repaid
 #### Workflow:
 1. Call `LToken.approve(FundsModule.address, lAmount)` to allow operation.
-1. Call `FundsModule.repay(debt, lAmount)` to execute operation.
+1. Call `LoanModule.repay(debt, lAmount)` to execute operation.
 

@@ -22,7 +22,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         withdrawFee = withdrawFeePercent/percentDivider;
 
         curve = await BondingCurve.new();
-        curve.initialize(curveA, curveB, withdrawFeePercent);
+        await curve.initialize(curveA, curveB, withdrawFeePercent);
     });
 
     it("should correctly calculate curve", async () => {
@@ -35,6 +35,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let expected = curveFunction(s);
         //console.log("expected = ", expected);
         //expect(roundP(result)).to.equal(roundP(expected));
+        if(result == 0){
+            console.log('zero result', result, resultWei.toString(), s, sWei.toString(), expected);
+        }
         expectEqualFloat(result, expected);
     });
     it("should correctly calculate inverse curve", async () => {
@@ -46,6 +49,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         //console.log("result = ", resultWei.toString(), result);
         let expected = inverseCurveFunction(x);
         //console.log("expected = ", expected);
+        if(result == 0){
+            console.log('zero result', result, resultWei.toString(), x, xWei.toString(), expected);
+        }
         expectEqualFloat(result, expected, -4); //TODO: Accuracy here is sometimes very bad
     });
     it("should match curve and inverse curve", async () => {
@@ -53,6 +59,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
             let xWei = w3random.interval(1, 100000, 'ether');
             let cWei = await curve.curveFunction(xWei);
             let icWei = await curve.inverseCurveFunction(cWei);
+            if(icWei.eq(new BN('0'))){
+                console.log('zero icWei', icWei.toString(), cWei.toString(), xWei.toString());
+            }
             expectEqualBN(icWei, xWei);
 
             let x = Number(web3.utils.fromWei(xWei));
@@ -128,6 +137,9 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let pAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
+        if(pAmount == 0){
+            console.log('zero pAmount', expected, pAmount, pAmountWei.toString(), lAmount, lAmountWei.toString(), liquidAssets, liquidAssetsWei.toString());
+        }
         expectEqualFloat(pAmount, expected);
     });
 

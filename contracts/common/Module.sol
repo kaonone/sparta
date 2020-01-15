@@ -2,15 +2,16 @@ pragma solidity ^0.5.12;
 
 
 import "./Base.sol";
+import "../core/ModuleNames.sol";
 
 /*
     Base contract for all modules
 */
-contract Module is Base {
+contract Module is Base, ModuleNames {
     address public pool;
 
-    function initialize(address sender, address _pool) public initializer {
-        Base.initialize(sender);
+    function initialize(address _pool) public initializer {
+        Base.initialize();
         setPool(_pool);
     }
 
@@ -19,7 +20,7 @@ contract Module is Base {
     }
 
     function getModuleAddress(string memory module) public view returns(address){
-        require(pool != ZERO_ADDRESS, "Base: no pool");
+        require(pool != ZERO_ADDRESS, "Module: no pool");
         (bool success, bytes memory result) = pool.staticcall(abi.encodeWithSignature("get(string)", module));
         
         //Forward error from Pool contract
@@ -28,7 +29,7 @@ contract Module is Base {
         }
 
         address moduleAddress = abi.decode(result, (address));
-        require(moduleAddress != ZERO_ADDRESS, "Base: requested module not found");
+        require(moduleAddress != ZERO_ADDRESS, "Module: requested module not found");
         return moduleAddress;
     }
 

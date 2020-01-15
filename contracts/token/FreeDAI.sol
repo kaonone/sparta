@@ -9,8 +9,8 @@ import "../common/Base.sol";
  */
 contract FreeDAI is Base, ERC20Detailed, ERC20Burnable {
 
-    function initialize(address sender) public initializer {
-        Base.initialize(sender);
+    function initialize() public initializer {
+        Base.initialize();
         ERC20Detailed.initialize("Free DAI for tests", "fDAI", 18);
     }
 

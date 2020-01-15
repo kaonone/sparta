@@ -1,10 +1,12 @@
 pragma solidity ^0.5.12;
 
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 import "../../utils/ISQRT.sol";
 
 contract BondingCurve is Initializable  {
     using ISQRT for uint256;
+    using SafeMath for uint256;
 
     uint256 private constant PERCENT_DIVIDER = 100;
     // Original curve formula uses float numbers to represent amounts. 
@@ -45,7 +47,8 @@ contract BondingCurve is Initializable  {
         uint256 debtCommitments,
         uint256 lAmount
     ) public view returns (uint256) {
-        return curveFunction(liquidAssets+debtCommitments+lAmount) - curveFunction(liquidAssets+debtCommitments);
+        uint256 liquidityWithDebt = liquidAssets.add(debtCommitments);
+        return curveFunction(liquidityWithDebt.add(lAmount)).sub(curveFunction(liquidityWithDebt));
     }
 
     /**
@@ -61,9 +64,8 @@ contract BondingCurve is Initializable  {
         uint256 lAmount
     ) public view returns (uint256) {
         uint256 fL = curveFunction(liquidAssets);
-        uint256 fLW = curveFunction(liquidAssets - lAmount);
-        assert(fL >= fLW);
-        return fL - fLW;
+        uint256 fLW = curveFunction(liquidAssets.sub(lAmount));
+        return fL.sub(fLW);
     }
 
     /**
@@ -83,12 +85,14 @@ contract BondingCurve is Initializable  {
         uint256 pAmount
     ) public view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP) {
         uint256 x = curveFunction(liquidAssets);
-        uint256 pdiff = x - pAmount;
+        uint256 pdiff = x.sub(pAmount);
         uint256 ldiff = inverseCurveFunction(pdiff);
         assert(liquidAssets >= ldiff);
-        withdraw = liquidAssets - ldiff;
-        withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
-        withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
+        withdraw = liquidAssets.sub(ldiff);
+        //withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
+        //withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
+        withdrawU = withdraw.mul(PERCENT_DIVIDER.sub(withdrawFeePercent)).div(PERCENT_DIVIDER);
+        withdrawP = withdraw.mul(withdrawFeePercent).div(PERCENT_DIVIDER);
     }
 
     /**
@@ -119,8 +123,10 @@ contract BondingCurve is Initializable  {
      * @return Value of curve at point s
      */
     function curve(uint256 a, uint256 b, uint256 s) private pure returns(uint256){
-        uint256 d = FIX2 * (a*a) + 4 * FIX * b * s;
-        return (d.sqrt() - FIX*a)/2;
+        //uint256 d = FIX2 * (a*a) + 4 * FIX * b * s;
+        //return (d.sqrt() - FIX*a)/2;
+        uint256 d = FIX2.mul(a).mul(a).add(FIX.mul(4).mul(b).mul(s));
+        return d.sqrt().sub(FIX.mul(a)).div(2);
     }
 
     /**
@@ -128,7 +134,8 @@ contract BondingCurve is Initializable  {
      * S = g(x)=(x^2+ax)/b
      */
     function inverseCurve(uint256 a, uint256 b, uint256 x) private pure returns(uint256){
-        return (x*x + FIX*a*x)/FIX*b;
+        //return (x*x + FIX*a*x)/FIX*b;
+        return x.mul(x).add(FIX.mul(a).mul(x)).div(FIX.mul(b));
     }
 
 

@@ -13,7 +13,7 @@ contract("FreeDAI", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         token = await FreeDAI.new();
-        await (<any> token).methods['initialize(address)'](owner, {from: owner});
+        await (<any> token).methods['initialize()']({from: owner});
     });
 
     it("should be mintable by anyone", async () => {

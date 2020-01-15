@@ -17,7 +17,7 @@ function expectEqualBN(actual, expected, decimals=18, precision=-7) {
     //console.log("diff", diff.toString());
     let accuracy = (new BN(10)).pow(new BN(decimals+precision));
     //console.log("accuracy", accuracy.toString());
-    assert(diff.lte(accuracy), actual.toString()+' should be equal to '+expected.toString()+' with accuracy '+accuracy.toString);
+    assert(diff.lte(accuracy), actual.toString()+' should be equal to '+expected.toString()+' with accuracy '+accuracy.toString());
 }
 
 module.exports = expectEqualBN;

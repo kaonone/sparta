@@ -12,7 +12,7 @@ contract("PoolFactory", async ([_, owner, ...otherAccounts]) => {
   
   beforeEach(async () => {
       poolFactory = await PoolFactory.new();
-      await poolFactory.initialize(owner, {from: owner});
+      await poolFactory.initialize({from: owner});
       await poolFactory.create("creditPool", "Greate Pool");
       const poolAddress = await poolFactory.getLastContract();
       pool = await Pool.at(poolAddress)

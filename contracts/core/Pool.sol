@@ -26,8 +26,8 @@ contract Pool is Base, CoreInterface {
      */
     mapping(address => string) public abiOf;
     
-    function initialize(address sender)public initializer {
-        Base.initialize(sender);
+    function initialize()public initializer {
+        Base.initialize();
         founder = _msgSender();
     }
 
