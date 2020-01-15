@@ -20,6 +20,10 @@ AkropolisOS is a framework for DAO that helps its members earn high-interest rat
 * [Openzepplin Contracts](https://openzeppelin.com/contracts/)
 * [Truffle](https://www.trufflesuite.com/)
 
+## Diagrams
+![Modules](/docs/diagram_modules.jpg)
+![User Interactions](/docs/diagram_user_interactions.jpg.jpg)
+
 ## Deployment
 
 ### Required data:
