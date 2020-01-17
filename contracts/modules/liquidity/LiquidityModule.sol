@@ -21,9 +21,9 @@ contract LiquidityModule is Module, ILiquidityModule {
     function deposit(uint256 lAmount, uint256 pAmountMin) public {
         require(lAmount > 0, "LiquidityModule: amount should not be 0");
         require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Deposits forbidden if address has active debts");
-        fundsModule().depositLTokens(_msgSender(), lAmount);
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
         require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
+        fundsModule().depositLTokens(_msgSender(), lAmount);
         fundsModule().mintPTokens(_msgSender(), pAmount);
         emit Deposit(_msgSender(), lAmount, pAmount);
     }

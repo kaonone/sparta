@@ -101,7 +101,6 @@ contract LoanModule is Module, ILoanModule {
             pAmount = calculatePoolExit(lAmount);
             assert(pAmount <= pAmountOld);
         } 
-        fundsModule().depositPTokens(_msgSender(), pAmount);
         if (p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
             p.supporters.push(_msgSender());
             p.pledges[_msgSender()] = DebtPledge({
@@ -113,6 +112,7 @@ contract LoanModule is Module, ILoanModule {
             p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
             p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
         }
+        fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
@@ -185,8 +185,6 @@ contract LoanModule is Module, ILoanModule {
         uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
         require(lAmount <= d.lAmount.add(lInterest), "LoanModule: can not repay more then debt.lAmount + interest");
 
-        fundsModule().depositLTokens(_msgSender(), lAmount); //TODO Think of reentrancy here. Which operation should be first?
-
         uint256 actualInterest;
         if (lAmount < lInterest) {
             uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
@@ -201,11 +199,11 @@ contract LoanModule is Module, ILoanModule {
             actualInterest = lInterest;
         }
 
-        //Mint pTokens to pay interest for supporters
         uint256 pInterest = calculatePoolEnter(actualInterest);
-        fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
-
         d.pInterest = d.pInterest.add(pInterest);
+
+        fundsModule().depositLTokens(_msgSender(), lAmount); 
+        fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
     }
