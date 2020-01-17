@@ -19,11 +19,11 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @param pAmountMin Minimal amout of pTokens suitable for sender
      */ 
     function deposit(uint256 lAmount, uint256 pAmountMin) public {
-        require(lAmount > 0, "FundsModule: amount should not be 0");
-        require(!loanModule().hasActiveDebts(_msgSender()), "FundsModule: Deposits forbidden if address has active debts");
-        fundsModule().depositLTokens(_msgSender(), lAmount);
+        require(lAmount > 0, "LiquidityModule: amount should not be 0");
+        require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Deposits forbidden if address has active debts");
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
-        require(pAmount >= pAmountMin, "FundsModule: Minimal amount is too high");
+        require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
+        fundsModule().depositLTokens(_msgSender(), lAmount);
         fundsModule().mintPTokens(_msgSender(), pAmount);
         emit Deposit(_msgSender(), lAmount, pAmount);
     }
@@ -34,10 +34,10 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public {
-        require(pAmount > 0, "FundsModule: amount should not be 0");
-        require(!loanModule().hasActiveDebts(_msgSender()), "FundsModule: Withdraws forbidden if address has active debts");
+        require(pAmount > 0, "LiquidityModule: amount should not be 0");
+        require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Withdraws forbidden if address has active debts");
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
-        require(lAmountU >= lAmountMin, "FundsModule: Minimal amount is too high");
+        require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         fundsModule().burnPTokens(_msgSender(), pAmount);
         fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);

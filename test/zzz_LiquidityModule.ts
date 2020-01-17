@@ -107,7 +107,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
         expectRevert(
             liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
-            'FundsModule: Deposits forbidden if address has active debts'
+            'LiquidityModule: Deposits forbidden if address has active debts'
         );
     });
     it('should not allow withdraw if there are debts', async () => {
@@ -122,7 +122,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
         expectRevert(
             liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
-            'FundsModule: Withdraws forbidden if address has active debts'
+            'LiquidityModule: Withdraws forbidden if address has active debts'
         );
     });
 
