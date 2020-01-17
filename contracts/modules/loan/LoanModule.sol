@@ -13,6 +13,9 @@ contract LoanModule is Module, ILoanModule {
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
     uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;  
+
     struct DebtPledge {
         uint256 senderIndex;  //Index of pledge sender in the array
         uint256 lAmount;      //Amount of liquid tokens, covered by this pledge
@@ -56,7 +59,8 @@ contract LoanModule is Module, ILoanModule {
         require(debtLAmount > 0, "LoanModule: DebtProposal amount should not be 0");
         (uint256 clAmount, , ) = calculatePoolExitInverse(pAmount);
         require(clAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
-        require(clAmount >= debtLAmount/2, "LoanModule: Less then 50% of loan is covered by borrower");
+        uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
+        require(clAmount >= fullCollateralLAmount/2, "LoanModule: Less then 50% of collateral is covered by borrower");
 
         fundsModule().depositPTokens(_msgSender(), pAmount);
         debtProposals[_msgSender()].push(DebtProposal({
@@ -293,7 +297,8 @@ contract LoanModule is Module, ILoanModule {
             address s = p.supporters[i];
             covered = covered.add(p.pledges[s].lAmount);
         }
-        return  p.lAmount.sub(covered);
+        uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
+        return  fullCollateralLAmount.sub(covered);
     }
 
     /**

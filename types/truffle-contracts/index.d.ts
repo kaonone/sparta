@@ -2731,6 +2731,12 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 export interface LoanModuleInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
+  COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
