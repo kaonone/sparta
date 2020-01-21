@@ -31,7 +31,7 @@ report-type:
 ```
 
 #### report
-Stores current state of the contract(s) defined in `report-type` in a log file.
+Store current state of the contract(s) defined in `report-type` to a log file.
 ```yaml
 report: myReportType
 ``` 
