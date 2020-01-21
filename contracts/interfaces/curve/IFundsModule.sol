@@ -77,5 +77,10 @@ interface IFundsModule {
      */
     function calculatePoolExitInverse(uint256 pAmount) external view returns(uint256, uint256, uint256);
 
+    /**
+     * @notice Current pool liquidity
+     * @return available liquidity
+     */
+    function lBalance() external view returns(uint256);
 
 }
