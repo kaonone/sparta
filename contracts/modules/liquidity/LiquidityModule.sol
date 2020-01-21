@@ -38,6 +38,8 @@ contract LiquidityModule is Module, ILiquidityModule {
         require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Withdraws forbidden if address has active debts");
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
+        uint256 availableLiquidity = fundsModule().lBalance();
+        require(lAmountT <= availableLiquidity, "LiquidityModule: not enough liquidity");
         fundsModule().burnPTokens(_msgSender(), pAmount);
         fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
