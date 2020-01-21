@@ -56,6 +56,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
    1. Register in pool: `Pool.set("funds", FundsModule.address)`
    1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
    1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
+   1. Add FundsModule as a Minter for PToken: `PToken.addMinter(FundsModule.address)`
 
 ## Liquidity
 
