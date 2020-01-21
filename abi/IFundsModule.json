@@ -62,11 +62,6 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "poolFee",
-        "type": "uint256"
       }
     ],
     "name": "withdrawLTokens",
@@ -86,6 +81,11 @@
       {
         "internalType": "uint256",
         "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "poolFee",
         "type": "uint256"
       }
     ],
@@ -238,6 +238,21 @@
         "name": "",
         "type": "uint256"
       },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "lBalance",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "",
