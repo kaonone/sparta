@@ -79,6 +79,7 @@ contract LoanModule is Module, ILoanModule {
             pAmount: pAmount
         });
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
+        return proposalIndex;
     }
 
     /**
@@ -173,6 +174,7 @@ contract LoanModule is Module, ILoanModule {
         lDebts = lDebts.add(p.lAmount);
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
+        return debtIdx;
     }
 
     /**
