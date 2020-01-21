@@ -91,8 +91,8 @@ contract BondingCurve is Initializable  {
         withdraw = liquidAssets.sub(ldiff);
         //withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
         //withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
-        withdrawU = withdraw.mul(PERCENT_DIVIDER.sub(withdrawFeePercent)).div(PERCENT_DIVIDER);
         withdrawP = withdraw.mul(withdrawFeePercent).div(PERCENT_DIVIDER);
+        withdrawU = withdraw.sub(withdrawP);
     }
 
     /**
