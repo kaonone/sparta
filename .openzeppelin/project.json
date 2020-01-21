@@ -5,9 +5,9 @@
     "PToken": "PToken",
     "Pool": "Pool",
     "CurveModule": "CurveModule",
-    "FundsModule": "FundsModule",
     "LiquidityModule": "LiquidityModule",
-    "LoanModule": "LoanModule"
+    "LoanModule": "LoanModule",
+    "FundsModule": "FundsModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",

@@ -2288,25 +2288,21 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     (
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2417,6 +2413,8 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
@@ -2730,6 +2728,12 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
 export interface LoanModuleInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 

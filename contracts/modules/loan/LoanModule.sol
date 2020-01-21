@@ -13,6 +13,9 @@ contract LoanModule is Module, ILoanModule {
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
     uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;  
+
     struct DebtPledge {
         uint256 senderIndex;  //Index of pledge sender in the array
         uint256 lAmount;      //Amount of liquid tokens, covered by this pledge
@@ -53,10 +56,11 @@ contract LoanModule is Module, ILoanModule {
      * @return Index of created DebtProposal
      */
     function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) public returns(uint256){
-        require(debtLAmount > 0, "FundsModule: DebtProposal amount should not be 0");
+        require(debtLAmount > 0, "LoanModule: DebtProposal amount should not be 0");
         (uint256 clAmount, , ) = calculatePoolExitInverse(pAmount);
-        require(clAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
-        require(clAmount >= debtLAmount/2, "FundsModule: Less then 50% of loan is covered by borrower");
+        require(clAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
+        uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
+        require(clAmount >= fullCollateralLAmount/2, "LoanModule: Less then 50% of collateral is covered by borrower");
 
         fundsModule().depositPTokens(_msgSender(), pAmount);
         debtProposals[_msgSender()].push(DebtProposal({
@@ -75,6 +79,7 @@ contract LoanModule is Module, ILoanModule {
             pAmount: pAmount
         });
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
+        return proposalIndex;
     }
 
     /**
@@ -89,19 +94,18 @@ contract LoanModule is Module, ILoanModule {
      */
     function addPledge(address borrower, uint256 proposal, uint256 pAmount, uint256 lAmountMin) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
-        require(!p.executed, "FundsModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(!p.executed, "LoanModule: DebtProposal is already executed");
         (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount);
-        require(lAmount >= lAmountMin, "FundsModule: Minimal amount is too high");
+        require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
         uint256 rlAmount= getRequiredPledge(borrower, proposal);
-        require(rlAmount > 0, "FundsModule: DebtProposal is already funded");
+        require(rlAmount > 0, "LoanModule: DebtProposal is already funded");
         if (lAmount > rlAmount) {
             uint256 pAmountOld = pAmount;
             lAmount = rlAmount;
             pAmount = calculatePoolExit(lAmount);
             assert(pAmount <= pAmountOld);
         } 
-        fundsModule().depositPTokens(_msgSender(), pAmount);
         if (p.pledges[_msgSender()].senderIndex == 0 && _msgSender() != borrower) {
             p.supporters.push(_msgSender());
             p.pledges[_msgSender()] = DebtPledge({
@@ -113,6 +117,7 @@ contract LoanModule is Module, ILoanModule {
             p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
             p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
         }
+        fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
@@ -124,10 +129,10 @@ contract LoanModule is Module, ILoanModule {
      */
     function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public {
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
-        require(!p.executed, "FundsModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(!p.executed, "LoanModule: DebtProposal is already executed");
         DebtPledge storage pledge = p.pledges[_msgSender()];
-        require(pAmount <= pledge.pAmount, "FundsModule: Can not withdraw more then locked");
+        require(pAmount <= pledge.pAmount, "LoanModule: Can not withdraw more then locked");
         uint256 lAmount; 
         if (pAmount == pledge.pAmount) {
             lAmount = pledge.lAmount;
@@ -137,7 +142,7 @@ contract LoanModule is Module, ILoanModule {
             assert(lAmount < pledge.lAmount);
         }
         if (_msgSender() == borrower) {
-            require(pledge.lAmount.sub(lAmount) >= p.lAmount/2, "FundsModule: Borrower's pledge should cover at least half of debt amount");
+            require(pledge.lAmount.sub(lAmount) >= p.lAmount/2, "LoanModule: Borrower's pledge should cover at least half of debt amount");
         }
         pledge.pAmount = pledge.pAmount.sub(pAmount);
         pledge.lAmount = pledge.lAmount.sub(lAmount);
@@ -153,9 +158,9 @@ contract LoanModule is Module, ILoanModule {
      */
     function executeDebtProposal(uint256 proposal) public returns(uint256){
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
-        require(getRequiredPledge(_msgSender(), proposal) == 0, "FundsModule: DebtProposal is not fully funded");
-        require(!p.executed, "FundsModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(getRequiredPledge(_msgSender(), proposal) == 0, "LoanModule: DebtProposal is not fully funded");
+        require(!p.executed, "LoanModule: DebtProposal is already executed");
         debts[_msgSender()].push(Debt({
             proposal: proposal,
             lAmount: p.lAmount,
@@ -169,6 +174,7 @@ contract LoanModule is Module, ILoanModule {
         lDebts = lDebts.add(p.lAmount);
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
+        return debtIdx;
     }
 
     /**
@@ -178,14 +184,12 @@ contract LoanModule is Module, ILoanModule {
      */
     function repay(uint256 debt, uint256 lAmount) public {
         Debt storage d = debts[_msgSender()][debt];
-        require(d.lAmount > 0, "FundsModule: Debt is already fully repaid"); //Or wrong debt index
+        require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
-        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
         uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
-        require(lAmount <= d.lAmount.add(lInterest), "FundsModule: can not repay more then debt.lAmount + interest");
-
-        fundsModule().depositLTokens(_msgSender(), lAmount); //TODO Think of reentrancy here. Which operation should be first?
+        require(lAmount <= d.lAmount.add(lInterest), "LoanModule: can not repay more then debt.lAmount + interest");
 
         uint256 actualInterest;
         if (lAmount < lInterest) {
@@ -201,11 +205,11 @@ contract LoanModule is Module, ILoanModule {
             actualInterest = lInterest;
         }
 
-        //Mint pTokens to pay interest for supporters
         uint256 pInterest = calculatePoolEnter(actualInterest);
-        fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
-
         d.pInterest = d.pInterest.add(pInterest);
+
+        fundsModule().depositLTokens(_msgSender(), lAmount); 
+        fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
     }
@@ -219,7 +223,7 @@ contract LoanModule is Module, ILoanModule {
         (, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn) = calculatePledgeInfo(borrower, debt, _msgSender());
 
         uint256 pUnlockedPlusInterest = pUnlocked.add(pInterest);
-        require(pUnlockedPlusInterest > pWithdrawn, "FundsModule: nothing to withdraw");
+        require(pUnlockedPlusInterest > pWithdrawn, "LoanModule: nothing to withdraw");
         uint256 pAmount = pUnlockedPlusInterest.sub(pWithdrawn);
 
         Debt storage dbt = debts[borrower][debt];
@@ -243,7 +247,7 @@ contract LoanModule is Module, ILoanModule {
     returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
         DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
-        require(proposal.lAmount > 0 && proposal.executed, "FundsModule: DebtProposal not found");
+        require(proposal.lAmount > 0 && proposal.executed, "LoanModule: DebtProposal not found");
 
         DebtPledge storage dp = proposal.pledges[supporter];
 
@@ -295,7 +299,8 @@ contract LoanModule is Module, ILoanModule {
             address s = p.supporters[i];
             covered = covered.add(p.pledges[s].lAmount);
         }
-        return  p.lAmount.sub(covered);
+        uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
+        return  fullCollateralLAmount.sub(covered);
     }
 
     /**
@@ -310,7 +315,7 @@ contract LoanModule is Module, ILoanModule {
             return (0, 0);
         }
         DebtProposal storage p = debtProposals[borrower][d.proposal];
-        require(p.lAmount > 0, "FundsModule: DebtProposal not found");
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
         uint256 interest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
         return (d.lAmount, interest);
@@ -347,7 +352,7 @@ contract LoanModule is Module, ILoanModule {
      * @param currentPayment Timestamp of current payment
      */
     function calculateInterestPayment(uint256 debtLAmount, uint256 interest, uint256 prevPayment, uint currentPayment) public pure returns(uint256){
-        require(prevPayment <= currentPayment, "FundsModule: prevPayment should be before currentPayment");
+        require(prevPayment <= currentPayment, "LoanModule: prevPayment should be before currentPayment");
         uint256 annualInterest = debtLAmount.mul(interest).div(INTEREST_MULTIPLIER);
         uint256 time = currentPayment.sub(prevPayment);
         return time.mul(annualInterest).div(ANNUAL_SECONDS);

@@ -4,9 +4,9 @@ pragma solidity ^0.5.12;
 import "./Base.sol";
 import "../core/ModuleNames.sol";
 
-/*
-    Base contract for all modules
-*/
+/**
+ * Base contract for all modules
+ */
 contract Module is Base, ModuleNames {
     address public pool;
 

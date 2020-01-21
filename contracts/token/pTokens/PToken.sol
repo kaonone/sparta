@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burn
 import "../../common/Base.sol";
 
 /**
- * @notice PToken contract mock
+ * @notice Implementation of Akropolis Pool Token
  */
 contract PToken is Base, ERC20Detailed, ERC20Mintable, ERC20Burnable {
 
