@@ -102,6 +102,32 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         expect(pBalance2).to.be.bignumber.lt(pBalance);
     });
 
+    it('should allow withdraw all minted PTK', async () => {
+        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+
+        let allPTokens = await pToken.totalSupply();
+        let allLPPtokens = await pToken.balanceOf(liquidityProvider);
+        expect(allLPPtokens).to.be.bignumber.eq(allPTokens);
+        //console.log('allPTokens', allPTokens.toString(), web3.utils.fromWei(allPTokens));
+        let poolLTokens = await lToken.balanceOf(funds.address);
+        //console.log('poolLTokens', poolLTokens.toString(), web3.utils.fromWei(poolLTokens));
+        let ptkForFullExit = await funds.calculatePoolExit(poolLTokens);
+        //console.log('ptkForFullExit', ptkForFullExit.toString(), web3.utils.fromWei(ptkForFullExit));
+        expectEqualBN(ptkForFullExit, allPTokens); //Actual ptkForFullExit may be not accurate, but we need to use this value for withdraw
+
+        let expectedLTokens = await funds.calculatePoolExitInverse(ptkForFullExit);
+        //console.log('expectedLTokens_Total', expectedLTokens[0].toString(), web3.utils.fromWei(expectedLTokens[0]));
+        expect(expectedLTokens[0]).to.be.bignumber.eq(poolLTokens);
+        //console.log('expectedLTokens_User', expectedLTokens[1].toString(), web3.utils.fromWei(expectedLTokens[1]));
+        //console.log('expectedLTokens_Pool', expectedLTokens[2].toString(), web3.utils.fromWei(expectedLTokens[2]));
+        expect(expectedLTokens[1].add(expectedLTokens[2])).to.be.bignumber.eq(expectedLTokens[0]);
+    
+        await pToken.approve(funds.address, ptkForFullExit, {from: liquidityProvider});
+        let receipt = await liqm.withdraw(ptkForFullExit, expectedLTokens[1], {from: liquidityProvider});
+        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':poolLTokens});
+    });
+
     it('should not allow deposit if there are debts', async () => {
         let amountWeiLToken = w3random.interval(1, 100000, 'ether');
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender

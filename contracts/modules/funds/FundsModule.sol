@@ -139,7 +139,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     function emitStatus() private {
         uint256 lDebts = loanModule().totalLDebts();
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
-        uint256 pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
+        uint256 pExitPrice; // = 0; //0 is default value
+        if (lBalance > 0) {
+            pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
+        }
         emit Status(lBalance, lDebts, pEnterPrice, pExitPrice);
     }
 

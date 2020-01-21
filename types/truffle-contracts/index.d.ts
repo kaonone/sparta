@@ -2288,25 +2288,21 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     (
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       to: string | BN,
       amount: number | BN | string,
-      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2417,6 +2413,8 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
