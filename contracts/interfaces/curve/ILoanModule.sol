@@ -10,7 +10,8 @@ interface ILoanModule {
     event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
     event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 lAmount);
     event Repay(address indexed sender, uint256 debt, uint256 lDebtLeft, uint256 lFullPaymentAmount, uint256 lInterestPaid, uint256 newlastPayment);
-    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 debt, uint256 pAmount);
+    event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 proposal, uint256 debt, uint256 pAmount);
+    event DebtDefaultExecuted(address indexed borrower, uint256 debt, uint256 pBurned);
 
     /**
      * @notice Create DebtProposal
@@ -52,6 +53,21 @@ interface ILoanModule {
      * @param lAmount Amount of liquid tokens to repay
      */
     function repay(uint256 debt, uint256 lAmount) external;
+
+    /**
+     * @notice Allows anyone to default a debt which is behind it's repay deadline
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     */
+    function executeDebtDefault(address borrower, uint256 debt) external;
+
+    /**
+     * @notice Calculates if default time for the debt is reached
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     * @return true if debt is defaulted
+     */
+    function isDebtDefaultTimeReached(address borrower, uint256 debt) view external returns(bool);
 
     /**
      * @notice Check if user has active debts

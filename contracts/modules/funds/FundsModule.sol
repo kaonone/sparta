@@ -89,6 +89,14 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Burn locked pool tokens
+     * @param amount Amount of tokens to burn
+     */
+    function burnPTokens(uint256 amount) public onlyFundsOperator {
+        pToken.burn(amount); //This call will revert if we have not enough pTokens
+    }
+
+    /**
      * @notice Burn pool tokens
      * @param from Address of the user, whos tokens we burning. Should have enough allowance.
      * @param amount Amount of tokens to burn
