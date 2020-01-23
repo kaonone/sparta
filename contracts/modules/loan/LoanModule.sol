@@ -247,7 +247,7 @@ contract LoanModule is Module, ILoanModule {
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
         IFundsModule funds = fundsModule();
-        funds.burnPTokens(address(funds), pLocked);
+        funds.burnPTokens(pLocked);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
@@ -381,7 +381,7 @@ contract LoanModule is Module, ILoanModule {
             bool isUnpaid = userDebts[i].lAmount != 0;
             bool isDefaulted = isUnpaid && _isDebtDefaultTimeReached(userDebts[i]);
             if (isUnpaid && !isDefaulted) return true;
-            if(i == 0) break;   //fix i-- fails because i is unsigned
+            if (i == 0) break;   //fix i-- fails because i is unsigned
         }
         return false;
     }
