@@ -2782,7 +2782,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     arg0: string | BN,
     arg1: number | BN | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, boolean]>;
+  ): Promise<[BN, BN, BN, BN, boolean]>;
 
   debts(
     arg0: string | BN,

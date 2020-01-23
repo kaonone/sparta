@@ -29,6 +29,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 interest;            //Annual interest rate multiplied by INTEREST_MULTIPLIER
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
+        uint256 lCovered;           //Amount of liquid tokens, covered by pledges
         uint256 pCollected;         //How many pTokens were locked for this proposal
         bool executed;              //If Debt is created for this proposal
     }
@@ -70,6 +71,7 @@ contract LoanModule is Module, ILoanModule {
             lAmount: debtLAmount,
             interest: interest,
             supporters: new address[](0),
+            lCovered: 0,
             pCollected: 0,
             executed: false
         }));
@@ -84,6 +86,7 @@ contract LoanModule is Module, ILoanModule {
             lAmount: clAmount,
             pAmount: pAmount
         });
+        p.lCovered = p.lCovered.add(clAmount);
         p.pCollected = p.pCollected.add(pAmount);
 
         fundsModule().depositPTokens(_msgSender(), pAmount);
@@ -126,6 +129,7 @@ contract LoanModule is Module, ILoanModule {
             p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
             p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
         }
+        p.lCovered = p.lCovered.add(lAmount);
         p.pCollected = p.pCollected.add(pAmount);
         fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
@@ -157,6 +161,7 @@ contract LoanModule is Module, ILoanModule {
         pledge.pAmount = pledge.pAmount.sub(pAmount);
         pledge.lAmount = pledge.lAmount.sub(lAmount);
         p.pCollected = p.pCollected.sub(pAmount);
+        p.lCovered = p.lCovered.sub(lAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -340,13 +345,8 @@ contract LoanModule is Module, ILoanModule {
     function getRequiredPledge(address borrower, uint256 proposal) view public returns(uint256){
         DebtProposal storage p = debtProposals[borrower][proposal];
         if (p.executed) return 0;
-        uint256 covered = 0;
-        for (uint256 i = 0; i < p.supporters.length; i++) {
-            address s = p.supporters[i];
-            covered = covered.add(p.pledges[s].lAmount);
-        }
         uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
-        return  fullCollateralLAmount.sub(covered);
+        return  fullCollateralLAmount.sub(p.lCovered);
     }
 
     /**
