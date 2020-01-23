@@ -39,6 +39,10 @@ contract LoanModuleStub is Module, ILoanModule {
         hasDebts[_msgSender()] = false;
     }
 
+    function executeDebtDefault(address, uint256) public {
+        this; // silence state mutability warning
+    }
+
     function withdrawUnlockedPledge(address, uint256) public {
         lDebts = lDebts; // silence state mutability warning
     }
@@ -57,6 +61,10 @@ contract LoanModuleStub is Module, ILoanModule {
     function getDebtRequiredPayments(address, uint256) public view returns(uint256, uint256) {
         this; // silence state mutability warning
         return (0, 0);
+    }
+
+    function isDebtDefaultTimeReached(address, uint256) view public returns(bool){
+        return false;
     }
 
     function hasActiveDebts(address sender) public view returns(bool) {

@@ -13,6 +13,8 @@ contract LoanModule is Module, ILoanModule {
     uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
     uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
+    uint256 public constant DEBT_REPAY_DEADLINE_PERIOD = 90*24*60*60;   //Period before debt without payments may be defaulted
+
     uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
     uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;  
 
@@ -27,6 +29,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 interest;            //Annual interest rate multiplied by INTEREST_MULTIPLIER
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
+        uint256 pCollected;         //How many pTokens were locked for this proposal
         bool executed;              //If Debt is created for this proposal
     }
 
@@ -36,6 +39,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 lastPayment;        // Timestamp of last interest payment (can be timestamp of last payment or a virtual date untill which interest is paid)
         uint256 pInterest;          // Amount of pTokens minted as interest for this debt
         mapping(address => uint256) claimedPledges;  //Amount of pTokens already claimed by supporter
+        bool defaultExecuted;       // If debt default is already executed by executeDebtDefault()
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
@@ -62,15 +66,17 @@ contract LoanModule is Module, ILoanModule {
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         require(clAmount >= fullCollateralLAmount/2, "LoanModule: Less then 50% of collateral is covered by borrower");
 
-        fundsModule().depositPTokens(_msgSender(), pAmount);
         debtProposals[_msgSender()].push(DebtProposal({
             lAmount: debtLAmount,
             interest: interest,
             supporters: new address[](0),
+            pCollected: 0,
             executed: false
         }));
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
         emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest);
+
+        //Add pldege of the creator
         DebtProposal storage p = debtProposals[_msgSender()][proposalIndex];
         p.supporters.push(_msgSender());
         p.pledges[_msgSender()] = DebtPledge({
@@ -78,6 +84,9 @@ contract LoanModule is Module, ILoanModule {
             lAmount: clAmount,
             pAmount: pAmount
         });
+        p.pCollected = p.pCollected.add(pAmount);
+
+        fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
         return proposalIndex;
     }
@@ -117,6 +126,7 @@ contract LoanModule is Module, ILoanModule {
             p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
             p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
         }
+        p.pCollected = p.pCollected.add(pAmount);
         fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -146,6 +156,7 @@ contract LoanModule is Module, ILoanModule {
         }
         pledge.pAmount = pledge.pAmount.sub(pAmount);
         pledge.lAmount = pledge.lAmount.sub(lAmount);
+        p.pCollected = p.pCollected.sub(pAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -165,7 +176,8 @@ contract LoanModule is Module, ILoanModule {
             proposal: proposal,
             lAmount: p.lAmount,
             lastPayment: now,
-            pInterest: 0
+            pInterest: 0,
+            defaultExecuted: false
         }));
         // We do not initialize pledges map here to save gas!
         // Instead we check PledgeAmount.initialized field and do lazy initialization
@@ -185,6 +197,7 @@ contract LoanModule is Module, ILoanModule {
     function repay(uint256 debt, uint256 lAmount) public {
         Debt storage d = debts[_msgSender()][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
+        require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
         DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
@@ -215,6 +228,24 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
+     * @notice Allows anyone to default a debt which is behind it's repay deadline
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     */
+    function executeDebtDefault(address borrower, uint256 debt) public {
+        Debt storage dbt = debts[borrower][debt];
+        require(dbt.lAmount > 0, "LoanModule: debt is fully repaid");
+        require(!dbt.defaultExecuted, "LoanModule: default is already executed");
+        require(_isDebtDefaultTimeReached(dbt), "LoanModule: not enough time passed");
+        DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
+        uint256 pLocked = proposal.pCollected.mul(dbt.lAmount).div(proposal.lAmount);
+        dbt.defaultExecuted = true;
+        IFundsModule funds = fundsModule();
+        funds.burnPTokens(address(funds), pLocked);
+        emit DebtDefaultExecuted(borrower, debt, pLocked);
+    }
+
+    /**
      * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt) + interest
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
@@ -230,6 +261,17 @@ contract LoanModule is Module, ILoanModule {
         dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, debt, pAmount);
+    }
+
+    /**
+     * @notice Calculates if default time for the debt is reached
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     * @return true if debt is defaulted
+     */
+    function isDebtDefaultTimeReached(address borrower, uint256 debt) view public returns(bool) {
+        Debt storage dbt = debts[borrower][debt];
+        return _isDebtDefaultTimeReached(dbt);
     }
 
     /**
@@ -283,6 +325,10 @@ contract LoanModule is Module, ILoanModule {
             }
         }
         pWithdrawn = dbt.claimedPledges[supporter];
+
+        if (_isDebtDefaultTimeReached(dbt)) {
+            pLocked = 0;
+        }
     }
 
     /**
@@ -387,5 +433,10 @@ contract LoanModule is Module, ILoanModule {
 
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    }
+
+    function _isDebtDefaultTimeReached(Debt storage dbt) view private returns(bool) {
+        uint256 timeSinceLastPayment = now.sub(dbt.lastPayment);
+        return timeSinceLastPayment > DEBT_REPAY_DEADLINE_PERIOD;
     }
 }
