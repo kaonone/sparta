@@ -7,9 +7,6 @@ before_install: # if "install" is overridden
   - sudo apt-get update -qq
   - sudo apt-get install -y -qq yarn=1.19.1-1
 
-cash:
-  yarn: true
-
 install:
  - yarn
  - yarn global add solhint
