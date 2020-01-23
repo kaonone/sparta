@@ -36,7 +36,7 @@
         "open-cli": "^5.0.0",
         "shx": "^0.3.2",
         "solidity-coverage": "0.7.0-beta.2",
-        "truffle": "^5.0.41",
+        "truffle": "^5.1.9",
         "truffle-hdwallet-provider": "^1.0.17",
         "truffle-security": "^1.6.1",
         "truffle-typings": "^1.0.7",
