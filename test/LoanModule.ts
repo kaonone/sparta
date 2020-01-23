@@ -210,7 +210,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
 
         // Partial repayment
-        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let repayLAmount = debtLAmount.div(new BN(3));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
@@ -220,7 +220,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));        
 
         // Repay rest
-        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         //console.log('debtLRequiredPayments', debtLRequiredPayments[0].toString(), debtLRequiredPayments[1].toString());
         expect(debtLRequiredPayments[1]).to.be.bignumber.gt(new BN(0));
@@ -254,7 +254,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(pledgeInfo[3]).to.be.bignumber.eq('0');
 
         // Partial repayment
-        let randTime = w3random.interval(30*24*60*60, 300*24*60*60);
+        let randTime = w3random.interval(30*24*60*60, 89*24*60*60);
         //console.log('Days passed', randTime/(24*60*60));
         await time.increase(randTime);
         let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
@@ -287,7 +287,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await lToken.transfer(borrower, debtLAmount.div(new BN(20)), {from: liquidityProvider});    //Transfer 5% of debtLAmount for paying interest
 
         // Full repayment
-        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         expect(requiredPayments[0]).to.be.bignumber.eq(debtLAmount); // Debt equal to loaned amount   
         expect(requiredPayments[1]).to.be.bignumber.gt('0');         // Some interest payment required
@@ -311,7 +311,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
 
         // Partial repayment
-        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         await loanm.repay(debtIdx, repayLAmount, {from: borrower});
@@ -324,7 +324,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
 
         // Full repayment
-        await time.increase(w3random.interval(30*24*60*60, 300*24*60*60));
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         repayLAmount = requiredPayments[0].add(requiredPayments[1]);
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
