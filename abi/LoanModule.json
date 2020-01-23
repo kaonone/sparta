@@ -5,6 +5,31 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pBurned",
+        "type": "uint256"
+      }
+    ],
+    "name": "DebtDefaultExecuted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "sender",
         "type": "address"
       },
@@ -215,6 +240,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "proposal",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "debt",
         "type": "uint256"
       },
@@ -262,6 +293,21 @@
     "constant": true,
     "inputs": [],
     "name": "COLLATERAL_TO_DEBT_RATIO_MULTIPLIER",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "DEBT_REPAY_DEADLINE_PERIOD",
     "outputs": [
       {
         "internalType": "uint256",
@@ -375,6 +421,16 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "lCovered",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pCollected",
+        "type": "uint256"
+      },
+      {
         "internalType": "bool",
         "name": "executed",
         "type": "bool"
@@ -419,6 +475,11 @@
         "internalType": "uint256",
         "name": "pInterest",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "defaultExecuted",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -700,10 +761,56 @@
         "type": "uint256"
       }
     ],
+    "name": "executeDebtDefault",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      }
+    ],
     "name": "withdrawUnlockedPledge",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      }
+    ],
+    "name": "isDebtDefaultTimeReached",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
