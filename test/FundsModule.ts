@@ -118,11 +118,20 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         let expectedPostTestPBalanceWei = preTestPBalanceWei.sub(amountWei);
         let postTestPBalanceWei = await pToken.balanceOf(funds.address);
     });    
-    it('should burn PTokens', async () => {
+    it('should burn locked PTokens', async () => {
         await pToken.mint(funds.address, web3.utils.toWei('1000'), {from: owner});
         let preTestPBalanceWei = await pToken.balanceOf(funds.address);
         let amountWei = w3random.interval(1, 1000, 'ether');
-        let receipt = await funds.burnPTokens(liquidityProvider, amountWei, {from: tester});
+        await pToken.transfer(funds.address, amountWei, {from:liquidityProvider});
+        let receipt = await (<any>funds).methods['burnPTokens(uint256)'](amountWei, {from: tester});
+        let expectedPostTestPBalanceWei = preTestPBalanceWei.sub(amountWei);
+        let postTestPBalanceWei = await pToken.balanceOf(funds.address);
+    });    
+    it('should burn PTokens from user', async () => {
+        await pToken.mint(funds.address, web3.utils.toWei('1000'), {from: owner});
+        let preTestPBalanceWei = await pToken.balanceOf(funds.address);
+        let amountWei = w3random.interval(1, 1000, 'ether');
+        let receipt = await (<any>funds).methods['burnPTokens(address,uint256)'](liquidityProvider, amountWei, {from: tester});
         let expectedPostTestPBalanceWei = preTestPBalanceWei.sub(amountWei);
         let postTestPBalanceWei = await pToken.balanceOf(funds.address);
     });    

@@ -1896,30 +1896,12 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (
-      _pool: string | BN,
-      _lToken: string | BN,
-      _pToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      _pool: string | BN,
-      _lToken: string | BN,
-      _pToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      _pool: string | BN,
-      _lToken: string | BN,
-      _pToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      _pool: string | BN,
-      _lToken: string | BN,
-      _pToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   depositLTokens: {
@@ -2039,22 +2021,18 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   burnPTokens: {
     (
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -2378,22 +2356,18 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
 
   burnPTokens: {
     (
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
