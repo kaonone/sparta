@@ -378,7 +378,10 @@ contract LoanModule is Module, ILoanModule {
         Debt[] storage userDebts = debts[sender];
         if (userDebts.length == 0) return false;
         for (uint256 i=userDebts.length-1; i >= 0; i--){ //searching in reverse order because probability to find active loan is higher for latest loans
-            if (userDebts[i].lAmount == 0) return true;
+            bool isUnpaid = userDebts[i].lAmount != 0;
+            bool isDefaulted = isUnpaid && _isDebtDefaultTimeReached(userDebts[i]);
+            if (isUnpaid && !isDefaulted) return true;
+            if(i == 0) break;   //fix i-- fails because i is unsigned
         }
         return false;
     }
