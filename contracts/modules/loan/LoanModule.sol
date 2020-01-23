@@ -245,6 +245,7 @@ contract LoanModule is Module, ILoanModule {
         DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
         uint256 pLocked = proposal.pCollected.mul(dbt.lAmount).div(proposal.lAmount);
         dbt.defaultExecuted = true;
+        lDebts = lDebts.sub(dbt.lAmount);
         IFundsModule funds = fundsModule();
         funds.burnPTokens(address(funds), pLocked);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
