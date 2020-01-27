@@ -38,11 +38,70 @@ report: myReportType
 
 ### Actions
 
+#### fund
+Fund each user in the `group` with `amount` DAI
+```yaml
+fund:
+    group: group1 
+    amount: 100
+```
+
 #### deposit
-For each user in the `group` deposit `amount` DAI to the pool, waiting for `sleep` seconds after each user.
+For each user in the `group` deposit `amount` DAI to the pool, 
+waiting for `sleep` seconds after each user.
 ```yaml
 deposit:
     group: group1 
     amount: 100
     sleep: 10
 ```
+
+#### withdraw
+For each user in the `group` withdraw `amount` DAI from the pool, 
+waiting for `sleep` seconds after each user.
+```yaml
+withdraw:
+    group: group1 
+    amount: 100
+    sleep: 10
+```
+
+#### createDebt
+For each user in the `borrowers` group creates a debt proposal for `amount` DAI,
+then for each user in `supporters` group add pledge to this proposals
+and then executes proposals, waiting for `sleep` after each operation for each user.
+Debt `name` should be used later to operate with created debts.
+```yaml
+createDebt:
+    name: debt1
+    borrowers: group1 
+    supporters: group2 
+    amount: 100
+    sleep: 10
+```
+
+#### repay
+For each user in the `borrowers` repays debt `name` with `amount` DAI,
+waiting for `sleep` seconds after each user.
+```yaml
+repay:
+    name: debt1
+    borrowers: group1 
+    amount: 100
+    sleep: 10
+```
+
+#### withdrawPledge
+For each user in the `supporters` withdraws (unlocked) pledge from the debt `name`,
+waiting for `sleep` seconds after each user.
+```yaml
+withdrawUnlockedPledge:
+    name: debt1
+    supporters: group2 
+    sleep: 10
+```
+
+
+
+
+
