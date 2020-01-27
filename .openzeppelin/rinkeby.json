@@ -1073,11 +1073,11 @@
       }
     },
     "FundsModule": {
-      "address": "0xB671A07B134e50E0B5B2D0151ff0a07324016356",
-      "constructorCode": "60806040526122f7806100136000396000f3fe",
-      "bodyBytecodeHash": "140fdb8383b665cc9beef11114727f553f926f3f3deb69f0f963218e9d762931",
-      "localBytecodeHash": "5cc9490b0d0c695685b3be0d3046428824605696752fd51824649dcfa9ba2839",
-      "deployedBytecodeHash": "5cc9490b0d0c695685b3be0d3046428824605696752fd51824649dcfa9ba2839",
+      "address": "0x29518F102cC748d30178e1fB6215f2BEF4a85b86",
+      "constructorCode": "6080604052612308806100136000396000f3fe",
+      "bodyBytecodeHash": "c8f8c012e27657c51dd078231232b666f065dbe26fdedd5101bf171ad455dc58",
+      "localBytecodeHash": "00e2447913e8d75d257ab2e3d98b6b110469ff71406ba5476e5967bf9b80f669",
+      "deployedBytecodeHash": "00e2447913e8d75d257ab2e3d98b6b110469ff71406ba5476e5967bf9b80f669",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -1108,7 +1108,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 5049,
+              "astId": 5054,
               "type": "t_mapping<t_bool>",
               "src": "150:32:31"
             }
@@ -1126,7 +1126,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 6141,
+          "astId": 6146,
           "type": "t_bool",
           "src": "757:24:40"
         },
@@ -1134,7 +1134,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 6143,
+          "astId": 6148,
           "type": "t_bool",
           "src": "876:25:40"
         },
@@ -1142,7 +1142,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 6199,
+          "astId": 6204,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:40"
         },
@@ -1150,7 +1150,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 5390,
+          "astId": 5395,
           "type": "t_address",
           "src": "526:22:34"
         },
@@ -1158,7 +1158,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 5503,
+          "astId": 5508,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:34"
         },
@@ -1174,7 +1174,7 @@
           "contract": "FundsOperatorRole",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsOperatorRole.sol",
           "label": "_operators",
-          "astId": 1690,
+          "astId": 1695,
           "type": "t_struct<Roles.Role>",
           "src": "448:29:17"
         },
@@ -1208,7 +1208,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "FundsOperatorRole",
+            "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsOperatorRole.sol",
+            "label": "_operators",
+            "astId": 1695,
+            "type": "t_struct<Roles.Role>",
+            "src": "448:29:17"
+          }
+        ],
+        "storageDiff": []
       }
     }
   },
@@ -1254,7 +1265,7 @@
       {
         "address": "0x36201b03F6A31300C67b6CFEaF45Fa28bea01662",
         "version": "1.0.0",
-        "implementation": "0xB671A07B134e50E0B5B2D0151ff0a07324016356",
+        "implementation": "0x29518F102cC748d30178e1fB6215f2BEF4a85b86",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
