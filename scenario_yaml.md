@@ -95,7 +95,7 @@ repay:
 For each user in the `supporters` withdraws (unlocked) pledge from the debt `name`,
 waiting for `sleep` seconds after each user.
 ```yaml
-withdrawUnlockedPledge:
+withdrawPledge:
     name: debt1
     supporters: group2 
     sleep: 10
