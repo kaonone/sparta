@@ -27,6 +27,7 @@ contract LoanModule is Module, ILoanModule {
     struct DebtProposal {
         uint256 lAmount;             //Amount of proposed credit (in liquid token)
         uint256 interest;            //Annual interest rate multiplied by INTEREST_MULTIPLIER
+        bytes32 descriptionHash;     //Hash of description, description itself is stored on Swarm   
         mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
         uint256 lCovered;           //Amount of liquid tokens, covered by pledges
@@ -58,9 +59,10 @@ contract LoanModule is Module, ILoanModule {
      * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
      * @param pAmount Amount of pTokens to use as collateral
      * @param lAmountMin Minimal amount of liquid tokens used as collateral.
+     * @param descriptionHash Hash of loan description
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) public returns(uint256){
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin, bytes32 descriptionHash) public returns(uint256){
         require(debtLAmount > 0, "LoanModule: DebtProposal amount should not be 0");
         (uint256 clAmount, , ) = calculatePoolExitInverse(pAmount);
         require(clAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
@@ -70,13 +72,14 @@ contract LoanModule is Module, ILoanModule {
         debtProposals[_msgSender()].push(DebtProposal({
             lAmount: debtLAmount,
             interest: interest,
+            descriptionHash: descriptionHash,
             supporters: new address[](0),
             lCovered: 0,
             pCollected: 0,
             executed: false
         }));
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
-        emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest);
+        emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
 
         //Add pldege of the creator
         DebtProposal storage p = debtProposals[_msgSender()][proposalIndex];

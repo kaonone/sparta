@@ -5,7 +5,7 @@ pragma solidity ^0.5.12;
  * @dev Funds module is responsible for deposits, withdrawals, debt proposals, debts and repay.
  */
 interface ILoanModule {
-    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 lAmount, uint256 interest);
+    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 lAmount, uint256 interest, bytes32 descriptionHash);
     event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
     event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
     event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 lAmount);
@@ -20,7 +20,7 @@ interface ILoanModule {
      * @param lAmountMin Minimal amount of liquid tokens 
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin) external returns(uint256);
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin, bytes32 descriptionHash) external returns(uint256);
 
     /**
      * @notice Add pledge to DebtProposal
