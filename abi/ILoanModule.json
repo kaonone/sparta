@@ -50,6 +50,12 @@
         "internalType": "uint256",
         "name": "interest",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "descriptionHash",
+        "type": "bytes32"
       }
     ],
     "name": "DebtProposalCreated",
@@ -196,6 +202,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "pInterestPaid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "newlastPayment",
         "type": "uint256"
       }
@@ -255,13 +267,13 @@
       },
       {
         "internalType": "uint256",
-        "name": "pAmount",
+        "name": "pAmountMax",
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "lAmountMin",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "descriptionHash",
+        "type": "bytes32"
       }
     ],
     "name": "createDebtProposal",
