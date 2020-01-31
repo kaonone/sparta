@@ -16,7 +16,8 @@ contract LoanModule is Module, ILoanModule {
     uint256 public constant DEBT_REPAY_DEADLINE_PERIOD = 90*24*60*60;   //Period before debt without payments may be defaulted
 
     uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
-    uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;  
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;
+    uint256 public constant PLEDGE_PERCENT_MIN_MULTIPLIER = 10**3;
 
     struct DebtPledge {
         uint256 senderIndex;  //Index of pledge sender in the array
@@ -44,10 +45,18 @@ contract LoanModule is Module, ILoanModule {
         bool defaultExecuted;       // If debt default is already executed by executeDebtDefault()
     }
 
+    struct LoanLimits {
+        uint256 lDebtAmountMin;     // Minimal amount of proposed credit (DebtProposal.lAmount)
+        uint256 debtInterestMin;    // Minimal value of debt interest
+        uint256 pledgePercentMin;   // Minimal pledge as percent of credit amount. Value is divided to PLEDGE_PERCENT_MIN_MULTIPLIER for calculations
+        uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
+    }
+
     mapping(address=>DebtProposal[]) public debtProposals;
     mapping(address=>Debt[]) public debts;
 
     uint256 private lDebts;
+    LoanLimits limits;
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -230,7 +239,7 @@ contract LoanModule is Module, ILoanModule {
         fundsModule().depositLTokens(_msgSender(), lAmount); 
         fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
 
-        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, d.lastPayment);
+        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
     }
 
     /**
