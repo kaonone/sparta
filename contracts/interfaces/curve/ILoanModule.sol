@@ -15,12 +15,13 @@ interface ILoanModule {
 
     /**
      * @notice Create DebtProposal
+     * @param debtLAmount Amount of debt in liquid tokens
      * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
-     * @param pAmount Amount of pTokens to use as collateral
-     * @param lAmountMin Minimal amount of liquid tokens 
+     * @param pAmountMax Max amount of pTokens to use as collateral
+     * @param descriptionHash Hash of loan description
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmount, uint256 lAmountMin, bytes32 descriptionHash) external returns(uint256);
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) external returns(uint256);
 
     /**
      * @notice Add pledge to DebtProposal
