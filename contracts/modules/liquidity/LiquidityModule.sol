@@ -8,9 +8,16 @@ import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract LiquidityModule is Module, ILiquidityModule {
+    struct LiquidityLimits {
+        uint256 lDepositMin;     // Minimal amount of liquid tokens for deposit
+        uint256 pWithdrawMin;    // Minimal amount of pTokens for withdraw
+    }
+
+    LiquidityLimits public limits;
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
+        setLimits(10*10**18, 0);    //10 DAI minimal enter
     }
 
     /*
@@ -20,6 +27,7 @@ contract LiquidityModule is Module, ILiquidityModule {
      */ 
     function deposit(uint256 lAmount, uint256 pAmountMin) public {
         require(lAmount > 0, "LiquidityModule: amount should not be 0");
+        require(lAmount >= limits.lDepositMin, "LiquidityModule: amount should be >= lDepositMin");
         require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Deposits forbidden if address has active debts");
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
         require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
@@ -35,6 +43,7 @@ contract LiquidityModule is Module, ILiquidityModule {
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public {
         require(pAmount > 0, "LiquidityModule: amount should not be 0");
+        require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
         require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Withdraws forbidden if address has active debts");
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
@@ -43,6 +52,11 @@ contract LiquidityModule is Module, ILiquidityModule {
         fundsModule().burnPTokens(_msgSender(), pAmount);
         fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
+    }
+
+    function setLimits(uint256 lDepositMin, uint256 pWithdrawMin) public onlyOwner {
+        limits.lDepositMin = lDepositMin;
+        limits.pWithdrawMin = pWithdrawMin;
     }
 
     function fundsModule() internal view returns(IFundsModule) {
