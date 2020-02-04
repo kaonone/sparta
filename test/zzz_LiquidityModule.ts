@@ -70,7 +70,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     })
 
     it('should allow deposit if no debts', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
         let totalLiquidAssets = await lToken.balanceOf(funds.address);
         expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':totalLiquidAssets});
@@ -103,7 +103,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     });
 
     it('should allow withdraw all minted PTK', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
 
         let allPTokens = await pToken.totalSupply();
@@ -129,7 +129,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     });
 
     it('should not allow deposit if there are debts', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
         expectRevert(
             liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
