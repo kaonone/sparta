@@ -557,6 +557,36 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "limits",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lDebtAmountMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debtInterestMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pledgePercentMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lMinPledgeMax",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -823,6 +853,36 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "lDebtAmountMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debtInterestMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pledgePercentMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lMinPledgeMax",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLimits",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "internalType": "address",
         "name": "borrower",
         "type": "address"
@@ -935,6 +995,37 @@
       {
         "internalType": "uint256",
         "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "proposal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPledgeRequirements",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minLPledge",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxLPledge",
         "type": "uint256"
       }
     ],

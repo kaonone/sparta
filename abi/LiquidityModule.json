@@ -173,6 +173,26 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "limits",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lDepositMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pWithdrawMin",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -298,6 +318,26 @@
       }
     ],
     "name": "withdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "lDepositMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pWithdrawMin",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLimits",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

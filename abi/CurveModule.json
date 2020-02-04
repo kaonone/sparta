@@ -111,6 +111,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "PERCENT_DIVIDER",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "WITHDRAW_FEE_PERCENT",
     "outputs": [
       {
