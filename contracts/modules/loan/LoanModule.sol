@@ -61,7 +61,7 @@ contract LoanModule is Module, ILoanModule {
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
         //100 DAI min credit, 10% min interest, 10% min pledge, 500 DAI max minimal pledge
-        setLimits(100*10**18, 10*INTEREST_MULTIPLIER, 10*PLEDGE_PERCENT_MIN_MULTIPLIER, 500*10**18);
+        setLimits(100*10**18, INTEREST_MULTIPLIER*10/100, PLEDGE_PERCENT_MIN_MULTIPLIER*10/100, 500*10**18);
     }
 
     /**
@@ -178,9 +178,9 @@ contract LoanModule is Module, ILoanModule {
         p.pCollected = p.pCollected.sub(pAmount);
         p.lCovered = p.lCovered.sub(lAmount);
 
-        //Check new min/max pledge AFTER current collateral is adjusted to new calues
+        //Check new min/max pledge AFTER current collateral is adjusted to new values
         (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
-        require(pledge.pAmount >= minLPledgeAmount, "LoanModule: pledge left is too small");
+        require(pledge.pAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
 
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);

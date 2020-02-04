@@ -243,6 +243,8 @@ export interface BaseInstance extends Truffle.ContractInstance {
 }
 
 export interface BondingCurveInstance extends Truffle.ContractInstance {
+  PERCENT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   curveB(txDetails?: Truffle.TransactionDetails): Promise<BN>;
@@ -488,6 +490,8 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  PERCENT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   WITHDRAW_FEE_PERCENT(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
