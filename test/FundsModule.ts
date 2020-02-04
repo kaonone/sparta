@@ -7,7 +7,8 @@ import {
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
-const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
+const { BN, constants, expectEvent, shouldFail, time } = require("@openzeppelin/test-helpers");
+const expectRevert= require("./utils/expectRevert");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 var expect = require("chai").expect;
@@ -40,7 +41,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await (<any> lToken).methods['initialize()']({from: owner});
 
         pToken = await PToken.new();
-        await (<any> pToken).methods['initialize()']({from: owner});
+        await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("ptoken", pToken.address, true, {from: owner});  
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
@@ -51,7 +53,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await pool.set("loan", loanm.address, true, {from: owner});  
 
         funds = await FundsModule.new();
-        await (<any> funds).methods['initialize(address,address,address)'](pool.address, lToken.address, pToken.address, {from: owner});
+        await (<any> funds).methods['initialize(address,address)'](pool.address, lToken.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(loanm.address, {from: owner});

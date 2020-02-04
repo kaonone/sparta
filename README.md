@@ -32,12 +32,13 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 * Address of liquidity token (`LToken.address`)
 
 ### Deployment sequence:
-1. PToken
-   1. Deploy proxy and contract instance
-   1. Call `initialize()`
 1. Pool
    1. Deploy proxy and contract instance
    1. Call `initialize()`
+1. PToken
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("ptoken", PToken.address)`
 1. CurveModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
@@ -52,7 +53,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
    1. Register in pool: `Pool.set("loan", LoanModule.address)`
 1. FundsModule
    1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address, LToken.address, PToken.address)`
+   1. Call `initialize(Pool.address, LToken.address)`
    1. Register in pool: `Pool.set("funds", FundsModule.address)`
    1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
    1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
