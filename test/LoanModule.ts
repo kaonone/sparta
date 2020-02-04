@@ -385,7 +385,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('after default', pledgeInfoAfterDefault);
         expect(pledgeInfoAfterDefault[0]).to.be.bignumber.eq(new BN(0));
-        expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]);
+        expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]); //TODO: calculate how many PTK added from borrower's pledge
         expect(pledgeInfoAfterDefault[2]).to.be.bignumber.eq(pledgeInfoBeforeDefault[2]);
         expect(pledgeInfoAfterDefault[3]).to.be.bignumber.eq(pledgeInfoBeforeDefault[3]);
 
