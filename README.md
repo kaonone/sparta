@@ -8,12 +8,12 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* PToken: `0xEFf55211680b69CB10a158A316B0715DFBd5A731`
-* Pool: `0x51FEA17BFabb171687498cBdAa030c7D3B2172dC`
-* CurveModule: `0x5f75C9b5103A1A70c760a52168760141fabc89b3`
-* FundsModule: `0x280eC6603bcC548Fc850eE6d9B94e58214D4a9EE`
-* LiquidityModule: `0x2eb19Ad7D17b67831202E16D0F7b7F3a0e01cd3C`
-* LoanModule: `0xE4cFc3c6Ed51957Ed67F784838C252130893C133`
+* Pool: `0x3fF17cB1e659529F3143F52F78D08393FCcdd7ed`
+* PToken: `0xcEbf0883A36c54bE74da1F3ADe15C61a3930F112`
+* CurveModule: `0x91c6aFcBFBFE8e768dAC75a7289BFF3AAA5fA79D`
+* LiquidityModule: `0x052f0CF990f0e3515922A540701dDC9e3c7a7a53`
+* LoanModule: `0xccD1Fa4E164eb279e867E139c8946E0c7B2C8897`
+* FundsModule: `0xb004A293002AaB928E7CF89623B12b16d717E5B9`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
