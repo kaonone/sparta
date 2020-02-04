@@ -32,6 +32,7 @@ declare global {
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;
       require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
+      require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(
         name: "LiquidityModule"
       ): TruffleContracts.LiquidityModuleContract;
