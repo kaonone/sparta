@@ -25,7 +25,22 @@ contract("Pool", async ([_, owner,  wallet1, wallet2, wallet3, wallet4, wallet5]
         (await pool.name()).should.equal("creditPool");
     });
 
-    it("should have  proper description", async () => {
+    it("should have proper description", async () => {
         (await pool.description()).should.equal("Great Pool");
+    });
+
+    it("should add module", async () => {
+        await pool.set('testModule', wallet1, false, {from: owner});
+    });
+
+    it("should replace module", async () => {
+        await pool.set('testModule', wallet1, false, {from: owner});
+        await pool.set('testModule', wallet2, false, {from: owner});
+    });
+
+    it("should add module after replace module", async () => {
+        await pool.set('testModule', wallet1, false, {from: owner});
+        await pool.set('testModule', wallet2, false, {from: owner});
+        await pool.set('anotherTestModule', wallet3, false, {from: owner});
     });
 });

@@ -8,5 +8,6 @@ contract ModuleNames {
     string public constant MODULE_FUNDS     = "funds";
     string public constant MODULE_LIQUIDITY = "liquidity";
     string public constant MODULE_LOAN      = "loan";
+    string public constant MODULE_LTOKEN    = "ltoken";
     string public constant MODULE_PTOKEN    = "ptoken";
 }
