@@ -321,6 +321,8 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
@@ -496,6 +498,8 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -1582,6 +1586,8 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addFundsOperator: {
@@ -1615,8 +1621,6 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  lToken(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -1677,26 +1681,12 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (
-      _pool: string | BN,
-      _lToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      _pool: string | BN,
-      _lToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      _pool: string | BN,
-      _lToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      _pool: string | BN,
-      _lToken: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   depositLTokens: {
@@ -2565,6 +2555,8 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
@@ -2726,6 +2718,8 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -3112,6 +3106,8 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
@@ -3467,6 +3463,8 @@ export interface ModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
@@ -3543,6 +3541,8 @@ export interface ModuleNamesInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 }
@@ -3823,6 +3823,8 @@ export interface PTokenInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -4204,6 +4206,8 @@ export interface TokenModuleInstance extends Truffle.ContractInstance {
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
@@ -4280,6 +4284,8 @@ export interface VotesModuleInstance extends Truffle.ContractInstance {
   MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
