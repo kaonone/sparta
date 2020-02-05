@@ -19,7 +19,7 @@ contract LoanModuleStub is Module, ILoanModule {
         Module.initialize(_pool);
     }
 
-    function createDebtProposal(uint256 debtLAmount, uint256, uint256, uint256) public returns(uint256){
+    function createDebtProposal(uint256 debtLAmount, uint256, uint256, bytes32) public returns(uint256){
         lDebts = debtLAmount;
     }
 

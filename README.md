@@ -8,12 +8,12 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* PToken: `0x9d39ad408A7c4987396308A3216E4961C12B6Bdb`
-* Pool: `0x2504fF0F9d5Dcb35E07f74d871FF8a7BA965AA68`
-* CurveModule: `0x267FE85742e84BdF174561fEf05D49bE693ccaC6`
-* FundsModule: `0x36201b03F6A31300C67b6CFEaF45Fa28bea01662`
-* LiquidityModule: `0x7a471386877BD110De4cD123418059C340C6bd56`
-* LoanModule: `0x1B23eeb88f90324f48bF62F4314d68F7700b4564`
+* Pool: `0x3fF17cB1e659529F3143F52F78D08393FCcdd7ed`
+* PToken: `0xcEbf0883A36c54bE74da1F3ADe15C61a3930F112`
+* CurveModule: `0x91c6aFcBFBFE8e768dAC75a7289BFF3AAA5fA79D`
+* LiquidityModule: `0x052f0CF990f0e3515922A540701dDC9e3c7a7a53`
+* LoanModule: `0xccD1Fa4E164eb279e867E139c8946E0c7B2C8897`
+* FundsModule: `0xb004A293002AaB928E7CF89623B12b16d717E5B9`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -32,12 +32,13 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 * Address of liquidity token (`LToken.address`)
 
 ### Deployment sequence:
-1. PToken
-   1. Deploy proxy and contract instance
-   1. Call `initialize()`
 1. Pool
    1. Deploy proxy and contract instance
    1. Call `initialize()`
+1. PToken
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("ptoken", PToken.address)`
 1. CurveModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
@@ -52,7 +53,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
    1. Register in pool: `Pool.set("loan", LoanModule.address)`
 1. FundsModule
    1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address, LToken.address, PToken.address)`
+   1. Call `initialize(Pool.address, LToken.address)`
    1. Register in pool: `Pool.set("funds", FundsModule.address)`
    1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
    1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
@@ -89,14 +90,15 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 #### Required data:
 * `debtLAmount`: Loan amount, DAI
 * `interest`: Interest rate, percents
-* `pAmount`: Borrower's own pledge, PTK. Should be not less than 50% оf `debtLAmount` when converted to DAI.
+* `pAmountMax`: Maximal amount of PTK to use as borrower's own pledge
+* `descriptionHash`: Hash of loan description stored in Swarm
 #### Required conditions:
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
-1. Call `LoanModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
+1. Call `LoanModule.createDebtProposal(debtLAmount, interest, pAmountMax, descriptionHash)` to create loan proposal.
 #### Data required for future calls:
 * Proposal index: `proposalIndex` from event `DebtProposalCreated`.
 

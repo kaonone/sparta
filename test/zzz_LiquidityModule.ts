@@ -8,7 +8,8 @@ import {
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
-const { BN, constants, expectEvent, expectRevert, shouldFail, time } = require("@openzeppelin/test-helpers");
+const { BN, constants, expectEvent, shouldFail, time } = require("@openzeppelin/test-helpers");
+const expectRevert= require("./utils/expectRevert");
 // tslint:disable-next-line:no-var-requires
 const should = require("chai").should();
 var expect = require("chai").expect;
@@ -43,7 +44,8 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await (<any> lToken).methods['initialize()']({from: owner});
 
         pToken = await PToken.new();
-        await (<any> pToken).methods['initialize()']({from: owner});
+        await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("ptoken", pToken.address, true, {from: owner});  
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
@@ -58,7 +60,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await pool.set("loan", loanms.address, true, {from: owner});  
 
         funds = await FundsModule.new();
-        await (<any> funds).methods['initialize(address,address,address)'](pool.address, lToken.address, pToken.address, {from: owner});
+        await (<any> funds).methods['initialize(address,address)'](pool.address, lToken.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
@@ -70,7 +72,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     })
 
     it('should allow deposit if no debts', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
         let totalLiquidAssets = await lToken.balanceOf(funds.address);
         expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':totalLiquidAssets});
@@ -103,7 +105,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     });
 
     it('should allow withdraw all minted PTK', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
 
         let allPTokens = await pToken.totalSupply();
@@ -129,7 +131,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     });
 
     it('should not allow deposit if there are debts', async () => {
-        let amountWeiLToken = w3random.interval(1, 100000, 'ether');
+        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
         expectRevert(
             liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),

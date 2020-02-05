@@ -84,3 +84,5 @@ bin/*
 build/*
 artifacts/*
 coverage.json
+
+.openzeppelin\.session

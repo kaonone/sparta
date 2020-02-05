@@ -11,7 +11,7 @@
         "function-max-lines": "off",
         "func-order": "error",
         "indent": ["error", 4],
-        "max-line-length": ["warn", 160],
+        "max-line-length": ["warn", 180],
         "no-inline-assembly": "off",
         "quotes": ["error", "double"],
         "separate-by-one-line-in-contract": "error",
