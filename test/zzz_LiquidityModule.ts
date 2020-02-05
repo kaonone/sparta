@@ -42,6 +42,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
 
         lToken = await FreeDAI.new();
         await (<any> lToken).methods['initialize()']({from: owner});
+        await pool.set("ltoken", lToken.address, true, {from: owner});  
 
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
@@ -60,7 +61,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await pool.set("loan", loanms.address, true, {from: owner});  
 
         funds = await FundsModule.new();
-        await (<any> funds).methods['initialize(address,address)'](pool.address, lToken.address, {from: owner});
+        await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});

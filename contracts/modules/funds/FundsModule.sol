@@ -13,13 +13,11 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    IERC20 public lToken;       //Address of liquid token
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
 
-    function initialize(address _pool, IERC20 _lToken) public initializer {
+    function initialize(address _pool) public initializer {
         Module.initialize(_pool);
         FundsOperatorRole.initialize(_msgSender());
-        lToken = _lToken;
         //lBalance = lToken.balanceOf(address(this)); //We do not initialize lBalance to preserve it's previous value when updgrade
     }
 
@@ -30,7 +28,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function depositLTokens(address from, uint256 amount) public onlyFundsOperator {
         lBalance = lBalance.add(amount);
-        require(lToken.transferFrom(from, address(this), amount), "FundsModule: deposit failed");
+        require(lToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
         emitStatus();
     }
 
@@ -51,10 +49,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         lBalance = lBalance.sub(amount);
-        require(lToken.transfer(to, amount), "FundsModule: withdraw failed");
+        require(lToken().transfer(to, amount), "FundsModule: withdraw failed");
         if (poolFee > 0) {
             lBalance = lBalance.sub(poolFee);
-            require(lToken.transfer(owner(), poolFee), "FundsModule: fee transfer failed");
+            require(lToken().transfer(owner(), poolFee), "FundsModule: fee transfer failed");
         }
         emitStatus();
     }
@@ -109,9 +107,9 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to send
      */
     function refundLTokens(address to, uint256 amount) public onlyFundsOperator {
-        uint256 realLBalance = lToken.balanceOf(address(this));
+        uint256 realLBalance = lToken().balanceOf(address(this));
         require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
-        require(lToken.transfer(to, amount), "FundsModule: refund failed");
+        require(lToken().transfer(to, amount), "FundsModule: refund failed");
     }
 
     /**
@@ -164,6 +162,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
 
     function pToken() private view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));
+    }
+    
+    function lToken() private view returns(IERC20){
+        return IERC20(getModuleAddress(MODULE_LTOKEN));
     }
 
 }
