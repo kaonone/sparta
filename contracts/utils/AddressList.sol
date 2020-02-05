@@ -40,7 +40,7 @@ library AddressList {
         if (_data.head == ZERO_ADDRESS) {
             _data.head = _data.tail = _item;
         } else {
-            require(_data.isContain[_to], " ");
+            require(_data.isContain[_to], "Append target not contained");
 
             address  nextTo = _data.nextOf[_to];
             if (nextTo != ZERO_ADDRESS) {
@@ -103,7 +103,7 @@ library AddressList {
      * @param _item is a removed list element
      */
     function remove(Data storage _data, address _item) internal {
-        require(_data.isContain[_item], " ");
+        require(_data.isContain[_item], "Item is not contained");
 
         address  elemPrev = _data.prevOf[_item];
         address  elemNext = _data.nextOf[_item];
@@ -132,7 +132,7 @@ library AddressList {
      */
     function replace(Data storage _data, address _from, address _to) internal {
 
-        require(_data.isContain[_from], " ");
+        require(_data.isContain[_from], "Old element not contained");
 
         address  elemPrev = _data.prevOf[_from];
         address  elemNext = _data.nextOf[_from];
@@ -152,6 +152,7 @@ library AddressList {
         _data.prevOf[_to] = elemPrev;
         _data.nextOf[_to] = elemNext;
         _data.isContain[_from] = false;
+        _data.isContain[_to] = true;
     }
 
     /**
@@ -161,7 +162,7 @@ library AddressList {
      * @param _b is a second element
      */
     function swap(Data storage _data, address _a, address _b) internal {
-        require(!_data.isContain[_a] || !_data.isContain[_b], " ");
+        require(!_data.isContain[_a] || !_data.isContain[_b], "Can not swap element which is not contained");
 
         address prevA = _data.prevOf[_a];
 
