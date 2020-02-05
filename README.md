@@ -90,14 +90,15 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 #### Required data:
 * `debtLAmount`: Loan amount, DAI
 * `interest`: Interest rate, percents
-* `pAmount`: Borrower's own pledge, PTK. Should be not less than 50% оf `debtLAmount` when converted to DAI.
+* `pAmountMax`: Maximal amount of PTK to use as borrower's own pledge
+* `descriptionHash`: Hash of loan description stored in Swarm
 #### Required conditions:
 * User has enough PTK: `PToken.balanceOf(userAddress) >= pAmount`
 #### Workflow:
 1. Call `FundsModule.calculatePoolExitInverse(pAmount)` to determine expected pledge in DAI (`lAmount`). The response has 3 values, use the first one.
 1. Determine minimum acceptable amount `lAmountMin <= lAmount` of DAI, which user expects to lock as a pledge, sending `pAmount` of PTK. Zero value is allowed.
 1. Call `PToken.approve(FundsModule.address, pAmount)` to allow operation.
-1. Call `LoanModule.createDebtProposal(debtLAmount, interest, pAmount, lAmountMin)` to create loan proposal.
+1. Call `LoanModule.createDebtProposal(debtLAmount, interest, pAmountMax, descriptionHash)` to create loan proposal.
 #### Data required for future calls:
 * Proposal index: `proposalIndex` from event `DebtProposalCreated`.
 
