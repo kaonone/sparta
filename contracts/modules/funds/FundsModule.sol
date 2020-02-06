@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
-import "../../token/pTokens/PToken.sol";
+import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
 import "./FundsOperatorRole.sol";
 
@@ -13,15 +13,11 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    IERC20 public lToken;       //Address of liquid token
-    PToken public pToken;       //Address of PToken
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
 
-    function initialize(address _pool, IERC20 _lToken, PToken _pToken) public initializer {
+    function initialize(address _pool) public initializer {
         Module.initialize(_pool);
         FundsOperatorRole.initialize(_msgSender());
-        lToken = _lToken;
-        pToken = _pToken;
         //lBalance = lToken.balanceOf(address(this)); //We do not initialize lBalance to preserve it's previous value when updgrade
     }
 
@@ -32,7 +28,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function depositLTokens(address from, uint256 amount) public onlyFundsOperator {
         lBalance = lBalance.add(amount);
-        require(lToken.transferFrom(from, address(this), amount), "FundsModule: deposit failed");
+        require(lToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
         emitStatus();
     }
 
@@ -53,10 +49,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         lBalance = lBalance.sub(amount);
-        require(lToken.transfer(to, amount), "FundsModule: withdraw failed");
+        require(lToken().transfer(to, amount), "FundsModule: withdraw failed");
         if (poolFee > 0) {
             lBalance = lBalance.sub(poolFee);
-            require(lToken.transfer(owner(), poolFee), "FundsModule: fee transfer failed");
+            require(lToken().transfer(owner(), poolFee), "FundsModule: fee transfer failed");
         }
         emitStatus();
     }
@@ -67,7 +63,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function depositPTokens(address from, uint256 amount) public onlyFundsOperator {
-        require(pToken.transferFrom(from, address(this), amount), "FundsModule: deposit failed");
+        require(pToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
     }
 
     /**
@@ -76,7 +72,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
-        require(pToken.transfer(to, amount), "FundsModule: withdraw failed");
+        require(pToken().transfer(to, amount), "FundsModule: withdraw failed");
     }
 
     /**
@@ -85,7 +81,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to mint
      */
     function mintPTokens(address to, uint256 amount) public onlyFundsOperator {
-        require(pToken.mint(to, amount), "FundsModule: mint failed");
+        require(pToken().mint(to, amount), "FundsModule: mint failed");
     }
 
     /**
@@ -93,7 +89,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(uint256 amount) public onlyFundsOperator {
-        pToken.burn(amount); //This call will revert if we have not enough pTokens
+        pToken().burn(amount); //This call will revert if we have not enough pTokens
     }
 
     /**
@@ -102,7 +98,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) public onlyFundsOperator {
-        pToken.burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
+        pToken().burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
     }
 
     /**
@@ -111,9 +107,9 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to send
      */
     function refundLTokens(address to, uint256 amount) public onlyFundsOperator {
-        uint256 realLBalance = lToken.balanceOf(address(this));
+        uint256 realLBalance = lToken().balanceOf(address(this));
         require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
-        require(lToken.transfer(to, amount), "FundsModule: refund failed");
+        require(lToken().transfer(to, amount), "FundsModule: refund failed");
     }
 
     /**
@@ -162,6 +158,14 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     
     function loanModule() private view returns(ILoanModule) {
         return ILoanModule(getModuleAddress(MODULE_LOAN));
+    }
+
+    function pToken() private view returns(IPToken){
+        return IPToken(getModuleAddress(MODULE_PTOKEN));
+    }
+    
+    function lToken() private view returns(IERC20){
+        return IERC20(getModuleAddress(MODULE_LTOKEN));
     }
 
 }

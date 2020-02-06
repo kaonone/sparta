@@ -8,7 +8,7 @@ contract BondingCurve is Initializable  {
     using ISQRT for uint256;
     using SafeMath for uint256;
 
-    uint256 private constant PERCENT_DIVIDER = 100;
+    uint256 public constant PERCENT_DIVIDER = 100;
     // Original curve formula uses float numbers to represent amounts. 
     // In Solidity we convert them to integers, using ether to wei conversion. 
     // While we use sqrt() operation we should convert formula accordingly.

@@ -27,10 +27,11 @@ library AddressMap {
      */
     function set(Data storage _data, string memory _key, address _value) internal {
         address replaced = get(_data, _key);
-        if (replaced != ZERO_ADDRESS)
+        if (replaced != ZERO_ADDRESS) {
             _data.items.replace(replaced, _value);
-        else
+        } else {
             _data.items.append(_value);
+        }
         _data.valueOf[keccak256(abi.encodePacked(_key))] = _value;
         _data.keyOf[_value] = _key;
     }

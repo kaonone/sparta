@@ -14,9 +14,6 @@ declare global {
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
-      require(name: "Counter_V0"): TruffleContracts.Counter_V0Contract;
-      require(name: "Counter_V1"): TruffleContracts.Counter_V1Contract;
-      require(name: "Counter"): TruffleContracts.CounterContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
       require(name: "ERC20"): TruffleContracts.ERC20Contract;
       require(name: "ERC20Burnable"): TruffleContracts.ERC20BurnableContract;
@@ -35,6 +32,7 @@ declare global {
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;
       require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
+      require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(
         name: "LiquidityModule"
       ): TruffleContracts.LiquidityModuleContract;
@@ -47,8 +45,6 @@ declare global {
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
-      require(name: "Role"): TruffleContracts.RoleContract;
-      require(name: "StorageModule"): TruffleContracts.StorageModuleContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;
