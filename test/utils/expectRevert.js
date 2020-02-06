@@ -12,7 +12,8 @@ const expectRevert = async function (promise, expectedError) {
                     showDiff: true
                 });
             }else{
-                throw new AssertionError(`Expected different fail reason. Expected:\n${expectedError}\nReceived:${error}`);
+                console.log($error);
+                throw new AssertionError(`Expected different fail reason. Expected:\n${expectedError}\nReceived:${error.message}`);
             }
         }
         return;

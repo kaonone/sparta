@@ -41,7 +41,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     before(async () => {
         //Setup system contracts
         pool = await Pool.new();
-        await pool.initialize({from: owner});
+        await (<any> pool).methods['initialize()']({from: owner});
 
         lToken = await FreeDAI.new();
         await (<any> lToken).methods['initialize()']({from: owner});
@@ -119,7 +119,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let lPledgeWei = w3random.intervalBN(lDebtWei.div(new BN(10)), lDebtWei.div(new BN(2)), 'ether');
+        let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
+        // console.log('pledgeRequirements', pledgeRequirements[0].toString(), pledgeRequirements[1].toString());
+        let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
         let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
         expectEqualBN(elPledgeWei[0],lPledgeWei);
@@ -144,7 +146,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let lPledgeWei = w3random.intervalBN(lDebtWei.div(new BN(10)), lDebtWei.div(new BN(2)), 'ether');
+        let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
+        //console.log('pledgeRequirements', pledgeRequirements[0].toString(), pledgeRequirements[1].toString());
+        let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
+        // let lPledgeWei = w3random.intervalBN(lDebtWei.div(new BN(10)), lDebtWei.div(new BN(2)), 'ether');
+        // console.log('lPledgeWei', lPledgeWei.toString(), lDebtWei.div(new BN(2)).toString());
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
         let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
         expectEqualBN(elPledgeWei[0],lPledgeWei);
@@ -171,7 +177,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log(proposalIdx);
 
         //Add Pleddge
-        let lPledgeWei = w3random.intervalBN(lDebtWei.div(new BN(10)), lDebtWei.div(new BN(2)), 'ether');
+        let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
+        //console.log('pledgeRequirements', pledgeRequirements[0].toString(), pledgeRequirements[1].toString());
+        let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
         let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
         // console.log('lPledgeWei', lPledgeWei.toString());
         // console.log('pPledgeWei', pPledgeWei.toString());
