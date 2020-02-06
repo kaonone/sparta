@@ -38,7 +38,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     before(async () => {
         //Setup system contracts
         pool = await Pool.new();
-        await pool.initialize({from: owner});
+        await (<any> pool).methods['initialize()']({from: owner});
 
         lToken = await FreeDAI.new();
         await (<any> lToken).methods['initialize()']({from: owner});
