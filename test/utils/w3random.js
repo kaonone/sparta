@@ -10,7 +10,7 @@ function intervalBN(min, max) {
     let maxBN = new BN(max);
     const MP = 100000000;
     let rnd = Math.round(MP * Math.random());
-    return minBN.add(maxBN.mul(new BN(rnd)).div(new BN(MP)));
+    return minBN.add(maxBN.sub(minBN).mul(new BN(rnd)).div(new BN(MP)));
 }
 function bn(bytes=32){
     return new BN(Web3.utils.randomHex(bytes).substr(2), 16);
