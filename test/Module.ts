@@ -17,7 +17,7 @@ contract("Module", async ([_, owner, ...otherAccounts]) => {
   
     beforeEach(async () => {
         pool = await Pool.new();
-        await pool.initialize({from: owner});
+        await (<any> pool).methods['initialize()']({from: owner});
 
         votes = await VotesModule.new();
         await (<any> votes).methods['initialize(address)'](pool.address, {from: owner});

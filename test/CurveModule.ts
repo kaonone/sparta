@@ -18,7 +18,7 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
     beforeEach(async () => {
         //Setup system contracts
         pool = await Pool.new();
-        await pool.initialize({from: owner});
+        await (<any> pool).methods['initialize()']({from: owner});
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
