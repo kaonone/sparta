@@ -407,11 +407,11 @@
       }
     },
     "Pool": {
-      "address": "0xd98827cA132819b884Bb57E79978Cb4A3238755A",
-      "constructorCode": "6080604052611bc5806100136000396000f3fe",
-      "bodyBytecodeHash": "9cfd4ef9a680a8d634b9280c987179fa6331f15aa9d2ba1edca152733083920e",
-      "localBytecodeHash": "e8694108021ef33fe39320ebdb1d796637b33b247fb33b28072d4f63940c5d21",
-      "deployedBytecodeHash": "e8694108021ef33fe39320ebdb1d796637b33b247fb33b28072d4f63940c5d21",
+      "address": "0x4D5d9daaEdA9F884985325C046E775fCcf61c8ec",
+      "constructorCode": "6080604052611c25806100136000396000f3fe",
+      "bodyBytecodeHash": "0cf1acc6638984027d1988ae853687d8aedb437d368e37e6566927b7d23943c6",
+      "localBytecodeHash": "590c79f053f1084c12d2603b261223948352388c0879848df0d873014e847ab5",
+      "deployedBytecodeHash": "590c79f053f1084c12d2603b261223948352388c0879848df0d873014e847ab5",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -447,21 +447,21 @@
           "members": [
             {
               "label": "valueOf",
-              "astId": 5260,
+              "astId": 5137,
               "type": "t_mapping<t_address>",
-              "src": "278:35:29"
+              "src": "278:35:26"
             },
             {
               "label": "keyOf",
-              "astId": 5264,
+              "astId": 5141,
               "type": "t_mapping<t_string>",
-              "src": "323:33:29"
+              "src": "323:33:26"
             },
             {
               "label": "items",
-              "astId": 5266,
+              "astId": 5143,
               "type": "t_struct<AddressList.Data>",
-              "src": "366:33:29"
+              "src": "366:33:26"
             }
           ]
         },
@@ -484,39 +484,39 @@
           "members": [
             {
               "label": "head",
-              "astId": 4683,
+              "astId": 4552,
               "type": "t_address",
-              "src": "178:12:28"
+              "src": "178:12:25"
             },
             {
               "label": "tail",
-              "astId": 4685,
+              "astId": 4554,
               "type": "t_address",
-              "src": "200:12:28"
+              "src": "200:12:25"
             },
             {
               "label": "length",
-              "astId": 4687,
+              "astId": 4556,
               "type": "t_uint256",
-              "src": "222:14:28"
+              "src": "222:14:25"
             },
             {
               "label": "isContain",
-              "astId": 4691,
+              "astId": 4560,
               "type": "t_mapping<t_bool>",
-              "src": "246:37:28"
+              "src": "246:37:25"
             },
             {
               "label": "nextOf",
-              "astId": 4695,
+              "astId": 4564,
               "type": "t_mapping<t_address>",
-              "src": "293:34:28"
+              "src": "293:34:25"
             },
             {
               "label": "prevOf",
-              "astId": 4699,
+              "astId": 4568,
               "type": "t_mapping<t_address>",
-              "src": "337:34:28"
+              "src": "337:34:25"
             }
           ]
         },
@@ -532,41 +532,41 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 6687,
+          "astId": 6566,
           "type": "t_bool",
-          "src": "757:24:41"
+          "src": "757:24:38"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 6689,
+          "astId": 6568,
           "type": "t_bool",
-          "src": "876:25:41"
+          "src": "876:25:38"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 6745,
+          "astId": 6624,
           "type": "t_array:50<t_uint256>",
-          "src": "1951:29:41"
+          "src": "1951:29:38"
         },
         {
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 5936,
+          "astId": 5815,
           "type": "t_address",
-          "src": "526:22:35"
+          "src": "526:22:32"
         },
         {
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 6049,
+          "astId": 5928,
           "type": "t_array:50<t_uint256>",
-          "src": "2471:29:35"
+          "src": "2471:29:32"
         },
         {
           "contract": "Pool",
@@ -622,7 +622,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "Pool",
+            "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\core\\Pool.sol",
+            "label": "modules",
+            "astId": 157,
+            "type": "t_struct<AddressMap.Data>",
+            "src": "317:23:3"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "CurveModule": {
@@ -1296,7 +1307,7 @@
       {
         "address": "0x24Aff547E744976e7e616B7BB9B10ea18185d472",
         "version": "1.0.0",
-        "implementation": "0xd98827cA132819b884Bb57E79978Cb4A3238755A",
+        "implementation": "0x4D5d9daaEdA9F884985325C046E775fCcf61c8ec",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
