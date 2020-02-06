@@ -363,7 +363,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let hasActiveDebts = await loanm.hasActiveDebts(borrower);
         expect(hasActiveDebts).to.be.false;
 
-        expectRevert(
+        await expectRevert(
             loanm.repay(debtIdx, debtLAmount, {from:borrower}),
             'LoanModule: debt is already defaulted'
         );
