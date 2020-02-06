@@ -149,7 +149,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
         let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
         await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
-        expectRevert(
+        await expectRevert(
             liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
             'LiquidityModule: Withdraws forbidden if address has active debts'
         );

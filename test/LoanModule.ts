@@ -363,10 +363,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let hasActiveDebts = await loanm.hasActiveDebts(borrower);
         expect(hasActiveDebts).to.be.false;
 
-        // expectRevert(
-        //     loanm.repay(debtIdx, debtLAmount, {from:borrower}),
-        //     'LoanModule: debt is already defaulted'
-        // );
+        await expectRevert(
+            loanm.repay(debtIdx, debtLAmount, {from:borrower}),
+            'LoanModule: debt is already defaulted'
+        );
     });
     it('should allow supporter to take part of the pledge after default date', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
