@@ -349,25 +349,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
     });
-    it('should not allow repay after default date', async () => {
-        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-
-        let debtLAmount = w3random.interval(100, 200, 'ether');
-        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
-        let borrowerLBalance = await lToken.balanceOf(borrower);
-        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
-        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
-
-        await time.increase(90*24*60*60+1);
-
-        let hasActiveDebts = await loanm.hasActiveDebts(borrower);
-        expect(hasActiveDebts).to.be.false;
-
-        expectRevert(
-            loanm.repay(debtIdx, debtLAmount, {from:borrower}),
-            'LoanModule: debt is already defaulted'
-        );
-    });
     it('should allow supporter to take part of the pledge after default date', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -404,6 +385,25 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
 
+    });
+    it('should not allow repay after default date', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
+
+        await time.increase(90*24*60*60+1);
+
+        let hasActiveDebts = await loanm.hasActiveDebts(borrower);
+        expect(hasActiveDebts).to.be.false;
+
+        expectRevert(
+            loanm.repay(debtIdx, debtLAmount, {from:borrower}),
+            'LoanModule: debt is already defaulted'
+        );
     });
     // it('should correctly calculate totalLDebts()', async () => {
     // });
