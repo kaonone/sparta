@@ -217,7 +217,7 @@ contract LoanModule is Module, ILoanModule {
     /**
      * @notice Repay amount of lToken and unlock pTokens
      * @param debt Index of Debt
-     * @param lAmount Amount of liquid tokens to repay
+     * @param lAmount Amount of liquid tokens to repay (it will not take more than needed for full debt repayment)
      */
     function repay(uint256 debt, uint256 lAmount) public {
         Debt storage d = debts[_msgSender()][debt];
@@ -227,7 +227,6 @@ contract LoanModule is Module, ILoanModule {
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
         uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
-        require(lAmount <= d.lAmount.add(lInterest), "LoanModule: can not repay more then debt.lAmount + interest");
 
         uint256 actualInterest;
         if (lAmount < lInterest) {
@@ -236,6 +235,9 @@ contract LoanModule is Module, ILoanModule {
             d.lastPayment = d.lastPayment.add(paidTime);
             actualInterest = lAmount;
         } else {
+            uint256 fullRepayLAmount = d.lAmount.add(lInterest);
+            if (lAmount > fullRepayLAmount) lAmount = fullRepayLAmount;
+
             d.lastPayment = now;
             uint256 debtReturned = lAmount.sub(lInterest);
             d.lAmount = d.lAmount.sub(debtReturned);

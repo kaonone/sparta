@@ -134,7 +134,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     it('should not allow deposit if there are debts', async () => {
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-        expectRevert(
+        await expectRevert(
             liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
             'LiquidityModule: Deposits forbidden if address has active debts'
         );
@@ -149,7 +149,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
         let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
         await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
-        expectRevert(
+        await expectRevert(
             liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
             'LiquidityModule: Withdraws forbidden if address has active debts'
         );

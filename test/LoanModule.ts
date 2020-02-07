@@ -238,7 +238,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log('debtLRequiredPayments', debtLRequiredPayments[0].toString(), debtLRequiredPayments[1].toString());
         expect(debtLRequiredPayments[1]).to.be.bignumber.gt(new BN(0));
 
-        let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]);
+        let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]).add(debtLRequiredPayments[0].div(new BN(1000))); //add 0.1% of full left amount to handle possible additiona interest required
         await lToken.transfer(borrower, fullRepayLAmount, {from: liquidityProvider});
         await lToken.approve(funds.address, fullRepayLAmount, {from: borrower});
         receipt = await loanm.repay(debtIdx, fullRepayLAmount, {from: borrower});
@@ -304,7 +304,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         expect(requiredPayments[0]).to.be.bignumber.eq(debtLAmount); // Debt equal to loaned amount   
         expect(requiredPayments[1]).to.be.bignumber.gt('0');         // Some interest payment required
-        let repayLAmount = requiredPayments[0].add(requiredPayments[1]);
+        let repayLAmount = requiredPayments[0].add(requiredPayments[1]).add(requiredPayments[0].div(new BN(1000)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         await loanm.repay(debtIdx, repayLAmount, {from: borrower});
 
@@ -339,7 +339,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Full repayment
         await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
-        repayLAmount = requiredPayments[0].add(requiredPayments[1]);
+        repayLAmount = requiredPayments[0].add(requiredPayments[1]).add(requiredPayments[0].div(new BN(1000)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         await loanm.repay(debtIdx, repayLAmount, {from: borrower});
 
@@ -363,7 +363,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let hasActiveDebts = await loanm.hasActiveDebts(borrower);
         expect(hasActiveDebts).to.be.false;
 
-        expectRevert(
+        await expectRevert(
             loanm.repay(debtIdx, debtLAmount, {from:borrower}),
             'LoanModule: debt is already defaulted'
         );
