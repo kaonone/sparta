@@ -23,9 +23,9 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 
 ## Diagrams
 ### Modules
-![Modules](/docs/diagram_modules.jpg)
+![Modules](/docs/diagram_modules_v1.jpg)
 ### User Interactions
-![User Interactions](/docs/diagram_user_interactions.jpg)
+![User Interactions](/docs/diagram_user_interactions_v1.jpg)
 
 ## Deployment
 
