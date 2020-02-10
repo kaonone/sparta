@@ -279,7 +279,7 @@ contract LoanModule is Module, ILoanModule {
      * @param debt Index of borrowers's debt
      */
     function withdrawUnlockedPledge(address borrower, uint256 debt) public {
-        (, , uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn) = calculatePledgeInfo(borrower, debt, _msgSender());
+        (, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn) = calculatePledgeInfo(borrower, debt, _msgSender());
 
         uint256 pUnlockedPlusInterest = pUnlocked.add(pInterest);
         require(pUnlockedPlusInterest > pWithdrawn, "LoanModule: nothing to withdraw");
@@ -333,7 +333,7 @@ contract LoanModule is Module, ILoanModule {
      *      pWithdrawn - amount of already withdrawn pTokens
      */
     function calculatePledgeInfo(address borrower, uint256 debt, address supporter) view public 
-    returns(uint256 lLocked, uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
+    returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
         DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
         require(proposal.lAmount > 0 && proposal.executed, "LoanModule: DebtProposal not found");
@@ -344,11 +344,9 @@ contract LoanModule is Module, ILoanModule {
 
         if (supporter == borrower) {
             if (dbt.lAmount == 0) {
-                lLocked = 0;
                 pLocked = 0;
                 pUnlocked = dp.pAmount;
             } else {
-                lLocked = dp.lAmount;
                 pLocked = dp.pAmount;
                 pUnlocked = 0;
                 if (_isDebtDefaultTimeReached(dbt)) {
@@ -359,7 +357,6 @@ contract LoanModule is Module, ILoanModule {
         }else{
             uint256 lPledge = dp.lAmount;
             uint256 pPledge = dp.pAmount;
-            lLocked = lPledge.mul(dbt.lAmount).div(proposal.lAmount);
             pLocked = pPledge.mul(dbt.lAmount).div(proposal.lAmount);
             assert(pLocked <= pPledge);
             pUnlocked = pPledge.sub(pLocked);
@@ -371,11 +368,9 @@ contract LoanModule is Module, ILoanModule {
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
                 uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
                 if (dbt.defaultExecuted) {
-                    lLocked = 0;
                     pLocked = 0;
                     pUnlocked = pUnlocked.add(pCompensation);
                 }else {
-                    lLocked = 0;
                     pLocked = pCompensation;
                 }
             }

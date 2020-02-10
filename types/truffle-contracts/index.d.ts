@@ -3061,7 +3061,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     debt: number | BN | string,
     supporter: string | BN,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN, BN]>;
+  ): Promise<[BN, BN, BN, BN]>;
 
   getRequiredPledge(
     borrower: string | BN,
