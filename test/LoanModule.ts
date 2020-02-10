@@ -260,11 +260,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Check pledge Info
         let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('Before repay', pledgeInfo);
-        let pPledge = pledgeInfo[0];
+        let pPledge = pledgeInfo[1];
         //console.log('Pledge pAmount', web3.utils.fromWei(pPledge));
-        expect(pledgeInfo[1]).to.be.bignumber.eq('0');
         expect(pledgeInfo[2]).to.be.bignumber.eq('0');
         expect(pledgeInfo[3]).to.be.bignumber.eq('0');
+        expect(pledgeInfo[4]).to.be.bignumber.eq('0');
 
         // Partial repayment
         let randTime = w3random.interval(30*24*60*60, 89*24*60*60);
@@ -278,16 +278,16 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Redeem unlocked pledge
         pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         // console.log('After repay', pledgeInfo);
-        // console.log('Pledge locked', web3.utils.fromWei(pledgeInfo[0]));
-        // console.log('Pledge unlocked', web3.utils.fromWei(pledgeInfo[1]));
-        // console.log('Pledge interest', web3.utils.fromWei(pledgeInfo[2]));
-        expectEqualBN(pledgeInfo[0].add(pledgeInfo[1]), pPledge); // Locked + unlocked = full pledge
-        expect(pledgeInfo[1]).to.be.bignumber.gt('0');    // Something is unlocked
-        expect(pledgeInfo[2]).to.be.bignumber.gt('0');    // Some interest receieved
-        expect(pledgeInfo[3]).to.be.bignumber.eq('0');    // Nothing withdrawn yet
+        // console.log('Pledge locked', web3.utils.fromWei(pledgeInfo[1]));
+        // console.log('Pledge unlocked', web3.utils.fromWei(pledgeInfo[2]));
+        // console.log('Pledge interest', web3.utils.fromWei(pledgeInfo[3]));
+        expectEqualBN(pledgeInfo[1].add(pledgeInfo[2]), pPledge); // Locked + unlocked = full pledge
+        expect(pledgeInfo[2]).to.be.bignumber.gt('0');    // Something is unlocked
+        expect(pledgeInfo[3]).to.be.bignumber.gt('0');    // Some interest receieved
+        expect(pledgeInfo[4]).to.be.bignumber.eq('0');    // Nothing withdrawn yet
 
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
-        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        let expectedPWithdraw = pledgeInfo[2].add(pledgeInfo[3]).sub(pledgeInfo[4]);
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), });
     });
     it('should fully redeem pledge from fully paid debt (without partial redeem)', async () => {
@@ -310,7 +310,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         //Withdraw pledge
         let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        let expectedPWithdraw = pledgeInfo[2].add(pledgeInfo[3]).sub(pledgeInfo[4]);
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
     });
@@ -332,7 +332,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         //Withdraw pledge
         let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-        let expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        let expectedPWithdraw = pledgeInfo[2].add(pledgeInfo[3]).sub(pledgeInfo[4]);
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
 
@@ -345,7 +345,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         //Withdraw pledge
         pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-        expectedPWithdraw = pledgeInfo[1].add(pledgeInfo[2]).sub(pledgeInfo[3]);
+        expectedPWithdraw = pledgeInfo[2].add(pledgeInfo[3]).sub(pledgeInfo[4]);
         receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'sender':otherAccounts[0], 'borrower':borrower, 'debt':String(debtIdx), 'pAmount':expectedPWithdraw});
     });
@@ -397,12 +397,13 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('after default', pledgeInfoAfterDefault);
         expect(pledgeInfoAfterDefault[0]).to.be.bignumber.eq(new BN(0));
-        expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]); //TODO: calculate how many PTK added from borrower's pledge
-        expect(pledgeInfoAfterDefault[2]).to.be.bignumber.eq(pledgeInfoBeforeDefault[2]);
+        expect(pledgeInfoAfterDefault[1]).to.be.bignumber.eq(new BN(0));
+        expect(pledgeInfoAfterDefault[2]).to.be.bignumber.gt(pledgeInfoBeforeDefault[2]); //TODO: calculate how many PTK added from borrower's pledge
         expect(pledgeInfoAfterDefault[3]).to.be.bignumber.eq(pledgeInfoBeforeDefault[3]);
+        expect(pledgeInfoAfterDefault[4]).to.be.bignumber.eq(pledgeInfoBeforeDefault[4]);
 
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
-        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[2].add(pledgeInfoAfterDefault[3].sub(pledgeInfoAfterDefault[4]))});
 
     });
     // it('should correctly calculate totalLDebts()', async () => {
