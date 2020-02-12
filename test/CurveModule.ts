@@ -38,8 +38,6 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
         let liquidAssetsWei = w3random.interval(100000, 1000000,'ether');
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
         //console.log("liquidAssets = ", liquidAssetsWei, liquidAssets);
-        let debtCommitmentsWei = w3random.interval(1, 1000000, 'ether');
-        let debtCommitments = Number(web3.utils.fromWei(debtCommitmentsWei));
 
         let maxPAmount = curveEnter(0, 0, liquidAssets-1);
         //console.log("maxPAmount = ", maxPAmount);
@@ -47,10 +45,10 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
 
-        let expected = curveExitInverse(liquidAssets, debtCommitments, pAmount);
+        let expected = curveExitInverseWithFee(liquidAssets, pAmount);
         //console.log('expected', expected);
 
-        let lAmountWei = await curve.calculateExitInverseWithFee(liquidAssetsWei, debtCommitmentsWei, pAmountWei);
+        let lAmountWei = await curve.calculateExitInverseWithFee(liquidAssetsWei, pAmountWei);
         let lAmountT = Number(web3.utils.fromWei(lAmountWei[0]));
         let lAmountU = Number(web3.utils.fromWei(lAmountWei[1]));
         let lAmountP = Number(web3.utils.fromWei(lAmountWei[2]));
@@ -104,7 +102,7 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
      * x = f(L)
      * dx - amount of pTokens taken from user
      */
-    function curveExitInverse(L:number, D:number, dx:number): number {
+    function curveExitInverse(L:number, dx:number): number {
         let withdraw = L - inverseCurveFunction(curveFunction(L) - dx)
         return withdraw;
     }
@@ -112,8 +110,8 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
      * WithdrawU = Withdraw*(1-withdrawFee)
      * WithdrawP = Withdraw*withdrawFee
      */
-    function curveExitInverseWithFee(L:number, D:number, dx:number): [number, number, number] {
-        let withdraw = curveExitInverse(L, D, dx);
+    function curveExitInverseWithFee(L:number, dx:number): [number, number, number] {
+        let withdraw = curveExitInverse(L, dx);
         let fee = withdrawFee;
         let withdrawU = withdraw*(1-fee);
         let withdrawP = withdraw*fee;

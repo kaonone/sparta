@@ -9,10 +9,6 @@ import "./BondingCurve.sol";
 contract CurveModule is Module, ICurveModule, BondingCurve {
     uint256 private constant DEFAULT_CURVE_A = 1;
     uint256 private constant DEFAULT_CURVE_B = 1;
-    uint256 private constant DEFAULT_LIQUIDITY_WEIGHT_ENTER = 1.0*LIQUIDITY_WEIGHT_DIVIDER;
-    uint256 private constant DEFAULT_DEBT_WEIGHT_ENTER = 1.0*LIQUIDITY_WEIGHT_DIVIDER;
-    uint256 private constant DEFAULT_LIQUIDITY_WEIGHT_EXIT = 1.0*LIQUIDITY_WEIGHT_DIVIDER;
-    uint256 private constant DEFAULT_DEBT_WEIGHT_EXIT = 0*LIQUIDITY_WEIGHT_DIVIDER;
 
     uint256 private constant DEFAULT_WITHDRAW_FEE_PERCENT = 5;
     uint256 public constant PERCENT_DIVIDER = 100;
@@ -21,11 +17,7 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        BondingCurve.initialize(
-            DEFAULT_CURVE_A, DEFAULT_CURVE_B, 
-            DEFAULT_LIQUIDITY_WEIGHT_ENTER, DEFAULT_DEBT_WEIGHT_ENTER,
-            DEFAULT_LIQUIDITY_WEIGHT_EXIT, DEFAULT_DEBT_WEIGHT_EXIT
-        );
+        BondingCurve.initialize(DEFAULT_CURVE_A, DEFAULT_CURVE_B);
         setWithdrawFee(DEFAULT_WITHDRAW_FEE_PERCENT);
     }
 
@@ -37,15 +29,8 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
         withdrawFeePercent = _withdrawFeePercent;
     }
 
-    function setCurveParams(
-        uint256 _curveA, 
-        uint256 _curveB, 
-        uint256 _liquidityWeightEnter, 
-        uint256 _debtWeightEnter,
-        uint256 _liquidityWeightExit, 
-        uint256 _debtWeightExit
-    ) public onlyOwner {
-        _setCurveParams(_curveA, _curveB, _liquidityWeightEnter, _debtWeightEnter, _liquidityWeightExit, _debtWeightExit);
+    function setCurveParams(uint256 _curveA, uint256 _curveB) public onlyOwner {
+        _setCurveParams(_curveA, _curveB);
     }
 
     /**
@@ -62,10 +47,9 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
      */
     function calculateExitInverseWithFee(
         uint256 liquidAssets,
-        uint256 debtCommitments,
         uint256 pAmount
     ) public view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP) {
-        withdraw = BondingCurve.calculateExitInverse(liquidAssets, debtCommitments, pAmount);
+        withdraw = BondingCurve.calculateExitInverse(liquidAssets, pAmount);
         //withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
         //withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
         withdrawP = withdraw.mul(withdrawFeePercent).div(PERCENT_DIVIDER);

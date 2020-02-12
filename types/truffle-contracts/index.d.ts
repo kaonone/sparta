@@ -238,55 +238,29 @@ export interface BaseInstance extends Truffle.ContractInstance {
 }
 
 export interface BondingCurveInstance extends Truffle.ContractInstance {
-  LIQUIDITY_WEIGHT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
   curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   curveB(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  debtWeightEnter(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  debtWeightExit(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  liquidityWeightEnter(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  liquidityWeightExit(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   initialize: {
     (
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -300,14 +274,12 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
 
   calculateExit(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExitInverse(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -498,8 +470,6 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
 }
 
 export interface CurveModuleInstance extends Truffle.ContractInstance {
-  LIQUIDITY_WEIGHT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
   MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
@@ -523,14 +493,12 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 
   calculateExit(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExitInverse(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -544,10 +512,6 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  debtWeightEnter(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  debtWeightExit(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
   getModuleAddress(
     module: string,
     txDetails?: Truffle.TransactionDetails
@@ -559,10 +523,6 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
-
-  liquidityWeightEnter(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  liquidityWeightExit(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -614,42 +574,12 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   setWithdrawFee: {
@@ -675,44 +605,27 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     (
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       _curveA: number | BN | string,
       _curveB: number | BN | string,
-      _liquidityWeightEnter: number | BN | string,
-      _debtWeightEnter: number | BN | string,
-      _liquidityWeightExit: number | BN | string,
-      _debtWeightExit: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculateExitInverseWithFee(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
@@ -1966,14 +1879,12 @@ export interface ICurveModuleInstance extends Truffle.ContractInstance {
 
   calculateExit(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
   calculateExitInverseWithFee(
     liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;

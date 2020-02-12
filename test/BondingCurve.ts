@@ -11,7 +11,6 @@ const expectEqualBN = require("./utils/expectEqualBN");
 const BondingCurve = artifacts.require("BondingCurve");
 
 contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
-    const LIQUIDITY_WEIGHT_DIVIDER = 1000;
     let curve: BondingCurveInstance;
     let curveA:number, curveB:number; //Curve parameters (constants)
   
@@ -20,7 +19,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         curveB = 1;
 
         curve = await BondingCurve.new();
-        await curve.initialize(curveA, curveB, 1*LIQUIDITY_WEIGHT_DIVIDER, 1*LIQUIDITY_WEIGHT_DIVIDER, 1*LIQUIDITY_WEIGHT_DIVIDER, 0);
+        await curve.initialize(curveA, curveB);
     });
 
     it("should correctly calculate curve", async () => {
@@ -100,8 +99,6 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let liquidAssetsWei = w3random.interval(100000, 1000000,'ether');
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
         //console.log("liquidAssets = ", liquidAssetsWei, liquidAssets);
-        let debtCommitmentsWei = w3random.interval(1, 1000000, 'ether');
-        let debtCommitments = Number(web3.utils.fromWei(debtCommitmentsWei));
 
         let maxPAmount = curveEnter(0, 0, liquidAssets-1);
         //console.log("maxPAmount = ", maxPAmount);
@@ -109,10 +106,10 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
 
-        let expected = curveExitInverse(liquidAssets, debtCommitments, pAmount);
+        let expected = curveExitInverse(liquidAssets, pAmount);
         //console.log('expected', expected);
 
-        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, debtCommitmentsWei, pAmountWei);
+        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, pAmountWei);
         let lAmount = Number(web3.utils.fromWei(lAmountWei));
         //console.log("lAmount = ", lAmountWei, lAmount);
         expectEqualFloat(lAmount, expected);
@@ -122,17 +119,15 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
         let liquidAssetsWei = w3random.interval(100000, 1000000,'ether');
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
         //console.log("liquidAssets = ", liquidAssetsWei, liquidAssets);
-        let debtCommitmentsWei = w3random.interval(1, 1000000, 'ether');
-        let debtCommitments = Number(web3.utils.fromWei(debtCommitmentsWei));
 
         let lAmountWei = w3random.interval(1, 100000, 'ether');
         let lAmount = Number(web3.utils.fromWei(lAmountWei));
         //console.log("lAmount = ", lAmountWei, lAmount);
 
-        let expected = curveExit(liquidAssets, debtCommitments, lAmount);
+        let expected = curveExit(liquidAssets, lAmount);
         //console.log("expected = ", expected);
 
-        let pAmountWei = await curve.calculateExit(liquidAssetsWei, debtCommitmentsWei, lAmountWei);
+        let pAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         //console.log("pAmount = ", pAmountWei, pAmount);
         if(pAmount == 0){
@@ -145,19 +140,17 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     it("should calculate exit by liquid token and by pToken with same results", async () => {
         let liquidAssetsWei = w3random.interval(1, 1000000,'ether');
         let liquidAssets = Number(web3.utils.fromWei(liquidAssetsWei));
-        let debtCommitmentsWei = w3random.interval(1, 1000000, 'ether');
-        let debtCommitments = Number(web3.utils.fromWei(debtCommitmentsWei));
 
         let maxPAmount = curveEnter(0, 0, liquidAssets-1);
         let pAmountWei = w3random.interval(1, maxPAmount, 'ether');
         let pAmount = Number(web3.utils.fromWei(pAmountWei));
         // console.log('pAmount  = ', pAmountWei.toString(), pAmount);
 
-        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, debtCommitmentsWei, pAmountWei);
+        let lAmountWei = await curve.calculateExitInverse(liquidAssetsWei, pAmountWei);
         let lAmount = Number(web3.utils.fromWei(lAmountWei));
         // console.log('lAmount  = ', lAmountWei.toString(), lAmount);
 
-        let epAmountWei = await curve.calculateExit(liquidAssetsWei, debtCommitments, lAmountWei);
+        let epAmountWei = await curve.calculateExit(liquidAssetsWei, lAmountWei);
         let epAmount = Number(web3.utils.fromWei(epAmountWei));
         // console.log('epAmount = ', epAmountWei.toString(), epAmount);
         expectEqualFloat(epAmount, pAmount);
@@ -209,7 +202,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
      * dx = (1+d)*(f(L) - f(L - Whidraw))
      * L is the volume of liquid assets
      */
-    function curveExit(L:number, debt:number, x:number): number {
+    function curveExit(L:number, x:number): number {
         return curveFunction(L) - curveFunction (L - x);
     }
 
@@ -222,7 +215,7 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
      * x = f(L)
      * dx - amount of pTokens taken from user
      */
-    function curveExitInverse(L:number, debt:number, dx:number): number {
+    function curveExitInverse(L:number, dx:number): number {
         let withdraw = L - inverseCurveFunction(curveFunction(L) - dx)
         return withdraw;
     }
