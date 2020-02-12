@@ -4,37 +4,66 @@ import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 import "../../utils/ISQRT.sol";
 
+/* solhint-disable func-order */
 contract BondingCurve is Initializable  {
     using ISQRT for uint256;
     using SafeMath for uint256;
 
-    uint256 public constant PERCENT_DIVIDER = 100;
     // Original curve formula uses float numbers to represent amounts. 
     // In Solidity we convert them to integers, using ether to wei conversion. 
     // While we use sqrt() operation we should convert formula accordingly.
     uint256 private constant FIX = 10**18; 
     uint256 private constant FIX2 = 10**36;
 
+    uint256 public constant LIQUIDITY_WEIGHT_DIVIDER = 10**3;
+
     uint256 public curveA;
     uint256 public curveB;
-    uint256 public withdrawFeePercent;
+    uint256 public liquidityWeightEnter;
+    uint256 public debtWeightEnter;
+    uint256 public liquidityWeightExit;
+    uint256 public debtWeightExit;
 
     /**
      * @notice Initialize curve parameters
      * @param _curveA Constabt A of a curve
      * @param _curveB Constant B of a curve
-     * @param _withdrawFeePercent Withdraw fee, stored as a percent (multiplied by 100)
+     * @param _liquidityWeightEnter Weight of available liquidity in total pool liquidity used for entering pool
+     * @param _debtWeightEnter Weight of debts in total pool liquidity used for entering pool
+     * @param _liquidityWeightEnter Weight of available liquidity in total pool liquidity used for exiting pool
+     * @param _debtWeightEnter Weight of debts in total pool liquidity used for exiting pool
      */
-    function initialize(uint256 _curveA, uint256 _curveB, uint256 _withdrawFeePercent) public initializer {
+    function initialize(
+        uint256 _curveA, 
+        uint256 _curveB, 
+        uint256 _liquidityWeightEnter, 
+        uint256 _debtWeightEnter,
+        uint256 _liquidityWeightExit, 
+        uint256 _debtWeightExit
+    ) public initializer {
+        _setCurveParams(_curveA, _curveB, _liquidityWeightEnter, _debtWeightEnter, _liquidityWeightExit, _debtWeightExit);
+    }
+
+    function _setCurveParams(
+        uint256 _curveA, 
+        uint256 _curveB, 
+        uint256 _liquidityWeightEnter, 
+        uint256 _debtWeightEnter,
+        uint256 _liquidityWeightExit, 
+        uint256 _debtWeightExit
+    ) internal {
         curveA = _curveA;
         curveB = _curveB;
-        withdrawFeePercent = _withdrawFeePercent;
+        liquidityWeightEnter = _liquidityWeightEnter;
+        debtWeightEnter = _debtWeightEnter;
+        liquidityWeightExit = _liquidityWeightExit;
+        debtWeightExit = _debtWeightExit;
     }
 
     /**
      * @notice Calculates amount of pTokens which should be minted/unlocked when liquidity added to pool
      * dx = f(A + Deposit) - f(A)
-     * A - A is the volume of  total assets (liquid assets in Pool + debt commitments), 
+     * A - A is the volume of  total assets (liquid assets in Pool + debt commitments, taken with their weight coefficients)
      * Deposit is the size of the deposit, 
      * dx is the number of pTokens tokens received.
      * @param liquidAssets Liquid assets in Pool
@@ -47,24 +76,27 @@ contract BondingCurve is Initializable  {
         uint256 debtCommitments,
         uint256 lAmount
     ) public view returns (uint256) {
-        uint256 liquidityWithDebt = liquidAssets.add(debtCommitments);
-        return curveFunction(liquidityWithDebt.add(lAmount)).sub(curveFunction(liquidityWithDebt));
+        uint256 liquidity = liquidAssets.mul(liquidityWeightEnter).add(debtCommitments.mul(debtWeightEnter)).div(LIQUIDITY_WEIGHT_DIVIDER);
+        return curveFunction(liquidity.add(lAmount)).sub(curveFunction(liquidity));
     }
 
     /**
      * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
      * dx = f(L) - f(L - Whidraw)
-     * L is the volume of liquid assets
+     * L - L is the volume of  total assets (liquid assets in Pool + debt commitments, taken with their weight coefficients)
      * @param liquidAssets Liquid assets in Pool
+     * @param debtCommitments Debt commitments
      * @param lAmount Amount of liquid tokens to withdraw (full: sum of withdrawU and withdrawP)
      * @return Amount of pTokens to burn/lock
      */
     function calculateExit(
         uint256 liquidAssets,
+        uint256 debtCommitments,
         uint256 lAmount
     ) public view returns (uint256) {
-        uint256 fL = curveFunction(liquidAssets);
-        uint256 fLW = curveFunction(liquidAssets.sub(lAmount));
+        uint256 liquidity = liquidAssets.mul(liquidityWeightExit).add(debtCommitments.mul(debtWeightExit)).div(LIQUIDITY_WEIGHT_DIVIDER);
+        uint256 fL = curveFunction(liquidity);
+        uint256 fLW = curveFunction(liquidity.sub(lAmount));
         return fL.sub(fLW);
     }
 
@@ -77,22 +109,21 @@ contract BondingCurve is Initializable  {
      * WithdrawP = Withdraw*d
      * Withdraw - amount of liquid token which should be sent to user
      * @param liquidAssets Liquid assets in Pool
+     * @param debtCommitments Debt commitments
      * @param pAmount Amount of pTokens to withdraw
-     * @return Amount of liquid tokens to withdraw: total, for user, for pool
+     * @return Amount of liquid tokens to withdraw
      */
     function calculateExitInverse(
         uint256 liquidAssets,
+        uint256 debtCommitments,
         uint256 pAmount
-    ) public view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP) {
-        uint256 x = curveFunction(liquidAssets);
+    ) public view returns (uint256) {
+        uint256 liquidity = liquidAssets.mul(liquidityWeightExit).add(debtCommitments.mul(debtWeightExit)).div(LIQUIDITY_WEIGHT_DIVIDER);
+        uint256 x = curveFunction(liquidity);
         uint256 pdiff = x.sub(pAmount);
         uint256 ldiff = inverseCurveFunction(pdiff);
-        assert(liquidAssets >= ldiff);
-        withdraw = liquidAssets.sub(ldiff);
-        //withdrawU = withdraw*(1*PERCENT_DIVIDER-withdrawFeePercent)/PERCENT_DIVIDER;
-        //withdrawP = withdraw*withdrawFeePercent/PERCENT_DIVIDER;
-        withdrawP = withdraw.mul(withdrawFeePercent).div(PERCENT_DIVIDER);
-        withdrawU = withdraw.sub(withdrawP);
+        assert(liquidity >= ldiff);
+        return liquidity.sub(ldiff);
     }
 
     /**
@@ -137,6 +168,5 @@ contract BondingCurve is Initializable  {
         //return (x*x + FIX*a*x)/FIX*b;
         return x.mul(x).add(FIX.mul(a).mul(x)).div(FIX.mul(b));
     }
-
 
 }

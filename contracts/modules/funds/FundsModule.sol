@@ -128,7 +128,8 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
-        return curveModule().calculateExit(lBalance, lAmount);
+        uint256 lDebts = loanModule().totalLDebts();
+        return curveModule().calculateExit(lBalance, lDebts, lAmount);
     }
 
     /**
@@ -137,7 +138,8 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
-        return curveModule().calculateExitInverse(lBalance, pAmount);
+        uint256 lDebts = loanModule().totalLDebts();
+        return curveModule().calculateExitInverseWithFee(lBalance, lDebts, pAmount);
     }
 
     function emitStatus() private {
@@ -145,7 +147,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
         if (lBalance >= STATUS_PRICE_AMOUNT) {
-            pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
+            pExitPrice = curveModule().calculateExit(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         } else {
             pExitPrice = 0;
         }

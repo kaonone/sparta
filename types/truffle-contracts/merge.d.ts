@@ -19,7 +19,6 @@ declare global {
       require(name: "ERC20Burnable"): TruffleContracts.ERC20BurnableContract;
       require(name: "ERC20Detailed"): TruffleContracts.ERC20DetailedContract;
       require(name: "ERC20Mintable"): TruffleContracts.ERC20MintableContract;
-      require(name: "Factory"): TruffleContracts.FactoryContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
       require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
@@ -43,7 +42,6 @@ declare global {
       require(name: "ModuleNames"): TruffleContracts.ModuleNamesContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
-      require(name: "PoolFactory"): TruffleContracts.PoolFactoryContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
