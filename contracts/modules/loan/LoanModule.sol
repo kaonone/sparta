@@ -15,9 +15,12 @@ contract LoanModule is Module, ILoanModule {
 
     uint256 public constant DEBT_REPAY_DEADLINE_PERIOD = 90*24*60*60;   //Period before debt without payments may be defaulted
 
-    uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
     uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
     uint256 public constant PLEDGE_PERCENT_MIN_MULTIPLIER = 10**3;
+
+    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER = 10**3;
+    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/2;
 
     struct DebtPledge {
         uint256 senderIndex;  //Index of pledge sender in the array
@@ -56,6 +59,7 @@ contract LoanModule is Module, ILoanModule {
     mapping(address=>Debt[]) public debts;
 
     uint256 private lDebts;
+    uint256 private lProposals;
     LoanLimits public limits;
 
     function initialize(address _pool) public initializer {
@@ -77,8 +81,9 @@ contract LoanModule is Module, ILoanModule {
         require(debtLAmount >= limits.lDebtAmountMin, "LoanModule: debtLAmount should be >= lDebtAmountMin");
         require(interest >= limits.debtInterestMin, "LoanModule: interest should be >= debtInterestMin");
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
-        uint256 clAmount = fullCollateralLAmount/2;
-        uint256 pAmount = calculatePoolExit(clAmount);
+        uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
+        uint256 fpAmount = calculatePoolExit(fullCollateralLAmount);
+        uint256 pAmount = fpAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
         require(pAmount <= pAmountMax, "LoanModule: pAmountMax is too low");
 
         debtProposals[_msgSender()].push(DebtProposal({
@@ -103,6 +108,7 @@ contract LoanModule is Module, ILoanModule {
         });
         p.lCovered = p.lCovered.add(clAmount);
         p.pCollected = p.pCollected.add(pAmount);
+        lProposals = lProposals.add(debtLAmount);
 
         fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
@@ -208,6 +214,7 @@ contract LoanModule is Module, ILoanModule {
         // Instead we check PledgeAmount.initialized field and do lazy initialization
         p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
+        lProposals = lProposals.sub(p.lAmount);
         lDebts = lDebts.add(p.lAmount);
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
@@ -449,10 +456,26 @@ contract LoanModule is Module, ILoanModule {
 
     /**
      * @notice Total amount of debts
-     * @return Summ of all liquid token debts
+     * @return Summ of all liquid token in debts
      */
     function totalLDebts() public view returns(uint256){
         return lDebts;
+    }
+
+    /**
+     * @notice Total amount of debts
+     * @return Summ of all liquid token in proposals
+     */
+    function totalLProposals() public view returns(uint256){
+        return lProposals;
+    }
+
+    /**
+     * @notice Total amount of debts
+     * @return Summ of all liquid token in debts and proposals
+     */
+    function totalLDebtsAndProposals() public view returns(uint256){
+        return lDebts.add(lProposals);
     }
 
     /**

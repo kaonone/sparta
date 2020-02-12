@@ -2346,6 +2346,10 @@ export interface ILoanModuleInstance extends Truffle.ContractInstance {
   ): Promise<boolean>;
 
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface IPTokenInstance extends Truffle.ContractInstance {
@@ -2653,6 +2657,14 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
 export interface LoanModuleInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -3043,6 +3055,10 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   calculateInterestPayment(
     debtLAmount: number | BN | string,
     interest: number | BN | string,
@@ -3122,21 +3138,12 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+    (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(
-      _pool: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      _pool: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      _pool: string | BN,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   createDebtProposal: {
@@ -3347,6 +3354,10 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
   ): Promise<boolean>;
 
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   calculateInterestPayment(
     arg0: number | BN | string,

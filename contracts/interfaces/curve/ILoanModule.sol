@@ -79,7 +79,19 @@ interface ILoanModule {
 
     /**
      * @notice Total amount of debts
-     * @return Summ of all liquid token debts
+     * @return Summ of all liquid token in debts
      */
     function totalLDebts() external view returns(uint256);
+
+    /**
+     * @notice Total amount of debts
+     * @return Summ of all liquid token in proposals
+     */
+    function totalLProposals() external view returns(uint256);
+
+    /**
+     * @notice Total amount of debts
+     * @return Summ of all liquid token in debts and proposals
+     */
+    function totalLDebtsAndProposals() external view returns(uint256);
 }

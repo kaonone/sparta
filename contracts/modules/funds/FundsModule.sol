@@ -118,8 +118,8 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be sent to sender
      */
     function calculatePoolEnter(uint256 lAmount) public view returns(uint256) {
-        uint256 lDebts = loanModule().totalLDebts();
-        return curveModule().calculateEnter(lBalance, lDebts, lAmount);
+        uint256 lDebtsAndProposals = loanModule().totalLDebtsAndProposals();
+        return curveModule().calculateEnter(lBalance, lDebtsAndProposals, lAmount);
     }
 
     /**
@@ -142,14 +142,16 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
 
     function emitStatus() private {
         uint256 lDebts = loanModule().totalLDebts();
-        uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
+        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lDebtsAndProposals = lDebts.add(lProposals);
+        uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebtsAndProposals, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
         if (lBalance >= STATUS_PRICE_AMOUNT) {
             pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
         } else {
             pExitPrice = 0;
         }
-        emit Status(lBalance, lDebts, pEnterPrice, pExitPrice);
+        emit Status(lBalance, lDebts, lProposals, pEnterPrice, pExitPrice);
     }
 
     function curveModule() private view returns(ICurveModule) {

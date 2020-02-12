@@ -5,7 +5,7 @@ pragma solidity ^0.5.12;
  * @dev Funds module is responsible for token transfers, provides info about current liquidity/debts and pool token price.
  */
 interface IFundsModule {
-    event Status(uint256 lBalance, uint256 lDebt, uint256 pEnterPrice, uint256 pExitPrice);
+    event Status(uint256 lBalance, uint256 lDebts, uint256 lProposals, uint256 pEnterPrice, uint256 pExitPrice);
 
     /**
      * @notice Deposit liquid tokens to the pool

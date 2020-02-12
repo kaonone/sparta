@@ -75,6 +75,14 @@ contract LoanModuleStub is Module, ILoanModule {
         return lDebts;
     }
 
+    function totalLProposals() public view returns(uint256) {
+        return 0;
+    }
+
+    function totalLDebtsAndProposals() public view returns(uint256) {
+        return lDebts;
+    }
+
     function calculateInterestPayment(uint256, uint256, uint256, uint) public pure returns(uint256){
         return 0;
     }
