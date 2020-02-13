@@ -17,7 +17,8 @@ contract LoanModule is Module, ILoanModule {
 
     uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;
     uint256 public constant COLLATERAL_TO_DEBT_RATIO = 1.00*COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
-    uint256 public constant PLEDGE_PERCENT_MIN_MULTIPLIER = 10**3;
+    uint256 public constant PLEDGE_PERCENT_MULTIPLIER = 10**3;
+    uint256 public constant DEBT_LOAD_MULTIPLIER = 10**3;
 
     uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER = 10**3;
     uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/2;
@@ -51,8 +52,9 @@ contract LoanModule is Module, ILoanModule {
     struct LoanLimits {
         uint256 lDebtAmountMin;     // Minimal amount of proposed credit (DebtProposal.lAmount)
         uint256 debtInterestMin;    // Minimal value of debt interest
-        uint256 pledgePercentMin;   // Minimal pledge as percent of credit collateral amount. Value is divided to PLEDGE_PERCENT_MIN_MULTIPLIER for calculations
+        uint256 pledgePercentMin;   // Minimal pledge as percent of credit collateral amount. Value is divided to PLEDGE_PERCENT_MULTIPLIER for calculations
         uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
+        uint256 debtLoadMax;        // Maximal ratio LoanModule.lDebts/(FundsModule.lBalance+LoanModule.lDebts)<=debtLoadMax; multiplied to DEBT_LOAD_MULTIPLIER
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
@@ -64,8 +66,8 @@ contract LoanModule is Module, ILoanModule {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        //100 DAI min credit, 10% min interest, 10% min pledge, 500 DAI max minimal pledge
-        setLimits(100*10**18, INTEREST_MULTIPLIER*10/100, PLEDGE_PERCENT_MIN_MULTIPLIER*10/100, 500*10**18);
+        //100 DAI min credit, 10% min interest, 10% min pledge, 500 DAI max minimal pledge, 50% max debt load
+        setLimits(100*10**18, INTEREST_MULTIPLIER*10/100, PLEDGE_PERCENT_MULTIPLIER*10/100, 500*10**18, DEBT_LOAD_MULTIPLIER*50/100);
     }
 
     /**
@@ -216,9 +218,15 @@ contract LoanModule is Module, ILoanModule {
         // Instead we check PledgeAmount.initialized field and do lazy initialization
         p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
+
+        // NOTE: calculations below expect p.lCovered == p.lAmount. This may be wrong if COLLATERAL_TO_DEBT_RATIO != 1
         lProposals = lProposals.sub(p.lCovered);
         lDebts = lDebts.add(p.lAmount);
-        // NOTE: calculations above expect p.lCovered == p.lAmount. This may be wrong if COLLATERAL_TO_DEBT_RATIO != 1
+
+        //uint256 debtLoad = DEBT_LOAD_MULTIPLIER.mul(lDebts).div(fundsModule().lBalance().add(lDebts.sub(p.lAmount)));
+        uint256 maxDebts = limits.debtLoadMax.mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
+        require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
+
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
         return debtIdx;
@@ -301,11 +309,18 @@ contract LoanModule is Module, ILoanModule {
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }
 
-    function setLimits(uint256 lDebtAmountMin, uint256 debtInterestMin, uint256 pledgePercentMin, uint256 lMinPledgeMax) public onlyOwner {
+    function setLimits(
+        uint256 lDebtAmountMin, 
+        uint256 debtInterestMin, 
+        uint256 pledgePercentMin, 
+        uint256 lMinPledgeMax,
+        uint256 debtLoadMax
+    ) public onlyOwner {
         limits.lDebtAmountMin = lDebtAmountMin;
         limits.debtInterestMin = debtInterestMin;
         limits.pledgePercentMin = pledgePercentMin;
         limits.lMinPledgeMax = lMinPledgeMax;
+        limits.debtLoadMax = debtLoadMax;
     }
 
     /**
@@ -408,7 +423,7 @@ contract LoanModule is Module, ILoanModule {
      * @return minimal allowed pledge, maximal allowed pledge
      */
     function getPledgeRequirements(address borrower, uint256 proposal) public view returns(uint256 minLPledge, uint256 maxLPledge){
-        // uint256 pledgePercentMin;   // Minimal pledge as percent of credit amount. Value is divided to PLEDGE_PERCENT_MIN_MULTIPLIER for calculations
+        // uint256 pledgePercentMin;   // Minimal pledge as percent of credit amount. Value is divided to PLEDGE_PERCENT_MULTIPLIER for calculations
         // uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
 
         DebtProposal storage p = debtProposals[borrower][proposal];
@@ -416,7 +431,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         maxLPledge = fullCollateralLAmount.sub(p.lCovered);
 
-        minLPledge = limits.pledgePercentMin.mul(fullCollateralLAmount).div(PLEDGE_PERCENT_MIN_MULTIPLIER);
+        minLPledge = limits.pledgePercentMin.mul(fullCollateralLAmount).div(PLEDGE_PERCENT_MULTIPLIER);
         if (minLPledge > limits.lMinPledgeMax) minLPledge = limits.lMinPledgeMax;
         if (minLPledge > maxLPledge) minLPledge = maxLPledge;
     }

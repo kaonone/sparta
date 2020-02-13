@@ -2670,6 +2670,8 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   DEBT_REPAY_DEADLINE_PERIOD(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -2688,7 +2690,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  PLEDGE_PERCENT_MIN_MULTIPLIER(
+  PLEDGE_PERCENT_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
@@ -2711,7 +2713,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
-  limits(txDetails?: Truffle.TransactionDetails): Promise<[BN, BN, BN, BN]>;
+  limits(txDetails?: Truffle.TransactionDetails): Promise<[BN, BN, BN, BN, BN]>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -2963,6 +2965,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
       debtInterestMin: number | BN | string,
       pledgePercentMin: number | BN | string,
       lMinPledgeMax: number | BN | string,
+      debtLoadMax: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
@@ -2970,6 +2973,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
       debtInterestMin: number | BN | string,
       pledgePercentMin: number | BN | string,
       lMinPledgeMax: number | BN | string,
+      debtLoadMax: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
@@ -2977,6 +2981,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
       debtInterestMin: number | BN | string,
       pledgePercentMin: number | BN | string,
       lMinPledgeMax: number | BN | string,
+      debtLoadMax: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
@@ -2984,6 +2989,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
       debtInterestMin: number | BN | string,
       pledgePercentMin: number | BN | string,
       lMinPledgeMax: number | BN | string,
+      debtLoadMax: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };

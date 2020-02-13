@@ -3,7 +3,6 @@ const AssertionError = require('assertion-error');
 const expectRevert = async function (promise, expectedError) {
     try {
         await promise;
-        throw new AssertionError('Expected an exception but none was received');
     } catch (error) {
         if (!error.message.includes(expectedError)) {
             if(error.reason){            
@@ -18,6 +17,7 @@ const expectRevert = async function (promise, expectedError) {
         }
         return;
     }
+    throw new AssertionError('Expected an exception but none was received');
 };
 
 module.exports = expectRevert;
