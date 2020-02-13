@@ -188,7 +188,7 @@ contract LoanModule is Module, ILoanModule {
 
         //Check new min/max pledge AFTER current collateral is adjusted to new values
         (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
-        require(pledge.pAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
+        require(pledge.lAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
 
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
