@@ -107,7 +107,7 @@ contract LoanModule is Module, ILoanModule {
         });
         prop.lCovered = prop.lCovered.add(clAmount);
         prop.pCollected = prop.pCollected.add(cpAmount);
-        lProposals = lProposals.add(clAmount);
+        lProposals = lProposals.add(clAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
 
         fundsModule().depositPTokens(_msgSender(), cpAmount);
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, cpAmount);
@@ -154,7 +154,7 @@ contract LoanModule is Module, ILoanModule {
         }
         p.lCovered = p.lCovered.add(lAmount);
         p.pCollected = p.pCollected.add(pAmount);
-        lProposals = lProposals.add(lAmount);
+        lProposals = lProposals.add(lAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
         fundsModule().depositPTokens(_msgSender(), pAmount);
         emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
@@ -184,7 +184,7 @@ contract LoanModule is Module, ILoanModule {
         pledge.lAmount = pledge.lAmount.sub(lAmount);
         p.pCollected = p.pCollected.sub(pAmount);
         p.lCovered = p.lCovered.sub(lAmount);
-        lProposals = lProposals.sub(lAmount);
+        lProposals = lProposals.sub(lAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
 
         //Check new min/max pledge AFTER current collateral is adjusted to new values
         (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
@@ -218,6 +218,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
         lProposals = lProposals.sub(p.lCovered);
         lDebts = lDebts.add(p.lAmount);
+        // NOTE: calculations above expect p.lCovered == p.lAmount. This may be wrong if COLLATERAL_TO_DEBT_RATIO != 1
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
         return debtIdx;
