@@ -2348,8 +2348,6 @@ export interface ILoanModuleInstance extends Truffle.ContractInstance {
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface IPTokenInstance extends Truffle.ContractInstance {
@@ -3056,8 +3054,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   calculateInterestPayment(
     debtLAmount: number | BN | string,
