@@ -81,10 +81,10 @@ contract LoanModule is Module, ILoanModule {
         require(debtLAmount >= limits.lDebtAmountMin, "LoanModule: debtLAmount should be >= lDebtAmountMin");
         require(interest >= limits.debtInterestMin, "LoanModule: interest should be >= debtInterestMin");
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
+        uint256 fullCollateralPAmount = calculatePoolExit(fullCollateralLAmount);
         uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
-        uint256 fpAmount = calculatePoolExit(fullCollateralLAmount);
-        uint256 pAmount = fpAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
-        require(pAmount <= pAmountMax, "LoanModule: pAmountMax is too low");
+        uint256 cpAmount = fullCollateralPAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
+        require(cpAmount <= pAmountMax, "LoanModule: pAmountMax is too low");
 
         debtProposals[_msgSender()].push(DebtProposal({
             lAmount: debtLAmount,
@@ -99,19 +99,19 @@ contract LoanModule is Module, ILoanModule {
         emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
 
         //Add pldege of the creator
-        DebtProposal storage p = debtProposals[_msgSender()][proposalIndex];
-        p.supporters.push(_msgSender());
-        p.pledges[_msgSender()] = DebtPledge({
+        DebtProposal storage prop = debtProposals[_msgSender()][proposalIndex];
+        prop.supporters.push(_msgSender());
+        prop.pledges[_msgSender()] = DebtPledge({
             senderIndex: 0,
             lAmount: clAmount,
-            pAmount: pAmount
+            pAmount: cpAmount
         });
-        p.lCovered = p.lCovered.add(clAmount);
-        p.pCollected = p.pCollected.add(pAmount);
+        prop.lCovered = prop.lCovered.add(clAmount);
+        prop.pCollected = prop.pCollected.add(cpAmount);
         lProposals = lProposals.add(debtLAmount);
 
-        fundsModule().depositPTokens(_msgSender(), pAmount);
-        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, pAmount);
+        fundsModule().depositPTokens(_msgSender(), cpAmount);
+        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, cpAmount);
         return proposalIndex;
     }
 
@@ -130,7 +130,8 @@ contract LoanModule is Module, ILoanModule {
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
         require(!p.executed, "LoanModule: DebtProposal is already executed");
-        (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount);
+        // p.lCovered/p.pCollected should be the same as original liquidity token to pToken exchange rate
+        uint256 lAmount = pAmount.mul(p.lCovered).div(p.pCollected);    
         require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
         (uint256 minLPledgeAmount, uint256 maxLPledgeAmount)= getPledgeRequirements(borrower, proposal);
         require(maxLPledgeAmount > 0, "LoanModule: DebtProposal is already funded");
@@ -138,7 +139,7 @@ contract LoanModule is Module, ILoanModule {
         if (lAmount > maxLPledgeAmount) {
             uint256 pAmountOld = pAmount;
             lAmount = maxLPledgeAmount;
-            pAmount = calculatePoolExit(lAmount);
+            pAmount = lAmount.mul(p.pCollected).div(p.lCovered);
             assert(pAmount <= pAmountOld);
         } 
         if (p.pledges[_msgSender()].senderIndex == 0) {

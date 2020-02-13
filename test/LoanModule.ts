@@ -117,19 +117,21 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
+        let proposal = <any> await loanm.debtProposals(borrower, proposalIdx);
+        //console.log(proposal);
 
         //Add Pleddge
         let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
         // console.log('pledgeRequirements', pledgeRequirements[0].toString(), pledgeRequirements[1].toString());
         let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
-        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
-        let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
-        expectEqualBN(elPledgeWei[0],lPledgeWei);
+        let pPledgeWei = lPledgeWei.mul(proposal.pCollected).div(proposal.lCovered);
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await loanm.addPledge(borrower, proposalIdx, pPledgeWei, '0',{from: otherAccounts[0]});
         // console.log('lAmount', elPledgeWei[0], elPledgeWei[0].toString());
         // console.log('pAmount', pPledgeWei, pPledgeWei.toString());
-        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
+        expectEvent(receipt, 'PledgeAdded', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'pAmount':pPledgeWei});
+        expectEqualBN(findEventArgs(receipt, 'PledgeAdded')['lAmount'],lPledgeWei);
+
     });
     it('should withdraw pledge in debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -144,6 +146,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
+        let proposal = <any> await loanm.debtProposals(borrower, proposalIdx);
+        //console.log(proposal);
 
         //Add Pleddge
         let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
@@ -151,16 +155,16 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
         // let lPledgeWei = w3random.intervalBN(lDebtWei.div(new BN(10)), lDebtWei.div(new BN(2)), 'ether');
         // console.log('lPledgeWei', lPledgeWei.toString(), lDebtWei.div(new BN(2)).toString());
-        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
-        let elPledgeWei = await funds.calculatePoolExitInverse(pPledgeWei);
-        expectEqualBN(elPledgeWei[0],lPledgeWei);
+        let pPledgeWei = lPledgeWei.mul(proposal.pCollected).div(proposal.lCovered);
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
         receipt = await loanm.addPledge(borrower, proposalIdx, pPledgeWei, '0', {from: otherAccounts[0]});
+        let elPledgeWei = findEventArgs(receipt, 'PledgeAdded')['lAmount']; 
+        expectEqualBN(elPledgeWei,lPledgeWei);
 
         //Withdraw pledge
         //TODO - find out problem with full pledge withraw
         receipt = await loanm.withdrawPledge(borrower, proposalIdx, pPledgeWei, {from: otherAccounts[0]});  
-        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
+        expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei, 'pAmount':pPledgeWei});
     });
     it('should not allow borrower withdraw too much of his pledge', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -175,12 +179,14 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
+        let proposal = <any> await loanm.debtProposals(borrower, proposalIdx);
+        //console.log(proposal);
 
         //Add Pleddge
         let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
         //console.log('pledgeRequirements', pledgeRequirements[0].toString(), pledgeRequirements[1].toString());
         let lPledgeWei = w3random.intervalBN(pledgeRequirements[0], pledgeRequirements[1]);
-        let pPledgeWei = await funds.calculatePoolExit(lPledgeWei);
+        let pPledgeWei = lPledgeWei.mul(proposal.pCollected).div(proposal.lCovered);
         // console.log('lPledgeWei', lPledgeWei.toString());
         // console.log('pPledgeWei', pPledgeWei.toString());
         await prepareSupporter(pPledgeWei, otherAccounts[0]);
@@ -204,10 +210,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Create Debt Proposal
         let receipt = await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+        let proposal = <any> await loanm.debtProposals(borrower, proposalIdx);
+        //console.log(proposal);
 
         //Add supporter
         let lPledge = await loanm.getRequiredPledge(borrower, proposalIdx);
-        let pPledge = await funds.calculatePoolExit(lPledge);
+        let pPledge = lPledge.mul(proposal.pCollected).div(proposal.lCovered);
         await prepareSupporter(pPledge, otherAccounts[0]);
         await loanm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
 
@@ -429,10 +437,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Create Debt Proposal
         let receipt = await loanm.createDebtProposal(debtLAmount, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+        let proposal = <any> await loanm.debtProposals(borrower, proposalIdx);
+        //console.log(proposal);
 
         //Add supporter
         let lPledge = await loanm.getRequiredPledge(borrower, proposalIdx);
-        let pPledge = await funds.calculatePoolExit(lPledge);
+        let pPledge = lPledge.mul(proposal.pCollected).div(proposal.lCovered);
         await prepareSupporter(pPledge, supporter);
         await loanm.addPledge(borrower, proposalIdx, pPledge, '0',{from: supporter});
 
