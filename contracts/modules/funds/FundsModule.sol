@@ -14,6 +14,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
+    mapping(address=>uint256) pBalances;    //Stores how many pTokens is locked in FundsModule by user
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -63,6 +64,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function depositPTokens(address from, uint256 amount) public onlyFundsOperator {
+        pBalances[from] = pBalances[from].add(amount);
         require(pToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
     }
 
@@ -72,6 +74,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
+        pBalances[to] = pBalances[to].sub(amount);
         require(pToken().transfer(to, amount), "FundsModule: withdraw failed");
     }
 
@@ -110,6 +113,13 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 realLBalance = lToken().balanceOf(address(this));
         require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
         require(lToken().transfer(to, amount), "FundsModule: refund failed");
+    }
+
+    /**
+     * @return Amount of pTokens locked in FundsModule by account
+     */
+    function pBalanceOf(address account) public view returns(uint256){
+        return pBalances[account];
     }
 
     /**

@@ -305,6 +305,7 @@ contract LoanModule is Module, ILoanModule {
 
         Debt storage dbt = debts[borrower][debt];
         dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
+        //TODO solve pCompensation problem...
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }

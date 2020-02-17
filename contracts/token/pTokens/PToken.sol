@@ -6,11 +6,14 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Mint
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burnable.sol";
 import "../../common/Module.sol";
 import "../../interfaces/token/IPToken.sol";
+import "../../interfaces/curve/IFundsModule.sol";
+import "./DistributionToken.sol";
 
 /**
  * @notice Implementation of Akropolis Pool Token
  */
-contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Burnable {
+contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Burnable, DistributionToken {
+
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -55,10 +58,24 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
     }
 
     /**
+     * @dev Overrides DistributionToken.distributionBalanceOf() to handle FundsModule
+     */
+    function distributionBalanceOf(address account) internal view returns(uint256) {
+        IFundsModule funds = fundsModule();
+        if (account == address(funds)) return 0; //FundsModule itself should not receive distributions
+        uint256 fundsBalance = funds.pBalanceOf(account);
+        return super.distributionBalanceOf(account).add(fundsBalance);
+    }
+
+    function fundsModule() internal view returns(IFundsModule) {
+        return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    }
+
+    /**
      * @dev Check that sender/receipient of transfer are allowed
      */
-    function requireAllowedParties(address from, address to, address fundsModule) private pure{
-        require(fundsModule == from || fundsModule == to, "PToken: only transfers to/from FundsModule allowed");
+    function requireAllowedParties(address from, address to, address funds) private pure{
+        require(funds == from || funds == to, "PToken: only transfers to/from FundsModule allowed");
     }
 }
 

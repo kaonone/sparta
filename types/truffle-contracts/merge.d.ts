@@ -15,6 +15,9 @@ declare global {
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
+      require(
+        name: "DistributionToken"
+      ): TruffleContracts.DistributionTokenContract;
       require(name: "ERC20"): TruffleContracts.ERC20Contract;
       require(name: "ERC20Burnable"): TruffleContracts.ERC20BurnableContract;
       require(name: "ERC20Detailed"): TruffleContracts.ERC20DetailedContract;

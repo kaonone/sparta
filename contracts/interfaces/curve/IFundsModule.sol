@@ -89,4 +89,9 @@ interface IFundsModule {
      */
     function lBalance() external view returns(uint256);
 
+    /**
+     * @return Amount of pTokens locked in FundsModule by account
+     */
+    function pBalanceOf(address account) external view returns(uint256);
+
 }
