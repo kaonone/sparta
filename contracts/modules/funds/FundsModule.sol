@@ -79,6 +79,15 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Mint new PTokens to FundsModule
+     * @param amount Amount of tokens to mint
+     */
+    function mintPTokens(uint256 amount) public onlyFundsOperator {
+        require(pToken().mint(address(this), amount), "FundsModule: mint failed");
+        pBalances[address(this)] = pBalances[address(this)].add(amount);
+    }
+    
+    /**
      * @notice Mint new PTokens
      * @param to Address of the user, who sends tokens.
      * @param amount Amount of tokens to mint
@@ -93,6 +102,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function burnPTokens(uint256 amount) public onlyFundsOperator {
         pToken().burn(amount); //This call will revert if we have not enough pTokens
+        pBalances[address(this)] = pBalances[address(this)].sub(amount); 
     }
 
     /**
@@ -101,7 +111,18 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) public onlyFundsOperator {
+        require(from != address(this), "FundsModule: use one-argument version to burn from FundsModule");
         pToken().burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
+    }
+
+    /**
+     * @notice Move locked pTokens from one user to another or to FundsModule itself
+     */
+    function movePTokens(address from, address to, uint256 amount) public onlyFundsOperator {
+        pToken().claimDistributions(from);
+        pToken().claimDistributions(to);
+        pBalances[from] = pBalances[from].sub(amount);                
+        pBalances[to] = pBalances[to].add(amount);                
     }
 
     /**

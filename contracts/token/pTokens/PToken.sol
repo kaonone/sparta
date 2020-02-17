@@ -62,8 +62,10 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
      */
     function distributionBalanceOf(address account) internal view returns(uint256) {
         IFundsModule funds = fundsModule();
-        if (account == address(funds)) return 0; //FundsModule itself should not receive distributions
         uint256 fundsBalance = funds.pBalanceOf(account);
+        if (account == address(funds)) {
+            return fundsBalance; //FundsModule itself should only receive distributions for tockens locked by pool
+        }
         return super.distributionBalanceOf(account).add(fundsBalance);
     }
 

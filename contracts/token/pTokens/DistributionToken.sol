@@ -28,6 +28,10 @@ contract DistributionToken is ERC20, ERC20Mintable {
         emit DistributionCreated(amount, currentTotalSupply);
     }
 
+    function claimDistributions(address account) public {
+        _updateUserBalance(account, distributions.length);
+    }
+    
     /**
      * @notice Claims distributions and allows to specify how many distributions to process.
      * This allows limit gas usage.

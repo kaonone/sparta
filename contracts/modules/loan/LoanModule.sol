@@ -227,6 +227,12 @@ contract LoanModule is Module, ILoanModule {
         uint256 maxDebts = limits.debtLoadMax.mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
         require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
 
+        //Move locked pTokens to Funds
+        for (uint256 i=0; i < p.supporters.length; i++) {
+            address supporter = p.supporters[i];
+            fundsModule().movePTokens(supporter, address(fundsModule()), p.pledges[supporter].pAmount);
+        }
+
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
         return debtIdx;
@@ -267,7 +273,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
-        fundsModule().mintPTokens(getModuleAddress(MODULE_FUNDS), pInterest);
+        fundsModule().mintPTokens(pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
     }
@@ -305,7 +311,8 @@ contract LoanModule is Module, ILoanModule {
 
         Debt storage dbt = debts[borrower][debt];
         dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
-        //TODO solve pCompensation problem...
+        
+        fundsModule().movePTokens(address(fundsModule()), _msgSender(), pAmount);
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }

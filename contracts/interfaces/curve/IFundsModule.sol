@@ -43,6 +43,11 @@ interface IFundsModule {
     function withdrawPTokens(address to, uint256 amount) external;
 
     /**
+     * @notice Mint new PTokens to FundsModule
+     * @param amount Amount of tokens to mint
+     */
+    function mintPTokens(uint256 amount) external;
+    /**
      * @notice Mint new PTokens
      * @param to Address of the user, who sends tokens.
      * @param amount Amount of tokens to mint
@@ -61,6 +66,11 @@ interface IFundsModule {
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) external;
+
+    /**
+     * @notice Move locked pTokens from one user to another or to FundsModule itself
+     */
+    function movePTokens(address from, address to, uint256 amount) external;
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
