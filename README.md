@@ -5,15 +5,16 @@
 AkropolisOS - Ethereum implementation (active development)
 AkropolisOS is a DAO framework where members of which can earn high-interest rates by providing undercollateralized loans to other members and by pooling and investing capital through various liquid DeFi instruments.
 
+Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* Pool: `0x24Aff547E744976e7e616B7BB9B10ea18185d472`
-* PToken: `0xCbE6E7eA6aC7e9f3519a7599a011f3f54b66dD77`
-* CurveModule: `0x44EAF1D16270c0A48b6B554511f2B344698a8Ff1`
-* LiquidityModule: `0x338a0F148cfD0cb7fc2018cbD3ee8FFA5d3Fb55D`
-* LoanModule: `0xF9E9934AD57bc983f9847Dc1dCb737BD5D5e99f7`
-* FundsModule: `0xf97C9b8180650cAa2a67F73d2743C6992B2110a5`
+* Pool: `0x3b42805B276eb1b74D253a80962D13ea6982a2ca`
+* PToken: `0xC5fC6Ff3fdb34BC4fb8b4cd05184aFFf61dEEDaF`
+* CurveModule: `0x02198c667963B03B3180B99521F26D8B12d0C3CB`
+* LiquidityModule: `0xF3A7aC40D004Fb545d821DE3e4f823dFfFF766a0`
+* LoanModule: `0x94315b5Db360A8b212dB998576Fe0eC3F88d2456`
+* FundsModule: `0x83e10F531Df7dd466F6C846bE2e49b1aD95A7ac1`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)

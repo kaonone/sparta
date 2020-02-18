@@ -4,6 +4,7 @@ pragma solidity ^0.5.12;
  * @title Bonding Curve Interface
  * @dev A bonding curve is a method for continous token minting / burning.
  */
+/* solhint-disable func-order */
 interface ICurveModule {
     /**
      * @notice Calculates amount of pTokens to mint
@@ -28,6 +29,5 @@ interface ICurveModule {
      * @param pAmount Amount of pTokens to withdraw
      * @return Amount of liquid tokens to withdraw: total, for user, for pool
      */
-    function calculateExitInverse(uint256 liquidAssets, uint256 pAmount) external view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP);
-
+    function calculateExitInverseWithFee(uint256 liquidAssets, uint256 pAmount) external view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP);
 }

@@ -14,6 +14,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
+    mapping(address=>uint256) pBalances;    //Stores how many pTokens is locked in FundsModule by user
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -63,6 +64,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function depositPTokens(address from, uint256 amount) public onlyFundsOperator {
+        pBalances[from] = pBalances[from].add(amount);
         require(pToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
     }
 
@@ -72,9 +74,19 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
+        pBalances[to] = pBalances[to].sub(amount);
         require(pToken().transfer(to, amount), "FundsModule: withdraw failed");
     }
 
+    /**
+     * @notice Mint new PTokens to FundsModule
+     * @param amount Amount of tokens to mint
+     */
+    function mintPTokens(uint256 amount) public onlyFundsOperator {
+        require(pToken().mint(address(this), amount), "FundsModule: mint failed");
+        pBalances[address(this)] = pBalances[address(this)].add(amount);
+    }
+    
     /**
      * @notice Mint new PTokens
      * @param to Address of the user, who sends tokens.
@@ -90,6 +102,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function burnPTokens(uint256 amount) public onlyFundsOperator {
         pToken().burn(amount); //This call will revert if we have not enough pTokens
+        pBalances[address(this)] = pBalances[address(this)].sub(amount); 
     }
 
     /**
@@ -98,7 +111,18 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) public onlyFundsOperator {
+        require(from != address(this), "FundsModule: use one-argument version to burn from FundsModule");
         pToken().burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
+    }
+
+    /**
+     * @notice Move locked pTokens from one user to another or to FundsModule itself
+     */
+    function movePTokens(address from, address to, uint256 amount) public onlyFundsOperator {
+        pToken().claimDistributions(from);
+        pToken().claimDistributions(to);
+        pBalances[from] = pBalances[from].sub(amount);                
+        pBalances[to] = pBalances[to].add(amount);                
     }
 
     /**
@@ -110,6 +134,13 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 realLBalance = lToken().balanceOf(address(this));
         require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
         require(lToken().transfer(to, amount), "FundsModule: refund failed");
+    }
+
+    /**
+     * @return Amount of pTokens locked in FundsModule by account
+     */
+    function pBalanceOf(address account) public view returns(uint256){
+        return pBalances[account];
     }
 
     /**
@@ -128,7 +159,8 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
-        return curveModule().calculateExit(lBalance, lAmount);
+        uint256 lProposals = loanModule().totalLProposals();
+        return curveModule().calculateExit(lBalance.sub(lProposals), lAmount);
     }
 
     /**
@@ -137,19 +169,21 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
-        return curveModule().calculateExitInverse(lBalance, pAmount);
+        uint256 lProposals = loanModule().totalLProposals();
+        return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
     }
 
     function emitStatus() private {
         uint256 lDebts = loanModule().totalLDebts();
+        uint256 lProposals = loanModule().totalLProposals();
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
         if (lBalance >= STATUS_PRICE_AMOUNT) {
-            pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
+            pExitPrice = curveModule().calculateExit(lBalance.sub(lProposals), STATUS_PRICE_AMOUNT);
         } else {
             pExitPrice = 0;
         }
-        emit Status(lBalance, lDebts, pEnterPrice, pExitPrice);
+        emit Status(lBalance, lDebts, lProposals, pEnterPrice, pExitPrice);
     }
 
     function curveModule() private view returns(ICurveModule) {

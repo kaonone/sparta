@@ -79,7 +79,16 @@ interface ILoanModule {
 
     /**
      * @notice Total amount of debts
-     * @return Summ of all liquid token debts
+     * @return Summ of all liquid token in debts
      */
     function totalLDebts() external view returns(uint256);
+
+    /**
+     * @notice Total amount of collateral locked in proposals
+     * Although this is measured in liquid tokens, it's not actual tokens,
+     * just a value wich is supposed to represent the collateral locked in proposals.
+     * @return Summ of all collaterals in proposals
+     */
+    function totalLProposals() external view returns(uint256);
+
 }
