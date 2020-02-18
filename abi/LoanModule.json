@@ -289,6 +289,36 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "COLLATERAL_TO_DEBT_RATIO",
     "outputs": [
       {
@@ -305,6 +335,21 @@
     "constant": true,
     "inputs": [],
     "name": "COLLATERAL_TO_DEBT_RATIO_MULTIPLIER",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "DEBT_LOAD_MULTIPLIER",
     "outputs": [
       {
         "internalType": "uint256",
@@ -439,7 +484,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "PLEDGE_PERCENT_MIN_MULTIPLIER",
+    "name": "PLEDGE_PERCENT_MULTIPLIER",
     "outputs": [
       {
         "internalType": "uint256",
@@ -607,6 +652,11 @@
       {
         "internalType": "uint256",
         "name": "lMinPledgeMax",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debtLoadMax",
         "type": "uint256"
       }
     ],
@@ -901,6 +951,11 @@
         "internalType": "uint256",
         "name": "lMinPledgeMax",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "debtLoadMax",
+        "type": "uint256"
       }
     ],
     "name": "setLimits",
@@ -1119,6 +1174,21 @@
     "constant": true,
     "inputs": [],
     "name": "totalLDebts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "totalLProposals",
     "outputs": [
       {
         "internalType": "uint256",
