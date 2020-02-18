@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-02-17
+* `FundsModule.pBalanceOf` now only represents PTK locked in proposals. PTK locked in executed loans are now counted as `FundsModule.pBalanceOf(FundsModule.address)`. This means, that borrower and supporters will not (at this version) receive distributions to 
+* Borrower now pays gas fee for "moving" locked funds of supporters to the pool, which includes calculations of distributions
+
 ## 2020-02-15
 * Added `FundsModule.pBalanceOf` to get all user's PTK locked in FundsModule
 * `PToken` now implements `DistributionToken` to allow distributions of new PTK to all PTK holders

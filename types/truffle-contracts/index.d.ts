@@ -578,6 +578,8 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  withdrawFeePercent(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   initialize: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse

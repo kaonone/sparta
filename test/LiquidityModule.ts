@@ -73,10 +73,13 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     })
 
     it('should allow deposit if no debts', async () => {
+        let fundsLWei = await lToken.balanceOf(funds.address);
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
-        let totalLiquidAssets = await lToken.balanceOf(funds.address);
-        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':totalLiquidAssets});
+        let expectedfundsLWei = fundsLWei.add(amountWeiLToken);
+        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':amountWeiLToken});
+        fundsLWei = await lToken.balanceOf(funds.address);
+        expectEqualBN(fundsLWei, expectedfundsLWei);
         let lpBalance = await pToken.balanceOf(liquidityProvider);
         expect(lpBalance).to.be.bignumber.gt('0');
     });
@@ -105,6 +108,24 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         expect(pBalance2).to.be.bignumber.lt(pBalance);
     });
 
+    it('should correctly work with rounding', async() => {
+        let lAmountWei = web3.utils.toWei('1000');
+        //console.log('lAmountWei', lAmountWei.toString());
+        let receipt = await liqm.deposit(lAmountWei, '0', {from: liquidityProvider});
+        //console.log(receipt);
+        lAmountWei = web3.utils.toWei('105.263157894736842106');
+        let pAmountWei = await funds.calculatePoolExit(lAmountWei);
+        //console.log('pAmountWei', pAmountWei.toString(), pAmountWei);
+        receipt = await liqm.withdraw(pAmountWei, '0', {from: liquidityProvider});
+        //console.log(receipt);
+        let lBalanceWei = await funds.lBalance();
+        //console.log('lBalanceWei', lBalanceWei.toString());
+        pAmountWei = await pToken.balanceOf(liquidityProvider);
+        //console.log('pAmountWei', pAmountWei.toString());
+        let result = await curve.calculateExitInverse(lBalanceWei, pAmountWei);
+        //console.log('result', result.toString());
+    });
+
     it('should allow withdraw all minted PTK', async () => {
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
@@ -117,18 +138,18 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         //console.log('poolLTokens', poolLTokens.toString(), web3.utils.fromWei(poolLTokens));
         let ptkForFullExit = await funds.calculatePoolExit(poolLTokens);
         //console.log('ptkForFullExit', ptkForFullExit.toString(), web3.utils.fromWei(ptkForFullExit));
-        expectEqualBN(ptkForFullExit, allPTokens); //Actual ptkForFullExit may be not accurate, but we need to use this value for withdraw
+        expectEqualBN(ptkForFullExit, allPTokens); // Check calculatePoolExit() calculates correct value
 
-        let expectedLTokens = await funds.calculatePoolExitInverse(ptkForFullExit);
+        let expectedLTokens = await funds.calculatePoolExitInverse(allPTokens);
         //console.log('expectedLTokens_Total', expectedLTokens[0].toString(), web3.utils.fromWei(expectedLTokens[0]));
-        expect(expectedLTokens[0]).to.be.bignumber.eq(poolLTokens);
+        expectEqualBN(expectedLTokens[0], poolLTokens); // It will never be 100% equal because of PTK rounding down on enter
         //console.log('expectedLTokens_User', expectedLTokens[1].toString(), web3.utils.fromWei(expectedLTokens[1]));
         //console.log('expectedLTokens_Pool', expectedLTokens[2].toString(), web3.utils.fromWei(expectedLTokens[2]));
         expect(expectedLTokens[1].add(expectedLTokens[2])).to.be.bignumber.eq(expectedLTokens[0]);
     
-        await pToken.approve(funds.address, ptkForFullExit, {from: liquidityProvider});
-        let receipt = await liqm.withdraw(ptkForFullExit, expectedLTokens[1], {from: liquidityProvider});
-        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':poolLTokens});
+        await pToken.approve(funds.address, allPTokens, {from: liquidityProvider});
+        let receipt = await liqm.withdraw(allPTokens, expectedLTokens[1], {from: liquidityProvider});
+        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':expectedLTokens[0]});
     });
 
     it('should not allow deposit if there are debts', async () => {
@@ -154,5 +175,4 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
             'LiquidityModule: Withdraws forbidden if address has active debts'
         );
     });
-
 });

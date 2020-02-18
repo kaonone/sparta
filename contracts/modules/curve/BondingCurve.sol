@@ -43,7 +43,12 @@ contract BondingCurve is Initializable  {
         uint256 lAmount
     ) public view returns (uint256) {
         uint256 fullLiquidity = liquidAssets.add(debtCommitments);
-        return curveFunction(fullLiquidity.add(lAmount)).sub(curveFunction(fullLiquidity));
+        // sub(1) fixes rounding issue: imagine
+        // - curveFunction(fullLiquidity.add(lAmount)) has exacly correct value
+        // - curveFunction(fullLiquidity) - rounded 1 wei down
+        // In this case user may receive 1 wei more, so we need to remove this 1 wei
+        // which overwise causes troubles on Exit
+        return curveFunction(fullLiquidity.add(lAmount)).sub(curveFunction(fullLiquidity)).sub(1);
     }
 
     /**
