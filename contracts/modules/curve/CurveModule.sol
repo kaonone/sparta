@@ -13,7 +13,7 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
     uint256 private constant DEFAULT_WITHDRAW_FEE_PERCENT = 5;
     uint256 public constant PERCENT_DIVIDER = 100;
 
-    uint256 withdrawFeePercent;
+    uint256 public withdrawFeePercent;
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
