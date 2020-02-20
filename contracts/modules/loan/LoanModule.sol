@@ -228,10 +228,12 @@ contract LoanModule is Module, ILoanModule {
         require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
 
         //Move locked pTokens to Funds
+        uint256[] memory amounts = new uint256[](p.supporters.length);
         for (uint256 i=0; i < p.supporters.length; i++) {
             address supporter = p.supporters[i];
-            fundsModule().movePTokens(supporter, address(fundsModule()), p.pledges[supporter].pAmount);
+            amounts[i] = p.pledges[supporter].pAmount;
         }
+        fundsModule().lockPTokens(debtHash(_msgSender(), debtIdx), p.supporters, amounts);
 
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
@@ -273,7 +275,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
-        fundsModule().mintPTokens(pInterest);
+        fundsModule().mintAndLockPTokens(debtHash(_msgSender(), debt), pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
     }
@@ -292,8 +294,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 pLocked = proposal.pCollected.mul(dbt.lAmount).div(proposal.lAmount);
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
-        IFundsModule funds = fundsModule();
-        funds.burnPTokens(pLocked);
+        fundsModule().burnLockedPTokens(debtHash(borrower, debt), pLocked);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
@@ -312,8 +313,7 @@ contract LoanModule is Module, ILoanModule {
         Debt storage dbt = debts[borrower][debt];
         dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
         
-        fundsModule().movePTokens(address(fundsModule()), _msgSender(), pAmount);
-        fundsModule().withdrawPTokens(_msgSender(), pAmount);
+        fundsModule().unlockAndWithdrawPTokens(debtHash(borrower, debt), _msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }
 
@@ -543,7 +543,11 @@ contract LoanModule is Module, ILoanModule {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
     }
 
-    function _isDebtDefaultTimeReached(Debt storage dbt) view private returns(bool) {
+    function debtHash(address borrower, uint256 index) internal pure returns(bytes32){
+        return keccak256(abi.encodePacked(borrower, index));
+    }
+
+    function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
         uint256 timeSinceLastPayment = now.sub(dbt.lastPayment);
         return timeSinceLastPayment > DEBT_REPAY_DEADLINE_PERIOD;
     }

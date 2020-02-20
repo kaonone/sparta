@@ -10,7 +10,7 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
     uint256 private constant DEFAULT_CURVE_A = 1;
     uint256 private constant DEFAULT_CURVE_B = 1;
 
-    uint256 private constant DEFAULT_WITHDRAW_FEE_PERCENT = 5;
+    uint256 private constant DEFAULT_WITHDRAW_FEE_PERCENT = 0; //0 used for start, normal will be 5
     uint256 public constant PERCENT_DIVIDER = 100;
 
     uint256 public withdrawFeePercent;
