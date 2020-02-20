@@ -21,9 +21,8 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
     beforeEach(async () => {
         curveA = 1;
         curveB = 1;
-        let withdrawFeePercent = 5;
         let percentDivider = 100;
-        withdrawFee = withdrawFeePercent/percentDivider;
+        let withdrawFeePercentDefault = 5;
 
         //Setup system contracts
         pool = await Pool.new();
@@ -32,6 +31,11 @@ contract("CurveModule", async ([_, owner, ...otherAccounts]) => {
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set('curve', curve.address, false, {from: owner});
+
+        await curve.setWithdrawFee(withdrawFeePercentDefault, {from: owner});
+        let withdrawFeePercent = await curve.withdrawFeePercent();
+        expect(withdrawFeePercent.toNumber()).to.be.equal(withdrawFeePercentDefault);
+        withdrawFee = withdrawFeePercent.toNumber()/percentDivider;
     });
 
     it("should correctly calculate exit by pToken amount", async () => {
