@@ -64,6 +64,7 @@ interface IFundsModule {
 
     function burnLockedPTokens(bytes32 loanHash, uint256 amount) external;
 
+    function distributionClaimedNotify(uint256 amount) external;
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity

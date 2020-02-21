@@ -148,8 +148,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 pExtra = amount.mul(loanLock.pDistributed).div(loanLock.pLockedAmount);
         loanLock.pLockedAmount = loanLock.pLockedAmount.sub(amount);
         uint256 withdrawAmount = amount.add(pExtra);
-        //pBalances[address(this)] = pBalances[address(this)].sub(withdrawAmount); //this is wrong because distributions are not yet added to pBalances[address(this)]
-        pBalances[address(this)] = pBalances[address(this)].sub(amount);
+        pBalances[address(this)] = pBalances[address(this)].sub(withdrawAmount);
         require(pToken().transfer(to, withdrawAmount), "FundsModule: withdraw failed");
     }
 
@@ -159,6 +158,11 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         loanLock.pLockedAmount = loanLock.pLockedAmount.sub(amount);
         pBalances[address(this)] = pBalances[address(this)].sub(amount);
         pToken().burn(amount); //This call will revert if something goes wrong
+    }
+
+    function distributionClaimedNotify(uint256 amount) public {
+        require(_msgSender() == getModuleAddress(MODULE_PTOKEN), "FundsModule: can accept claim notifications from PToken only");
+        pBalances[address(this)] = pBalances[address(this)].add(amount);
     }
 
     /**
