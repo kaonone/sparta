@@ -278,6 +278,11 @@ contract LoanModule is Module, ILoanModule {
         fundsModule().mintAndLockPTokens(debtHash(_msgSender(), debt), pInterest);
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
+
+        if (d.lAmount == 0) {
+            //Debt is fully repaid
+            withdrawUnlockedPledge(_msgSender(), debt);
+        }
     }
 
     /**
