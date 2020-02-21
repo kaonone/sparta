@@ -126,9 +126,10 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await pToken.mint(liquidityProvider, web3.utils.toWei('1000'), {from: owner});
         let amountWei = w3random.interval(1, 1000, 'ether');
         await (<any>funds).methods['depositPTokens(address,uint256)'](liquidityProvider, amountWei, {from:tester});
-        await (<any>funds).methods['movePTokens(address,address,uint256)'](liquidityProvider, funds.address, amountWei, {from:tester});
+        let loanHash = web3.utils.randomHex(32);
+        await funds.lockPTokens(loanHash, [liquidityProvider], [amountWei], {from:tester});
         let preTestPBalanceWei = await pToken.balanceOf(funds.address);
-        let receipt = await (<any>funds).methods['burnPTokens(uint256)'](amountWei, {from: tester});
+        let receipt = await funds.burnLockedPTokens(loanHash, amountWei, {from: tester});
         let expectedPostTestPBalanceWei = preTestPBalanceWei.sub(amountWei);
         let postTestPBalanceWei = await pToken.balanceOf(funds.address);
         expect(postTestPBalanceWei).to.be.bignumber.equal(expectedPostTestPBalanceWei);
