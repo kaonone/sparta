@@ -8,6 +8,7 @@ import "../core/ModuleNames.sol";
  * Base contract for all modules
  */
 contract Module is Base, ModuleNames {
+    event PoolAddressChanged(address newPool);
     address public pool;
 
     function initialize(address _pool) public initializer {
@@ -16,7 +17,9 @@ contract Module is Base, ModuleNames {
     }
 
     function setPool(address _pool) public onlyOwner {
-        pool = _pool;        
+        require(_pool != ZERO_ADDRESS, "Module: pool address can't be zero");
+        pool = _pool;
+        emit PoolAddressChanged(_pool);        
     }
 
     function getModuleAddress(string memory module) public view returns(address){

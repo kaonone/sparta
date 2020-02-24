@@ -17,9 +17,10 @@ contract("BondingCurve", async ([_, owner, ...otherAccounts]) => {
     beforeEach(async () => {
         curveA = 1;
         curveB = 1;
+        let FIX = new BN('1000000000000000000');
 
         curve = await BondingCurve.new();
-        await curve.initialize(curveA, curveB);
+        await curve.initialize(new BN(curveA).mul(FIX), new BN(curveB).mul(FIX));
     });
 
     it("should correctly calculate curve", async () => {

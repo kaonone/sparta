@@ -4541,6 +4541,11 @@ export interface PoolInstance extends Truffle.ContractInstance {
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
+  is_constant(
+    arg0: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
