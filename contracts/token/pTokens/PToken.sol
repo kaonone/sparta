@@ -57,6 +57,15 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
         }
     }
 
+    function _updateUserBalance(address account, uint256 toDistribution) internal returns(uint256) {
+        uint256 distributionAmount = super._updateUserBalance(account, toDistribution);
+        address funds = getModuleAddress(MODULE_FUNDS);
+        if (account == funds) {
+            IFundsModule(funds).distributionClaimedNotify(distributionAmount);
+        }
+        return distributionAmount;
+    }
+
     /**
      * @dev Overrides DistributionToken.distributionBalanceOf() to handle FundsModule
      */

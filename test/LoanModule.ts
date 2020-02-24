@@ -189,7 +189,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Withdraw pledge
         await expectRevert(
             loanm.withdrawPledge(borrower, proposalIdx, pPledgeWei.add(new BN(1)), {from: otherAccounts[0]}),
-            'LoanModule: Can not withdraw more then locked'
+            'LoanModule: Can not withdraw more than locked'
         );  
     });
     it('should execute successful debt proposal', async () => {

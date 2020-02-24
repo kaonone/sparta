@@ -18,7 +18,7 @@ contract Pool is Base, CoreInterface {
     using AddressMap for AddressMap.Data;
 
     /* Module constant mapping */
-    mapping(bytes32 => bool) is_constant;
+    mapping(bytes32 => bool) public is_constant;
 
     /**
      * @dev Contract ABI storage
@@ -26,7 +26,7 @@ contract Pool is Base, CoreInterface {
      */
     mapping(address => string) public abiOf;
     
-    function initialize()public initializer {
+    function initialize() public initializer {
         Base.initialize();
         founder = _msgSender();
     }
@@ -64,8 +64,7 @@ contract Pool is Base, CoreInterface {
      * @param _name module name
      */
     function remove(string memory _name)  public onlyOwner {
-
-        require(isConstant(_name), "Pool: module can not be removed");
+        require(!isConstant(_name), "Pool: module can not be removed");
 
         // Notify
         emit ModuleRemoved(_name, modules.get(_name));

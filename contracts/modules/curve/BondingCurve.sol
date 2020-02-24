@@ -11,9 +11,8 @@ contract BondingCurve is Initializable  {
     // Original curve formula uses float numbers to represent amounts. 
     // In Solidity we convert them to integers, using ether to wei conversion. 
     // While we use sqrt() operation we should convert formula accordingly.
-    uint256 private constant FIX = 10**18; 
-    uint256 private constant FIX2 = 10**36;
-
+    // For this purpose curveA and curveB stored multiplied to FIX
+    uint256 internal constant FIX = 10**18; 
     uint256 public curveA;
     uint256 public curveB;
 
@@ -43,7 +42,12 @@ contract BondingCurve is Initializable  {
         uint256 lAmount
     ) public view returns (uint256) {
         uint256 fullLiquidity = liquidAssets.add(debtCommitments);
-        return curveFunction(fullLiquidity.add(lAmount)).sub(curveFunction(fullLiquidity));
+        // sub(1) fixes rounding issue: imagine
+        // - curveFunction(fullLiquidity.add(lAmount)) has exacly correct value
+        // - curveFunction(fullLiquidity) - rounded 1 wei down
+        // In this case user may receive 1 wei more, so we need to remove this 1 wei
+        // which overwise causes troubles on Exit
+        return curveFunction(fullLiquidity.add(lAmount)).sub(curveFunction(fullLiquidity)).sub(1);
     }
 
     /**
@@ -102,8 +106,13 @@ contract BondingCurve is Initializable  {
     function inverseCurveFunction(uint256 x) public view returns(uint256){
         return inverseCurve(curveA, curveB, x);
     }
-
+    
+    /**
+     * @notice Set bonding curve params
+     * @dev param values should be multiplied to FIX
+     */
     function _setCurveParams(uint256 _curveA, uint256 _curveB) internal {
+        require(_curveB != 0, "BondingCurve: _curveB should not be 0");
         curveA = _curveA;
         curveB = _curveB;
     }
@@ -120,8 +129,10 @@ contract BondingCurve is Initializable  {
     function curve(uint256 a, uint256 b, uint256 s) private pure returns(uint256){
         //uint256 d = FIX2 * (a*a) + 4 * FIX * b * s;
         //return (d.sqrt() - FIX*a)/2;
-        uint256 d = FIX2.mul(a).mul(a).add(FIX.mul(4).mul(b).mul(s));
-        return d.sqrt().sub(FIX.mul(a)).div(2);
+        // uint256 d = FIX2.mul(a).mul(a).add(FIX.mul(4).mul(b).mul(s));
+        // return d.sqrt().sub(FIX.mul(a)).div(2);
+        uint256 d = a.mul(a).add(b.mul(4).mul(s));
+        return d.sqrt().sub(a).div(2);
     }
 
     /**
@@ -130,7 +141,8 @@ contract BondingCurve is Initializable  {
      */
     function inverseCurve(uint256 a, uint256 b, uint256 x) private pure returns(uint256){
         //return (x*x + FIX*a*x)/FIX*b;
-        return x.mul(x).add(FIX.mul(a).mul(x)).div(FIX.mul(b));
+        //return x.mul(x).add(FIX.mul(a).mul(x)).div(FIX.mul(b));
+        return x.mul(x).add(a.mul(x)).div(b);
     }
 
 }

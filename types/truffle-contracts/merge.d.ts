@@ -25,6 +25,9 @@ declare global {
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
       require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
+        name: "FundsModuleStub"
+      ): TruffleContracts.FundsModuleStubContract;
+      require(
         name: "FundsOperatorRole"
       ): TruffleContracts.FundsOperatorRoleContract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;

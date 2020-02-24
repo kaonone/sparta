@@ -42,7 +42,7 @@ library ISQRT {
      * https://github.com/ethereum/dapp-bin/pull/50
      */
     function sqrtBabylonian(uint256 x) internal pure returns (uint256) {
-        assert(x < 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF); //x = MAX_UINT256 makes this method fail
+        require(x < 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF); //x = MAX_UINT256 makes this method fail
         uint256 z = (x + 1) / 2;
         uint256 y = x;
         while (z < y) {

@@ -8,7 +8,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     using SafeMath for uint256;
 
     event DistributionCreated(uint256 amount, uint256 totalSupply);
-    event DistributionsClaimed(address account, uint256 amount, uint256 startDistribution, uint256 nextDistribution);
+    event DistributionsClaimed(address account, uint256 amount, uint256 fromDistribution, uint256 toDistribution);
 
     struct Distribution {
         uint256 amount;         // Amount of tokens being distributed during the event
@@ -28,8 +28,8 @@ contract DistributionToken is ERC20, ERC20Mintable {
         emit DistributionCreated(amount, currentTotalSupply);
     }
 
-    function claimDistributions(address account) public {
-        _updateUserBalance(account, distributions.length);
+    function claimDistributions(address account) public returns(uint256) {
+        return _updateUserBalance(account, distributions.length);
     }
     
     /**
@@ -37,10 +37,10 @@ contract DistributionToken is ERC20, ERC20Mintable {
      * This allows limit gas usage.
      * One can do this for others
      */
-    function claimDistributions(address account, uint256 lastDistribution) public {
-        require(lastDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
-        require(nextDistributions[account] < lastDistribution, "DistributionToken: no distributions to claim");
-        _updateUserBalance(account, lastDistribution+1); //+1 is safe because we've already checked lastDistribution < distributions.length
+    function claimDistributions(address account, uint256 toDistribution) public returns(uint256) {
+        require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
+        require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
+        return _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
     }
 
     /**
@@ -55,7 +55,24 @@ contract DistributionToken is ERC20, ERC20Mintable {
         uint256 unclaimed = calculateClaimAmount(account);
         return distributionBalance.add(unclaimed);
     }
-    
+
+    /**
+     * @notice Calculates amount of tokens distributed to inital amount between startDistribution and nextDistribution
+     * @param fromDistribution index of first Distribution to start calculations
+     * @param toDistribution index of distribuition next to the last processed
+     * @param initialBalance amount of tokens before startDistribution
+     * @return amount of tokens distributed
+     */
+    function calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 initialBalance) public view returns(uint256) {
+        require(fromDistribution < toDistribution, "DistributionToken: startDistribution is too high");
+        require(toDistribution <= distributions.length, "DistributionToken: nextDistribution is too high");
+        return _calculateDistributedAmount(fromDistribution, toDistribution, initialBalance);
+    }
+
+    function nextDistribution() public view returns(uint256){
+        return distributions.length;
+    }
+
     // Override functions that change user balance
     function _transfer(address sender, address recipient, uint256 amount) internal {
         _updateUserBalance(sender);
@@ -73,17 +90,18 @@ contract DistributionToken is ERC20, ERC20Mintable {
         super._burn(account, amount);
     }
 
-    function _updateUserBalance(address account) internal {
-        _updateUserBalance(account, distributions.length);
+    function _updateUserBalance(address account) internal returns(uint256) {
+        return _updateUserBalance(account, distributions.length);
     }
 
-    function _updateUserBalance(address account, uint256 nextDistribution) internal {
-        uint256 startDistribution = nextDistributions[account];
-        if (startDistribution >= nextDistribution) return;
-        uint256 distributionAmount = calculateClaimAmount(account, nextDistribution);
-        nextDistributions[account] = nextDistribution;
+    function _updateUserBalance(address account, uint256 toDistribution) internal returns(uint256) {
+        uint256 fromDistribution = nextDistributions[account];
+        if (fromDistribution >= toDistribution) return 0;
+        uint256 distributionAmount = calculateClaimAmount(account, toDistribution);
+        nextDistributions[account] = toDistribution;
         super._transfer(address(this), account, distributionAmount);
-        emit DistributionsClaimed(account, distributionAmount, startDistribution, nextDistribution);
+        emit DistributionsClaimed(account, distributionAmount, fromDistribution, toDistribution);
+        return distributionAmount;
     }
 
     /**
@@ -103,13 +121,15 @@ contract DistributionToken is ERC20, ERC20Mintable {
         return calculateClaimAmount(account, distributions.length);
     }
 
-    function calculateClaimAmount(address account, uint256 nextDistribution) internal view returns(uint256) {
-        assert(nextDistribution <= distributions.length);
-        uint256 startDistribution = nextDistributions[account];
-        uint256 initialBalance = distributionBalanceOf(account);
-        uint256 next = startDistribution;
+    function calculateClaimAmount(address account, uint256 toDistribution) internal view returns(uint256) {
+        assert(toDistribution <= distributions.length);
+        return _calculateDistributedAmount(nextDistributions[account], toDistribution, distributionBalanceOf(account));
+    }
+
+    function _calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 initialBalance) internal view returns(uint256) {
+        uint256 next = fromDistribution;
         uint256 balance = initialBalance;
-        while (next < nextDistribution) {
+        while (next < toDistribution) {
             uint256 da = balance.mul(distributions[next].amount).div(distributions[next].totalSupply);
             balance = balance.add(da);
             next++;
