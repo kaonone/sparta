@@ -9,12 +9,12 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* Pool: `0xBd0459c5522EAaBE44897146A6017c813984e06F`
-* PToken: `0x325a5ac54FBa5EFbf480FB83B1f712bd5e2c0a9f`
-* CurveModule: `0x03731AC85D13d804F5b09548463c0654a8799c78`
-* LiquidityModule: `0xA66fAE2A84aB13CA6284c8610c85632326C62D70`
-* LoanModule: `0xE9e55bB8e77d380D38f4224559A5D7C9606D8265`
-* FundsModule: `0x74Cd4069C5AaAbb4F7e8a06c499910BD6897ED68`
+* Pool: `0x17d7aFC6604C3933913960110Cfa5c436eb0dB45`
+* PToken: `0x2dC45475c35AB01eC7eEA16a843246e8c67D6C82`
+* CurveModule: `0xD5F67aa0af6be5c10389A8AC5d2392ee60e8D1Cb`
+* LiquidityModule: `0xfC95422e89e1892D939B103e73e80d60030b02A5`
+* LoanModule: `0xCA7c5AcF5686d4fdF1a439FE356d66638371Db64`
+* FundsModule: `0x3b1E2e62A4332BAb55A3e935EeaC95aF71002E7B`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
