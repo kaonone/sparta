@@ -215,8 +215,8 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
 
     function updateLoanLock(bytes32 loanHash) internal {
         LoanLock storage loanLock = loanLocks[loanHash];
-        assert(loanLock.nextDistribution != 0);
         uint256 newNextDistribution = pToken().nextDistribution();
+        if (loanLock.nextDistribution == newNextDistribution) return;
         uint256 newDistributedAmount = pToken().calculateDistributedAmount(loanLock.nextDistribution, newNextDistribution, loanLock.pLockedAmount);
         loanLock.pDistributed = loanLock.pDistributed.add(newDistributedAmount);
         loanLock.nextDistribution = newNextDistribution;
