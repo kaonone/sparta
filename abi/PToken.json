@@ -61,13 +61,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "startDistribution",
+        "name": "fromDistribution",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "nextDistribution",
+        "name": "toDistribution",
         "type": "uint256"
       }
     ],
@@ -117,6 +117,19 @@
       }
     ],
     "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newPool",
+        "type": "address"
+      }
+    ],
+    "name": "PoolAddressChanged",
     "type": "event"
   },
   {
@@ -338,6 +351,37 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fromDistribution",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "toDistribution",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initialBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculateDistributedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -347,7 +391,13 @@
       }
     ],
     "name": "claimDistributions",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -362,12 +412,18 @@
       },
       {
         "internalType": "uint256",
-        "name": "lastDistribution",
+        "name": "toDistribution",
         "type": "uint256"
       }
     ],
     "name": "claimDistributions",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -593,6 +649,21 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "nextDistribution",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "payable": false,
