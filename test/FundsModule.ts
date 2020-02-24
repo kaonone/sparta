@@ -6,6 +6,7 @@ import {
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
+import Snapshot from "./utils/snapshot";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail, time } = require("@openzeppelin/test-helpers");
 const expectRevert= require("./utils/expectRevert");
@@ -25,6 +26,8 @@ const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
 
 contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, ...otherAccounts]) => {
+    let snap: Snapshot;
+
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
     let loanm: LoanModuleStubInstance; 
@@ -66,7 +69,12 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
 
         pToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await pToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
-    })
+        //Save snapshot
+        snap = await Snapshot.create(web3.currentProvider);
+    });
+    beforeEach(async () => {
+        // await snap.revert();
+    });
 
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
@@ -106,7 +114,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         expect(postTestPBalanceWei).to.be.bignumber.equal(expectedPostTestPBalanceWei);
     });    
     it('should withdraw PTokens', async () => {
-        await pToken.mint(funds.address, web3.utils.toWei('1000'), {from: owner});
+        await funds.depositPTokens(liquidityProvider, web3.utils.toWei('1000'), {from: tester});
         let preTestPBalanceWei = await pToken.balanceOf(funds.address);
         let amountWei = w3random.interval(1, 1000, 'ether');
         let receipt = await funds.withdrawPTokens(liquidityProvider, amountWei, {from: tester});
@@ -123,7 +131,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         expect(postTestPBalanceWei).to.be.bignumber.equal(expectedPostTestPBalanceWei);
     });    
     it('should burn locked PTokens', async () => {
-        await pToken.mint(liquidityProvider, web3.utils.toWei('1000'), {from: owner});
+        await funds.depositPTokens(liquidityProvider, web3.utils.toWei('1000'), {from: tester});
         let amountWei = w3random.interval(1, 1000, 'ether');
         await (<any>funds).methods['depositPTokens(address,uint256)'](liquidityProvider, amountWei, {from:tester});
         let loanHash = web3.utils.randomHex(32);
@@ -135,7 +143,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         expect(postTestPBalanceWei).to.be.bignumber.equal(expectedPostTestPBalanceWei);
     });    
     it('should burn PTokens from user', async () => {
-        await pToken.mint(liquidityProvider, web3.utils.toWei('1000'), {from: owner});
+        await funds.depositPTokens(liquidityProvider, web3.utils.toWei('1000'), {from: tester});
         let preTestPBalanceWei = await pToken.balanceOf(liquidityProvider);
         let amountWei = w3random.interval(1, 1000, 'ether');
         let receipt = await (<any>funds).methods['burnPTokens(address,uint256)'](liquidityProvider, amountWei, {from: tester});
@@ -158,5 +166,22 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         let postTestFundsLBalanceWei = await funds.lBalance();
         expect(postTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
         expect(postTestLBalanceWei).to.be.bignumber.equal(postTestFundsLBalanceWei);
-    });    
+    });
+
+    it('should  lock pTokens in a loan', async () => {
+        let pDeposits:Array<BN> = [];
+        let pDepositTotal = new BN(0);
+        for(let i=0; i < 5; i++){
+            let pBalanceInitial = await funds.pBalanceOf(otherAccounts[i]);
+            pDeposits[i] = w3random.interval(100, 300, 'ether');
+            await pToken.mint(otherAccounts[i], pDeposits[i], {from: owner});            
+            await funds.depositPTokens(otherAccounts[i], pDeposits[i], {from: tester});
+            let pBalance = await funds.pBalanceOf(otherAccounts[i]);
+            expect(pBalance).to.be.bignumber.equal(pBalanceInitial.add(pDeposits[i]));
+            pDepositTotal = pDepositTotal.add(pDeposits[i]);
+        }
+        let loanHash = web3.utils.randomHex(32);
+        let receipt = funds.lockPTokens(loanHash, otherAccounts.slice(0,5), pDeposits.slice(0,5));
+
+    });
 });

@@ -23,7 +23,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
 
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
     mapping(address=>uint256) pBalances;    //Stores how many pTokens is locked in FundsModule by user
-    mapping(bytes32=>LoanLock) loanLocks;   //Stores information about token locked in loans (executed but unpaid debts)
+    mapping(bytes32=>LoanLock) public loanLocks;   //Stores information about token locked in loans (executed but unpaid debts)
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);

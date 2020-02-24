@@ -1857,6 +1857,11 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
+  loanLocks(
+    arg0: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN, BN]>;
+
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
