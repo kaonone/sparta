@@ -75,7 +75,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
     beforeEach(async () => {
         // await snap.revert();
     });
-/*
+
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
         let preTestFundsLBalanceWei = await funds.lBalance();
@@ -167,7 +167,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         expect(postTestFundsLBalanceWei).to.be.bignumber.equal(preTestFundsLBalanceWei);
         expect(postTestLBalanceWei).to.be.bignumber.equal(postTestFundsLBalanceWei);
     });
-*/
     it('should distribute to pTokens not locked in a loan', async () => {
         for(let i=0; i < 5; i++){
             await pToken.mint(otherAccounts[i], w3random.interval(50, 100, 'ether'), {from: owner});
@@ -224,28 +223,25 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await funds.lockPTokens(loanHash, otherAccounts.slice(0,3), pDeposits.slice(0,3), {from: tester});
         let pTotalSupply = await pToken.totalSupply();
         let pPool = await funds.pBalanceOf(funds.address);
-        console.log('pPool', pPool.toString());
+        //console.log('pPool', pPool.toString());
         let pDistribution = w3random.interval(1, 5, 'ether');
-        console.log('pDistribution', pDistribution.toString());
+        //console.log('pDistribution', pDistribution.toString());
         await pToken.distribute(pDistribution, {from: owner});
         await (<any>pToken).methods['claimDistributions(address)'](funds.address);
         let pPoolAfterDistr = await funds.pBalanceOf(funds.address);
-        console.log('pPoolAfterDistr', pPoolAfterDistr.toString());
+        //console.log('pPoolAfterDistr', pPoolAfterDistr.toString());
         expectEqualBN(pPoolAfterDistr, pPool.add(pPool.mul(pDistribution).div(pTotalSupply)));
         for(let i=0; i < 3; i++){
+            let loanLock = (<any>await funds.loanLocks(loanHash));
+            //console.log(`Loan lock before ${i}`, `pLockedAmount = ${loanLock.pLockedAmount.toString()}`, `pDistributed = ${loanLock.pDistributed.toString()}`, `nextDistribution = ${loanLock.nextDistribution.toString()}`);
             pPool = await funds.pBalanceOf(funds.address);
             let pDistrLockedOwn = pDeposits[i].mul(pDistribution).div(pTotalSupply);
-            console.log(`Withdraw for ${i}: ${otherAccounts[i]}`, pDeposits[i].toString(), pDistrLockedOwn.toString());
+            //console.log(`Withdraw for ${i}: ${otherAccounts[i]}`, pDeposits[i].toString(), pDistrLockedOwn.toString());
             await funds.unlockAndWithdrawPTokens(loanHash, otherAccounts[i], pDeposits[i], {from: tester});
             let pPoolAfterWithdr = await funds.pBalanceOf(funds.address);
-            console.log(`Pool after withdraw ${i}`, pPoolAfterWithdr.toString());
-            //expectEqualBN(pPoolAfterWithdr, pPool.sub(pDeposits[i]).sub(pDistrLockedOwn));
+            //console.log(`Pool after withdraw ${i}`, pPoolAfterWithdr.toString());
+            expectEqualBN(pPoolAfterWithdr, pPool.sub(pDeposits[i]).sub(pDistrLockedOwn));
         }        
-
-        // await pToken.claimDistributions(otherAccounts[0]);
-        // let pBalanceOwnAfter = await pToken.balanceOf(otherAccounts[0]);
-        // expectEqualBN(pBalanceOwnAfter, pFullBalanceOwn.add(pDistrOwn));
-
     });
 
 

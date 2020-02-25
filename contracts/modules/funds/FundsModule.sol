@@ -147,6 +147,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         updateLoanLock(loanHash);
         uint256 pExtra = amount.mul(loanLock.pDistributed).div(loanLock.pLockedAmount);
         loanLock.pLockedAmount = loanLock.pLockedAmount.sub(amount);
+        loanLock.pDistributed = loanLock.pDistributed.sub(pExtra);
         uint256 withdrawAmount = amount.add(pExtra);
         pBalances[address(this)] = pBalances[address(this)].sub(withdrawAmount);
         require(pToken().transfer(to, withdrawAmount), "FundsModule: withdraw failed");
