@@ -119,10 +119,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         if (loanLock.pLockedAmount > 0) { // Lock was already created, probably because it required several tx to be executed
             updateLoanLock(loanHash);
         }
+        pToken().claimDistributions(from);
         uint256 lockAmount;
         for (uint256 i=0; i < from.length; i++) {
             address account = from[i];
-            pToken().claimDistributions(account); //TODO: think of possible reentrancy
             pBalances[account] = pBalances[account].sub(amount[i]);                
             lockAmount = lockAmount.add(amount[i]);
         }
@@ -160,6 +160,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         pToken().burn(amount); //This call will revert if something goes wrong
     }
 
+    /**
+     * @dev This function is used to receive notification on distributions
+     * to tokens locked in loans (which are counted on FundsModule own address).
+     */
     function distributionClaimedNotify(uint256 amount) public {
         require(_msgSender() == getModuleAddress(MODULE_PTOKEN), "FundsModule: can accept claim notifications from PToken only");
         pBalances[address(this)] = pBalances[address(this)].add(amount);
