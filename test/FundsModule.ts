@@ -75,7 +75,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
     beforeEach(async () => {
         // await snap.revert();
     });
-
+/*
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
         let preTestFundsLBalanceWei = await funds.lBalance();
@@ -243,6 +243,70 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             expectEqualBN(pPoolAfterWithdr, pPool.sub(pDeposits[i]).sub(pDistrLockedOwn));
         }        
     });
+ */
+    it('should handle several distributions and mint', async () => {
+        let pInitial:Array<BN> = [];
+        for(let i=0; i < 5; i++){
+            await pToken.mint(otherAccounts[i], w3random.interval(50, 100, 'ether'), {from: owner});
+            pInitial[i] = await pToken.balanceOf(otherAccounts[i]);
+        }
+        let pTotalSupply = await pToken.totalSupply();
+        let pDeposits:Array<BN> = [];
+        let pDepositTotal = new BN(0);
+        for(let i=0; i < 3; i++){
+            pDeposits[i] = w3random.interval(10, 20, 'ether');
+            await funds.depositPTokens(otherAccounts[i], pDeposits[i], {from: tester});
+            pDepositTotal = pDepositTotal.add(pDeposits[i]);            
+        }
+        let loanHash = web3.utils.randomHex(32);
+        await funds.lockPTokens(loanHash, otherAccounts.slice(0,3), pDeposits.slice(0,3), {from: tester});
+        
+        let pDistribution1 = w3random.interval(1, 5, 'ether');
+        await pToken.distribute(pDistribution1, {from: owner});
+        for(let i=1; i < 3; i++){
+            await funds.unlockAndWithdrawPTokens(loanHash, otherAccounts[i], pDeposits[i].div(new BN(2)), {from: tester});
+        }
 
+        await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts);
+        for(let i=0; i < 5; i++) {
+            console.log(`User ${i} - ${otherAccounts[i]} balance after distr1:`, (await pToken.balanceOf(otherAccounts[i])).toString());
+        }
+
+        let pMint = new BN(0);// w3random.interval(1, 5, 'ether');
+        //await funds.mintAndLockPTokens(loanHash, pMint, {from: tester});
+
+        let pExpectedTotalSupply1 = pTotalSupply.add(pDistribution1).add(pMint);
+        expectEqualBN(await pToken.totalSupply(), pExpectedTotalSupply1);
+
+        let pDistribution2 = w3random.interval(1, 5, 'ether');
+        await pToken.distribute(pDistribution2, {from: owner});
+        for(let i=0; i < 3; i++){
+            let pMyMinted = (i==0)?(new BN(0)):pMint.mul(pDeposits[i]).div(pDepositTotal.sub(pDeposits[0]));
+            await funds.unlockAndWithdrawPTokens(loanHash, otherAccounts[i], pDeposits[i].div(new BN(2)).add(pMyMinted), {from: tester});
+        }
+        let pExpectedTotalSupply = pTotalSupply.add(pDistribution1).add(pMint).add(pDistribution2);
+        expectEqualBN(await pToken.totalSupply(), pExpectedTotalSupply);
+        await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts.slice(3, 5));
+        for(let i=0; i < 5; i++){
+            let pMyDistributed1 = pInitial[i].mul(pDistribution1).div(pTotalSupply);
+            let pMyMinted = (!(1 <= i && i < 3))?(new BN(0)):pMint.mul(pDeposits[i]).div(pDepositTotal.sub(pDeposits[0]));
+            let pBalanceBeforeDistr2 = pInitial[i].add(pMyMinted).add(pMyDistributed1);
+            let pMyDistributed2 = pBalanceBeforeDistr2.mul(pDistribution2).div(pTotalSupply.add(pMint));
+            let pExpectedBalance = pInitial[i].add(pMyMinted).add(pMyDistributed1).add(pMyDistributed2);
+
+            let pBalance = await pToken.balanceOf(otherAccounts[i]);
+            console.log(
+                `User ${i} - ${otherAccounts[i]}:\n`,
+                `pInitial = ${pInitial[i].toString()}`,
+                `pMyDistributed1 = ${pMyDistributed1.toString()}`,
+                `pMyMinted = ${pMyMinted.toString()}`,
+                `pBalanceBeforeDistr2 = ${pBalanceBeforeDistr2.toString()}`,
+                `pMyDistributed2 = ${pMyDistributed2.toString()}\n`,
+                `pExpectedBalance = ${pExpectedBalance.toString()}`,
+                `pBalance = ${pBalance.toString()}`,
+            );
+            //expectEqualBN(pBalance, pExpectedBalance);
+        }
+    });
 
 });
