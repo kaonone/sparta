@@ -4,6 +4,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Mintable.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 
+//solhint-disable func-order
 contract DistributionToken is ERC20, ERC20Mintable {
     using SafeMath for uint256;
 
@@ -41,6 +42,19 @@ contract DistributionToken is ERC20, ERC20Mintable {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
         return _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
+    }
+
+    function claimDistributions(address[] calldata accounts) external {
+        for (uint256 i=0; i < accounts.length; i++){
+            _updateUserBalance(accounts[i], distributions.length);
+        }
+    }
+
+    function claimDistributions(address[] calldata accounts, uint256 toDistribution) external {
+        require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
+        for (uint256 i=0; i < accounts.length; i++){
+            _updateUserBalance(accounts[i], toDistribution);
+        }
     }
 
     /**
