@@ -123,7 +123,6 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 lockAmount;
         for (uint256 i=0; i < from.length; i++) {
             address account = from[i];
-            //pToken().claimDistributions(account); //TODO: think of possible reentrancy
             pBalances[account] = pBalances[account].sub(amount[i]);                
             lockAmount = lockAmount.add(amount[i]);
         }

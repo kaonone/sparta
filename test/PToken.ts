@@ -117,9 +117,9 @@ contract("PToken", async ([_, owner, ...otherAccounts]) => {
         let fullBalanceU2 = await pToken.fullBalanceOf(otherAccounts[1]);
         expectEqualBN(fullBalanceU1, amountU1.add(amountDU1));
         expectEqualBN(fullBalanceU2, amountU2.add(amountDU2));
-        receipt = await pToken.claimDistributions(otherAccounts[0], {from: owner});
+        receipt = await (<any>pToken).methods['claimDistributions(address)'](otherAccounts[0], {from: owner});
         expectEvent(receipt, 'DistributionsClaimed', {'account':otherAccounts[0], 'amount':amountDU1});
-        receipt = await pToken.claimDistributions(otherAccounts[1], {from: owner});
+        receipt = await (<any>pToken).methods['claimDistributions(address)'](otherAccounts[1], {from: owner});
         expectEvent(receipt, 'DistributionsClaimed', {'account':otherAccounts[1], 'amount':amountDU2});
 
     });
