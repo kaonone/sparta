@@ -5,7 +5,7 @@ pragma solidity ^0.5.12;
  * @dev Funds module is responsible for token transfers, provides info about current liquidity/debts and pool token price.
  */
 interface IFundsModule {
-    event Status(uint256 lBalance, uint256 lDebt, uint256 pEnterPrice, uint256 pExitPrice);
+    event Status(uint256 lBalance, uint256 lDebts, uint256 lProposals, uint256 pEnterPrice, uint256 pExitPrice);
 
     /**
      * @notice Deposit liquid tokens to the pool
@@ -50,17 +50,21 @@ interface IFundsModule {
     function mintPTokens(address to, uint256 amount) external;
 
     /**
-     * @notice Burn locked pool tokens
-     * @param amount Amount of tokens to burn
-     */
-    function burnPTokens(uint256 amount) external;
-
-    /**
      * @notice Burn pool tokens
      * @param from Address of the user, whos tokens we burning. Should have enough allowance.
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) external;
+
+    function lockPTokens(bytes32 loanHash, address[] calldata from, uint256[] calldata amount) external;
+
+    function mintAndLockPTokens(bytes32 loanHash, uint256 amount) external;
+
+    function unlockAndWithdrawPTokens(bytes32 loanHash, address to, uint256 amount) external;
+
+    function burnLockedPTokens(bytes32 loanHash, uint256 amount) external;
+
+    function distributionClaimedNotify(uint256 amount) external;
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
@@ -88,5 +92,10 @@ interface IFundsModule {
      * @return available liquidity
      */
     function lBalance() external view returns(uint256);
+
+    /**
+     * @return Amount of pTokens locked in FundsModule by account
+     */
+    function pBalanceOf(address account) external view returns(uint256);
 
 }

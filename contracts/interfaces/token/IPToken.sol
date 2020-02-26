@@ -22,4 +22,15 @@ interface IPToken {
     function mint(address account, uint256 amount) external returns (bool);
     function burn(uint256 amount) external;
     function burnFrom(address account, uint256 amount) external;
+
+    //Distributions
+    function distribute(uint256 amount) external;
+    function claimDistributions(address account) external returns(uint256);
+    function claimDistributions(address account, uint256 lastDistribution) external returns(uint256);
+    function claimDistributions(address[] calldata accounts) external;
+    function claimDistributions(address[] calldata accounts, uint256 toDistribution) external;
+    function fullBalanceOf(address account) external view returns(uint256);
+    function calculateDistributedAmount(uint256 startDistribution, uint256 nextDistribution, uint256 initialBalance) external view returns(uint256);
+    function nextDistribution() external view returns(uint256);
+
 }

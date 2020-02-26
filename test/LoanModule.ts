@@ -88,7 +88,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             //Prepare Borrower account
             let lDebtWei = w3random.interval(100, 200, 'ether');
             let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-            let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+            let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
             await prepareBorrower(pAmountMinWei);
 
             //Create Debt Proposal
@@ -108,7 +108,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
         let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
         // console.log('lcWei', lcWei.toString());
         // console.log('pAmountMinWei', pAmountMinWei.toString());
         await prepareBorrower(pAmountMinWei);
@@ -137,7 +137,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
         let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
@@ -168,7 +168,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
         let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
@@ -189,16 +189,16 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Withdraw pledge
         await expectRevert(
             loanm.withdrawPledge(borrower, proposalIdx, pPledgeWei.add(new BN(1)), {from: otherAccounts[0]}),
-            'LoanModule: Can not withdraw more then locked'
+            'LoanModule: Can not withdraw more than locked'
         );  
     });
-    it('should execute for successful debt proposal', async () => {
+    it('should execute successful debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
         let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
@@ -213,6 +213,34 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         receipt = await loanm.executeDebtProposal(proposalIdx, {from: borrower});
         expectEvent(receipt, 'DebtProposalExecuted', {'sender':borrower, 'proposal':String(proposalIdx), 'lAmount':lDebtWei});
+    });
+    it('should not execute successful debt proposal if debt load is too high', async () => {
+        let liquidity = w3random.interval(200, 400, 'ether')
+        await prepareLiquidity(liquidity);
+
+        //Prepare Borrower account
+        let lDebtWei = liquidity.div(new BN(2)).add(new BN(1));
+        //console.log('lDebtWei', lDebtWei.toString());
+        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
+        await prepareBorrower(pAmountMinWei);
+
+        //Create Debt Proposal
+        let receipt = await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+
+        //Add supporter
+        let lPledge = await loanm.getRequiredPledge(borrower, proposalIdx);
+        let pPledge = await funds.calculatePoolExit(lPledge);
+        await prepareSupporter(pPledge, otherAccounts[0]);
+        await loanm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
+        // console.log('lBalance', (await funds.lBalance()).toString());
+        // console.log('lDebts', (await loanm.totalLDebts()).toString());
+
+        await expectRevert(
+            loanm.executeDebtProposal(proposalIdx, {from: borrower}),
+            "LoanModule: DebtProposal can not be executed now because of debt loan limit"
+        );
     });
     it('should repay debt and interest', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
@@ -423,8 +451,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
     async function createDebt(debtLAmount:BN, supporter:string){
         //Prepare Borrower account
-        let lcWei = debtLAmount.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = await funds.calculatePoolExit(lcWei);
+        let pAmountMinWei = (await funds.calculatePoolExit(debtLAmount)).div(new BN(2));
         await prepareBorrower(pAmountMinWei);
 
         //Create Debt Proposal
