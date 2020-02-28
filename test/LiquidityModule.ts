@@ -1,6 +1,7 @@
 import {
     PoolContract, PoolInstance, 
     FundsModuleContract, FundsModuleInstance, 
+    AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
@@ -19,6 +20,7 @@ const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
 const FundsModule = artifacts.require("FundsModule");
+const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
@@ -29,6 +31,7 @@ const FreeDAI = artifacts.require("FreeDAI");
 contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
+    let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanms: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
@@ -47,6 +50,11 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
+
+        access = await AccessModule.new();
+        await (<any> access).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("access", access.address, true, {from: owner});  
+        access.disableWhitelist({from: owner});
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
