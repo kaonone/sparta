@@ -97,6 +97,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         require(pToken().mint(to, amount), "FundsModule: mint failed");
     }
 
+    function distributePTokens(uint256 amount) public onlyFundsOperator {
+        pToken().distribute(amount);
+    }
+    
     /**
      * @notice Burn pool tokens
      * @param from Address of the user, whos tokens we burning. Should have enough allowance.

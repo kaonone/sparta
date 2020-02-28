@@ -2053,6 +2053,25 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  distributePTokens: {
+    (
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   burnPTokens: {
     (
       from: string | BN,
@@ -2441,6 +2460,25 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  distributePTokens: {
+    (
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   burnPTokens: {
     (
       arg0: string | BN,
@@ -2795,21 +2833,25 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     (
       to: string | BN,
       amount: number | BN | string,
+      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       to: string | BN,
       amount: number | BN | string,
+      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       to: string | BN,
       amount: number | BN | string,
+      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       to: string | BN,
       amount: number | BN | string,
+      poolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2878,6 +2920,25 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     ): Promise<string>;
     estimateGas(
       to: string | BN,
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  distributePTokens: {
+    (
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;

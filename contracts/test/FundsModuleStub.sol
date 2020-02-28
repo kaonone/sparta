@@ -41,6 +41,10 @@ contract FundsModuleStub is Module, IFundsModule {
         pToken().mint(to, amount);
     }
 
+    function distributePTokens(uint256 amount) external {
+        pToken().distribute(amount);
+    }
+
     function burnPTokens(address, uint256) external {
         this;
     }

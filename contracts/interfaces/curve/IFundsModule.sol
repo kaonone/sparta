@@ -50,6 +50,12 @@ interface IFundsModule {
     function mintPTokens(address to, uint256 amount) external;
 
     /**
+     * @notice Mint new PTokens and distribute the to other PToken holders
+     * @param amount Amount of tokens to mint
+     */
+    function distributePTokens(uint256 amount) external;
+
+    /**
      * @notice Burn pool tokens
      * @param from Address of the user, whos tokens we burning. Should have enough allowance.
      * @param amount Amount of tokens to burn

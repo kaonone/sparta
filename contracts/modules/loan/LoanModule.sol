@@ -274,9 +274,11 @@ contract LoanModule is Module, ILoanModule {
 
         uint256 pInterest = calculatePoolEnter(actualInterest);
         d.pInterest = d.pInterest.add(pInterest);
+        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
-        fundsModule().mintAndLockPTokens(debtHash(_msgSender(), debt), pInterest);
+        fundsModule().distributePTokens(poolInterest);
+        fundsModule().mintAndLockPTokens(debtHash(_msgSender(), debt), pInterest.sub(poolInterest));
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
 

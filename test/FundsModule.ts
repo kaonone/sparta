@@ -75,7 +75,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
     beforeEach(async () => {
         // await snap.revert();
     });
-/*
+
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
         let preTestFundsLBalanceWei = await funds.lBalance();
@@ -243,7 +243,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             expectEqualBN(pPoolAfterWithdr, pPool.sub(pDeposits[i]).sub(pDistrLockedOwn));
         }        
     });
-*/
+    /*
     it('should handle several distributions and mint', async () => {
         let pInitial:Array<BN> = [];
         for(let i=0; i < 5; i++){
@@ -350,4 +350,5 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             //expectEqualBN(pBalance, pExpectedBalance);
         }
     });
+    */
 });
