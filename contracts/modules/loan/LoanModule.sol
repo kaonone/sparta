@@ -416,7 +416,7 @@ contract LoanModule is Module, ILoanModule {
                 DebtPledge storage dpb = proposal.pledges[borrower];
                 uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
-                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
+                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
                 if (dbt.defaultExecuted) {
                     pLocked = 0;
                     pUnlocked = pUnlocked.add(pCompensation);
