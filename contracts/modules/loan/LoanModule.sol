@@ -201,7 +201,7 @@ contract LoanModule is Module, ILoanModule {
         (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
         require(pledge.lAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
 
-        fundsModule().withdrawPTokens(_msgSender(), pAmount);
+//        fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
@@ -416,7 +416,8 @@ contract LoanModule is Module, ILoanModule {
                 DebtPledge storage dpb = proposal.pledges[borrower];
                 uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
-                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
+                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
+                //uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
                 if (dbt.defaultExecuted) {
                     pLocked = 0;
                     pUnlocked = pUnlocked.add(pCompensation);
