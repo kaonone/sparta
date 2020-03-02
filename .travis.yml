@@ -9,7 +9,7 @@ before_install: # if "install" is overridden
 
 install:
  - yarn
- - yarn global add solhint
+ - yarn global add solhint@2.3.0
  
 notifications:
   email: true
