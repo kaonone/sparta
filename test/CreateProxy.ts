@@ -23,11 +23,10 @@ contract("Create Proxy", async ([_, owner,  ...otherAccounts]) => {
 
     let project: any;
     let creatorAddress: string;
-    let initializerAddress: string;
   
     beforeEach(async () => {
       project = await TestHelper();
-      [creatorAddress, initializerAddress] = await ZWeb3.accounts();
+      creatorAddress = await ZWeb3.defaultAccount();
     });
   
     it("should create proxy", async () => {
