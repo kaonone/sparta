@@ -408,6 +408,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should allow supporter to take part of the pledge after default date', async () => {
         // for(let r = 0; r < 20; r++){
         //     await snap.revert();
+
             await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
             let debtLAmount = w3random.interval(100, 200, 'ether');
@@ -422,7 +423,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             await lToken.approve(funds.address, repayLAmount, {from: borrower});
             await loanm.repay(debtIdx, repayLAmount, {from: borrower});
             let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-            console.log('before default', pledgeInfoBeforeDefault);
+            //console.log('before default', pledgeInfoBeforeDefault);
 
             await time.increase(90*24*60*60+1);
             let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
@@ -434,7 +435,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             expect(hasActiveDebts).to.be.false;
 
             let pledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-            console.log('after default', pledgeInfoAfterDefault);
+            //console.log('after default', pledgeInfoAfterDefault);
             expect(pledgeInfoAfterDefault[0]).to.be.bignumber.eq(new BN(0));
             expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]); //TODO: calculate how many PTK added from borrower's pledge
             expect(pledgeInfoAfterDefault[2]).to.be.bignumber.eq(pledgeInfoBeforeDefault[2]);
