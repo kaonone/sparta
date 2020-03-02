@@ -408,7 +408,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should allow supporter to take part of the pledge after default date', async () => {
         // for(let r = 0; r < 20; r++){
         //     await snap.revert();
-
             await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
             let debtLAmount = w3random.interval(100, 200, 'ether');
