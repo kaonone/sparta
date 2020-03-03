@@ -20,7 +20,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     mapping(address => uint256) public nextDistributions;  // Map account to first distribution not yet processed
 
     function distribute(uint256 amount) public onlyMinter {
-        uint256 currentTotalSupply = totalSupply();
+        uint256 currentTotalSupply = distributionTotalSupply();
         distributions.push(Distribution({
             amount:amount,
             totalSupply: currentTotalSupply
