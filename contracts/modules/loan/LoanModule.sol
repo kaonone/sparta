@@ -308,6 +308,12 @@ contract LoanModule is Module, ILoanModule {
         require(_isDebtDefaultTimeReached(dbt), "LoanModule: not enough time passed");
         DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
         uint256 pLocked = proposal.pCollected.mul(dbt.lAmount).div(proposal.lAmount);
+        uint256 pBorrower = proposal.pCollected.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
+        if(pBorrower > pLocked){
+            uint256 pExtra = pBorrower - pLocked;
+            uint256 pDistribution = pExtra.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
+            fundsModule().distributePTokens(pDistribution);
+        }
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
         fundsModule().burnLockedPTokens(pLocked);
@@ -407,17 +413,20 @@ contract LoanModule is Module, ILoanModule {
         }else{
             uint256 lPledge = dp.lAmount;
             uint256 pPledge = dp.pAmount;
-            pLocked = pPledge.mul(dbt.lAmount).div(proposal.lAmount);
+            pLocked = pPledge.mul(dbt.lAmount).div(proposal.lCovered);
             assert(pLocked <= pPledge);
             pUnlocked = pPledge.sub(pLocked);
-            pInterest = dbt.pInterest.mul(lPledge).div(proposal.lAmount);
+            pInterest = dbt.pInterest.mul(lPledge).div(proposal.lCovered);
             assert(pInterest <= dbt.pInterest);
             if (_isDebtDefaultTimeReached(dbt)) {
                 DebtPledge storage dpb = proposal.pledges[borrower];
-                uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
+                uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lCovered);
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
-                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
-                //uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
+                //uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
+                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
+                if(pCompensation > pLocked){
+                    pCompensation = pLocked;
+                }
                 if (dbt.defaultExecuted) {
                     pLocked = 0;
                     pUnlocked = pUnlocked.add(pCompensation);
