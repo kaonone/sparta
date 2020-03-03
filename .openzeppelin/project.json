@@ -7,7 +7,8 @@
     "CurveModule": "CurveModule",
     "LiquidityModule": "LiquidityModule",
     "LoanModule": "LoanModule",
-    "FundsModule": "FundsModule"
+    "FundsModule": "FundsModule",
+    "AccessModule": "AccessModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
@@ -19,7 +20,9 @@
         "enabled": false,
         "runs": "200"
       }
-    }
+    },
+    "artifactsDir": "build\\contracts",
+    "contractsDir": "contracts"
   },
   "telemetryOptIn": true
 }
