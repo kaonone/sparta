@@ -242,7 +242,7 @@ contract LoanModule is Module, ILoanModule {
             address supporter = p.supporters[i];
             amounts[i] = p.pledges[supporter].pAmount;
         }
-        fundsModule().lockPTokens(debtHash(_msgSender(), debtIdx), p.supporters, amounts);
+        fundsModule().lockPTokens(p.supporters, amounts);
 
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
@@ -286,7 +286,7 @@ contract LoanModule is Module, ILoanModule {
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
         fundsModule().distributePTokens(poolInterest);
-        fundsModule().mintAndLockPTokens(debtHash(_msgSender(), debt), pInterest.sub(poolInterest));
+        fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
         emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
 
@@ -310,7 +310,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 pLocked = proposal.pCollected.mul(dbt.lAmount).div(proposal.lAmount);
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
-        fundsModule().burnLockedPTokens(debtHash(borrower, debt), pLocked);
+        fundsModule().burnLockedPTokens(pLocked);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
@@ -329,7 +329,7 @@ contract LoanModule is Module, ILoanModule {
         Debt storage dbt = debts[borrower][debt];
         dbt.claimedPledges[_msgSender()] = dbt.claimedPledges[_msgSender()].add(pAmount);
         
-        fundsModule().unlockAndWithdrawPTokens(debtHash(borrower, debt), _msgSender(), pAmount);
+        fundsModule().unlockAndWithdrawPTokens(_msgSender(), pAmount);
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }
 
@@ -559,10 +559,6 @@ contract LoanModule is Module, ILoanModule {
 
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
-    }
-
-    function debtHash(address borrower, uint256 index) internal pure returns(bytes32){
-        return keccak256(abi.encodePacked(borrower, index));
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {

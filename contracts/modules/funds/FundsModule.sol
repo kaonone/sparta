@@ -14,16 +14,15 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    // Stores information about pTokens locked in a loan
-    struct LoanLock {
-        uint256 pLockedAmount;      //pTokens locked in a loan, including iterest distributed by LoanModule
-        uint256 pDistributed;       //pTokens distributed by PToken Distributions
-        uint256 nextDistribution;   //index of next unprocessed distribution
-    }
+    // // Stores information about pTokens locked in a loan
+    // struct LoanLock {
+    //     uint256 pLockedAmount;      //pTokens locked in a loan, including iterest distributed by LoanModule
+    //     uint256 pDistributed;       //pTokens distributed by PToken Distributions
+    //     uint256 nextDistribution;   //index of next unprocessed distribution
+    // }
 
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
     mapping(address=>uint256) pBalances;    //Stores how many pTokens is locked in FundsModule by user
-    mapping(bytes32=>LoanLock) public loanLocks;   //Stores information about token locked in loans (executed but unpaid debts)
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -116,13 +115,9 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param from list of addresses to lock tokens from
      * @param amount list of amounts addresses to lock tokens from
      */
-    function lockPTokens(bytes32 loanHash, address[] calldata from, uint256[] calldata amount) external onlyFundsOperator {
+    function lockPTokens(address[] calldata from, uint256[] calldata amount) external onlyFundsOperator {
         require(from.length == amount.length, "FundsModule: from and amount length should match");
-        pToken().claimDistributions(address(this));
-        LoanLock storage loanLock = loanLocks[loanHash];
-        if (loanLock.pLockedAmount > 0) { // Lock was already created, probably because it required several tx to be executed
-            updateLoanLock(loanHash);
-        }
+        //pToken().claimDistributions(address(this));
         pToken().claimDistributions(from);
         uint256 lockAmount;
         for (uint256 i=0; i < from.length; i++) {
@@ -131,47 +126,22 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
             lockAmount = lockAmount.add(amount[i]);
         }
         pBalances[address(this)] = pBalances[address(this)].add(lockAmount);
-        loanLock.pLockedAmount = loanLock.pLockedAmount.add(lockAmount);
-        loanLock.nextDistribution = pToken().nextDistribution();
     }
 
-    function mintAndLockPTokens(bytes32 loanHash, uint256 amount) public onlyFundsOperator {
-        LoanLock storage loanLock = loanLocks[loanHash];
-        require(loanLock.pLockedAmount > 0, "FundsModule: loan not found or fully unlocked");
-        updateLoanLock(loanHash);
+    function mintAndLockPTokens(uint256 amount) public onlyFundsOperator {
         require(pToken().mint(address(this), amount), "FundsModule: mint failed");
         pBalances[address(this)] = pBalances[address(this)].add(amount);
-        loanLock.pLockedAmount = loanLock.pLockedAmount.add(amount);
     }
 
-    function unlockAndWithdrawPTokens(bytes32 loanHash, address to, uint256 amount) public onlyFundsOperator {
-        pToken().claimDistributions(address(this));
-        LoanLock storage loanLock = loanLocks[loanHash];
-        require(loanLock.pLockedAmount > 0, "FundsModule: loan not found or already fully unlocked");
-        updateLoanLock(loanHash);
-        uint256 pExtra = amount.mul(loanLock.pDistributed).div(loanLock.pLockedAmount);
-        loanLock.pLockedAmount = loanLock.pLockedAmount.sub(amount);
-        loanLock.pDistributed = loanLock.pDistributed.sub(pExtra);
-        uint256 withdrawAmount = amount.add(pExtra);
-        pBalances[address(this)] = pBalances[address(this)].sub(withdrawAmount);
-        require(pToken().transfer(to, withdrawAmount), "FundsModule: withdraw failed");
+    function unlockAndWithdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
+        //pToken().claimDistributions(address(this));
+        pBalances[address(this)] = pBalances[address(this)].sub(amount);
+        require(pToken().transfer(to, amount), "FundsModule: withdraw failed");
     }
 
-    function burnLockedPTokens(bytes32 loanHash, uint256 amount) public onlyFundsOperator {
-        pToken().claimDistributions(address(this));
-        LoanLock storage loanLock = loanLocks[loanHash];
-        loanLock.pLockedAmount = loanLock.pLockedAmount.sub(amount);
+    function burnLockedPTokens(uint256 amount) public onlyFundsOperator {
         pBalances[address(this)] = pBalances[address(this)].sub(amount);
         pToken().burn(amount); //This call will revert if something goes wrong
-    }
-
-    /**
-     * @dev This function is used to receive notification on distributions
-     * to tokens locked in loans (which are counted on FundsModule own address).
-     */
-    function distributionClaimedNotify(uint256 amount) public {
-        require(_msgSender() == getModuleAddress(MODULE_PTOKEN), "FundsModule: can accept claim notifications from PToken only");
-        pBalances[address(this)] = pBalances[address(this)].add(amount);
     }
 
     /**
@@ -220,15 +190,6 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         uint256 lProposals = loanModule().totalLProposals();
         return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
-    }
-
-    function updateLoanLock(bytes32 loanHash) internal {
-        LoanLock storage loanLock = loanLocks[loanHash];
-        uint256 newNextDistribution = pToken().nextDistribution();
-        if (loanLock.nextDistribution == newNextDistribution) return;
-        uint256 newDistributedAmount = pToken().calculateDistributedAmount(loanLock.nextDistribution, newNextDistribution, loanLock.pLockedAmount);
-        loanLock.pDistributed = loanLock.pDistributed.add(newDistributedAmount);
-        loanLock.nextDistribution = newNextDistribution;
     }
 
     function emitStatus() private {

@@ -49,23 +49,19 @@ contract FundsModuleStub is Module, IFundsModule {
         this;
     }
 
-    function lockPTokens(bytes32, address[] calldata, uint256[] calldata) external {
+    function lockPTokens(address[] calldata, uint256[] calldata) external {
         this;
     }
 
-    function mintAndLockPTokens(bytes32, uint256) external {
+    function mintAndLockPTokens(uint256) external {
         this;
     }
 
-    function unlockAndWithdrawPTokens(bytes32, address, uint256) external {
+    function unlockAndWithdrawPTokens(address, uint256) external {
         this;
     }
 
-    function burnLockedPTokens(bytes32, uint256) external {
-        this;
-    }
-
-    function distributionClaimedNotify(uint256) external {
+    function burnLockedPTokens(uint256) external {
         this;
     }
 

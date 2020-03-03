@@ -121,10 +121,19 @@ contract DistributionToken is ERC20, ERC20Mintable {
     /**
      * @notice Balance of account, which is counted for distributions
      * It only represents already distributed balance.
-     * @dev This function should be overloaded to include balance of locked tokens
+     * @dev This function should be overloaded to include balance of tokens stored in proposals
      */
     function distributionBalanceOf(address account) internal view returns(uint256) {
         return balanceOf(account);
+    }
+
+    /**
+     * @notice Total supply which is counted for distributions
+     * It only represents already distributed tokens
+     * @dev This function should be overloaded to exclude tokens locked in loans
+     */
+    function distributionTotalSupply() internal view returns(uint256){
+        return totalSupply();
     }
 
     /**
