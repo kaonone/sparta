@@ -14,13 +14,6 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
-    // // Stores information about pTokens locked in a loan
-    // struct LoanLock {
-    //     uint256 pLockedAmount;      //pTokens locked in a loan, including iterest distributed by LoanModule
-    //     uint256 pDistributed;       //pTokens distributed by PToken Distributions
-    //     uint256 nextDistribution;   //index of next unprocessed distribution
-    // }
-
     uint256 public lBalance;    //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
     mapping(address=>uint256) pBalances;    //Stores how many pTokens is locked in FundsModule by user
 
