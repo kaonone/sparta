@@ -4,6 +4,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
+import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
@@ -296,6 +297,53 @@ contract LoanModule is Module, ILoanModule {
         }
     }
 
+    function repayPTK(uint256 debt, uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Repay) {
+        Debt storage d = debts[_msgSender()][debt];
+        require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
+        require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
+        DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+
+        (, uint256 lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
+        require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
+
+        uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        uint256 actualInterest;
+        if (lAmount < lInterest) {
+            uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
+            assert(d.lastPayment + paidTime <= now);
+            d.lastPayment = d.lastPayment.add(paidTime);
+            actualInterest = lAmount;
+        } else {
+            uint256 fullRepayLAmount = d.lAmount.add(lInterest);
+            if (lAmount > fullRepayLAmount) {
+                lAmount = fullRepayLAmount;
+                pAmount = calculatePoolExit(lAmount);
+            }
+
+            d.lastPayment = now;
+            uint256 debtReturned = lAmount.sub(lInterest);
+            d.lAmount = d.lAmount.sub(debtReturned);
+            lDebts = lDebts.sub(debtReturned);
+            actualInterest = lInterest;
+        }
+
+        uint256 pInterest = calculatePoolEnter(actualInterest);
+        d.pInterest = d.pInterest.add(pInterest);
+        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+
+        liquidityModule().withdrawForRepay(pAmount);
+        fundsModule().distributePTokens(poolInterest);
+        fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
+
+        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
+
+        if (d.lAmount == 0) {
+            //Debt is fully repaid
+            withdrawUnlockedPledge(_msgSender(), debt);
+        }
+    }
+
     /**
      * @notice Allows anyone to default a debt which is behind it's repay deadline
      * @param borrower Address of borrower
@@ -428,7 +476,7 @@ contract LoanModule is Module, ILoanModule {
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
                 //uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lAmount);
                 uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
-                if(pCompensation > pLocked){
+                if (pCompensation > pLocked) {
                     pCompensation = pLocked;
                 }
                 if (dbt.defaultExecuted) {
@@ -572,6 +620,10 @@ contract LoanModule is Module, ILoanModule {
 
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    }
+
+    function liquidityModule() internal view returns(ILiquidityModule) {
+        return ILiquidityModule(getModuleAddress(MODULE_LIQUIDITY));
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {

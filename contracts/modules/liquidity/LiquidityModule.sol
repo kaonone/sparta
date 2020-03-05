@@ -59,6 +59,22 @@ contract LiquidityModule is Module, ILiquidityModule {
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
     }
 
+    /**
+     * @notice Withdraw amount of lToken and burn pTokens
+     * @param pAmount Amount of pTokens to send
+     */
+    function withdrawForRepay(uint256 pAmount) public {
+        require(_msgSender() == getModuleAddress(MODULE_LOAN), "LiquidityModule: call only allowed from LoanModule");
+        require(pAmount > 0, "LiquidityModule: amount should not be 0");
+        //require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin"); //Limit disabled, because this is actually repay
+        (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
+        uint256 availableLiquidity = fundsModule().lBalance();
+        require(lAmountP <= availableLiquidity, "LiquidityModule: not enough liquidity");
+        //fundsModule().burnPTokens(_msgSender(), pAmount); //We are NOT burning PTK, because it will be used in LoanModule.repay()
+        fundsModule().withdrawLTokens(_msgSender(), 0, lAmountP);   //This call is required to send pool fee
+        emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
+    }
+
     function setLimits(uint256 lDepositMin, uint256 pWithdrawMin) public onlyOwner {
         limits.lDepositMin = lDepositMin;
         limits.pWithdrawMin = pWithdrawMin;

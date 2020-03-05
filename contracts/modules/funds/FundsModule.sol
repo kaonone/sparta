@@ -51,7 +51,9 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         lBalance = lBalance.sub(amount);
-        require(lToken().transfer(to, amount), "FundsModule: withdraw failed");
+        if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
+            require(lToken().transfer(to, amount), "FundsModule: withdraw failed");
+        }
         if (poolFee > 0) {
             lBalance = lBalance.sub(poolFee);
             require(lToken().transfer(owner(), poolFee), "FundsModule: fee transfer failed");
