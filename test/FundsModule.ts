@@ -232,6 +232,9 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             let fullBalance = await pToken.fullBalanceOf(otherAccounts[i]);
             expectEqualBN(fullBalance, ptkBalance.add(pDeposits[i]));
         }
+        for(let i=3; i < 5; i++){
+            pDeposits[i] = new BN(0);
+        }
 
         // Execute proposal
         await funds.lockPTokens(otherAccounts.slice(0,3), pDeposits.slice(0,3), {from: tester});
@@ -246,7 +249,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         // Distribution 1
         let pDistribution1 = w3random.interval(1, 5, 'ether');
         await pToken.distribute(pDistribution1, {from: owner});
-        for(let i=0; i < 3; i++){
+        for(let i=0; i < 5; i++){
             let ptkBalance = await pToken.balanceOf(otherAccounts[i]);
             let fullBalance = await pToken.fullBalanceOf(otherAccounts[i]);
             let pMyDistributed1 = pInitial[i].sub(pDeposits[i]).mul(pDistribution1).div(pTotalSupply.sub(pDepositTotal));
