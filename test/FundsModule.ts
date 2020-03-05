@@ -73,9 +73,9 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         snap = await Snapshot.create(web3.currentProvider);
     });
     beforeEach(async () => {
-        // await snap.revert();
+        await snap.revert();
     });
-    /*
+    
     it('should deposit LTokens', async () => {
         let preTestLBalanceWei = await lToken.balanceOf(funds.address);
         let preTestFundsLBalanceWei = await funds.lBalance();
@@ -210,7 +210,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         pFundsBalanceAfter = await funds.pBalanceOf(funds.address);
         expectEqualBN(pFundsBalanceAfter, pFundsBalanceBefore);
     });
-    */
+    
     it('should handle several distributions and mint', async () => {
         let pInitial:Array<BN> = [];
         for(let i=0; i < 5; i++){
@@ -296,7 +296,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
                 case 2:
                     let pMyMint = pMint.mul(pDeposits[i]).div(pDepositTotal.sub(pDeposits[0])); 
                     pWithdraw = pDeposits[i].div(new BN(2)).add(pMyMint);
-                    console.log(`User ${i} - ${otherAccounts[i]} - pMyMint, pWithdraw`, pMyMint.toString(), pWithdraw.toString());                    
                     break;
                 default:
                     pWithdraw = new BN(0);
@@ -323,11 +322,11 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
                     break;
                 case 1:
                 case 2:
-                    pMyDistributed1 = pInitial[i].sub(pDeposits[i]).mul(pDistribution1).div(pTotalSupply.sub(pDeposits[i]));
+                    pMyDistributed1 = pInitial[i].sub(pDeposits[i]).mul(pDistribution1).div(pTotalSupply.sub(pDepositTotal));
                     pMyMinted = pMint.mul(pDeposits[i]).div(pDepositTotal.sub(pDeposits[0]));
                     break;
                 default:
-                    pMyDistributed1 = pInitial[i].mul(pDistribution1).div(pTotalSupply);
+                    pMyDistributed1 = pInitial[i].mul(pDistribution1).div(pTotalSupply.sub(pDepositTotal));
                     pMyMinted = new BN(0);
             }                
             pBalanceBeforeDistr2 = pInitial[i].add(pMyMinted).add(pMyDistributed1);
@@ -335,17 +334,17 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             pExpectedBalance = pInitial[i].add(pMyMinted).add(pMyDistributed1).add(pMyDistributed2);
 
             let pBalance = await pToken.balanceOf(otherAccounts[i]);
-            console.log(
-                `User ${i} - ${otherAccounts[i]}:\n`,
-                `pInitial = ${pInitial[i].toString()}`,
-                `pMyDistributed1 = ${pMyDistributed1.toString()}`,
-                `pMyMinted = ${pMyMinted.toString()}`,
-                `pBalanceBeforeDistr2 = ${pBalanceBeforeDistr2.toString()}`,
-                `pMyDistributed2 = ${pMyDistributed2.toString()}\n`,
-                `pExpectedBalance = ${pExpectedBalance.toString()}`,
-                `pBalance = ${pBalance.toString()}`,
-            );
-            //expectEqualBN(pBalance, pExpectedBalance);
+            // console.log(
+            //     `User ${i} - ${otherAccounts[i]}:\n`,
+            //     `pInitial = ${pInitial[i].toString()}`,
+            //     `pMyDistributed1 = ${pMyDistributed1.toString()}`,
+            //     `pMyMinted = ${pMyMinted.toString()}`,
+            //     `pBalanceBeforeDistr2 = ${pBalanceBeforeDistr2.toString()}`,
+            //     `pMyDistributed2 = ${pMyDistributed2.toString()}\n`,
+            //     `pExpectedBalance = ${pExpectedBalance.toString()}`,
+            //     `pBalance = ${pBalance.toString()}`,
+            // );
+            expectEqualBN(pBalance, pExpectedBalance);
         }
     });
     
