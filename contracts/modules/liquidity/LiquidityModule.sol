@@ -35,7 +35,6 @@ contract LiquidityModule is Module, ILiquidityModule {
     function deposit(uint256 lAmount, uint256 pAmountMin) public operationAllowed(IAccessModule.Operation.Deposit) {
         require(lAmount > 0, "LiquidityModule: amount should not be 0");
         require(lAmount >= limits.lDepositMin, "LiquidityModule: amount should be >= lDepositMin");
-        require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Deposits forbidden if address has active debts");
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
         require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
         fundsModule().depositLTokens(_msgSender(), lAmount);
@@ -51,7 +50,6 @@ contract LiquidityModule is Module, ILiquidityModule {
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: amount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
-        require(!loanModule().hasActiveDebts(_msgSender()), "LiquidityModule: Withdraws forbidden if address has active debts");
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         uint256 availableLiquidity = fundsModule().lBalance();
