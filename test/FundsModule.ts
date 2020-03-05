@@ -310,8 +310,9 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
                     break;
                 case 1:
                 case 2:
-                    let pMyMint = pMint.mul(pDeposits[i]).div(pFundsBalance.sub(pFundsBalanceInitial).sub(pMint).sub(pDeposits[0])); 
+                    let pMyMint = pMint.mul(pDeposits[i]).div(pDepositTotal.sub(pDeposits[0])); 
                     pWithdraw = pDeposits[i].div(new BN(2)).add(pMyMint);
+                    console.log(`User ${i} - ${otherAccounts[i]} - pMyMint, pWithdraw`, pMyMint.toString(), pWithdraw.toString());                    
                     break;
                 default:
                     pWithdraw = new BN(0);
