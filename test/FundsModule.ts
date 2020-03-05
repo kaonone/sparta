@@ -271,25 +271,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         pFundsBalance = await funds.pBalanceOf(funds.address);
         expectEqualBN(pFundsBalance, pFundsBalanceInitial.add(pDepositTotal).sub(pUnlockedTotal));
 
-        //await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts);
-        // for(let i=0; i < 5; i++) {
-        //     let pLockedInLoan:BN;
-        //     switch (i) {
-        //         case 0:
-        //             pLockedInLoan = pDeposits[i];
-        //             break;
-        //         case 1:
-        //         case 2:
-        //             pLockedInLoan = pDeposits[i].div(new BN(2));
-        //             break;
-        //         default:
-        //             pLockedInLoan = new BN(0);
-        //     }
-        //     let pTokenBalance = await pToken.balanceOf(otherAccounts[i]);
-        //     let pFundsBalance = await funds.pBalanceOf(otherAccounts[i]);
-        //     console.log(`User ${i} - ${otherAccounts[i]} balance after distr1:`, pTokenBalance.toString(), pFundsBalance.toString(), pTokenBalance.add(pFundsBalance).add(pLockedInLoan).toString());
-        // }
-
         // Mint
         let pMint = w3random.interval(1, 5, 'ether');
         await funds.mintAndLockPTokens(pMint, {from: tester});
@@ -321,9 +302,6 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
                     pWithdraw = new BN(0);
             }
 
-            pFundsBalance = await funds.pBalanceOf(funds.address);
-            console.log(`User ${i} - ${otherAccounts[i]}`, pFundsBalance.toString(), pWithdraw.toString(), pDeposits[i].toString());
-
             let balanceBefore = await pToken.balanceOf(otherAccounts[i]);           
             await funds.unlockAndWithdrawPTokens(otherAccounts[i], pWithdraw, {from: tester});
 
@@ -332,16 +310,15 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
             let expectedDistributed = new BN(0); //pWithdraw.mul(pDistribution1).div(pTotalSupply.add(pDistribution1));
             //expectedDistributed = expectedDistributed.add(pWithdraw.add(expectedDistributed).mul(pDistribution2).div(pExpectedTotalSupply1));
             expectEqualBN(pDistributedAndMinted, expectedDistributed);
-            console.log(`User ${i} - ${otherAccounts[i]} - withdraw2`, pWithdraw.toString(), pDistributedAndMinted.toString(), expectedDistributed.toString());
         }
         let pExpectedTotalSupply = pTotalSupply.add(pDistribution1).add(pMint).add(pDistribution2);
         expectEqualBN(await pToken.totalSupply(), pExpectedTotalSupply);
         await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts.slice(3, 5));
-        let pMyDistributed1:BN, pMyMinted:BN, pBalanceBeforeDistr2:BN, pMyDistributed2:BN, pExpectedBalance:BN;
         for(let i=0; i < 5; i++){
+            let pMyDistributed1:BN, pMyMinted:BN, pBalanceBeforeDistr2:BN, pMyDistributed2:BN, pExpectedBalance:BN;
             switch (i) {
                 case 0:
-                    pMyDistributed1 = pInitial[i].sub(pDeposits[i]).mul(pDistribution1).div(pTotalSupply.sub(pDeposits[i]));
+                    pMyDistributed1 = pInitial[i].sub(pDeposits[i]).mul(pDistribution1).div(pTotalSupply.sub(pDepositTotal));
                     pMyMinted = new BN(0);
                     break;
                 case 1:
@@ -354,8 +331,8 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
                     pMyMinted = new BN(0);
             }                
             pBalanceBeforeDistr2 = pInitial[i].add(pMyMinted).add(pMyDistributed1);
-            let pMyDistributed2 = new BN(0); //pBalanceBeforeDistr2.mul(pDistribution2).div(pTotalSupply.add(pDistribution1).add(pMint));
-            let pExpectedBalance = pInitial[i].add(pMyMinted).add(pMyDistributed1).add(pMyDistributed2);
+            pMyDistributed2 = new BN(0); //pBalanceBeforeDistr2.mul(pDistribution2).div(pTotalSupply.add(pDistribution1).add(pMint));
+            pExpectedBalance = pInitial[i].add(pMyMinted).add(pMyDistributed1).add(pMyDistributed2);
 
             let pBalance = await pToken.balanceOf(otherAccounts[i]);
             console.log(
