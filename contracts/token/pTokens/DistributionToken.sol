@@ -71,6 +71,15 @@ contract DistributionToken is ERC20, ERC20Mintable {
     }
 
     /**
+     * @notice How many tokens are not yet claimed from distributions
+     * @param account Account to check
+     * @return Amount of tokens available to claim
+     */
+    function calculateUnlcaimedDistributions(address account) public view returns(uint256) {
+        return calculateClaimAmount(account);
+    }
+
+    /**
      * @notice Calculates amount of tokens distributed to inital amount between startDistribution and nextDistribution
      * @param fromDistribution index of first Distribution to start calculations
      * @param toDistribution index of distribuition next to the last processed
