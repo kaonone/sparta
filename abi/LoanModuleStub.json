@@ -287,6 +287,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "MODULE_ACCESS",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "MODULE_CURVE",
     "outputs": [
       {
