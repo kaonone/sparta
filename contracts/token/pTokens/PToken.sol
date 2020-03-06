@@ -57,25 +57,23 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
         }
     }
 
-    function _updateUserBalance(address account, uint256 toDistribution) internal returns(uint256) {
-        uint256 distributionAmount = super._updateUserBalance(account, toDistribution);
-        address funds = getModuleAddress(MODULE_FUNDS);
-        if (account == funds) {
-            IFundsModule(funds).distributionClaimedNotify(distributionAmount);
-        }
-        return distributionAmount;
-    }
-
     /**
      * @dev Overrides DistributionToken.distributionBalanceOf() to handle FundsModule
      */
     function distributionBalanceOf(address account) internal view returns(uint256) {
         IFundsModule funds = fundsModule();
-        uint256 fundsBalance = funds.pBalanceOf(account);
         if (account == address(funds)) {
-            return fundsBalance; //FundsModule itself should only receive distributions for tockens locked by pool
+            return 0; //FundsModule itself does not receive distributions
         }
+        uint256 fundsBalance = funds.pBalanceOf(account);
         return super.distributionBalanceOf(account).add(fundsBalance);
+    }
+
+    function distributionTotalSupply() internal view returns(uint256){
+        IFundsModule funds = fundsModule();
+        uint256 fullSupply = super.distributionTotalSupply();
+        uint256 locked = funds.pBalanceOf(address(funds));
+        return fullSupply.sub(locked);
     }
 
     function fundsModule() internal view returns(IFundsModule) {

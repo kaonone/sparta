@@ -12,6 +12,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * Pool: `0x17d7aFC6604C3933913960110Cfa5c436eb0dB45`
 * PToken: `0x2dC45475c35AB01eC7eEA16a843246e8c67D6C82`
 * CurveModule: `0xD5F67aa0af6be5c10389A8AC5d2392ee60e8D1Cb`
+* AccessModule: `0x3346a57563Ce5d04Ab45efcA62DDe6544D056064`
 * LiquidityModule: `0xfC95422e89e1892D939B103e73e80d60030b02A5`
 * LoanModule: `0xCA7c5AcF5686d4fdF1a439FE356d66638371Db64`
 * FundsModule: `0x3b1E2e62A4332BAb55A3e935EeaC95aF71002E7B`
@@ -46,6 +47,10 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("curve", CurveModule.address)`
+1. AccessModule
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("access", CurveModule.address)`
 1. LiquidityModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`

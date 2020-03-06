@@ -23,4 +23,9 @@ interface ILiquidityModule {
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) external;
 
+    /**
+     * @notice Simulate withdrawal for loan repay with PTK
+     * @param pAmount Amount of pTokens to use
+     */
+    function withdrawForRepay(uint256 pAmount) external;
 }

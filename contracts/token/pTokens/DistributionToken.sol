@@ -20,7 +20,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     mapping(address => uint256) public nextDistributions;  // Map account to first distribution not yet processed
 
     function distribute(uint256 amount) public onlyMinter {
-        uint256 currentTotalSupply = totalSupply();
+        uint256 currentTotalSupply = distributionTotalSupply();
         distributions.push(Distribution({
             amount:amount,
             totalSupply: currentTotalSupply
@@ -68,6 +68,15 @@ contract DistributionToken is ERC20, ERC20Mintable {
         uint256 distributionBalance = distributionBalanceOf(account);
         uint256 unclaimed = calculateClaimAmount(account);
         return distributionBalance.add(unclaimed);
+    }
+
+    /**
+     * @notice How many tokens are not yet claimed from distributions
+     * @param account Account to check
+     * @return Amount of tokens available to claim
+     */
+    function calculateUnlcaimedDistributions(address account) public view returns(uint256) {
+        return calculateClaimAmount(account);
     }
 
     /**
@@ -121,10 +130,19 @@ contract DistributionToken is ERC20, ERC20Mintable {
     /**
      * @notice Balance of account, which is counted for distributions
      * It only represents already distributed balance.
-     * @dev This function should be overloaded to include balance of locked tokens
+     * @dev This function should be overloaded to include balance of tokens stored in proposals
      */
     function distributionBalanceOf(address account) internal view returns(uint256) {
         return balanceOf(account);
+    }
+
+    /**
+     * @notice Total supply which is counted for distributions
+     * It only represents already distributed tokens
+     * @dev This function should be overloaded to exclude tokens locked in loans
+     */
+    function distributionTotalSupply() internal view returns(uint256){
+        return totalSupply();
     }
 
     /**

@@ -1,6 +1,7 @@
 import {
     PoolContract, PoolInstance, 
     FundsModuleContract, FundsModuleInstance, 
+    AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
@@ -19,6 +20,7 @@ const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
 const FundsModule = artifacts.require("FundsModule");
+const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
@@ -29,6 +31,7 @@ const FreeDAI = artifacts.require("FreeDAI");
 contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
+    let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanms: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
@@ -47,6 +50,11 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
+
+        access = await AccessModule.new();
+        await (<any> access).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("access", access.address, true, {from: owner});  
+        access.disableWhitelist({from: owner});
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
@@ -152,15 +160,17 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':expectedLTokens[0]});
     });
 
-    it('should not allow deposit if there are debts', async () => {
+    it('should allow deposit if there are debts', async () => {
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-        await expectRevert(
-            liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
-            'LiquidityModule: Deposits forbidden if address has active debts'
-        );
+        // await expectRevert(
+        //     liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
+        //     'LiquidityModule: Deposits forbidden if address has active debts'
+        // );
+        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider});
     });
-    it('should not allow withdraw if there are debts', async () => {
+    it('should allow withdraw if there are debts', async () => {
         await loanms.repay(0, 0, {from: liquidityProvider}); //Unset hasDebts for msg.sender, it may be set by previous tests
         let lDepositWei = w3random.interval(2000, 100000, 'ether');
         await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
@@ -170,9 +180,11 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
         let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
         await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
-        await expectRevert(
-            liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
-            'LiquidityModule: Withdraws forbidden if address has active debts'
-        );
+        // await expectRevert(
+        //     liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
+        //     'LiquidityModule: Withdraws forbidden if address has active debts'
+        // );
+        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
+        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
     });
 });
