@@ -1175,6 +1175,11 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  calculateUnlcaimedDistributions(
+    account: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   calculateDistributedAmount(
     fromDistribution: number | BN | string,
     toDistribution: number | BN | string,
@@ -5223,6 +5228,11 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     fromDistribution: number | BN | string,
     toDistribution: number | BN | string,
     initialBalance: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculateUnlcaimedDistributions(
+    account: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
