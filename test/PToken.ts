@@ -5,10 +5,11 @@ import {
 } from "../types/truffle-contracts/index";
 
 // tslint:disable-next-line:no-var-requires
-const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
+const { BN, constants, expectEvent, shouldFail, time } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
 import Snapshot from "./utils/snapshot";
 const should = require("chai").should();
+var expect = require("chai").expect;
 const expectRevert= require("./utils/expectRevert");
 const expectEqualBN = require("./utils/expectEqualBN");
 const w3random = require("./utils/w3random");
@@ -123,4 +124,105 @@ contract("PToken", async ([_, owner, ...otherAccounts]) => {
         expectEvent(receipt, 'DistributionsClaimed', {'account':otherAccounts[1], 'amount':amountDU2});
 
     });
+
+    it("should accumulate distributions", async () => {
+        let receipt, totalSupply, accumulated;
+        let amountD1 = w3random.interval(1, 10, 'ether');
+        let amountD2 = w3random.interval(1, 10, 'ether');
+        let amountD3 = w3random.interval(1, 10, 'ether');
+
+        let amountU:Array<BN> = [];
+        for(let i=0; i<5; i++) {
+            amountU[i] = w3random.interval(1, 1000, 'ether');
+            await pToken.mint(otherAccounts[i], amountU[i], {from: owner});
+        }
+        const totalSupplyBeforeDistr = await pToken.totalSupply();
+
+        // Set time to start of the day
+        let now = await time.latest();
+        let tommorow =  now - (now % (24*60*60)) + (24*60*60);
+        time.increaseTo(tommorow + 2*60*60);
+
+        // First distribution (executed because initial nextDistributionTimestmap == 0)
+        receipt = await pToken.distribute(amountD1, {from: owner});
+        expectEvent(receipt, 'DistributionAccumulatorIncreased', {'amount': amountD1});
+        expectEvent(receipt, 'DistributionCreated', {'amount': amountD1, 'totalSupply':totalSupplyBeforeDistr});
+        totalSupply = await pToken.totalSupply();
+        expectEqualBN(totalSupply, totalSupplyBeforeDistr.add(amountD1));
+        accumulated = await pToken.distributionAccumulator();
+        expectEqualBN(accumulated, new BN(0));
+        await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts.slice(0, 5));
+        for(let i=0; i<5; i++) {
+            let prevAmountU = amountU[i];
+            let distrU = amountD1.mul(amountU[i]).div(totalSupplyBeforeDistr);
+            amountU[i] = await pToken.balanceOf(otherAccounts[i]);
+            expectEqualBN(amountU[i], prevAmountU.add(distrU));
+        }
+
+        // Second distribution (accumulated)
+        time.increase(2*60*60);
+        receipt = await pToken.distribute(amountD2, {from: owner});
+        expectEvent(receipt, 'DistributionAccumulatorIncreased', {'amount': amountD2});
+        totalSupply = await pToken.totalSupply();
+        expectEqualBN(totalSupply, totalSupplyBeforeDistr.add(amountD1)); //Total Supply not increased
+        accumulated = await pToken.distributionAccumulator();
+        expectEqualBN(accumulated, amountD2);
+        await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts.slice(0, 5));
+        for(let i=0; i<5; i++) {
+            let prevAmountU = amountU[i];
+            amountU[i] = await pToken.balanceOf(otherAccounts[i]);
+            expectEqualBN(amountU[i], prevAmountU);
+        }
+
+        // Third distribution (triggers accumulated distribuitions)
+        time.increase(24*60*60);
+        receipt = await pToken.distribute(amountD3, {from: owner});
+        expectEvent(receipt, 'DistributionAccumulatorIncreased', {'amount': amountD3});
+        expectEvent(receipt, 'DistributionCreated', {'amount': amountD2.add(amountD3), 'totalSupply':totalSupplyBeforeDistr.add(amountD1)});
+        totalSupply = await pToken.totalSupply();
+        expectEqualBN(totalSupply, totalSupplyBeforeDistr.add(amountD1).add(amountD2).add(amountD3));
+        accumulated = await pToken.distributionAccumulator();
+        expectEqualBN(accumulated, new BN(0));
+        await (<any>pToken).methods['claimDistributions(address[])'](otherAccounts.slice(0, 5));
+        for(let i=0; i<5; i++) {
+            let prevAmountU = amountU[i];
+            let distrU = amountD2.add(amountD3).mul(amountU[i]).div(totalSupplyBeforeDistr.add(amountD1));
+            amountU[i] = await pToken.balanceOf(otherAccounts[i]);
+            expectEqualBN(amountU[i], prevAmountU.add(distrU));
+        }
+    });
+    it("should trigger accumulated distributions on transfer", async () => {
+        let receipt, totalSupply, accumulated;
+        for(let i=0; i<5; i++) {
+            await pToken.mint(otherAccounts[i], w3random.interval(100, 1000, 'ether'), {from: owner});
+        }
+
+
+        // Set time to start of the day
+        let now = await time.latest();
+        let tommorow =  now - (now % (24*60*60)) + (24*60*60);
+        time.increaseTo(tommorow + 2*60*60);
+
+        // First distribution is always triggered
+        await pToken.distribute(w3random.interval(1, 10, 'ether'), {from: owner});
+
+        // Second distribution (accumulated)
+        time.increase(2*60*60);
+        totalSupply = await pToken.totalSupply();
+        receipt = await pToken.distribute(w3random.interval(1, 10, 'ether'), {from: owner});
+        expectEvent(receipt, 'DistributionAccumulatorIncreased');
+        //Make sure distribution was not triggered
+        expectEqualBN(await pToken.totalSupply(), totalSupply); 
+        accumulated = await pToken.distributionAccumulator();
+        expect(accumulated).to.be.bignumber.gt(new BN(0));
+
+        // Action that triggers distribution
+        time.increase(24*60*60);
+        //await pToken.transfer(funds.address, w3random.interval(1, 10, 'ether'), {from: otherAccounts[0]});
+        await funds.depositPTokens(otherAccounts[0], w3random.interval(1, 10, 'ether'), {from: owner});
+        //Make sure distribution was triggered
+        expectEqualBN(await pToken.distributionAccumulator(), new BN(0));
+        expectEqualBN(await pToken.totalSupply(), totalSupply.add(accumulated));
+    });
+
 });
