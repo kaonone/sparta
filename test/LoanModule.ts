@@ -41,6 +41,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
 
+    let withdrawFeePercent:BN, percentDivider:BN;
+
     before(async () => {
         //Setup system contracts
         pool = await Pool.new();
@@ -82,13 +84,16 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
 
+        curve.setWithdrawFee(new BN(5), {from: owner});
+        withdrawFeePercent = await curve.withdrawFeePercent();
+        percentDivider = await curve.PERCENT_DIVIDER();
+
         //Save snapshot
         snap = await Snapshot.create(web3.currentProvider);
     })
     beforeEach(async () => {
         await snap.revert();
     });
-
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -282,6 +287,42 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
+        expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
+    });
+    it('should repay debt and interest with PTK', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        let borrowerPBalance = await pToken.balanceOf(borrower);
+
+        // Partial repayment
+        await time.increase(w3random.interval(30*24*60*60, 60*24*60*60));
+        let debtLRequiredPaymentsBefore = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        let repayLAmount = debtLAmount.div(new BN(3)).add(debtLRequiredPaymentsBefore[1]);
+        let repayLAmountWithFee = repayLAmount.mul(percentDivider).div(percentDivider.sub(withdrawFeePercent));
+        let repayPAmount = await funds.calculatePoolExit(repayLAmountWithFee);
+        await prepareBorrower(repayPAmount);
+        let pBalanceBefore = await pToken.balanceOf(borrower);
+
+        let loanLRepay = repayLAmount.sub(debtLRequiredPaymentsBefore[1]);
+        console.log('debtLRequiredPaymentsBefore', debtLRequiredPaymentsBefore[0].toString(), debtLRequiredPaymentsBefore[1].toString());
+        console.log('loanLRepay', loanLRepay.toString());
+
+        let receipt = await loanm.repayPTK(debtIdx, repayPAmount, repayLAmount.sub(new BN(1000)), {from: borrower});
+        expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
+        let receiptArgs = findEventArgs(receipt, 'Repay');
+        expectEqualBN(receiptArgs.lFullPaymentAmount, repayLAmount);
+        //expectEqualBN(receiptArgs.lInterestPaid, debtLRequiredPaymentsBefore[1]); //This check may fail because of time passed between getDebtRequiredPayments() call and repayPTK() call
+
+        //console.log('receiptArgs', receiptArgs);
+        let pBalanceAfter = await pToken.balanceOf(borrower);
+        expectEqualBN(pBalanceBefore.sub(pBalanceAfter), repayPAmount);
+
+        let debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        expectEqualBN(debtLRequiredPayments[0], debtLRequiredPaymentsBefore[0].sub(repayLAmount.sub(receiptArgs.lInterestPaid)));
         expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
     it('should partially redeem pledge from debt', async () => {
