@@ -918,6 +918,10 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface DistributionTokenInstance extends Truffle.ContractInstance {
+  DISTRIBUTION_AGGREGATION_PERIOD(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   addMinter: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
@@ -993,6 +997,8 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  distributionAccumulator(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   distributions(
     arg0: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -1066,6 +1072,10 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  nextDistributionTimestmap(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   nextDistributions(
     arg0: string | BN,
@@ -1150,6 +1160,15 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
       amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
+  };
+
+  createDistribution: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   claimDistributions: {
@@ -5139,6 +5158,10 @@ export interface PoolInstance extends Truffle.ContractInstance {
 }
 
 export interface PTokenInstance extends Truffle.ContractInstance {
+  DISTRIBUTION_AGGREGATION_PERIOD(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
@@ -5254,6 +5277,15 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  createDistribution: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
   decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   decreaseAllowance: {
@@ -5297,6 +5329,8 @@ export interface PTokenInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  distributionAccumulator(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   distributions(
     arg0: number | BN | string,
@@ -5369,6 +5403,10 @@ export interface PTokenInstance extends Truffle.ContractInstance {
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  nextDistributionTimestmap(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   nextDistributions(
     arg0: string | BN,

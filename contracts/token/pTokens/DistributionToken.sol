@@ -7,9 +7,11 @@ import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 //solhint-disable func-order
 contract DistributionToken is ERC20, ERC20Mintable {
     using SafeMath for uint256;
+    uint256 public constant DISTRIBUTION_AGGREGATION_PERIOD = 24*60*60;
 
     event DistributionCreated(uint256 amount, uint256 totalSupply);
     event DistributionsClaimed(address account, uint256 amount, uint256 fromDistribution, uint256 toDistribution);
+    event DistributionAccumulatorIncreased(uint256 amount);
 
     struct Distribution {
         uint256 amount;         // Amount of tokens being distributed during the event
@@ -19,17 +21,22 @@ contract DistributionToken is ERC20, ERC20Mintable {
     Distribution[] public distributions;                   // Array of all distributions
     mapping(address => uint256) public nextDistributions;  // Map account to first distribution not yet processed
 
-    function distribute(uint256 amount) public onlyMinter {
-        uint256 currentTotalSupply = distributionTotalSupply();
-        distributions.push(Distribution({
-            amount:amount,
-            totalSupply: currentTotalSupply
-        }));
-        super._mint(address(this), amount); //Use super because we overloaded _mint in this contract and need old behaviour
-        emit DistributionCreated(amount, currentTotalSupply);
+    uint256 public nextDistributionTimestmap;      //Timestamp when next distribuition should be fired regardles of accumulated tokens
+    uint256 public distributionAccumulator;        //Tokens accumulated for next distribution
+
+    function distribute(uint256 amount) external onlyMinter {
+        distributionAccumulator = distributionAccumulator.add(amount);
+        emit DistributionAccumulatorIncreased(amount);
+        _createDistributionIfReady();
     }
 
-    function claimDistributions(address account) public returns(uint256) {
+    function createDistribution() external onlyMinter {
+        require(distributionAccumulator > 0, "DistributionToken: nothing to distribute");
+        _createDistribution();
+    }
+
+    function claimDistributions(address account) external returns(uint256) {
+        _createDistributionIfReady();
         return _updateUserBalance(account, distributions.length);
     }
     
@@ -38,13 +45,14 @@ contract DistributionToken is ERC20, ERC20Mintable {
      * This allows limit gas usage.
      * One can do this for others
      */
-    function claimDistributions(address account, uint256 toDistribution) public returns(uint256) {
+    function claimDistributions(address account, uint256 toDistribution) external returns(uint256) {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
         return _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
     }
 
     function claimDistributions(address[] calldata accounts) external {
+        _createDistributionIfReady();
         for (uint256 i=0; i < accounts.length; i++){
             _updateUserBalance(accounts[i], distributions.length);
         }
@@ -98,17 +106,20 @@ contract DistributionToken is ERC20, ERC20Mintable {
 
     // Override functions that change user balance
     function _transfer(address sender, address recipient, uint256 amount) internal {
+        _createDistributionIfReady();
         _updateUserBalance(sender);
         _updateUserBalance(recipient);
         super._transfer(sender, recipient, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
+        _createDistributionIfReady();
         _updateUserBalance(account);
         super._mint(account, amount);
     }
     
     function _burn(address account, uint256 amount) internal {
+        _createDistributionIfReady();
         _updateUserBalance(account);
         super._burn(account, amount);
     }
@@ -125,6 +136,25 @@ contract DistributionToken is ERC20, ERC20Mintable {
         super._transfer(address(this), account, distributionAmount);
         emit DistributionsClaimed(account, distributionAmount, fromDistribution, toDistribution);
         return distributionAmount;
+    }
+
+    function _createDistributionIfReady() internal {
+        if (!isReadyForDistribution()) return;
+        _createDistribution();
+    }
+    
+    function _createDistribution() internal {
+        uint256 currentTotalSupply = distributionTotalSupply();
+        distributions.push(Distribution({
+            amount:distributionAccumulator,
+            totalSupply: currentTotalSupply
+        }));
+        super._mint(address(this), distributionAccumulator); //Use super because we overloaded _mint in this contract and need old behaviour
+        emit DistributionCreated(distributionAccumulator, currentTotalSupply);
+
+        // Clear data for next distribution
+        distributionAccumulator = 0;
+        nextDistributionTimestmap = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
     }
 
     /**
@@ -169,4 +199,10 @@ contract DistributionToken is ERC20, ERC20Mintable {
         return balance.sub(initialBalance);
     }
 
+    /**
+     * @dev Calculates if conditions for creating new distribution are met
+     */
+    function isReadyForDistribution() internal view returns(bool) {
+        return (distributionAccumulator > 0) && (now >= nextDistributionTimestmap);
+    }
 }
