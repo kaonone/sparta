@@ -70,7 +70,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         uint256 availableLiquidity = fundsModule().lBalance();
         require(lAmountP <= availableLiquidity, "LiquidityModule: not enough liquidity");
-        //fundsModule().burnPTokens(_msgSender(), pAmount); //We are NOT burning PTK, because it will be used in LoanModule.repay()
+        fundsModule().burnPTokens(_msgSender(), pAmount);           //We just burn pTokens, withous sending lTokens to _msgSender()
         fundsModule().withdrawLTokens(_msgSender(), 0, lAmountP);   //This call is required to send pool fee
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
     }
