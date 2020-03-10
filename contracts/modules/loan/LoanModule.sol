@@ -332,7 +332,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
         uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
 
-        liquidityModule().withdrawForRepay(pAmount);
+        liquidityModule().withdrawForRepay(_msgSender(), pAmount);
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 

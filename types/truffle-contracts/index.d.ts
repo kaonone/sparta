@@ -3358,18 +3358,22 @@ export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
 
   withdrawForRepay: {
     (
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -3904,18 +3908,22 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
   withdrawForRepay: {
     (
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
+      borrower: string | BN,
       pAmount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
