@@ -566,7 +566,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         // Check balances
         initialBalances.forEach(async(pAmountInitial, addr) => {
-            await pToken.claimDistributions(addr);
+            await (<any>pToken).methods['claimDistributions(address)'](addr);
             let pAmountCurrent = await pToken.balanceOf(addr);
             let pBalanceExpected:BN;
             if(addr == otherAccounts[0]){
