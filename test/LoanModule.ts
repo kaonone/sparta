@@ -9,6 +9,7 @@ import {
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
 import Snapshot from "./utils/snapshot";
+import repeat from "./utils/repeat";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail, time } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
@@ -461,43 +462,124 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         );
     });
     it('should allow supporter to take part of the pledge after default date', async () => {
-            await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
-            let debtLAmount = w3random.interval(100, 200, 'ether');
-            let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
-            let borrowerLBalance = await lToken.balanceOf(borrower);
-            expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
-            await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
 
-            // Partial repayment
-            await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
-            let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
-            await lToken.approve(funds.address, repayLAmount, {from: borrower});
-            await loanm.repay(debtIdx, repayLAmount, {from: borrower});
-            let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-            //console.log('before default', pledgeInfoBeforeDefault);
+        // Partial repayment
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
+        let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        //console.log('before default', pledgeInfoBeforeDefault);
 
-            await time.increase(90*24*60*60+1);
-            let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
-            await loanm.executeDebtDefault(borrower, debtIdx);
-            let pPoolBalanceAfter = await pToken.balanceOf(funds.address);
-            expect(pPoolBalanceAfter).to.be.bignumber.lt(pPoolBalanceBefore);
+        await time.increase(90*24*60*60+1);
+        let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
+        await loanm.executeDebtDefault(borrower, debtIdx);
+        let pPoolBalanceAfter = await pToken.balanceOf(funds.address);
+        expect(pPoolBalanceAfter).to.be.bignumber.lt(pPoolBalanceBefore);
 
-            let hasActiveDebts = await loanm.hasActiveDebts(borrower);
-            expect(hasActiveDebts).to.be.false;
+        let hasActiveDebts = await loanm.hasActiveDebts(borrower);
+        expect(hasActiveDebts).to.be.false;
 
-            let pledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-            //console.log('after default', pledgeInfoAfterDefault);
-            expect(pledgeInfoAfterDefault[0]).to.be.bignumber.eq(new BN(0));
-            expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]); //TODO: calculate how many PTK added from borrower's pledge
-            expect(pledgeInfoAfterDefault[2]).to.be.bignumber.eq(pledgeInfoBeforeDefault[2]);
-            expect(pledgeInfoAfterDefault[3]).to.be.bignumber.eq(pledgeInfoBeforeDefault[3]);
+        let pledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        //console.log('after default', pledgeInfoAfterDefault);
+        expect(pledgeInfoAfterDefault[0]).to.be.bignumber.eq(new BN(0));
+        expect(pledgeInfoAfterDefault[1]).to.be.bignumber.gt(pledgeInfoBeforeDefault[1]); //TODO: calculate how many PTK added from borrower's pledge
+        expect(pledgeInfoAfterDefault[2]).to.be.bignumber.eq(pledgeInfoBeforeDefault[2]);
+        expect(pledgeInfoAfterDefault[3]).to.be.bignumber.eq(pledgeInfoBeforeDefault[3]);
 
-            let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
-            expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
+        let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
     });
-    it('should correctly distribute tokens after default', async() => {
+    it('should correctly distribute tokens after default', async() =>{
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts.slice(0,2)); //Create debt with 2 supporters
+        let borrowerLBalance = await lToken.balanceOf(borrower);
+        expect(borrowerLBalance).to.be.bignumber.gte(debtLAmount);
+        await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
+
+        // Define initial balances
+        let initialBalances = new Map<string,BN>();
+        initialBalances.set(liquidityProvider, await pToken.balanceOf(liquidityProvider));
+        initialBalances.set(borrower, await pToken.balanceOf(borrower));
+        for(let i=0; i<5; i++){
+            await pToken.mint(otherAccounts[i], w3random.interval(0, 100, 'ether'), {from: owner});
+            initialBalances.set(otherAccounts[i], await pToken.balanceOf(otherAccounts[i]));
+        }
+        // console.log('initialBalances.sum', Array.from(initialBalances.values()).reduce((accum:BN, val:BN) => accum.add(val)).toString());
+        // console.log('pToken.distributionSupply', (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address)).toString());
+
+        // Partial repayment
+        await time.increase(w3random.interval(30*24*60*60, 60*24*60*60));
+        let requiredPayment = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        let repayLAmount = w3random.intervalBN(debtLAmount.mul(new BN(2)).div(new BN(3)), debtLAmount.mul(new BN(3)).div(new BN(4)));
+        await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        let repayEventArgs = findEventArgs(receipt, 'Repay');
+        let repayPInterest = repayEventArgs.pInterestPaid;
+        // console.log('repay pInterest', repayEventArgs.pInterestPaid.toString());
+        // console.log('pToken.distributionSupply', (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address)).toString());
+        //console.log('before default', borrowerPledgeInfoBeforeDefault);
+        let borrowerPledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, borrower);
+
+
+        //Check debt info
+        let lUnpaidDebt = requiredPayment[0].add(requiredPayment[1]).sub(repayLAmount);
+        let debt = await loanm.debts(borrower, debtIdx);
+        let proposal = await loanm.debtProposals(borrower, (<any>debt).proposal);
+        expectEqualBN((<any>debt).lAmount, lUnpaidDebt, 18, -4);    //Precision is very low here because of interest change between calls
+        let lockedPTK = (<any>proposal).pCollected.mul(lUnpaidDebt).div((<any>proposal).lAmount);
+        let borrowerLockedPTK = (<any>borrowerPledgeInfoBeforeDefault).pLocked;
+        expect(borrowerLockedPTK).to.be.bignumber.gt(lockedPTK);
+        let extraPTK = borrowerLockedPTK.sub(lockedPTK);
+
+
+        // Withdraw
+        await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        let pAmountSupporter_0 = await pToken.balanceOf(otherAccounts[0]);
+        let distributionTotalSupplyExpected =  Array.from(initialBalances.values()).reduce((accum:BN, val:BN) => accum.add(val)); //Initial
+        // console.log('distributionTotalSupplyExpected', distributionTotalSupplyExpected);
+        distributionTotalSupplyExpected = distributionTotalSupplyExpected
+            .add(repayPInterest.div(new BN(2)))                                                        // distributed with repayment  
+            .sub(<BN>initialBalances.get(otherAccounts[0])).add(pAmountSupporter_0);     // after withdraw locked tokens of supporter_0
+        let distributionTotalSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        // expectEqualBN(distributionTotalSupply, distributionTotalSupplyExpected);
+
+
+        // Default
+        await time.increase(90*24*60*60+1);
+        let blockNum = await web3.eth.getBlockNumber();
+        receipt = await loanm.executeDebtDefault(borrower, debtIdx, {from: owner});
+        let distrCreatedEvent = await (<any>pToken).getPastEvents('DistributionCreated', {fromBlock:blockNum});
+        let distrAmount = distrCreatedEvent[0].args.amount;
+        //console.log(distrCreatedEvent);
+        expectEqualBN(distrAmount, extraPTK);
+
+
+        // Check balances
+        initialBalances.forEach(async(pAmountInitial, addr) => {
+            await pToken.claimDistributions(addr);
+            let pAmountCurrent = await pToken.balanceOf(addr);
+            let pBalanceExpected:BN;
+            if(addr == otherAccounts[0]){
+                pBalanceExpected = pAmountSupporter_0
+                .add(pAmountSupporter_0.mul(distrAmount).div(distributionTotalSupply));
+            }else{
+                pBalanceExpected = pAmountInitial
+                .add(pAmountInitial.mul(distrAmount).div(distributionTotalSupply));
+            }
+            let pBalance = pToken.balanceOf(addr);
+            expectEqualBN(pBalance, pBalanceExpected);
+        });
+       
     });
 
     // it('should correctly calculate totalLDebts()', async () => {
@@ -516,7 +598,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //await pToken.approve(funds.address, pAmount, {from: supporter});
     }
 
-    async function createDebt(debtLAmount:BN, supporter:string){
+    async function createDebt(debtLAmount:BN, supporter:string|Array<string>){
         //Prepare Borrower account
         let pAmountMinWei = (await funds.calculatePoolExit(debtLAmount)).div(new BN(2));
         await prepareBorrower(pAmountMinWei);
@@ -525,11 +607,22 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.createDebtProposal(debtLAmount, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
-        //Add supporter
-        let lPledge = await loanm.getRequiredPledge(borrower, proposalIdx);
-        let pPledge = await funds.calculatePoolExit(lPledge);
-        await prepareSupporter(pPledge, supporter);
-        await loanm.addPledge(borrower, proposalIdx, pPledge, '0',{from: supporter});
+        //Add supporters
+        if(supporter instanceof Array){
+            let lPledgeTotal = await loanm.getRequiredPledge(borrower, proposalIdx);
+            for(let i=0; i < supporter.length; i++){
+                let lPledge = lPledgeTotal.div(new BN(supporter.length)).add(new BN(1)); // Add 1 to handle rounding
+                let pPledge = await funds.calculatePoolExit(lPledge);
+                await prepareSupporter(pPledge, supporter[i]);
+                await loanm.addPledge(borrower, proposalIdx, pPledge, lPledge.sub(new BN(1)), {from: supporter[i]});
+            }
+        }else{
+            // supporter is one address
+            let lPledge = await loanm.getRequiredPledge(borrower, proposalIdx);
+            let pPledge = await funds.calculatePoolExit(lPledge);
+            await prepareSupporter(pPledge, supporter);
+            await loanm.addPledge(borrower, proposalIdx, pPledge, '0',{from: supporter});
+        }
 
         receipt = await loanm.executeDebtProposal(proposalIdx, {from: borrower});
         let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
