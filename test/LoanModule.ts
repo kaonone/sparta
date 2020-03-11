@@ -460,11 +460,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             'LoanModule: debt is already defaulted'
         );
     });
-
     it('should allow supporter to take part of the pledge after default date', async () => {
-        // for(let r = 0; r < 20; r++){
-        //     await snap.revert();
-
             await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
             let debtLAmount = w3random.interval(100, 200, 'ether');
@@ -499,8 +495,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
             let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
             expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
-        // }
     });
+    it('should correctly distribute tokens after default', async() => {
+
+    });
+
     // it('should correctly calculate totalLDebts()', async () => {
     // });
 

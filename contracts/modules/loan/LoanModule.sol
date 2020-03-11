@@ -364,11 +364,12 @@ contract LoanModule is Module, ILoanModule {
         uint256 pLocked = pLockedBorrower.add(pLockedSupportersPledge);
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
+        uint256 pExtra;
         if (pUnlockedBorrower > pLockedSupportersPledge){
-            uint256 pExtra = pUnlockedBorrower - pLockedSupportersPledge;
+            pExtra = pUnlockedBorrower - pLockedSupportersPledge;
             fundsModule().distributePTokens(pExtra);
         }
-        fundsModule().burnLockedPTokens(pLocked);
+        fundsModule().burnLockedPTokens(pLocked.add(pExtra));
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
