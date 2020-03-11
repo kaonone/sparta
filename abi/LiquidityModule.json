@@ -385,6 +385,11 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "pAmount",
         "type": "uint256"
