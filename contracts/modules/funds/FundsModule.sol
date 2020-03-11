@@ -178,6 +178,16 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include part for pool
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256) {
+        uint256 lProposals = loanModule().totalLProposals();
+        return curveModule().calculateExitWithFee(lBalance.sub(lProposals), lAmount);
+    }
+
+    /**
      * @notice Calculates how many liquid tokens should be removed from pool when decreasing liquidity
      * @param pAmount Amount of pToken which should be taken from sender
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool

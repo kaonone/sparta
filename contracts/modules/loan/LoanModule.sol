@@ -318,7 +318,7 @@ contract LoanModule is Module, ILoanModule {
             uint256 fullRepayLAmount = d.lAmount.add(lInterest);
             if (lAmount > fullRepayLAmount) {
                 lAmount = fullRepayLAmount;
-                pAmount = calculatePoolExit(lAmount);
+                pAmount = calculatePoolExitWithFee(lAmount);
             }
 
             d.lastPayment = now;
@@ -332,7 +332,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
         uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
 
-        liquidityModule().withdrawForRepay(pAmount);
+        liquidityModule().withdrawForRepay(_msgSender(), pAmount);
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
@@ -607,6 +607,10 @@ contract LoanModule is Module, ILoanModule {
      */
     function calculatePoolExit(uint256 lAmount) internal view returns(uint256) {
         return fundsModule().calculatePoolExit(lAmount);
+    }
+    
+    function calculatePoolExitWithFee(uint256 lAmount) internal view returns(uint256) {
+        return fundsModule().calculatePoolExitWithFee(lAmount);
     }
 
     /**
