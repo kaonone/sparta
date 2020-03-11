@@ -92,6 +92,13 @@ interface IFundsModule {
     function calculatePoolExitInverse(uint256 pAmount) external view returns(uint256, uint256, uint256);
 
     /**
+     * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
+     * @param lAmount Amount of liquid tokens which will be removed from the pool
+     * @return Amount of pToken which should be taken from sender
+     */
+    function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256);
+
+    /**
      * @notice Current pool liquidity
      * @return available liquidity
      */

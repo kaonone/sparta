@@ -56,4 +56,15 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
         withdrawP = withdraw.mul(withdrawFeePercent).div(PERCENT_DIVIDER);
         withdrawU = withdraw.sub(withdrawP);
     }
+
+    /**
+     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
+     * @param liquidAssets Liquid assets in Pool
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include fee = withdrawU
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculateExitWithFee(uint256 liquidAssets, uint256 lAmount) public view returns(uint256){
+        uint256 withdraw = lAmount.mul(PERCENT_DIVIDER).div(PERCENT_DIVIDER.sub(withdrawFeePercent));
+        return calculateExit(liquidAssets, withdraw);
+    }
 }

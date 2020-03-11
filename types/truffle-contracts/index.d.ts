@@ -915,6 +915,12 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  calculateExitWithFee(
+    liquidAssets: number | BN | string,
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface DistributionTokenInstance extends Truffle.ContractInstance {
@@ -2512,6 +2518,11 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  calculatePoolExitWithFee(
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   calculatePoolExitInverse(
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -2858,6 +2869,11 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  calculatePoolExitWithFee(
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   calculatePoolExitInverse(
     arg0: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -2940,6 +2956,12 @@ export interface ICurveModuleInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   calculateExit(
+    liquidAssets: number | BN | string,
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  calculateExitWithFee(
     liquidAssets: number | BN | string,
     lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
@@ -3300,6 +3322,11 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  calculatePoolExitWithFee(
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 

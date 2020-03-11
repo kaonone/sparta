@@ -72,6 +72,10 @@ contract FundsModuleStub is Module, IFundsModule {
     function calculatePoolExit(uint256) external view returns(uint256) {
         return 0;
     }
+    
+    function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256){
+        return 0;
+    }
 
     function calculatePoolExitInverse(uint256) external view returns(uint256, uint256, uint256) {
         return (0, 0, 0);

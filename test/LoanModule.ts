@@ -308,8 +308,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pBalanceBefore = await pToken.balanceOf(borrower);
 
         let loanLRepay = repayLAmount.sub(debtLRequiredPaymentsBefore[1]);
-        console.log('debtLRequiredPaymentsBefore', debtLRequiredPaymentsBefore[0].toString(), debtLRequiredPaymentsBefore[1].toString());
-        console.log('loanLRepay', loanLRepay.toString());
+        // console.log('debtLRequiredPaymentsBefore', debtLRequiredPaymentsBefore[0].toString(), debtLRequiredPaymentsBefore[1].toString());
+        // console.log('loanLRepay', loanLRepay.toString());
 
         let receipt = await loanm.repayPTK(debtIdx, repayPAmount, repayLAmount.sub(new BN(1000)), {from: borrower});
         expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
@@ -323,6 +323,21 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         let debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         expectEqualBN(debtLRequiredPayments[0], debtLRequiredPaymentsBefore[0].sub(repayLAmount.sub(receiptArgs.lInterestPaid)));
+        expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
+
+        // Repay rest
+        await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
+        debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        repayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]);
+        repayLAmountWithFee = repayLAmount.mul(percentDivider).div(percentDivider.sub(withdrawFeePercent));
+        repayPAmount = await funds.calculatePoolExit(repayLAmountWithFee);
+        repayPAmount = repayPAmount.mul(new BN(101)).div(new BN(100)); //Add 1% rezerv
+        await prepareBorrower(repayPAmount);
+        receipt = await loanm.repayPTK(debtIdx, repayPAmount, repayLAmount.sub(new BN(1000)), {from: borrower});
+        expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
+
+        debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
+        expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
         expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
     it('should partially redeem pledge from debt', async () => {
