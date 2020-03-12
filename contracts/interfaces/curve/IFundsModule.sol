@@ -50,21 +50,25 @@ interface IFundsModule {
     function mintPTokens(address to, uint256 amount) external;
 
     /**
+     * @notice Mint new PTokens and distribute the to other PToken holders
+     * @param amount Amount of tokens to mint
+     */
+    function distributePTokens(uint256 amount) external;
+
+    /**
      * @notice Burn pool tokens
      * @param from Address of the user, whos tokens we burning. Should have enough allowance.
      * @param amount Amount of tokens to burn
      */
     function burnPTokens(address from, uint256 amount) external;
 
-    function lockPTokens(bytes32 loanHash, address[] calldata from, uint256[] calldata amount) external;
+    function lockPTokens(address[] calldata from, uint256[] calldata amount) external;
 
-    function mintAndLockPTokens(bytes32 loanHash, uint256 amount) external;
+    function mintAndLockPTokens(uint256 amount) external;
 
-    function unlockAndWithdrawPTokens(bytes32 loanHash, address to, uint256 amount) external;
+    function unlockAndWithdrawPTokens(address to, uint256 amount) external;
 
-    function burnLockedPTokens(bytes32 loanHash, uint256 amount) external;
-
-    function distributionClaimedNotify(uint256 amount) external;
+    function burnLockedPTokens(uint256 amount) external;
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
@@ -86,6 +90,13 @@ interface IFundsModule {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) external view returns(uint256, uint256, uint256);
+
+    /**
+     * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
+     * @param lAmount Amount of liquid tokens which will be removed from the pool
+     * @return Amount of pToken which should be taken from sender
+     */
+    function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256);
 
     /**
      * @notice Current pool liquidity

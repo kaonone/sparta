@@ -63,12 +63,19 @@ interface ILoanModule {
     function executeDebtDefault(address borrower, uint256 debt) external;
 
     /**
+     * @notice Withdraw part of the pledge which is already unlocked (borrower repaid part of the debt) + interest
+     * @param borrower Address of borrower
+     * @param debt Index of borrowers's debt
+     */
+    function withdrawUnlockedPledge(address borrower, uint256 debt) external;
+
+    /**
      * @notice Calculates if default time for the debt is reached
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
      * @return true if debt is defaulted
      */
-    function isDebtDefaultTimeReached(address borrower, uint256 debt) view external returns(bool);
+    function isDebtDefaultTimeReached(address borrower, uint256 debt) external view returns(bool);
 
     /**
      * @notice Check if user has active debts

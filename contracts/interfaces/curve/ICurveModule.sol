@@ -24,6 +24,14 @@ interface ICurveModule {
     function calculateExit(uint256 liquidAssets, uint256 lAmount) external view returns (uint256);
 
     /**
+     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
+     * @param liquidAssets Liquid assets in Pool
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include fee = withdrawU
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculateExitWithFee(uint256 liquidAssets, uint256 lAmount) external view returns(uint256);
+
+    /**
      * @notice Calculates amount of liquid tokens one can withdraw from the pool when pTokens are burned/locked
      * @param liquidAssets Liquid assets in Pool
      * @param pAmount Amount of pTokens to withdraw
