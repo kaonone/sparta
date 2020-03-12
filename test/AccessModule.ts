@@ -52,7 +52,7 @@ contract("AccessModule", async ([_, owner, ...otherAccounts]) => {
         //await snap.revert();
     });
 
-    it('should enable/disable whitelist from unauthorized user', async () => {
+    it('should not enable/disable whitelist from unauthorized user', async () => {
         await expectRevert(
             access.enableWhitelist({from:otherAccounts[0]}),
             'WhitelistAdminRole: caller does not have the WhitelistAdmin role'
