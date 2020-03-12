@@ -553,9 +553,20 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
 
         // Withdraw
+        let distributed_s0 = (await pToken.balanceOf(otherAccounts[0])).mul(distributedPTK).div(distributionSupply);
+        let lockedInLoanBeforeWithdraw = await funds.pBalanceOf(funds.address);
         await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        let lockedInLoanAfterWithdraw = await funds.pBalanceOf(funds.address);
         let pAmountSupporter_0 = await pToken.balanceOf(otherAccounts[0]);
-        distributionSupplyExpected = distributionSupplyExpected.sub(<BN>initialBalances.get(otherAccounts[0])).add(pAmountSupporter_0);     // after withdraw locked tokens of supporter_0
+        // after withdraw locked tokens of supporter_0
+        expectEqualBN(
+            lockedInLoanBeforeWithdraw.sub(lockedInLoanAfterWithdraw), 
+            pAmountSupporter_0.sub(<BN>initialBalances.get(otherAccounts[0])).sub(distributed_s0)
+        );
+        distributionSupplyExpected = distributionSupplyExpected
+            .sub(<BN>initialBalances.get(otherAccounts[0]))
+            .add(pAmountSupporter_0)
+            .sub(distributed_s0);     
         distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
         expectEqualBN(distributionSupply, distributionSupplyExpected);
 
