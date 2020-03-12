@@ -95,6 +95,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     beforeEach(async () => {
         await snap.revert();
     });
+    /*
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -497,6 +498,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
     });
+    */
     it('should correctly distribute tokens after default', async() =>{
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -507,15 +509,19 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await lToken.transfer(borrower, debtLAmount.div(new BN(10)), {from: liquidityProvider});    //Transfer 10% of debtLAmount for paying interest
 
         // Define initial balances
+        console.log('liquidityProvider', liquidityProvider);
+        console.log('borrower', borrower);
         let initialBalances = new Map<string,BN>();
         initialBalances.set(liquidityProvider, await pToken.balanceOf(liquidityProvider));
         initialBalances.set(borrower, await pToken.balanceOf(borrower));
         for(let i=0; i<5; i++){
             await pToken.mint(otherAccounts[i], w3random.interval(0, 100, 'ether'), {from: owner});
             initialBalances.set(otherAccounts[i], await pToken.balanceOf(otherAccounts[i]));
+            console.log('otherAccounts', i, otherAccounts[i]);
         }
-        // console.log('initialBalances.sum', Array.from(initialBalances.values()).reduce((accum:BN, val:BN) => accum.add(val)).toString());
-        // console.log('pToken.distributionSupply', (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address)).toString());
+        let distributionSupplyExpected = Array.from(initialBalances.values()).reduce((accum:BN, val:BN) => accum.add(val));
+        let distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        expectEqualBN(distributionSupply, distributionSupplyExpected);
 
         // Partial repayment
         await time.increase(w3random.interval(30*24*60*60, 60*24*60*60));
@@ -530,7 +536,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log('before default', borrowerPledgeInfoBeforeDefault);
         let borrowerPledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, borrower);
 
-
         //Check debt info
         let lUnpaidDebt = requiredPayment[0].add(requiredPayment[1]).sub(repayLAmount);
         let debt = await loanm.debts(borrower, debtIdx);
@@ -541,17 +546,18 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(borrowerLockedPTK).to.be.bignumber.gt(lockedPTK);
         let extraPTK = borrowerLockedPTK.sub(lockedPTK);
 
+        let distributedPTK = repayPInterest.mul(borrowerLockedPTK).div((<any>proposal).pCollected);
+        distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK);
+        distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        //expectEqualBN(distributionSupply, distributionSupplyExpected);
+
 
         // Withdraw
         await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         let pAmountSupporter_0 = await pToken.balanceOf(otherAccounts[0]);
-        let distributionTotalSupplyExpected =  Array.from(initialBalances.values()).reduce((accum:BN, val:BN) => accum.add(val)); //Initial
-        // console.log('distributionTotalSupplyExpected', distributionTotalSupplyExpected);
-        distributionTotalSupplyExpected = distributionTotalSupplyExpected
-            .add(repayPInterest.div(new BN(2)))                                                        // distributed with repayment  
-            .sub(<BN>initialBalances.get(otherAccounts[0])).add(pAmountSupporter_0);     // after withdraw locked tokens of supporter_0
-        let distributionTotalSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
-        // expectEqualBN(distributionTotalSupply, distributionTotalSupplyExpected);
+        distributionSupplyExpected = distributionSupplyExpected.sub(<BN>initialBalances.get(otherAccounts[0])).add(pAmountSupporter_0);     // after withdraw locked tokens of supporter_0
+        distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        //expectEqualBN(distributionSupply, distributionSupplyExpected);
 
 
         // Default
@@ -562,23 +568,28 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let distrAmount = distrCreatedEvent[0].args.amount;
         //console.log(distrCreatedEvent);
         expectEqualBN(distrAmount, extraPTK);
+        expectEqualBN(distributionSupply, distrCreatedEvent[0].args.totalSupply);
 
 
         // Check balances
-        initialBalances.forEach(async(pAmountInitial, addr) => {
+        for(let [addr, pAmountInitial] of initialBalances) {
             await (<any>pToken).methods['claimDistributions(address)'](addr);
             let pAmountCurrent = await pToken.balanceOf(addr);
             let pBalanceExpected:BN;
             if(addr == otherAccounts[0]){
                 pBalanceExpected = pAmountSupporter_0
-                .add(pAmountSupporter_0.mul(distrAmount).div(distributionTotalSupply));
+                .add(pAmountSupporter_0.mul(distrAmount).div(distributionSupply));
             }else{
                 pBalanceExpected = pAmountInitial
-                .add(pAmountInitial.mul(distrAmount).div(distributionTotalSupply));
+                .add(pAmountInitial.mul(distrAmount).div(distributionSupply));
             }
-            let pBalance = pToken.balanceOf(addr);
+            let pBalance = await pToken.balanceOf(addr);
+            console.log(addr);
+            console.log(pAmountInitial.toString());
+            console.log(pBalance.toString());
+            console.log(pBalanceExpected.toString());
             expectEqualBN(pBalance, pBalanceExpected);
-        });
+        };
        
     });
 
