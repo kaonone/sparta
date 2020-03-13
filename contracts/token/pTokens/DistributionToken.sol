@@ -47,7 +47,6 @@ contract DistributionToken is ERC20, ERC20Mintable {
      */
     function claimDistributions(address account, uint256 toDistribution) external returns(uint256) {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
-        require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
         return _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
     }
 
