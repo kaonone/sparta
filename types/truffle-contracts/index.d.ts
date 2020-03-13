@@ -2870,7 +2870,7 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    arg0: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 

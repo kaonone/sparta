@@ -43,7 +43,7 @@ library ISQRT {
      */
     function sqrtBabylonian(uint256 x) internal pure returns (uint256) {
         // x == MAX_UINT256 makes this method fail, so in this case return value calculated separately
-        if(x == 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF) return 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+        if (x == 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF) return 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
         uint256 z = (x + 1) / 2;
         uint256 y = x;
         while (z < y) {
