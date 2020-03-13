@@ -192,6 +192,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     function _calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 initialBalance) internal view returns(uint256) {
         uint256 next = fromDistribution;
         uint256 balance = initialBalance;
+        if(initialBalance == 0) return 0;
         while (next < toDistribution) {
             uint256 da = balance.mul(distributions[next].amount).div(distributions[next].totalSupply);
             balance = balance.add(da);
