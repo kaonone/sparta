@@ -61,7 +61,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     function claimDistributions(address[] calldata accounts, uint256 toDistribution) external {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         for (uint256 i=0; i < accounts.length; i++){
-            _updateUserBalance(accounts[i], toDistribution);
+            _updateUserBalance(accounts[i], toDistribution+1);
         }
     }
 
