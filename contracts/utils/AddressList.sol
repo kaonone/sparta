@@ -133,6 +133,7 @@ library AddressList {
     function replace(Data storage _data, address _from, address _to) internal {
 
         require(_data.isContain[_from], "Old element not contained");
+        require(!_data.isContain[_to], "New element is already contained");
 
         address  elemPrev = _data.prevOf[_from];
         address  elemNext = _data.nextOf[_from];

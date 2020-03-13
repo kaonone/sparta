@@ -1079,7 +1079,7 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  nextDistributionTimestmap(
+  nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
@@ -1200,7 +1200,7 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateUnlcaimedDistributions(
+  calculateUnclaimedDistributions(
     account: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -2870,7 +2870,7 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    arg0: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
@@ -5289,7 +5289,7 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  calculateUnlcaimedDistributions(
+  calculateUnclaimedDistributions(
     account: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -5439,7 +5439,7 @@ export interface PTokenInstance extends Truffle.ContractInstance {
 
   nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  nextDistributionTimestmap(
+  nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
