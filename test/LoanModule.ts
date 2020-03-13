@@ -172,8 +172,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         //Withdraw pledge
         //TODO - find out problem with full pledge withraw
+        let pBalanceBefore = await pToken.balanceOf(otherAccounts[0]);
         receipt = await loanm.withdrawPledge(borrower, proposalIdx, pPledgeWei, {from: otherAccounts[0]});  
         expectEvent(receipt, 'PledgeWithdrawn', {'sender':otherAccounts[0], 'borrower':borrower, 'proposal':String(proposalIdx), 'lAmount':elPledgeWei[0], 'pAmount':pPledgeWei});
+        let pBalanceAfter = await pToken.balanceOf(otherAccounts[0]);
+        expectEqualBN(pBalanceAfter, pBalanceBefore.add(pPledgeWei));
     });
     it('should not allow borrower withdraw too much of his pledge', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
