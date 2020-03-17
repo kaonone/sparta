@@ -168,6 +168,17 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Calculates how many pTokens should be given to user for increasing liquidity
+     * @param lAmount Amount of liquid tokens which will be put into the pool
+     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
+     * @return Amount of pToken which should be sent to sender
+     */
+    function calculatePoolEnter(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
+        uint256 lDebts = loanModule().totalLDebts();
+        return curveModule().calculateEnter(lBalance.sub(liquidityCorrection), lDebts, lAmount);
+    }
+
+    /**
      * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
      * @param lAmount Amount of liquid tokens which will be removed from the pool
      * @return Amount of pToken which should be taken from sender

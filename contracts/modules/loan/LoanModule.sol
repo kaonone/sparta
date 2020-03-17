@@ -3,6 +3,7 @@ pragma solidity ^0.5.12;
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/access/IAccessModule.sol";
+import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
@@ -328,7 +329,8 @@ contract LoanModule is Module, ILoanModule {
             actualInterest = lInterest;
         }
 
-        uint256 pInterest = calculatePoolEnter(actualInterest);
+        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
+        uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
         d.pInterest = d.pInterest.add(pInterest);
         uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
 
@@ -598,6 +600,16 @@ contract LoanModule is Module, ILoanModule {
      */
     function calculatePoolEnter(uint256 lAmount) internal view returns(uint256) {
         return fundsModule().calculatePoolEnter(lAmount);
+    }
+
+    /**
+     * @notice Calculates how many pTokens should be given to user for increasing liquidity
+     * @param lAmount Amount of liquid tokens which will be put into the pool
+     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
+     * @return Amount of pToken which should be sent to sender
+     */
+    function calculatePoolEnter(uint256 lAmount, uint256 liquidityCorrection) internal view returns(uint256) {
+        return fundsModule().calculatePoolEnter(lAmount, liquidityCorrection);
     }
 
     /**
