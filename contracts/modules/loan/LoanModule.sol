@@ -346,6 +346,47 @@ contract LoanModule is Module, ILoanModule {
         }
     }
 
+    function repayAllInterest(address borrower) public {
+        require(_msgSender() == getModuleAddress(MODULE_LIQUIDITY), "LoanModule: call only allowed from LiquidityModule");
+        Debt[] storage userDebts = debts[borrower];
+        if (userDebts.length == 0) return;
+        uint256 totalLInterest;
+        uint256 totalPWithdraw;
+        uint256 totalPInterestToMint;
+        uint256 totalPInterestToDistribute;
+        for (uint256 i=userDebts.length-1; i >= 0; i--){
+            Debt storage d = userDebts[i];
+            bool isUnpaid = (d.lAmount != 0);
+            bool isDefaulted = _isDebtDefaultTimeReached(d);
+            if (isUnpaid && !isDefaulted){
+                DebtProposal storage p = debtProposals[borrower][d.proposal];
+                uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                totalLInterest = totalLInterest.add(lInterest);
+                uint256 pAmount = calculatePoolExitWithFee(lInterest);
+
+                //Update debt
+                d.lastPayment = now;
+                //current liquidity already includes totalLInterest, which was never actually withdrawn, so we need to remove it here
+                uint256 pInterest = calculatePoolEnter(lInterest, totalLInterest); 
+                d.pInterest = d.pInterest.add(pInterest);
+                uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+                totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
+                totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
+
+                totalPWithdraw = totalPWithdraw.add(pAmount);
+                emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
+            }
+        }
+        if (totalPWithdraw > 0) {
+            liquidityModule().withdrawForRepay(borrower, totalPWithdraw);
+            fundsModule().distributePTokens(totalPInterestToDistribute);
+            fundsModule().mintAndLockPTokens(totalPInterestToMint);
+        } else {
+            assert(totalPInterestToDistribute == 0);
+            assert(totalPInterestToMint == 0);
+        }
+    }
+
     /**
      * @notice Allows anyone to default a debt which is behind it's repay deadline
      * @param borrower Address of borrower
@@ -559,6 +600,29 @@ contract LoanModule is Module, ILoanModule {
             if (i == 0) break;   //fix i-- fails because i is unsigned
         }
         return false;
+    }
+
+    /**
+     * @notice Calculates unpaid interest on all actve debts of the borrower
+     * @dev This function may use a lot of gas, so it is not recommended to call it in the context of transaction. Use payAllInterest() instead.
+     * @param borrower Address of borrower
+     * @return summ of interest payments on all unpaid debts
+     */
+    function getUnpaidInterest(address borrower) public view returns(uint256){
+        Debt[] storage userDebts = debts[borrower];
+        if (userDebts.length == 0) return 0;
+        uint256 totalLInterest;
+        for (uint256 i=userDebts.length-1; i >= 0; i--){
+            Debt storage d = userDebts[i];
+            bool isUnpaid = (d.lAmount != 0);
+            bool isDefaulted = _isDebtDefaultTimeReached(d);
+            if (isUnpaid && !isDefaulted){
+                DebtProposal storage p = debtProposals[borrower][d.proposal];
+                uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                totalLInterest = totalLInterest.add(lInterest);
+            }
+        }
+        return totalLInterest;
     }
 
     /**

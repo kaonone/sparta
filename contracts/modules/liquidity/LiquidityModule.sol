@@ -27,7 +27,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         setLimits(10*10**18, 0);    //10 DAI minimal enter
     }
 
-    /*
+    /**
      * @notice Deposit amount of lToken and mint pTokens
      * @param lAmount Amount of liquid tokens to invest
      * @param pAmountMin Minimal amout of pTokens suitable for sender
@@ -44,7 +44,8 @@ contract LiquidityModule is Module, ILiquidityModule {
 
     /**
      * @notice Withdraw amount of lToken and burn pTokens
-     * @param pAmount Amount of pTokens to send
+     * @dev This operation also repays all interest on all debts
+     * @param pAmount Amount of pTokens to send (this amount does not include pTokens used to pay interest)
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
@@ -54,6 +55,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         uint256 availableLiquidity = fundsModule().lBalance();
         require(lAmountT <= availableLiquidity, "LiquidityModule: not enough liquidity");
+        loanModule().repayAllInterest(_msgSender());
         fundsModule().burnPTokens(_msgSender(), pAmount);
         fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
