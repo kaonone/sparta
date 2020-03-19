@@ -61,7 +61,8 @@ contract LoanModule is Module, ILoanModule {
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
-    mapping(address=>Debt[]) public debts;
+    mapping(address=>Debt[]) public debts;                 
+    mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
     uint256 private lDebts;
     uint256 private lProposals;
@@ -246,6 +247,7 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().lockPTokens(p.supporters, amounts);
 
+        activeDebts[_msgSender()] = activeDebts[_msgSender()].add(1);
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
         return debtIdx;
@@ -294,6 +296,7 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
+            activeDebts[_msgSender()] = activeDebts[_msgSender()].sub(1);
             withdrawUnlockedPledge(_msgSender(), debt);
         }
     }
@@ -342,6 +345,7 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
+            activeDebts[_msgSender()] = activeDebts[_msgSender()].sub(1);
             withdrawUnlockedPledge(_msgSender(), debt);
         }
     }
@@ -354,6 +358,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 totalPWithdraw;
         uint256 totalPInterestToMint;
         uint256 totalPInterestToDistribute;
+        uint256 activeDebtCount = 0;
         for (uint256 i=userDebts.length-1; i >= 0; i--){
             Debt storage d = userDebts[i];
             bool isUnpaid = (d.lAmount != 0);
@@ -375,6 +380,9 @@ contract LoanModule is Module, ILoanModule {
 
                 totalPWithdraw = totalPWithdraw.add(pAmount);
                 emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
+
+                activeDebtCount++;
+                if (activeDebtCount >= activeDebts[borrower]) break;
             }
         }
         if (totalPWithdraw > 0) {
@@ -413,6 +421,7 @@ contract LoanModule is Module, ILoanModule {
             fundsModule().distributePTokens(pExtra);
         }
         fundsModule().burnLockedPTokens(pLocked.add(pExtra));
+        activeDebts[borrower] = activeDebts[borrower].sub(1);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
@@ -586,20 +595,11 @@ contract LoanModule is Module, ILoanModule {
 
     /**
      * @notice Check if user has active debts
-     * @param sender Address to check
-     * @return True if sender has unpaid debts
+     * @param borrower Address to check
+     * @return True if borrower has unpaid debts
      */
-    function hasActiveDebts(address sender) public view returns(bool) {
-        //TODO: iterating through all debts may be too expensive if there are a lot of closed debts. Need to test this and find solution
-        Debt[] storage userDebts = debts[sender];
-        if (userDebts.length == 0) return false;
-        for (uint256 i=userDebts.length-1; i >= 0; i--){ //searching in reverse order because probability to find active loan is higher for latest loans
-            bool isUnpaid = (userDebts[i].lAmount != 0);
-            bool isDefaulted = _isDebtDefaultTimeReached(userDebts[i]);
-            if (isUnpaid && !isDefaulted) return true;
-            if (i == 0) break;   //fix i-- fails because i is unsigned
-        }
-        return false;
+    function hasActiveDebts(address borrower) public view returns(bool) {
+        return activeDebts[borrower] > 0;
     }
 
     /**
@@ -612,6 +612,7 @@ contract LoanModule is Module, ILoanModule {
         Debt[] storage userDebts = debts[borrower];
         if (userDebts.length == 0) return 0;
         uint256 totalLInterest;
+        uint256 activeDebtCount;
         for (uint256 i=userDebts.length-1; i >= 0; i--){
             Debt storage d = userDebts[i];
             bool isUnpaid = (d.lAmount != 0);
@@ -620,6 +621,9 @@ contract LoanModule is Module, ILoanModule {
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
                 totalLInterest = totalLInterest.add(lInterest);
+
+                activeDebtCount++;
+                if (activeDebtCount >= activeDebts[borrower]) break;
             }
         }
         return totalLInterest;

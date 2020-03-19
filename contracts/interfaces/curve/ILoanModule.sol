@@ -83,10 +83,10 @@ interface ILoanModule {
 
     /**
      * @notice Check if user has active debts
-     * @param sender Address to check
-     * @return True if sender has unpaid debts
+     * @param borrower Address to check
+     * @return True if borrower has unpaid debts
      */
-    function hasActiveDebts(address sender) external view returns(bool);
+    function hasActiveDebts(address borrower) external view returns(bool);
 
     /**
      * @notice Total amount of debts
