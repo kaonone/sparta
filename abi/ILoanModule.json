@@ -495,7 +495,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "sender",
+        "name": "borrower",
         "type": "address"
       }
     ],

@@ -39,11 +39,11 @@ contract LoanModuleStub is Module, ILoanModule {
         hasDebts[_msgSender()] = false;
     }
 
-    function repayPTK(uint256 debt, uint256 pAmount, uint256 lAmountMin) public {
+    function repayPTK(uint256, uint256, uint256) public {
         hasDebts[_msgSender()] = false;
     }
 
-    function repayAllInterest(address borrower) public {
+    function repayAllInterest(address) public {
         this; // silence state mutability warning
     }
 

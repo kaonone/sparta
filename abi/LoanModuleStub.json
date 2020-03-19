@@ -655,17 +655,17 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "debt",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "pAmount",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "lAmountMin",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -680,7 +680,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "borrower",
+        "name": "",
         "type": "address"
       }
     ],

@@ -247,7 +247,7 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().lockPTokens(p.supporters, amounts);
 
-        activeDebts[_msgSender()] = activeDebts[_msgSender()].add(1);
+        increaseActiveDebts(_msgSender());
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
         return debtIdx;
@@ -296,7 +296,7 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
-            activeDebts[_msgSender()] = activeDebts[_msgSender()].sub(1);
+            decreaseActiveDebts(_msgSender());
             withdrawUnlockedPledge(_msgSender(), debt);
         }
     }
@@ -345,7 +345,7 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
-            activeDebts[_msgSender()] = activeDebts[_msgSender()].sub(1);
+            decreaseActiveDebts(_msgSender());
             withdrawUnlockedPledge(_msgSender(), debt);
         }
     }
@@ -356,14 +356,15 @@ contract LoanModule is Module, ILoanModule {
         if (userDebts.length == 0) return;
         uint256 totalLInterest;
         uint256 totalPWithdraw;
-        uint256 totalPInterestToMint;
         uint256 totalPInterestToDistribute;
+        uint256 totalPInterestToMint;
         uint256 activeDebtCount = 0;
         for (uint256 i=userDebts.length-1; i >= 0; i--){
             Debt storage d = userDebts[i];
-            bool isUnpaid = (d.lAmount != 0);
-            bool isDefaulted = _isDebtDefaultTimeReached(d);
-            if (isUnpaid && !isDefaulted){
+            // bool isUnpaid = (d.lAmount != 0);
+            // bool isDefaulted = _isDebtDefaultTimeReached(d);
+            // if (isUnpaid && !isDefaulted){                      
+            if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
                 totalLInterest = totalLInterest.add(lInterest);
@@ -421,7 +422,7 @@ contract LoanModule is Module, ILoanModule {
             fundsModule().distributePTokens(pExtra);
         }
         fundsModule().burnLockedPTokens(pLocked.add(pExtra));
-        activeDebts[borrower] = activeDebts[borrower].sub(1);
+        decreaseActiveDebts(borrower);
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
@@ -708,6 +709,14 @@ contract LoanModule is Module, ILoanModule {
 
     function liquidityModule() internal view returns(ILiquidityModule) {
         return ILiquidityModule(getModuleAddress(MODULE_LIQUIDITY));
+    }
+
+    function increaseActiveDebts(address borrower) private {
+        activeDebts[borrower] = activeDebts[borrower].add(1);
+    }
+
+    function decreaseActiveDebts(address borrower) private {
+        activeDebts[borrower] = activeDebts[borrower].sub(1);
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
