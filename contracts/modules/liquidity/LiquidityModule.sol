@@ -5,7 +5,6 @@ import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
-import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract LiquidityModule is Module, ILiquidityModule {

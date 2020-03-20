@@ -7,7 +7,7 @@ import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
-import "../../token/pTokens/PToken.sol";
+import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
 
 contract LoanModule is Module, ILoanModule {
@@ -409,6 +409,8 @@ contract LoanModule is Module, ILoanModule {
         DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
         DebtPledge storage borrowerPledge = proposal.pledges[borrower];
 
+        withdrawDebtDefaultPayment(borrower, debt);
+
         uint256 pLockedBorrower = borrowerPledge.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
         uint256 pUnlockedBorrower = borrowerPledge.pAmount.sub(pLockedBorrower);
         uint256 pSupportersPledge = proposal.pCollected.sub(borrowerPledge.pAmount);
@@ -711,12 +713,55 @@ contract LoanModule is Module, ILoanModule {
         return ILiquidityModule(getModuleAddress(MODULE_LIQUIDITY));
     }
 
+    function pToken() internal view returns(IPToken){
+        return IPToken(getModuleAddress(MODULE_PTOKEN));
+    }
+
     function increaseActiveDebts(address borrower) private {
         activeDebts[borrower] = activeDebts[borrower].add(1);
     }
 
     function decreaseActiveDebts(address borrower) private {
         activeDebts[borrower] = activeDebts[borrower].sub(1);
+    }
+
+    function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
+        Debt storage d = debts[borrower][debt];
+        DebtProposal storage p = debtProposals[borrower][d.proposal];
+        uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        uint256 lAmount = d.lAmount.add(lInterest);
+        uint256 pAmount = calculatePoolExitWithFee(lAmount);
+        uint256 pBalance = pToken().balanceOf(borrower);
+
+        if (pAmount > pBalance) {
+            pAmount = pBalance;
+            (, lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
+        }
+        
+        uint256 actualInterest;
+        if (lAmount < lInterest) {
+            uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
+            assert(d.lastPayment + paidTime <= now);
+            d.lastPayment = d.lastPayment.add(paidTime);
+            actualInterest = lAmount;
+        } else {
+            d.lastPayment = now;
+            uint256 debtReturned = lAmount.sub(lInterest);
+            d.lAmount = d.lAmount.sub(debtReturned);
+            lDebts = lDebts.sub(debtReturned);
+            actualInterest = lInterest;
+        }
+
+        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
+        uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
+        d.pInterest = d.pInterest.add(pInterest);
+        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+
+        liquidityModule().withdrawForRepay(_msgSender(), pAmount);
+        fundsModule().distributePTokens(poolInterest);
+        fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
+
+        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
