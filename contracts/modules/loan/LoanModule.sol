@@ -526,7 +526,7 @@ contract LoanModule is Module, ILoanModule {
             pUnlocked = pPledge.sub(pLocked);
             pInterest = dbt.pInterest.mul(lPledge).div(proposal.lCovered);
             assert(pInterest <= dbt.pInterest);
-            if (_isDebtDefaultTimeReached(dbt)) {
+            if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
                 DebtPledge storage dpb = proposal.pledges[borrower];
                 uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
                 uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
