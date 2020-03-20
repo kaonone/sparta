@@ -755,13 +755,13 @@ contract LoanModule is Module, ILoanModule {
         //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
         uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+        uint256 poolInterest = pInterest.mul(p.pledges[borrower].lAmount).div(p.lAmount);
 
-        liquidityModule().withdrawForRepay(_msgSender(), pAmount);
+        liquidityModule().withdrawForRepay(borrower, pAmount);
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
-        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
+        emit Repay(borrower, debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
