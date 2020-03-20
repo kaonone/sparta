@@ -513,7 +513,7 @@ contract LoanModule is Module, ILoanModule {
             } else {
                 pLocked = dp.pAmount;
                 pUnlocked = 0;
-                if (_isDebtDefaultTimeReached(dbt)) {
+                if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
                     pLocked = 0; 
                 }
             }
