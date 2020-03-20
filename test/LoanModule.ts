@@ -478,6 +478,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log('before default', pledgeInfoBeforeDefault);
 
         await time.increase(90*24*60*60+1);
+        await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
         let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
         await loanm.executeDebtDefault(borrower, debtIdx);
         let pPoolBalanceAfter = await pToken.balanceOf(funds.address);
