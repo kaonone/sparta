@@ -732,6 +732,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 lAmount = d.lAmount.add(lInterest);
         uint256 pAmount = calculatePoolExitWithFee(lAmount);
         uint256 pBalance = pToken().balanceOf(borrower);
+        if(pBalance == 0) return;
 
         if (pAmount > pBalance) {
             pAmount = pBalance;

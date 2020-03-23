@@ -477,13 +477,13 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('before default', pledgeInfoBeforeDefault);
         let dbtBeforeDefault = await loanm.debts(borrower, debtIdx);
-        console.log('dbtBeforeDefault.pInterest', (<any>dbtBeforeDefault).pInterest.toString());
+        // console.log('dbtBeforeDefault.pInterest', (<any>dbtBeforeDefault).pInterest.toString());
 
         await time.increase(90*24*60*60+1);
-        console.log('before burn', (await pToken.balanceOf(borrower)).toString());
+        // console.log('before burn', (await pToken.balanceOf(borrower)).toString());
         await (<any>pToken).methods['claimDistributions(address)'](borrower);
         await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
-        console.log('after burn', (await pToken.balanceOf(borrower)).toString());
+        // console.log('after burn', (await pToken.balanceOf(borrower)).toString());
         expect(await pToken.balanceOf(borrower)).to.be.bignumber.eq(new BN(0));
 
         let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
@@ -491,7 +491,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pPoolBalanceAfter = await pToken.balanceOf(funds.address);
         expect(pPoolBalanceAfter).to.be.bignumber.lt(pPoolBalanceBefore);
         let dbtAfterDefault = await loanm.debts(borrower, debtIdx);
-        console.log('dbtAfterDefault.pInterest', (<any>dbtAfterDefault).pInterest.toString());
+        // console.log('dbtAfterDefault.pInterest', (<any>dbtAfterDefault).pInterest.toString());
         expect((<any>dbtBeforeDefault).pInterest).to.be.bignumber.eq((<any>dbtAfterDefault).pInterest);
 
         let hasActiveDebts = await loanm.hasActiveDebts(borrower);
@@ -583,6 +583,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         // Default
         await time.increase(90*24*60*60+1);
+        await (<any>pToken).methods['claimDistributions(address)'](borrower);
+        await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
         let blockNum = await web3.eth.getBlockNumber();
         receipt = await loanm.executeDebtDefault(borrower, debtIdx, {from: owner});
         let distrCreatedEvent = await (<any>pToken).getPastEvents('DistributionCreated', {fromBlock:blockNum});
