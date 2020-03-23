@@ -50,11 +50,11 @@ contract LiquidityModule is Module, ILiquidityModule {
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: amount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
+        loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         uint256 availableLiquidity = fundsModule().lBalance();
         require(lAmountT <= availableLiquidity, "LiquidityModule: not enough liquidity");
-        loanModule().repayAllInterest(_msgSender());
         fundsModule().burnPTokens(_msgSender(), pAmount);
         fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);

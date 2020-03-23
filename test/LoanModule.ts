@@ -673,15 +673,15 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let blockNum = await web3.eth.getBlockNumber();
         let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
-        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest[0]);
+        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest[0], 18, -15);
         //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
         let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
         expectEqualBN(withrawEvents[0].args.pAmount, pInterest);
         expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest[0]);
         expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest[0].add(lInterestFee));
         expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
-        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
         expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
+        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
         let pBalanceAfter = await pToken.balanceOf(liquidityProvider);
         expect(pBalanceAfter).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
     });
