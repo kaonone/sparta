@@ -667,6 +667,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
         //let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
         let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
+        let lWithdrawWeiTotal = lWithdrawWeiUser.add(await curve.calculateExitFee(lWithdrawWeiUser));
         let lInterestFee = await curve.calculateExitFee(lInterest[0]);
         let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
         let blockNum = await web3.eth.getBlockNumber();
@@ -676,7 +677,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
         let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
         expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
-        //expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
+        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
         expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
         let pBalanceAfter = await pToken.balanceOf(liquidityProvider);
         expect(pBalanceAfter).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
