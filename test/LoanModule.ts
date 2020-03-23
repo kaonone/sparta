@@ -476,6 +476,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await loanm.repay(debtIdx, repayLAmount, {from: borrower});
         let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('before default', pledgeInfoBeforeDefault);
+        let dbt = await loanm.debts(borrower, debtIdx);
+        console.log('dbt.pInterest', (<any>dbt).pInterest.toString());
 
         await time.increase(90*24*60*60+1);
         await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
