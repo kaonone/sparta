@@ -368,6 +368,7 @@ contract LoanModule is Module, ILoanModule {
             if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
                 totalLFee = totalLFee.add(calculateExitFee(lInterest));
 
                 //Update debt
@@ -379,7 +380,6 @@ contract LoanModule is Module, ILoanModule {
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
                 totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
 
-                totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
                 emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
 
                 activeDebtCount++;
