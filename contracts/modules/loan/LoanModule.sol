@@ -368,18 +368,18 @@ contract LoanModule is Module, ILoanModule {
             if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                totalLFee = totalLFee.add(calculateExitFee(lInterest));
 
                 //Update debt
                 d.lastPayment = now;
                 //current liquidity already includes totalLFee, which was never actually withdrawn, so we need to remove it here
-                uint256 pInterest = calculatePoolEnter(lInterest, totalLFee); 
+                uint256 pInterest = calculatePoolEnter(lInterest, lInterest.add(totalLFee)); 
                 d.pInterest = d.pInterest.add(pInterest);
                 uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
                 totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
 
                 totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
-                totalLFee = totalLFee.add(calculateExitFee(lInterest));
                 emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
 
                 activeDebtCount++;
