@@ -584,14 +584,16 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Default
         await time.increase(90*24*60*60+1);
         await (<any>pToken).methods['claimDistributions(address)'](borrower);
-        await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
+        let pBorrower = await pToken.balanceOf(borrower);
+        await funds.burnPTokens(borrower, pBorrower, {from:owner}); // Clear borrower balance to prevent repay during default
         let blockNum = await web3.eth.getBlockNumber();
         receipt = await loanm.executeDebtDefault(borrower, debtIdx, {from: owner});
         let distrCreatedEvent = await (<any>pToken).getPastEvents('DistributionCreated', {fromBlock:blockNum});
         let distrAmount = distrCreatedEvent[0].args.amount;
+
         //console.log(distrCreatedEvent);
         expectEqualBN(distrAmount, extraPTK);
-        expectEqualBN(distributionSupply, distrCreatedEvent[0].args.totalSupply);
+        expectEqualBN(distrCreatedEvent[0].args.totalSupply, distributionSupply.sub(pBorrower));
 
 
         // Check balances
@@ -607,7 +609,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
                 pBalanceExpected = pBalance1.add(pBalance1.mul(distrAmount).div(distributionSupply));
             }
             let pBalance = await pToken.balanceOf(addr);
-            expectEqualBN(pBalance, pBalanceExpected);
+            if(addr != borrower){
+                expectEqualBN(pBalance, pBalanceExpected);
+            }else{
+                expect(pBalance).to.be.bignumber.eq(new BN(0));
+            }
         };
        
     });
