@@ -480,7 +480,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         console.log('dbtBeforeDefault.pInterest', (<any>dbtBeforeDefault).pInterest.toString());
 
         await time.increase(90*24*60*60+1);
+        console.log('before burn', (await pToken.balanceOf(borrower)).toString());
+        await (<any>pToken).methods['claimDistributions(address)'](borrower);
         await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
+        console.log('after burn', (await pToken.balanceOf(borrower)).toString());
         expect(await pToken.balanceOf(borrower)).to.be.bignumber.eq(new BN(0));
 
         let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
