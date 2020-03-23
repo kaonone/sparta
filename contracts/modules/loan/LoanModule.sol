@@ -62,11 +62,12 @@ contract LoanModule is Module, ILoanModule {
 
     mapping(address=>DebtProposal[]) public debtProposals;
     mapping(address=>Debt[]) public debts;                 
-    mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
     uint256 private lDebts;
     uint256 private lProposals;
     LoanLimits public limits;
+
+    mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
