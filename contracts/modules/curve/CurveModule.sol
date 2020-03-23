@@ -67,4 +67,13 @@ contract CurveModule is Module, ICurveModule, BondingCurve {
         uint256 withdraw = lAmount.mul(PERCENT_DIVIDER).div(PERCENT_DIVIDER.sub(withdrawFeePercent));
         return calculateExit(liquidAssets, withdraw);
     }
+
+    /**
+     * @notice Calculates lAmount to be taken as fee upon withdraw
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include fee
+     * @return Amount of liquid tokens which will be additionally taken as a pool fee
+     */
+    function calculateExitFee(uint256 lAmount) public view returns(uint256){
+        return lAmount.mul(withdrawFeePercent).div(PERCENT_DIVIDER.sub(withdrawFeePercent));        
+    }
 }

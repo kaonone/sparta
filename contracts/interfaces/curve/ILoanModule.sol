@@ -55,6 +55,10 @@ interface ILoanModule {
      */
     function repay(uint256 debt, uint256 lAmount) external;
 
+    function repayPTK(uint256 debt, uint256 pAmount, uint256 lAmountMin) external;
+
+    function repayAllInterest(address borrower) external;
+
     /**
      * @notice Allows anyone to default a debt which is behind it's repay deadline
      * @param borrower Address of borrower
@@ -79,10 +83,10 @@ interface ILoanModule {
 
     /**
      * @notice Check if user has active debts
-     * @param sender Address to check
-     * @return True if sender has unpaid debts
+     * @param borrower Address to check
+     * @return True if borrower has unpaid debts
      */
-    function hasActiveDebts(address sender) external view returns(bool);
+    function hasActiveDebts(address borrower) external view returns(bool);
 
     /**
      * @notice Total amount of debts

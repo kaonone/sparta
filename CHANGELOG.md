@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-03-18
+* `LoanModule.getUnpaidInterest()` added to calcualte all interest on all loans of a borrower
+* `LiquidityModule.withdraw()` now repays all interest on all loans before withdrawing requested amount
+
 ## 2020-02-17
 * `FundsModule.pBalanceOf` now only represents PTK locked in proposals. PTK locked in executed loans are now counted as `FundsModule.pBalanceOf(FundsModule.address)`. This means, that borrower and supporters will not (at this version) receive distributions to 
 * Borrower now pays gas fee for "moving" locked funds of supporters to the pool, which includes calculations of distributions

@@ -388,6 +388,46 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lAmountMin",
+        "type": "uint256"
+      }
+    ],
+    "name": "repayPTK",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "repayAllInterest",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "internalType": "address",
         "name": "borrower",
         "type": "address"
@@ -455,7 +495,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "sender",
+        "name": "borrower",
         "type": "address"
       }
     ],

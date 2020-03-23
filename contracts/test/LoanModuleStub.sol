@@ -39,6 +39,14 @@ contract LoanModuleStub is Module, ILoanModule {
         hasDebts[_msgSender()] = false;
     }
 
+    function repayPTK(uint256, uint256, uint256) public {
+        hasDebts[_msgSender()] = false;
+    }
+
+    function repayAllInterest(address) public {
+        this; // silence state mutability warning
+    }
+
     function executeDebtDefault(address, uint256) public {
         this; // silence state mutability warning
     }

@@ -38,4 +38,11 @@ interface ICurveModule {
      * @return Amount of liquid tokens to withdraw: total, for user, for pool
      */
     function calculateExitInverseWithFee(uint256 liquidAssets, uint256 pAmount) external view returns (uint256 withdraw, uint256 withdrawU, uint256 withdrawP);
+
+    /**
+     * @notice Calculates lAmount to be taken as fee upon withdraw
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include fee
+     * @return Amount of liquid tokens which will be additionally taken as a pool fee
+     */
+    function calculateExitFee(uint256 lAmount) external view returns(uint256);
 }
