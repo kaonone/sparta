@@ -4463,7 +4463,7 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   getUnpaidInterest(
     borrower: string | BN,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<[BN, BN]>;
 
   totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
