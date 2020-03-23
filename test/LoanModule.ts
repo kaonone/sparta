@@ -659,6 +659,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await lToken.approve(funds.address, lDepositWei, {from: borrower});
         await liqm.deposit(lDepositWei, '0', {from: borrower});
         let pBalance = await pToken.balanceOf(liquidityProvider);
+        console.log('pBalance before withdraw', pBalance.toString());
 
         // Withdraw
         await time.increase(30*24*60*60);
@@ -667,9 +668,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let lInterest = await loanm.getUnpaidInterest(borrower);
         let blockNum = await web3.eth.getBlockNumber();
         let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: borrower});
-        expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountUser':lWithdrawWei});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
+        console.log('pBalance after withdraw', pBalance.toString());
         expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest)
+        expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei});
     });
 
     // it('should correctly calculate totalLDebts()', async () => {

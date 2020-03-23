@@ -354,7 +354,7 @@ contract LoanModule is Module, ILoanModule {
         require(_msgSender() == getModuleAddress(MODULE_LIQUIDITY), "LoanModule: call only allowed from LiquidityModule");
         Debt[] storage userDebts = debts[borrower];
         if (userDebts.length == 0) return;
-        uint256 totalLInterest;
+        uint256 totalLFee;
         uint256 totalPWithdraw;
         uint256 totalPInterestToDistribute;
         uint256 totalPInterestToMint;
@@ -367,19 +367,18 @@ contract LoanModule is Module, ILoanModule {
             if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
-                totalLInterest = totalLInterest.add(lInterest);
-                uint256 pAmount = calculatePoolExitWithFee(lInterest);
 
                 //Update debt
                 d.lastPayment = now;
-                //current liquidity already includes totalLInterest, which was never actually withdrawn, so we need to remove it here
-                uint256 pInterest = calculatePoolEnter(lInterest, totalLInterest); 
+                //current liquidity already includes totalLFee, which was never actually withdrawn, so we need to remove it here
+                uint256 pInterest = calculatePoolEnter(lInterest, totalLFee); 
                 d.pInterest = d.pInterest.add(pInterest);
                 uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
                 totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
 
-                totalPWithdraw = totalPWithdraw.add(pAmount);
+                totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
+                totalLFee = totalLFee.add(calculateExitFee(lInterest));
                 emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
 
                 activeDebtCount++;
@@ -696,6 +695,10 @@ contract LoanModule is Module, ILoanModule {
         return fundsModule().calculatePoolExitWithFee(lAmount);
     }
 
+    function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) internal view returns(uint256) {
+        return fundsModule().calculatePoolExitWithFee(lAmount, liquidityCorrection);
+    }
+
     /**
      * @notice Calculates how many liquid tokens should be removed from pool when decreasing liquidity
      * @param pAmount Amount of pToken which should be taken from sender
@@ -703,6 +706,10 @@ contract LoanModule is Module, ILoanModule {
      */
     function calculatePoolExitInverse(uint256 pAmount) internal view returns(uint256, uint256, uint256) {
         return fundsModule().calculatePoolExitInverse(pAmount);
+    }
+
+    function calculateExitFee(uint256 lAmount) internal view returns(uint256){
+        return ICurveModule(getModuleAddress(MODULE_CURVE)).calculateExitFee(lAmount);
     }
 
     function fundsModule() internal view returns(IFundsModule) {
@@ -732,7 +739,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 lAmount = d.lAmount.add(lInterest);
         uint256 pAmount = calculatePoolExitWithFee(lAmount);
         uint256 pBalance = pToken().balanceOf(borrower);
-        if(pBalance == 0) return;
+        if (pBalance == 0) return;
 
         if (pAmount > pBalance) {
             pAmount = pBalance;

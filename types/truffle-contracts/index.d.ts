@@ -921,6 +921,11 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
     lAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
+
+  calculateExitFee(
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface DistributionTokenInstance extends Truffle.ContractInstance {
@@ -2954,6 +2959,11 @@ export interface ICurveModuleInstance extends Truffle.ContractInstance {
     pAmount: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
+
+  calculateExitFee(
+    lAmount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface IERC20Instance extends Truffle.ContractInstance {
@@ -3288,7 +3298,6 @@ export interface IFundsModuleInstance extends Truffle.ContractInstance {
 
   calculatePoolEnter(
     lAmount: number | BN | string,
-    liquidityCorrection: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 

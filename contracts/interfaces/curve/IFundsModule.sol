@@ -107,6 +107,14 @@ interface IFundsModule {
     function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256);
 
     /**
+     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
+     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include part for pool
+     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
+     * @return Amount of pTokens to burn/lock
+     */
+    function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) external view returns(uint256);
+
+    /**
      * @notice Current pool liquidity
      * @return available liquidity
      */

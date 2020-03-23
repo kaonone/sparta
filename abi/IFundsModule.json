@@ -273,11 +273,6 @@
         "internalType": "uint256",
         "name": "lAmount",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityCorrection",
-        "type": "uint256"
       }
     ],
     "name": "calculatePoolEnter",
@@ -298,6 +293,11 @@
       {
         "internalType": "uint256",
         "name": "lAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityCorrection",
         "type": "uint256"
       }
     ],
@@ -371,6 +371,32 @@
       {
         "internalType": "uint256",
         "name": "lAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculatePoolExitWithFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "lAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityCorrection",
         "type": "uint256"
       }
     ],
