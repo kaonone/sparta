@@ -664,18 +664,20 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(30*24*60*60);
         let lInterest = await loanm.getUnpaidInterest(borrower);
         let pInterest = await funds.calculatePoolExit(lInterest[0]);
-        let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
-        let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
-        //let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
-        //let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterest[0]);
+        //let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
+        //let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
+        let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
+        let lInterestFee = await curve.calculateExitFee(lInterest[0]);
+        let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
         let blockNum = await web3.eth.getBlockNumber();
         let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
         expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest[0]);
         //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
         let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
-        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
-        //expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
+        expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
+        //expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
+        expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
         let pBalanceAfter = await pToken.balanceOf(liquidityProvider);
         expect(pBalanceAfter).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
     });
