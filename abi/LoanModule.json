@@ -1272,7 +1272,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "totalLInterest",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalLInterestPerSecond",
         "type": "uint256"
       }
     ],

@@ -609,12 +609,11 @@ contract LoanModule is Module, ILoanModule {
      * @notice Calculates unpaid interest on all actve debts of the borrower
      * @dev This function may use a lot of gas, so it is not recommended to call it in the context of transaction. Use payAllInterest() instead.
      * @param borrower Address of borrower
-     * @return summ of interest payments on all unpaid debts
+     * @return summ of interest payments on all unpaid debts, summ of all interest payments per second
      */
-    function getUnpaidInterest(address borrower) public view returns(uint256){
+    function getUnpaidInterest(address borrower) public view returns(uint256 totalLInterest, uint256 totalLInterestPerSecond){
         Debt[] storage userDebts = debts[borrower];
-        if (userDebts.length == 0) return 0;
-        uint256 totalLInterest;
+        if (userDebts.length == 0) return (0, 0);
         uint256 activeDebtCount;
         for (uint256 i=userDebts.length-1; i >= 0; i--){
             Debt storage d = userDebts[i];
@@ -623,13 +622,14 @@ contract LoanModule is Module, ILoanModule {
             if (isUnpaid && !isDefaulted){
                 DebtProposal storage p = debtProposals[borrower][d.proposal];
                 uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                uint256 lInterestPerSecond = lInterest.div(now.sub(d.lastPayment));
                 totalLInterest = totalLInterest.add(lInterest);
+                totalLInterestPerSecond = totalLInterestPerSecond.add(lInterestPerSecond);
 
                 activeDebtCount++;
                 if (activeDebtCount >= activeDebts[borrower]) break;
             }
         }
-        return totalLInterest;
     }
 
     /**

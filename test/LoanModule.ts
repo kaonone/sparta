@@ -670,7 +670,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
         console.log('pBalance after withdraw', pBalance.toString());
-        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest)
+        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest[0]);
         expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei});
     });
 
