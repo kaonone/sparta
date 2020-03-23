@@ -677,7 +677,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
         let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
         expectEqualBN(withrawEvents[0].args.pAmount, pInterest);
-        expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest);
+        expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest[0]);
         expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest[0].add(lInterestFee));
         expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
         expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
