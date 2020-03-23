@@ -476,15 +476,20 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await loanm.repay(debtIdx, repayLAmount, {from: borrower});
         let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('before default', pledgeInfoBeforeDefault);
-        let dbt = await loanm.debts(borrower, debtIdx);
-        console.log('dbt.pInterest', (<any>dbt).pInterest.toString());
+        let dbtBeforeDefault = await loanm.debts(borrower, debtIdx);
+        console.log('dbtBeforeDefault.pInterest', (<any>dbtBeforeDefault).pInterest.toString());
 
         await time.increase(90*24*60*60+1);
         await funds.burnPTokens(borrower, await pToken.balanceOf(borrower), {from:owner}); // Clear borrower balance to prevent repay during default
+        expect(await pToken.balanceOf(borrower)).to.be.bignumber.eq(new BN(0));
+
         let pPoolBalanceBefore = await pToken.balanceOf(funds.address);
         await loanm.executeDebtDefault(borrower, debtIdx);
         let pPoolBalanceAfter = await pToken.balanceOf(funds.address);
         expect(pPoolBalanceAfter).to.be.bignumber.lt(pPoolBalanceBefore);
+        let dbtAfterDefault = await loanm.debts(borrower, debtIdx);
+        console.log('dbtAfterDefault.pInterest', (<any>dbtAfterDefault).pInterest.toString());
+        expect((<any>dbtBeforeDefault).pInterest).to.be.bignumber.eq((<any>dbtAfterDefault).pInterest);
 
         let hasActiveDebts = await loanm.hasActiveDebts(borrower);
         expect(hasActiveDebts).to.be.false;
