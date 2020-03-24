@@ -95,7 +95,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     beforeEach(async () => {
         await snap.revert();
     });
-/*    
+    
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -628,24 +628,41 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         // Prepare borrower for repay
         await time.increase(90*24*60*60+1);
-        await prepareBorrower(w3random.interval(10, 20, 'ether'));
+        await prepareBorrower(await funds.calculatePoolEnter(w3random.interval(10, 20, 'ether')));
         let pBorrowerBeforeDefault = await pToken.balanceOf(borrower);
-        console.log('pBorrowerBeforeDefault', pBorrowerBeforeDefault.toString());
+        //console.log('pBorrowerBeforeDefault', pBorrowerBeforeDefault.toString());
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
-        expect(requiredPayments[0]).to.be.bignumber.gt(pBorrowerBeforeDefault);    //debt is greater then balance
-        expect(requiredPayments[1]).to.be.bignumber.lt(pBorrowerBeforeDefault);    //interest is less then balance
-        console.log('requiredPayments', requiredPayments[0].toString(), requiredPayments[1].toString());
+        //console.log('requiredPayments', requiredPayments[0].toString(), requiredPayments[1].toString());
         //Execute debt default
         let supporterPledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
+        let blockNum = await web3.eth.getBlockNumber();
         await loanm.executeDebtDefault(borrower, debtIdx, {from: owner});
         let pBorrowerAfterDefault = await pToken.balanceOf(borrower);
         let supporterPledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
-        console.log('pBorrowerAfterDefault', pBorrowerAfterDefault.toString());
+        //console.log('pBorrowerAfterDefault', pBorrowerAfterDefault.toString());
+
+        // let withdrawEvents = await (<any>liqm).getPastEvents('Withdraw', {fromBlock:blockNum});
+        // withdrawEvents.forEach((evt:any)=>{console.log(
+        //     `${evt.event}`, 
+        //     `lAmountTotal = ${evt.args.lAmountTotal.toString()}`,
+        //     `lAmountUser = ${evt.args.lAmountTotal.toString()}`,
+        //     `pAmount = ${evt.args.pAmount.toString()}`
+        // )});
+        // let repayEvents = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
+        // repayEvents.forEach((evt:any)=>{
+        //     console.log(
+        //     `${evt.event}`, 
+        //     `lDebtLeft = ${evt.args.lDebtLeft.toString()}`,
+        //     `lFullPaymentAmount = ${evt.args.lFullPaymentAmount.toString()}`,
+        //     `lInterestPaid = ${evt.args.lInterestPaid.toString()}`,
+        //     `pInterestPaid = ${evt.args.pInterestPaid.toString()}`,
+        //     )
+        // });
 
         expect(pBorrowerAfterDefault).to.be.bignumber.eq(new BN(0));
 
     });
-*/
+
     it('should take interest during withdraw', async () => {
         await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
 
@@ -658,20 +675,35 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await lToken.transfer(borrower, lDepositWei, {from: liquidityProvider});
         await lToken.approve(funds.address, lDepositWei, {from: borrower});
         await liqm.deposit(lDepositWei, '0', {from: borrower});
-        let pBalance = await pToken.balanceOf(liquidityProvider);
-        console.log('pBalance before withdraw', pBalance.toString());
+        let pBalanceBefore = await pToken.balanceOf(borrower);
 
         // Withdraw
         await time.increase(30*24*60*60);
-        let lWithdrawWei = w3random.interval(100, 200, 'ether')
-        let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
-        let lInterest = await loanm.getUnpaidInterest(borrower);
         let blockNum = await web3.eth.getBlockNumber();
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: borrower});
+        let lInterestInfo = await loanm.getUnpaidInterest(borrower);
+        let lInterest = lInterestInfo[0];
+        let pInterest = await (<any>funds).methods['calculatePoolExitWithFee(uint256)'](lInterest);
+        let lInterestFee = await curve.calculateExitFee(lInterest);
+        //let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
+        //let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
+        let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
+        let lWithdrawWeiTotal = lWithdrawWeiUser.add(await curve.calculateExitFee(lWithdrawWeiUser));
+        let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
+        let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
-        console.log('pBalance after withdraw', pBalance.toString());
-        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest[0]);
-        expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei});
+        //lInterest = lInterest.add(lInterestInfo[1].mul(new BN(receipt.receipt.blockNumber - blockNum)));
+        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest, 18, -4); //Inacurracy because time passes during calculations
+        //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
+        let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
+        expectEqualBN(withrawEvents[0].args.pAmount, pInterest);
+        expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest, 18, -4);
+        expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest.add(lInterestFee), 18, -4);
+        expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
+        expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
+        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
+        let pBalanceAfter = await pToken.balanceOf(borrower);
+        //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
+        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
     });
 
     // it('should correctly calculate totalLDebts()', async () => {
