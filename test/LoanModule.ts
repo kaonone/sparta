@@ -537,6 +537,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let requiredPayment = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         let repayLAmount = w3random.intervalBN(debtLAmount.mul(new BN(2)).div(new BN(3)), debtLAmount.mul(new BN(3)).div(new BN(4)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
+        let blockNum1 = await web3.eth.getBlockNumber();
         let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
         let repayEventArgs = findEventArgs(receipt, 'Repay');
         let repayPInterest = repayEventArgs.pInterestPaid;
@@ -544,6 +545,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // console.log('pToken.distributionSupply', (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address)).toString());
         //console.log('before default', borrowerPledgeInfoBeforeDefault);
         let borrowerPledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, borrower);
+        let distrCreatedEvents = await (<any>pToken).getPastEvents('DistributionCreated', {fromBlock:blockNum1});
+        expect(distrCreatedEvents.length).to.be.equal(1);
 
         //Check debt info
         let lUnpaidDebt = requiredPayment[0].add(requiredPayment[1]).sub(repayLAmount);
@@ -556,8 +559,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let extraPTK = borrowerLockedPTK.sub(lockedPTK);
 
         let distributedPTK = repayPInterest.div(new BN(2));
+        expectEqualBN(distributedPTK, distrCreatedEvents[0].args.amount);
         distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK);
         distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        expectEqualBN(distributionSupply, distrCreatedEvents[0].args.totalSupply);
         expectEqualBN(distributionSupply, distributionSupplyExpected);
         const firstDistributedPTK = distributedPTK;
         const firstDistributionSupply = distributionSupply;
@@ -566,9 +571,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Withdraw
         let distributed_s0 = (await pToken.balanceOf(otherAccounts[0])).mul(distributedPTK).div(distributionSupply);
         let lockedInLoanBeforeWithdraw = await funds.pBalanceOf(funds.address);
-        let blockNum1 = await web3.eth.getBlockNumber();
+        let blockNum2 = await web3.eth.getBlockNumber();
         await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
-        let distrClaimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum1});
+        let distrClaimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum2});
         expect(distrClaimEvents.length).to.be.equal(1);
         let pClaimed_s0 = distrClaimEvents[0].args.amount;
         expectEqualBN(pClaimed_s0, distributed_s0);
