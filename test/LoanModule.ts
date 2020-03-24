@@ -703,9 +703,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
         let lWithdrawWeiTotal = lWithdrawWeiUser.add(await curve.calculateExitFee(lWithdrawWeiUser));
         let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
-        let lWithdrawWeiCalculated = await funds.calculatePoolExitInverse(pWithdrawWeiTotal);
-        console.log('lWithdrawWeiTotal', lWithdrawWeiTotal.toString(), lWithdrawWeiCalculated[0].toString());
-        console.log('lWithdrawWeiUser', lWithdrawWeiUser.toString(), lWithdrawWeiCalculated[1].toString());
+        // let lWithdrawWeiCalculated = await funds.calculatePoolExitInverse(pWithdrawWeiTotal);
+        // console.log('lWithdrawWeiTotal', lWithdrawWeiTotal.toString(), lWithdrawWeiCalculated[0].toString());
+        // console.log('lWithdrawWeiUser', lWithdrawWeiUser.toString(), lWithdrawWeiCalculated[1].toString());
         let pInterest = await (<any>funds).methods['calculatePoolExitWithFee(uint256)'](lInterest);
         let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
@@ -717,11 +717,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest, 18, -6);
         expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest.add(lInterestFee), 18, -6);
         expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
-        expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser);
-        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal);
+        expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser, 18, -6);
+        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal, 18, -6);
         let pBalanceAfter = await pToken.balanceOf(borrower);
         //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
-        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
+        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(pWithdrawWeiTotal));
     }));
 
     // it('should correctly calculate totalLDebts()', async () => {
