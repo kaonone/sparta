@@ -641,14 +641,14 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let supporterPledgeInfoAfterDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('pBorrowerAfterDefault', pBorrowerAfterDefault.toString());
 
-        // let withdrawEvents = await (<any>liqm).getPastEvents('Withdraw', {fromBlock:blockNum});
+        let withdrawEvents = await (<any>liqm).getPastEvents('Withdraw', {fromBlock:blockNum});
         // withdrawEvents.forEach((evt:any)=>{console.log(
         //     `${evt.event}`, 
         //     `lAmountTotal = ${evt.args.lAmountTotal.toString()}`,
         //     `lAmountUser = ${evt.args.lAmountTotal.toString()}`,
         //     `pAmount = ${evt.args.pAmount.toString()}`
         // )});
-        // let repayEvents = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
+        let repayEvents = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
         // repayEvents.forEach((evt:any)=>{
         //     console.log(
         //     `${evt.event}`, 
@@ -658,9 +658,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //     `pInterestPaid = ${evt.args.pInterestPaid.toString()}`,
         //     )
         // });
-
+        expectEqualBN(repayEvents[0].args.lInterestPaid, requiredPayments[1]);
         expect(pBorrowerAfterDefault).to.be.bignumber.eq(new BN(0));
-
     });
 
     it('should take interest during withdraw', async () => {
