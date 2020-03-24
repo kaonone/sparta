@@ -508,7 +508,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expectEvent(receipt, 'UnlockedPledgeWithdraw', {'pAmount':pledgeInfoAfterDefault[1].add(pledgeInfoAfterDefault[2].sub(pledgeInfoAfterDefault[3]))});
     });
-    it('should correctly distribute tokens after default', async() =>{
+    it('should correctly distribute tokens after default', async() => repeat(snap, async() => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         let debtLAmount = w3random.interval(100, 200, 'ether');
@@ -611,13 +611,13 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             }
             let pBalance = await pToken.balanceOf(addr);
             if(addr != borrower){
-                expectEqualBN(pBalance, pBalanceExpected);
+                expectEqualBN(pBalance, pBalanceExpected, 18, -5);
             }else{
                 expect(pBalance).to.be.bignumber.eq(new BN(0));
             }
         };
        
-    });
+    }));
 
     it('should repay ptk from borrower\'s balance during debt default', async() =>{
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
