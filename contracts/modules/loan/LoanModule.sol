@@ -287,7 +287,7 @@ contract LoanModule is Module, ILoanModule {
 
         uint256 pInterest = calculatePoolEnter(actualInterest);
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lCovered);
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
         fundsModule().distributePTokens(poolInterest);
