@@ -770,4 +770,5 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
         return debtIdx;
     }
+    
 });
