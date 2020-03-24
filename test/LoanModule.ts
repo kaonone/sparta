@@ -566,7 +566,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Withdraw
         let distributed_s0 = (await pToken.balanceOf(otherAccounts[0])).mul(distributedPTK).div(distributionSupply);
         let lockedInLoanBeforeWithdraw = await funds.pBalanceOf(funds.address);
+        let blockNum1 = await web3.eth.getBlockNumber();
         await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
+        let distrClaimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum1});
+        expect(distrClaimEvents.length).to.be.equal(1);
+        let pClaimed_s0 = distrClaimEvents[0].args.amount;
+        expectEqualBN(pClaimed_s0, distributed_s0);
         let lockedInLoanAfterWithdraw = await funds.pBalanceOf(funds.address);
         let pAmountSupporter_0 = await pToken.balanceOf(otherAccounts[0]);
         // after withdraw locked tokens of supporter_0

@@ -9,7 +9,7 @@ const chai = require('chai');
  * with accuracy = 10^precision (so `precision` should be negative)
  * assuming v1 and v2 are big numbers with `decimals` decimals.
  */
-function expectEqualBN(actual, expected, decimals=18, precision=-7) {
+function expectEqualBN(actual, expected, decimals=18, precision=-14) {
     // console.log("actual", actual.toString());
     // console.log("expected", expected.toString());
     if(decimals <= -1*precision) throw "Precision should be less then decimals";
