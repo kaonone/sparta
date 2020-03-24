@@ -593,7 +593,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             pUnlockedAmount,
             pAmountSupporter_0.sub(<BN>initialBalances.get(otherAccounts[0])).sub(distributed_s0)
         );
-        distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK).sub(pUnlockedAmount);     
+        distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK).add(pUnlockedAmount);     
         distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
         expectEqualBN(distributionSupply, distributionSupplyExpected);
 
