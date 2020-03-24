@@ -678,7 +678,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(pBorrowerAfterDefault).to.be.bignumber.eq(new BN(0));
     });
 
-    it('should take interest during withdraw', async() => repeat(snap, async () => {
+    it('should take interest during withdraw', async () => {
         await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
 
         // Create debt
@@ -722,7 +722,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let pBalanceAfter = await pToken.balanceOf(borrower);
         //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
         expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(pWithdrawWeiTotal));
-    }));
+    });
 
     // it('should correctly calculate totalLDebts()', async () => {
     // });
@@ -770,5 +770,4 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
         return debtIdx;
     }
-    
 });
