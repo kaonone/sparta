@@ -576,6 +576,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let distributed_s0 = (await pToken.balanceOf(otherAccounts[0])).mul(distributedPTK).div(distributionSupply);
         let lockedInLoanBeforeWithdraw = await funds.pBalanceOf(funds.address);
         let blockNum2 = await web3.eth.getBlockNumber();
+        let distributionSupply1 = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
         receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         distrClaimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum2});
         expect(distrClaimEvents.length).to.be.equal(1);
@@ -593,6 +594,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         );
         distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK).sub(pUnlockedAmount);     
         distributionSupply = (await pToken.totalSupply()).sub(await funds.pBalanceOf(funds.address));
+        expect(distributionSupply).to.be.bignumber.equal(distributionSupply1);
         expectEqualBN(distributionSupply, distributionSupplyExpected);
 
 
