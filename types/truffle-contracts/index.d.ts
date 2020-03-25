@@ -4229,6 +4229,25 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  cancelDebtProposal: {
+    (
+      proposal: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      proposal: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      proposal: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      proposal: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   executeDebtProposal: {
     (
       proposal: number | BN | string,
