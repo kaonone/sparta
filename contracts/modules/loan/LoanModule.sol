@@ -213,7 +213,7 @@ contract LoanModule is Module, ILoanModule {
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
         require(!p.executed, "LoanModule: DebtProposal is already executed");
-        for(uint256 i=0; i < p.supporters.length; i++){
+        for (uint256 i=0; i < p.supporters.length; i++){
             address supporter = p.supporters[i];                //first supporter is borrower himself
             DebtPledge storage pledge = p.pledges[supporter];
             fundsModule().withdrawPTokens(_msgSender(), pledge.pAmount);
