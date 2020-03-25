@@ -209,6 +209,26 @@ contract LoanModule is Module, ILoanModule {
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
     }
 
+    function cancelDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.CancelDebtProposal) {
+        DebtProposal storage p = debtProposals[_msgSender()][proposal];
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(!p.executed, "LoanModule: DebtProposal is already executed");
+        for(uint256 i=0; i < p.supporters.length; i++){
+            address supporter = p.supporters[i];                //first supporter is borrower himself
+            DebtPledge storage pledge = p.pledges[supporter];
+            fundsModule().withdrawPTokens(_msgSender(), pledge.pAmount);
+            emit PledgeWithdrawn(supporter, _msgSender(), proposal, pledge.lAmount, pledge.pAmount);
+            delete p.pledges[supporter];
+        }
+        delete p.supporters;
+        p.lAmount = 0;      //Mark proposal as deleted
+        p.interest = 0;
+        p.descriptionHash = 0;
+        p.pCollected = 0;   
+        p.lCovered = 0;    
+        emit DebtProposalCanceled(_msgSender(), proposal);
+    }
+
     /**
      * @notice Execute DebtProposal
      * @dev Creates Debt using data of DebtProposal
@@ -287,7 +307,7 @@ contract LoanModule is Module, ILoanModule {
 
         uint256 pInterest = calculatePoolEnter(actualInterest);
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lCovered);
 
         fundsModule().depositLTokens(_msgSender(), lAmount); 
         fundsModule().distributePTokens(poolInterest);
@@ -360,8 +380,8 @@ contract LoanModule is Module, ILoanModule {
         uint256 totalPInterestToDistribute;
         uint256 totalPInterestToMint;
         uint256 activeDebtCount = 0;
-        for (uint256 i=userDebts.length-1; i >= 0; i--){
-            Debt storage d = userDebts[i];
+        for (int256 i=int256(userDebts.length)-1; i >= 0; i--){
+            Debt storage d = userDebts[uint256(i)];
             // bool isUnpaid = (d.lAmount != 0);
             // bool isDefaulted = _isDebtDefaultTimeReached(d);
             // if (isUnpaid && !isDefaulted){                      
@@ -380,7 +400,7 @@ contract LoanModule is Module, ILoanModule {
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
                 totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
 
-                emit Repay(borrower, i, d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
+                emit Repay(borrower, uint256(i), d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
 
                 activeDebtCount++;
                 if (activeDebtCount >= activeDebts[borrower]) break;
@@ -615,8 +635,8 @@ contract LoanModule is Module, ILoanModule {
         Debt[] storage userDebts = debts[borrower];
         if (userDebts.length == 0) return (0, 0);
         uint256 activeDebtCount;
-        for (uint256 i=userDebts.length-1; i >= 0; i--){
-            Debt storage d = userDebts[i];
+        for (int256 i=int256(userDebts.length)-1; i >= 0; i--){
+            Debt storage d = userDebts[uint256(i)];
             bool isUnpaid = (d.lAmount != 0);
             bool isDefaulted = _isDebtDefaultTimeReached(d);
             if (isUnpaid && !isDefaulted){
