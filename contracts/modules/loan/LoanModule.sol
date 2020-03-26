@@ -216,6 +216,7 @@ contract LoanModule is Module, ILoanModule {
         for (uint256 i=0; i < p.supporters.length; i++){
             address supporter = p.supporters[i];                //first supporter is borrower himself
             DebtPledge storage pledge = p.pledges[supporter];
+            lProposals = lProposals.sub(pledge.lAmount);
             fundsModule().withdrawPTokens(supporter, pledge.pAmount);
             emit PledgeWithdrawn(supporter, _msgSender(), proposal, pledge.lAmount, pledge.pAmount);
             delete p.pledges[supporter];
