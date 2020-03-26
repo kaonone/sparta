@@ -285,11 +285,11 @@
       }
     },
     "LiquidityModule": {
-      "address": "0x95579F731ac7d4153E68ee4c3FF9De3a7b22E026",
+      "address": "0xD4dD7E3f6aD6a37f9584453330Aa0AeB729Bc64C",
       "constructorCode": "6080604052611b61806100136000396000f3fe",
-      "bodyBytecodeHash": "26918d2a42d3791115c0d3b1d04b00877994df48248876012c0811dd91eaf795",
-      "localBytecodeHash": "4b1e2694ba3488ab66f8f02f615048a976f1d42348eec8b017c5526e61edfe5d",
-      "deployedBytecodeHash": "4b1e2694ba3488ab66f8f02f615048a976f1d42348eec8b017c5526e61edfe5d",
+      "bodyBytecodeHash": "6fef3c21180a54029c0641f114f7ecd24ed83aba087fad9470778ef6211fdb79",
+      "localBytecodeHash": "62f6a806bc4a83edfc6536998651d676bf2862915b9516391795b7f7ac3bb43a",
+      "deployedBytecodeHash": "62f6a806bc4a83edfc6536998651d676bf2862915b9516391795b7f7ac3bb43a",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -320,13 +320,13 @@
           "members": [
             {
               "label": "lDepositMin",
-              "astId": 2622,
+              "astId": 2629,
               "type": "t_uint256",
               "src": "442:19:19"
             },
             {
               "label": "pWithdrawMin",
-              "astId": 2624,
+              "astId": 2631,
               "type": "t_uint256",
               "src": "522:20:19"
             }
@@ -338,7 +338,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 10333,
+          "astId": 10479,
           "type": "t_bool",
           "src": "757:24:46"
         },
@@ -346,7 +346,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 10335,
+          "astId": 10481,
           "type": "t_bool",
           "src": "876:25:46"
         },
@@ -354,7 +354,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 10397,
+          "astId": 10543,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:46"
         },
@@ -362,7 +362,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 9577,
+          "astId": 9723,
           "type": "t_address",
           "src": "526:22:40"
         },
@@ -370,7 +370,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 9690,
+          "astId": 9836,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:40"
         },
@@ -386,7 +386,7 @@
           "contract": "LiquidityModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\liquidity\\LiquidityModule.sol",
           "label": "limits",
-          "astId": 2627,
+          "astId": 2634,
           "type": "t_struct<LiquidityModule.LiquidityLimits>",
           "src": "600:29:19"
         }
@@ -402,7 +402,7 @@
             "contract": "LiquidityModule",
             "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\liquidity\\LiquidityModule.sol",
             "label": "limits",
-            "astId": 2627,
+            "astId": 2634,
             "type": "t_struct<LiquidityModule.LiquidityLimits>",
             "src": "600:29:19"
           }
@@ -411,11 +411,11 @@
       }
     },
     "AccessModule": {
-      "address": "0x1391734da2D60140F99b00A5b039b91b4FCA6489",
+      "address": "0xA09034E29da937DC6eB6A2B5F541537b992EAE96",
       "constructorCode": "6080604052611a7c806100136000396000f3fe",
-      "bodyBytecodeHash": "d0a7b648222deaf6c42cbc6af1c5f3508ea3d8917c11dc7347247b60d958ccb4",
-      "localBytecodeHash": "46c16bdc6a5ffb32d98227b1e974e0ede822256659b1e270d042917c6f7d6b4d",
-      "deployedBytecodeHash": "46c16bdc6a5ffb32d98227b1e974e0ede822256659b1e270d042917c6f7d6b4d",
+      "bodyBytecodeHash": "63bb37709eca62768a5ddcdbc94574c74daadcfb2243126b5e865b885dfca2da",
+      "localBytecodeHash": "e17b014cf8e753ad94903123d1f83da11a21b3bc352ca839249dc6543dc46b81",
+      "deployedBytecodeHash": "e17b014cf8e753ad94903123d1f83da11a21b3bc352ca839249dc6543dc46b81",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -446,7 +446,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 7857,
+              "astId": 8843,
               "type": "t_mapping<t_bool>",
               "src": "150:32:33"
             }
@@ -464,7 +464,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 9493,
+          "astId": 10479,
           "type": "t_bool",
           "src": "757:24:46"
         },
@@ -472,7 +472,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 9495,
+          "astId": 10481,
           "type": "t_bool",
           "src": "876:25:46"
         },
@@ -480,7 +480,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 9557,
+          "astId": 10543,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:46"
         },
@@ -488,7 +488,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 8737,
+          "astId": 9723,
           "type": "t_address",
           "src": "526:22:40"
         },
@@ -496,7 +496,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 8850,
+          "astId": 9836,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:40"
         },
@@ -512,7 +512,7 @@
           "contract": "PauserRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\PauserRole.sol",
           "label": "_pausers",
-          "astId": 8077,
+          "astId": 9063,
           "type": "t_struct<Roles.Role>",
           "src": "327:27:35"
         },
@@ -520,7 +520,7 @@
           "contract": "PauserRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\PauserRole.sol",
           "label": "______gap",
-          "astId": 8177,
+          "astId": 9163,
           "type": "t_array:50<t_uint256>",
           "src": "1193:29:35"
         },
@@ -528,7 +528,7 @@
           "contract": "Pausable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\lifecycle\\Pausable.sol",
           "label": "_paused",
-          "astId": 8456,
+          "astId": 9442,
           "type": "t_bool",
           "src": "909:20:38"
         },
@@ -536,7 +536,7 @@
           "contract": "Pausable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\lifecycle\\Pausable.sol",
           "label": "______gap",
-          "astId": 8539,
+          "astId": 9525,
           "type": "t_array:50<t_uint256>",
           "src": "2163:29:38"
         },
@@ -544,7 +544,7 @@
           "contract": "WhitelistAdminRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistAdminRole.sol",
           "label": "_whitelistAdmins",
-          "astId": 8200,
+          "astId": 9186,
           "type": "t_struct<Roles.Role>",
           "src": "477:35:36"
         },
@@ -552,7 +552,7 @@
           "contract": "WhitelistAdminRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistAdminRole.sol",
           "label": "______gap",
-          "astId": 8300,
+          "astId": 9286,
           "type": "t_array:50<t_uint256>",
           "src": "1503:29:36"
         },
@@ -560,7 +560,7 @@
           "contract": "WhitelistedRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistedRole.sol",
           "label": "_whitelisteds",
-          "astId": 8326,
+          "astId": 9312,
           "type": "t_struct<Roles.Role>",
           "src": "709:32:37"
         },
@@ -568,7 +568,7 @@
           "contract": "WhitelistedRole",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistedRole.sol",
           "label": "______gap",
-          "astId": 8434,
+          "astId": 9420,
           "type": "t_array:50<t_uint256>",
           "src": "1760:29:37"
         },
@@ -576,7 +576,7 @@
           "contract": "AccessModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\access\\AccessModule.sol",
           "label": "whitelistEnabled",
-          "astId": 1085,
+          "astId": 1131,
           "type": "t_bool",
           "src": "433:28:12"
         }
@@ -586,7 +586,34 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "PauserRole",
+            "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\PauserRole.sol",
+            "label": "_pausers",
+            "astId": 9063,
+            "type": "t_struct<Roles.Role>",
+            "src": "327:27:35"
+          },
+          {
+            "contract": "WhitelistAdminRole",
+            "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistAdminRole.sol",
+            "label": "_whitelistAdmins",
+            "astId": 9186,
+            "type": "t_struct<Roles.Role>",
+            "src": "477:35:36"
+          },
+          {
+            "contract": "WhitelistedRole",
+            "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\access\\roles\\WhitelistedRole.sol",
+            "label": "_whitelisteds",
+            "astId": 9312,
+            "type": "t_struct<Roles.Role>",
+            "src": "709:32:37"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "FundsModule": {
@@ -738,11 +765,11 @@
       }
     },
     "LoanModule": {
-      "address": "0xf4ac2B292887EeeAF94FA1680F08558Cb994c92F",
-      "constructorCode": "6080604052615b33806100136000396000f3fe",
-      "bodyBytecodeHash": "392047f0fb478fa45cda3bdb6eaacb8ebd88a5a364b125b20a24b358060810b6",
-      "localBytecodeHash": "7066d258ba6a805167047ec41e354898a4bf0ef83508769848f014ff747df357",
-      "deployedBytecodeHash": "7066d258ba6a805167047ec41e354898a4bf0ef83508769848f014ff747df357",
+      "address": "0xC517b7D57fe517746fB6fD973A9b6d9F7D7E8e00",
+      "constructorCode": "6080604052615f77806100136000396000f3fe",
+      "bodyBytecodeHash": "c770930825a9245db9fd22be954bfbb75438a40df8e97654649df9683bcc2c70",
+      "localBytecodeHash": "138ddb4ec91a78fc113755802003e41e9bc62cce874e66a1554fc258ba02716b",
+      "deployedBytecodeHash": "138ddb4ec91a78fc113755802003e41e9bc62cce874e66a1554fc258ba02716b",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -773,49 +800,49 @@
           "members": [
             {
               "label": "lAmount",
-              "astId": 3040,
+              "astId": 3047,
               "type": "t_uint256",
               "src": "1818:15:20"
             },
             {
               "label": "interest",
-              "astId": 3042,
+              "astId": 3049,
               "type": "t_uint256",
               "src": "1901:16:20"
             },
             {
               "label": "descriptionHash",
-              "astId": 3044,
+              "astId": 3051,
               "type": "t_bytes32",
               "src": "1995:23:20"
             },
             {
               "label": "pledges",
-              "astId": 3048,
+              "astId": 3055,
               "type": "t_mapping<t_struct<LoanModule.DebtPledge>>",
               "src": "2096:38:20"
             },
             {
               "label": "supporters",
-              "astId": 3051,
+              "astId": 3058,
               "type": "t_array:dyn<t_address>",
               "src": "2218:20:20"
             },
             {
               "label": "lCovered",
-              "astId": 3053,
+              "astId": 3060,
               "type": "t_uint256",
               "src": "2335:16:20"
             },
             {
               "label": "pCollected",
-              "astId": 3055,
+              "astId": 3062,
               "type": "t_uint256",
               "src": "2417:18:20"
             },
             {
               "label": "executed",
-              "astId": 3057,
+              "astId": 3064,
               "type": "t_bool",
               "src": "2502:13:20"
             }
@@ -833,19 +860,19 @@
           "members": [
             {
               "label": "senderIndex",
-              "astId": 3033,
+              "astId": 3040,
               "type": "t_uint256",
               "src": "1564:19:20"
             },
             {
               "label": "lAmount",
-              "astId": 3035,
+              "astId": 3042,
               "type": "t_uint256",
               "src": "1632:15:20"
             },
             {
               "label": "pAmount",
-              "astId": 3037,
+              "astId": 3044,
               "type": "t_uint256",
               "src": "1712:15:20"
             }
@@ -884,37 +911,37 @@
           "members": [
             {
               "label": "proposal",
-              "astId": 3060,
+              "astId": 3067,
               "type": "t_uint256",
               "src": "2602:16:20"
             },
             {
               "label": "lAmount",
-              "astId": 3062,
+              "astId": 3069,
               "type": "t_uint256",
               "src": "2689:15:20"
             },
             {
               "label": "lastPayment",
-              "astId": 3064,
+              "astId": 3071,
               "type": "t_uint256",
               "src": "2796:19:20"
             },
             {
               "label": "pInterest",
-              "astId": 3066,
+              "astId": 3073,
               "type": "t_uint256",
               "src": "2953:17:20"
             },
             {
               "label": "claimedPledges",
-              "astId": 3070,
+              "astId": 3077,
               "type": "t_mapping<t_uint256>",
               "src": "3043:42:20"
             },
             {
               "label": "defaultExecuted",
-              "astId": 3072,
+              "astId": 3079,
               "type": "t_bool",
               "src": "3145:20:20"
             }
@@ -946,31 +973,31 @@
           "members": [
             {
               "label": "lDebtAmountMin",
-              "astId": 3075,
+              "astId": 3082,
               "type": "t_uint256",
               "src": "3275:22:20"
             },
             {
               "label": "debtInterestMin",
-              "astId": 3077,
+              "astId": 3084,
               "type": "t_uint256",
               "src": "3371:23:20"
             },
             {
               "label": "pledgePercentMin",
-              "astId": 3079,
+              "astId": 3086,
               "type": "t_uint256",
               "src": "3441:24:20"
             },
             {
               "label": "lMinPledgeMax",
-              "astId": 3081,
+              "astId": 3088,
               "type": "t_uint256",
               "src": "3598:21:20"
             },
             {
               "label": "debtLoadMax",
-              "astId": 3083,
+              "astId": 3090,
               "type": "t_uint256",
               "src": "3726:19:20"
             }
@@ -982,7 +1009,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 10333,
+          "astId": 10479,
           "type": "t_bool",
           "src": "757:24:46"
         },
@@ -990,7 +1017,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 10335,
+          "astId": 10481,
           "type": "t_bool",
           "src": "876:25:46"
         },
@@ -998,7 +1025,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 10397,
+          "astId": 10543,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:46"
         },
@@ -1006,7 +1033,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 9577,
+          "astId": 9723,
           "type": "t_address",
           "src": "526:22:40"
         },
@@ -1014,7 +1041,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 9690,
+          "astId": 9836,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:40"
         },
@@ -1030,7 +1057,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "debtProposals",
-          "astId": 3089,
+          "astId": 3096,
           "type": "t_mapping<t_array:dyn<t_struct<LoanModule.DebtProposal>>>",
           "src": "3890:53:20"
         },
@@ -1038,7 +1065,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "debts",
-          "astId": 3094,
+          "astId": 3101,
           "type": "t_mapping<t_array:dyn<t_struct<LoanModule.Debt>>>",
           "src": "3949:37:20"
         },
@@ -1046,7 +1073,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "lDebts",
-          "astId": 3096,
+          "astId": 3103,
           "type": "t_uint256",
           "src": "4010:22:20"
         },
@@ -1054,7 +1081,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "lProposals",
-          "astId": 3098,
+          "astId": 3105,
           "type": "t_uint256",
           "src": "4038:26:20"
         },
@@ -1062,7 +1089,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "limits",
-          "astId": 3100,
+          "astId": 3107,
           "type": "t_struct<LoanModule.LoanLimits>",
           "src": "4070:24:20"
         },
@@ -1070,7 +1097,7 @@
           "contract": "LoanModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
           "label": "activeDebts",
-          "astId": 3104,
+          "astId": 3111,
           "type": "t_mapping<t_uint256>",
           "src": "4101:44:20"
         }
@@ -1086,7 +1113,7 @@
             "contract": "LoanModule",
             "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
             "label": "debtProposals",
-            "astId": 3089,
+            "astId": 3096,
             "type": "t_mapping<t_array:dyn<t_struct<LoanModule.DebtProposal>>>",
             "src": "3890:53:20"
           },
@@ -1094,7 +1121,7 @@
             "contract": "LoanModule",
             "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
             "label": "debts",
-            "astId": 3094,
+            "astId": 3101,
             "type": "t_mapping<t_array:dyn<t_struct<LoanModule.Debt>>>",
             "src": "3949:37:20"
           },
@@ -1102,7 +1129,7 @@
             "contract": "LoanModule",
             "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanModule.sol",
             "label": "limits",
-            "astId": 3100,
+            "astId": 3107,
             "type": "t_struct<LoanModule.LoanLimits>",
             "src": "4070:24:20"
           }
@@ -1649,7 +1676,7 @@
       {
         "address": "0xD13e1930E46C5412B9adbE3B0c091E9e9b41af91",
         "version": "1.0.0",
-        "implementation": "0x1391734da2D60140F99b00A5b039b91b4FCA6489",
+        "implementation": "0xA09034E29da937DC6eB6A2B5F541537b992EAE96",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
@@ -1658,7 +1685,7 @@
       {
         "address": "0xCBA406Cd5cEc74E7F23bF7C87b60322Cc0Fb451e",
         "version": "1.0.0",
-        "implementation": "0x95579F731ac7d4153E68ee4c3FF9De3a7b22E026",
+        "implementation": "0xD4dD7E3f6aD6a37f9584453330Aa0AeB729Bc64C",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
@@ -1667,7 +1694,7 @@
       {
         "address": "0xB7C9389735513B4313198d93e9fc835066b5F1fC",
         "version": "1.0.0",
-        "implementation": "0xf4ac2B292887EeeAF94FA1680F08558Cb994c92F",
+        "implementation": "0xC517b7D57fe517746fB6fD973A9b6d9F7D7E8e00",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
