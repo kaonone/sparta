@@ -28,6 +28,7 @@ contract("AccessModule", async ([_, owner, ...otherAccounts]) => {
         CreateDebtProposal,
         AddPledge,
         WithdrawPledge,
+        CancelDebtProposal,
         ExecuteDebtProposal,
         Repay,
         ExecuteDebtDefault,
