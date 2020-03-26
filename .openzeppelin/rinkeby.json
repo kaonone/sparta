@@ -765,7 +765,7 @@
       }
     },
     "LoanModule": {
-      "address": "0xaC470176dd5da82061FAc8Ae70060C746Fa167F9",
+      "address": "0x11705AE47B5AAD3b8E85B13EaEfdD6Ca659EA3f5",
       "constructorCode": "6080604052615f8c806100136000396000f3fe",
       "bodyBytecodeHash": "50c805a6186d25ca0282ee8de61642e350c78799a083774fd157c32aba380fcd",
       "localBytecodeHash": "e1339c3598f772bade92b53d7ec026933c9c81b08f7dcfc40ccad24dc68b4e27",
@@ -1694,7 +1694,7 @@
       {
         "address": "0xB7C9389735513B4313198d93e9fc835066b5F1fC",
         "version": "1.0.0",
-        "implementation": "0xaC470176dd5da82061FAc8Ae70060C746Fa167F9",
+        "implementation": "0x11705AE47B5AAD3b8E85B13EaEfdD6Ca659EA3f5",
         "admin": "0x3e2c630e5ffE717D939C755E78265fF502CB6FA8",
         "kind": "Upgradeable"
       }
