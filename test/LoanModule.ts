@@ -220,6 +220,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         initialBalances.set(borrower, await pToken.balanceOf(borrower));
 
         // Create Proposal
+        let pLockedTotal = pDebtAmount.divn(2);
         let receipt = await loanm.createDebtProposal(lDebtAmount, '100', pDebtAmount.divn(2), web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
@@ -235,6 +236,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
             let lPledge = w3random.intervalBN(pledgeRequirements[0],pledgeRequirements[1]);
             let pPledge = await funds.calculatePoolExit(lPledge);
+            pLockedTotal = pLockedTotal.add(pPledge);
             console.log(`${otherAccounts[i]} \t pledge: ${lPledge.toString()} DAI = ${pPledge.toString()} PTK`);
             if(pPledge.gt(new BN(0))){
                 await loanm.addPledge(borrower, proposalIdx, pPledge, '0', {from: otherAccounts[i]});
@@ -243,6 +245,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Add last pledge to cover proposal
         let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
         let pPledge = await funds.calculatePoolExit(pledgeRequirements[1]);
+        pLockedTotal = pLockedTotal.add(pPledge);
         console.log(`${otherAccounts[3]} \t pledge: ${pledgeRequirements[1].toString()} DAI = ${pPledge.toString()} PTK`);
         if(pPledge.gt(new BN(0))){
             await loanm.addPledge(borrower, proposalIdx, pPledge, '0', {from: otherAccounts[3]});
@@ -250,6 +253,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
 
         // Cancel proposal
+        console.log('pLockedTotal', pLockedTotal.toString());
+        console.log('funds balance', (await pToken.balanceOf(funds.address)).toString());
         receipt = await loanm.cancelDebtProposal(proposalIdx, {from: borrower});
         expectEvent(receipt, 'DebtProposalCanceled');
 
