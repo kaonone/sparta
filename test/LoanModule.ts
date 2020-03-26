@@ -209,6 +209,67 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             'LoanModule: Can not withdraw more than locked'
         );  
     });
+    it('should cancel proposal and return all locked ptk', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+
+        let initialBalances = new Map<string,BN>();
+        let lDebtAmount = w3random.interval(100, 200, 'ether');
+        let pDebtAmount = await funds.calculatePoolExit(lDebtAmount);
+        await prepareBorrower(pDebtAmount.divn(2));
+        initialBalances.set(borrower, await pToken.balanceOf(borrower));
+
+        // Create Proposal
+        let pLockedTotal = new BN('0');
+        let receipt = await loanm.createDebtProposal(lDebtAmount, '100', pDebtAmount.divn(2), web3.utils.sha3('test'), {from: borrower});
+        let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+        let pPledge = findEventArgs(receipt, 'PledgeAdded')['pAmount'];
+        pLockedTotal = pLockedTotal.add(pPledge);
+        // Prepare supporters
+        for (let i=0; i<5; i++){
+            await pToken.mint(otherAccounts[i], w3random.interval(100, 200, 'ether'), {from: owner});
+            let pAmount = await pToken.balanceOf(otherAccounts[i]);
+            initialBalances.set(otherAccounts[i], pAmount);
+            //console.log(`${otherAccounts[i]} \t balance: ${pAmount.toString()} PTK`);
+        }
+        // Add random pledges
+        for (let i=0; i<3; i++){
+            let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
+            let lPledge = w3random.intervalBN(pledgeRequirements[0],pledgeRequirements[1]);
+            let pPledge = await funds.calculatePoolExit(lPledge);
+            pLockedTotal = pLockedTotal.add(pPledge);
+            //console.log(`${otherAccounts[i]} \t pledge: ${lPledge.toString()} DAI = ${pPledge.toString()} PTK`);
+            if(pPledge.gt(new BN(0))){
+                await loanm.addPledge(borrower, proposalIdx, pPledge, '0', {from: otherAccounts[i]});
+            }
+        }
+        // Add last pledge to cover proposal
+        let pledgeRequirements = await loanm.getPledgeRequirements(borrower, proposalIdx);
+        pPledge = await funds.calculatePoolExit(pledgeRequirements[1]);
+        //console.log(`${otherAccounts[3]} \t pledge: ${pledgeRequirements[1].toString()} DAI = ${pPledge.toString()} PTK`);
+        if(pPledge.gt(new BN(0))){
+            receipt = await loanm.addPledge(borrower, proposalIdx, pPledge, '0', {from: otherAccounts[3]});
+            pPledge = findEventArgs(receipt, 'PledgeAdded')['pAmount'];
+            pLockedTotal = pLockedTotal.add(pPledge);
+        }
+        // Cancel proposal
+        //console.log('pLockedTotal', pLockedTotal.toString());
+        let pFundsBalance = await pToken.balanceOf(funds.address);
+        //console.log('funds balance before cancel', pFundsBalance.toString());
+        expect(pFundsBalance).to.be.bignumber.equal(pLockedTotal);
+        receipt = await loanm.cancelDebtProposal(proposalIdx, {from: borrower});
+        expectEvent(receipt, 'DebtProposalCanceled');
+
+        for(let [addr, pInitial] of initialBalances) {
+            let pBalance = await pToken.balanceOf(addr);
+            expect(pBalance).to.be.bignumber.eq(pInitial);
+        }
+        pFundsBalance = await pToken.balanceOf(funds.address);
+        //console.log('funds balance after cancel', pFundsBalance.toString());
+        expect(pFundsBalance).to.be.bignumber.equal(new BN(0));
+
+    });
+
     it('should execute successful debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -674,7 +735,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //     `pInterestPaid = ${evt.args.pInterestPaid.toString()}`,
         //     )
         // });
-        expectEqualBN(repayEvents[0].args.lInterestPaid, requiredPayments[1]);
+        expectEqualBN(repayEvents[0].args.lInterestPaid, requiredPayments[1], 18, -6);
         expect(pBorrowerAfterDefault).to.be.bignumber.eq(new BN(0));
     });
 
