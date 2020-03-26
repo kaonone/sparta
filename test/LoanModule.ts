@@ -212,12 +212,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should cancel proposal and return all locked ptk', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
-
         let initialBalances = new Map<string,BN>();
         let lDebtAmount = w3random.interval(100, 200, 'ether');
         let pDebtAmount = await funds.calculatePoolExit(lDebtAmount);
         await prepareBorrower(pDebtAmount.divn(2));
         initialBalances.set(borrower, await pToken.balanceOf(borrower));
+        let lProposalsBefore = await loanm.totalLProposals();
 
         // Create Proposal
         let pLockedTotal = new BN('0');
@@ -268,6 +268,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //console.log('funds balance after cancel', pFundsBalance.toString());
         expect(pFundsBalance).to.be.bignumber.equal(new BN(0));
 
+        let lProposalsAfter = await loanm.totalLProposals();
+        expect(lProposalsAfter).to.be.bignumber.equal(lProposalsBefore);            
     });
 
     it('should execute successful debt proposal', async () => {
