@@ -5,7 +5,6 @@ import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
-import "../../token/pTokens/PToken.sol";
 import "../../common/Module.sol";
 
 contract LiquidityModule is Module, ILiquidityModule {
@@ -27,7 +26,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         setLimits(10*10**18, 0);    //10 DAI minimal enter
     }
 
-    /*
+    /**
      * @notice Deposit amount of lToken and mint pTokens
      * @param lAmount Amount of liquid tokens to invest
      * @param pAmountMin Minimal amout of pTokens suitable for sender
@@ -44,12 +43,14 @@ contract LiquidityModule is Module, ILiquidityModule {
 
     /**
      * @notice Withdraw amount of lToken and burn pTokens
-     * @param pAmount Amount of pTokens to send
+     * @dev This operation also repays all interest on all debts
+     * @param pAmount Amount of pTokens to send (this amount does not include pTokens used to pay interest)
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: amount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
+        loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         uint256 availableLiquidity = fundsModule().lBalance();

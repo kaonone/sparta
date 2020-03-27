@@ -9,6 +9,7 @@ interface IAccessModule {
         CreateDebtProposal,
         AddPledge,
         WithdrawPledge,
+        CancelDebtProposal,
         ExecuteDebtProposal,
         Repay,
         ExecuteDebtDefault,

@@ -21,7 +21,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     Distribution[] public distributions;                   // Array of all distributions
     mapping(address => uint256) public nextDistributions;  // Map account to first distribution not yet processed
 
-    uint256 public nextDistributionTimestmap;      //Timestamp when next distribuition should be fired regardles of accumulated tokens
+    uint256 public nextDistributionTimestamp;      //Timestamp when next distribuition should be fired regardles of accumulated tokens
     uint256 public distributionAccumulator;        //Tokens accumulated for next distribution
 
     function distribute(uint256 amount) external onlyMinter {
@@ -61,7 +61,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     function claimDistributions(address[] calldata accounts, uint256 toDistribution) external {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         for (uint256 i=0; i < accounts.length; i++){
-            _updateUserBalance(accounts[i], toDistribution);
+            _updateUserBalance(accounts[i], toDistribution+1);
         }
     }
 
@@ -83,7 +83,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
      * @param account Account to check
      * @return Amount of tokens available to claim
      */
-    function calculateUnlcaimedDistributions(address account) public view returns(uint256) {
+    function calculateUnclaimedDistributions(address account) public view returns(uint256) {
         return calculateClaimAmount(account);
     }
 
@@ -155,7 +155,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
 
         // Clear data for next distribution
         distributionAccumulator = 0;
-        nextDistributionTimestmap = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
+        nextDistributionTimestamp = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
     }
 
     /**
@@ -192,6 +192,7 @@ contract DistributionToken is ERC20, ERC20Mintable {
     function _calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 initialBalance) internal view returns(uint256) {
         uint256 next = fromDistribution;
         uint256 balance = initialBalance;
+        if (initialBalance == 0) return 0;
         while (next < toDistribution) {
             uint256 da = balance.mul(distributions[next].amount).div(distributions[next].totalSupply);
             balance = balance.add(da);
@@ -204,6 +205,6 @@ contract DistributionToken is ERC20, ERC20Mintable {
      * @dev Calculates if conditions for creating new distribution are met
      */
     function isReadyForDistribution() internal view returns(bool) {
-        return (distributionAccumulator > 0) && (now >= nextDistributionTimestmap);
+        return (distributionAccumulator > 0) && (now >= nextDistributionTimestamp);
     }
 }
