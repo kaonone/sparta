@@ -104,6 +104,24 @@ contract DistributionToken is ERC20, ERC20Mintable {
         return distributions.length;
     }
 
+    /**
+     * @notice Balance of account, which is counted for distributions
+     * It only represents already distributed balance.
+     * @dev This function should be overloaded to include balance of tokens stored in proposals
+     */
+    function distributionBalanceOf(address account) public view returns(uint256) {
+        return balanceOf(account);
+    }
+
+    /**
+     * @notice Total supply which is counted for distributions
+     * It only represents already distributed tokens
+     * @dev This function should be overloaded to exclude tokens locked in loans
+     */
+    function distributionTotalSupply() public view returns(uint256){
+        return totalSupply();
+    }
+
     // Override functions that change user balance
     function _transfer(address sender, address recipient, uint256 amount) internal {
         _createDistributionIfReady();
@@ -132,8 +150,8 @@ contract DistributionToken is ERC20, ERC20Mintable {
         uint256 fromDistribution = nextDistributions[account];
         if (fromDistribution >= toDistribution) return 0;
         uint256 distributionAmount = calculateClaimAmount(account, toDistribution);
-        if (distributionAmount == 0) return 0;
         nextDistributions[account] = toDistribution;
+        if (distributionAmount == 0) return 0;
         super._transfer(address(this), account, distributionAmount);
         emit DistributionsClaimed(account, distributionAmount, fromDistribution, toDistribution);
         return distributionAmount;
@@ -156,24 +174,6 @@ contract DistributionToken is ERC20, ERC20Mintable {
         // Clear data for next distribution
         distributionAccumulator = 0;
         nextDistributionTimestamp = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
-    }
-
-    /**
-     * @notice Balance of account, which is counted for distributions
-     * It only represents already distributed balance.
-     * @dev This function should be overloaded to include balance of tokens stored in proposals
-     */
-    function distributionBalanceOf(address account) internal view returns(uint256) {
-        return balanceOf(account);
-    }
-
-    /**
-     * @notice Total supply which is counted for distributions
-     * It only represents already distributed tokens
-     * @dev This function should be overloaded to exclude tokens locked in loans
-     */
-    function distributionTotalSupply() internal view returns(uint256){
-        return totalSupply();
     }
 
     /**
