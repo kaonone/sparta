@@ -597,6 +597,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         // Partial repayment
         await time.increase(w3random.interval(30*24*60*60, 60*24*60*60));
+        let blockNum2 = await web3.eth.getBlockNumber();
         let requiredPayment = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         let repayLAmount = w3random.intervalBN(debtLAmount.mul(new BN(2)).div(new BN(3)), debtLAmount.mul(new BN(3)).div(new BN(4)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
@@ -638,7 +639,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // Withdraw
         let distributed_s0 = (await pToken.balanceOf(otherAccounts[0])).mul(distributedPTK).div(distributionSupply);
         let lockedInLoanBeforeWithdraw = await funds.pBalanceOf(funds.address);
-        let blockNum2 = await web3.eth.getBlockNumber();
         let ptkTotalSupply = await pToken.totalSupply();
         receipt = await loanm.withdrawUnlockedPledge(borrower, debtIdx, {from: otherAccounts[0]});
         expect(await pToken.totalSupply()).to.be.bignumber.equal(ptkTotalSupply);
