@@ -1218,6 +1218,13 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  distributionBalanceOf(
+    account: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  distributionTotalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface ERC20Instance extends Truffle.ContractInstance {
@@ -5743,6 +5750,13 @@ export interface PTokenInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  distributionBalanceOf(
+    account: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  distributionTotalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface TestSQRTInstance extends Truffle.ContractInstance {

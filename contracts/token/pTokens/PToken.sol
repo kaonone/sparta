@@ -60,7 +60,7 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
     /**
      * @dev Overrides DistributionToken.distributionBalanceOf() to handle FundsModule
      */
-    function distributionBalanceOf(address account) internal view returns(uint256) {
+    function distributionBalanceOf(address account) public view returns(uint256) {
         IFundsModule funds = fundsModule();
         if (account == address(funds)) {
             return 0; //FundsModule itself does not receive distributions
@@ -69,7 +69,7 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
         return super.distributionBalanceOf(account).add(fundsBalance);
     }
 
-    function distributionTotalSupply() internal view returns(uint256){
+    function distributionTotalSupply() public view returns(uint256){
         IFundsModule funds = fundsModule();
         uint256 fullSupply = super.distributionTotalSupply();
         uint256 locked = funds.pBalanceOf(address(funds));

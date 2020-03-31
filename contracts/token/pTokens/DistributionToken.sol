@@ -104,6 +104,24 @@ contract DistributionToken is ERC20, ERC20Mintable {
         return distributions.length;
     }
 
+    /**
+     * @notice Balance of account, which is counted for distributions
+     * It only represents already distributed balance.
+     * @dev This function should be overloaded to include balance of tokens stored in proposals
+     */
+    function distributionBalanceOf(address account) public view returns(uint256) {
+        return balanceOf(account);
+    }
+
+    /**
+     * @notice Total supply which is counted for distributions
+     * It only represents already distributed tokens
+     * @dev This function should be overloaded to exclude tokens locked in loans
+     */
+    function distributionTotalSupply() public view returns(uint256){
+        return totalSupply();
+    }
+
     // Override functions that change user balance
     function _transfer(address sender, address recipient, uint256 amount) internal {
         _createDistributionIfReady();
@@ -156,24 +174,6 @@ contract DistributionToken is ERC20, ERC20Mintable {
         // Clear data for next distribution
         distributionAccumulator = 0;
         nextDistributionTimestamp = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
-    }
-
-    /**
-     * @notice Balance of account, which is counted for distributions
-     * It only represents already distributed balance.
-     * @dev This function should be overloaded to include balance of tokens stored in proposals
-     */
-    function distributionBalanceOf(address account) internal view returns(uint256) {
-        return balanceOf(account);
-    }
-
-    /**
-     * @notice Total supply which is counted for distributions
-     * It only represents already distributed tokens
-     * @dev This function should be overloaded to exclude tokens locked in loans
-     */
-    function distributionTotalSupply() internal view returns(uint256){
-        return totalSupply();
     }
 
     /**
