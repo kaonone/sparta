@@ -150,8 +150,8 @@ contract DistributionToken is ERC20, ERC20Mintable {
         uint256 fromDistribution = nextDistributions[account];
         if (fromDistribution >= toDistribution) return 0;
         uint256 distributionAmount = calculateClaimAmount(account, toDistribution);
-        if (distributionAmount == 0) return 0;
         nextDistributions[account] = toDistribution;
+        if (distributionAmount == 0) return 0;
         super._transfer(address(this), account, distributionAmount);
         emit DistributionsClaimed(account, distributionAmount, fromDistribution, toDistribution);
         return distributionAmount;
