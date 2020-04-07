@@ -150,6 +150,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
         require(lToken().transfer(to, amount), "FundsModule: refund failed");
     }
 
+    function emitStatusEvent() public onlyFundsOperator {
+        emitStatus();
+    }
+
     /**
      * @return Amount of pTokens locked in FundsModule by account
      */

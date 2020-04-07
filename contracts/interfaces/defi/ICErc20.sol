@@ -9,7 +9,17 @@ pragma solidity ^0.5.12;
  */
 contract ICErc20 { 
 
-     /*** User Interface ***/
+
+    /*** User Interface of CTokenInterface ***/
+
+    function transfer(address dst, uint amount) external returns (bool);
+    function transferFrom(address src, address dst, uint amount) external returns (bool);
+    function approve(address spender, uint amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint);
+    function balanceOf(address owner) external view returns (uint);
+    function balanceOfUnderlying(address owner) external returns (uint);
+
+     /*** User Interface of CErc20Interface ***/
 
     function mint(uint mintAmount) external returns (uint);
     function redeem(uint redeemTokens) external returns (uint);

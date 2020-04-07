@@ -446,6 +446,7 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().burnLockedPTokens(pLocked.add(pExtra));
         decreaseActiveDebts(borrower);
+        fundsModule().emitStatusEvent();    // lDebts changes, so we need to emit status, and there was no depositLTokens/withdrawLTokens to do it for us
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 
