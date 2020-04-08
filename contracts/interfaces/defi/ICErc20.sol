@@ -18,15 +18,12 @@ contract ICErc20 {
     function allowance(address owner, address spender) external view returns (uint);
     function balanceOf(address owner) external view returns (uint);
     function balanceOfUnderlying(address owner) external returns (uint);
+    function exchangeRateCurrent() public returns (uint);
 
      /*** User Interface of CErc20Interface ***/
 
     function mint(uint mintAmount) external returns (uint);
     function redeem(uint redeemTokens) external returns (uint);
     function redeemUnderlying(uint redeemAmount) external returns (uint);
-    function borrow(uint borrowAmount) external returns (uint);
-    function repayBorrow(uint repayAmount) external returns (uint);
-    function repayBorrowBehalf(address borrower, uint repayAmount) external returns (uint);
-    function liquidateBorrow(address borrower, uint repayAmount, address /*CTokenInterface*/ cTokenCollateral) external returns (uint);
 
 }
