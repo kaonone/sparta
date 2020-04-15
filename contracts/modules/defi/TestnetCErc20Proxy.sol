@@ -19,6 +19,7 @@ contract TestnetCErc20Proxy is Base {
         testnetDAI = ITestnetCompoundDAI(_testnetDAI);
     }
 
+    // === Modified proxied functions ===
     function mint(uint256 mintAmount) public returns (uint256) {
         uint256 balanceBefore;
         uint256 transfered;
@@ -45,14 +46,14 @@ contract TestnetCErc20Proxy is Base {
         require(cDAI.transfer(_msgSender(), transfered), "TestnetCErc20Proxy: failed to transfer minted cDAI");
     }
 
-    function redeemUnderlying(uint256 redeemTokens) external returns (uint256) {
+    function redeem(uint256 redeemTokens) external returns (uint256) {
         // Transfer cDAI to proxy
         cDAI.transferFrom(_msgSender(), address(this), redeemTokens);
 
         // Execute exchange
         cDAI.approve(address(cDAI), redeemTokens);
         uint256 balanceBefore = testnetDAI.balanceOf(address(this));
-        cDAI.redeemUnderlying(redeemAmount);
+        cDAI.redeem(redeemTokens);
         uint256 transfered = testnetDAI.balanceOf(address(this)).sub(balanceBefore);
 
         // Mint AkropolisDAI if required
@@ -89,6 +90,19 @@ contract TestnetCErc20Proxy is Base {
         akropolisDAI.transfer(_msgSender(), transfered);
     }
 
+
+    // === Directly proxied functions ===
+    function balanceOf(address owner) external view returns (uint){
+        return cDAI.balanceOf(owner);
+    }
+    function balanceOfUnderlying(address owner) external returns (uint) {
+        return cDAI.balanceOfUnderlying(owner);
+    }
+    function exchangeRateCurrent() public returns (uint) {
+        return cDAI.exchangeRateCurrent();
+    }
+
+    // === Math ===
 
     /**
      * @dev Divide a scalar by an Exp mantissa, then truncate to return an unsigned integer.

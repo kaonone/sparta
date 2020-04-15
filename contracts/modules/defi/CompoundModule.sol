@@ -1,10 +1,22 @@
 pragma solidity ^0.5.12;
 
-import "../../common/Module.sol";
+import "./DefiModuleBase.sol";
 
-contract CompoundModule is Module {
+contract CompoundModule is DefiModuleBase {
 
     function initialize(address _pool) public initializer {
-        Module.initialize(_pool);
+        DefiModuleBase.initialize(_pool);
+    }
+
+    function depositInternal(uint256 amount) internal {
+    }
+
+    function withdrawInternal(uint256 amount) internal {
+    }
+
+    function balanceOfDAI() internal view returns(uint256) {
+    }
+
+    function totalSupplyOfPTK() internal view returns(uint256) {
     }
 }
