@@ -28,9 +28,8 @@ contract DefiModuleBase is Module, DefiOperatorRole {
 
     Distribution[] public distributions;                    // Array of all distributions
     mapping(address => InvestmentBalance) public balances;  // Map account to first distribution not yet processed
-    int256 saldoSinceLastDistribution;                      // Amount DAI (deposited-withdrawn) since last distribution;
-
-
+    uint256 depositsSinceLastDistribution;                  // Amount DAI deposited since last distribution;
+    uint256 withdrawalsSinceLastDistribution;               // Amount DAI withdrawn since last distribution;
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -40,11 +39,11 @@ contract DefiModuleBase is Module, DefiOperatorRole {
 
     // == Public functions
     function deposit(uint256 amount) public onlyDefiOperator {
-        saldoSinceLastDistribution += int256(amount);
+        depositsSinceLastDistribution = depositsSinceLastDistribution.add(amount);
         depositInternal(amount);
     }
     function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
-        saldoSinceLastDistribution -= int256(amount);
+        withdrawalsSinceLastDistribution = withdrawalsSinceLastDistribution.add(amount);
         withdrawInternal(beneficiary, amount);
     }
     function withdrawInterest() public {
@@ -90,14 +89,24 @@ contract DefiModuleBase is Module, DefiOperatorRole {
     function _createDistribution() internal {
         Distribution storage prev = distributions[distributions.length - 1]; //This is safe because _createInitialDistribution called in initialize.
         uint256 currentBalanceOfDAI = poolBalanceOfDAI();
-        int256 distributionAmount = int256(currentBalanceOfDAI) - saldoSinceLastDistribution - int256(prev.balance); //TODO: think of  SafeMath...
-        if(distributionAmount <= 0) return;
+
+        // This calculation expects that, without deposit/withdrawals, DAI balance can only be increased
+        // Such assumption may be wrong if underlying system (Compound) is compromised.
+        // In that case SafeMath will revert transaction and we will have to update our logic.
+        uint256 distributionAmount =
+            currentBalanceOfDAI
+            .add(withdrawalsSinceLastDistribution)
+            .sub(depositsSinceLastDistribution)
+            .sub(prev.balance);
+        if (distributionAmount == 0) return;
+
         distributions.push(Distribution({
             amount:uint256(distributionAmount),
             balance: currentBalanceOfDAI,
             totalPTK: totalSupplyOfPTK()
         }));
-        saldoSinceLastDistribution = 0;
+        depositsSinceLastDistribution = 0;
+        withdrawalsSinceLastDistribution = 0;
     }
 
     function _updateUserBalance(address account, uint256 toDistribution) internal {
