@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "../../interfaces/defi/IDefiModule.sol";
 import "../../common/Module.sol";
 import "./DefiOperatorRole.sol";
 
@@ -9,7 +10,7 @@ import "./DefiOperatorRole.sol";
 * This module should be initialized only *AFTER* PTK module is available and address
 * of DeFi source is set.
 */
-contract DefiModuleBase is Module, DefiOperatorRole {
+contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     using SafeMath for uint256;
 
     event InvestmentDistributionCreated(uint256 amount, uint256 currentBalance, uint256 totalShares);
@@ -72,7 +73,7 @@ contract DefiModuleBase is Module, DefiOperatorRole {
     // == Abstract functions to be defined in realization ==
     function depositInternal(address sender, uint256 amount) internal;
     function withdrawInternal(address beneficiary, uint256 amount) internal;
-    function poolBalanceOfDAI() internal view returns(uint256);
+    function poolBalanceOfDAI() internal /*view*/ returns(uint256); //This is not a view function because cheking cDAI balance may update it
     function totalSupplyOfPTK() internal view returns(uint256);
 
     // == Internal functions of DefiModule

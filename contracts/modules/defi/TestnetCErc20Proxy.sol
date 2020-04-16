@@ -92,10 +92,10 @@ contract TestnetCErc20Proxy is Base {
 
 
     // === Directly proxied functions ===
-    function balanceOf(address owner) external view returns (uint){
+    function balanceOf(address owner) public view returns (uint){
         return cDAI.balanceOf(owner);
     }
-    function balanceOfUnderlying(address owner) external returns (uint) {
+    function balanceOfUnderlying(address owner) public returns (uint) {
         return cDAI.balanceOfUnderlying(owner);
     }
     function exchangeRateCurrent() public returns (uint) {

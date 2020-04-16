@@ -22,14 +22,14 @@ contract CompoundModule is DefiModuleBase {
         cDAI().redeemUnderlying(amount);
         lToken().transfer(beneficiary, amount);
     }
-    function poolBalanceOfDAI() internal view returns(uint256) {
+    function poolBalanceOfDAI() internal returns(uint256) {
         return cDAI().balanceOfUnderlying(address(this));
     }
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
     }
 
-    function cDAI() private returns(TestnetCErc20Proxy){
+    function cDAI() private view returns(TestnetCErc20Proxy){
         return TestnetCErc20Proxy(getModuleAddress(MODULE_CDAI));
     }
 

@@ -18,7 +18,7 @@ contract ICErc20 {
     function allowance(address owner, address spender) external view returns (uint);
     function balanceOf(address owner) external view returns (uint);
     function balanceOfUnderlying(address owner) external returns (uint);
-    function exchangeRateCurrent() public returns (uint);
+    function exchangeRateCurrent() external returns (uint);
 
      /*** User Interface of CErc20Interface ***/
 
