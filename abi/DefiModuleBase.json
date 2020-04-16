@@ -316,41 +316,6 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "claimDistributions",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "deposit",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "constant": true,
     "inputs": [
       {
@@ -518,19 +483,43 @@
   },
   {
     "constant": false,
+    "inputs": [],
+    "name": "initialize",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
-        "name": "account",
+        "name": "_pool",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "sender",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "ptkBalance",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "updatePTKBalance",
+    "name": "deposit",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -567,8 +556,14 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "initialize",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "claimDistributions",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -579,11 +574,16 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_pool",
+        "name": "account",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "ptkBalance",
+        "type": "uint256"
       }
     ],
-    "name": "initialize",
+    "name": "updatePTKBalance",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

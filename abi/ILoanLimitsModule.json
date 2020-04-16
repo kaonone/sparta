@@ -1,13 +1,54 @@
 [
   {
     "constant": true,
-    "inputs": [],
-    "name": "MODULE_ACCESS",
+    "inputs": [
+      {
+        "internalType": "enum ILoanLimitsModule.LoanLimitType",
+        "name": "limit",
+        "type": "uint8"
+      }
+    ],
+    "name": "get",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "enum ILoanLimitsModule.LoanLimitType",
+        "name": "limit",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "set",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "lDebtAmountMin",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -17,12 +58,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_CDAI",
+    "name": "debtInterestMin",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -32,12 +73,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_CURVE",
+    "name": "pledgePercentMin",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -47,12 +88,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_DEFI",
+    "name": "lMinPledgeMax",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -62,12 +103,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_FUNDS",
+    "name": "debtLoadMax",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -77,12 +118,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_LIQUIDITY",
+    "name": "maxOpenProposalsPerUser",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -92,57 +133,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_LOAN",
+    "name": "minCancelProposalTimeout",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LOAN_LIMTS",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LTOKEN",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_PTOKEN",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "payable": false,
