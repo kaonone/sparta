@@ -12,8 +12,8 @@ import "./DefiOperatorRole.sol";
 contract DefiModuleBase is Module, DefiOperatorRole {
     using SafeMath for uint256;
 
-    event InvestmentDistributionCreated(uint256 amount, uint256 totalShares);
-    event InvestmentDistributionsClaimed(address account, uint256 amount, uint256 fromDistribution, uint256 toDistribution);
+    event InvestmentDistributionCreated(uint256 amount, uint256 currentBalance, uint256 totalShares);
+    event InvestmentDistributionsClaimed(address account, uint256 shares, uint256 amount, uint256 fromDistribution, uint256 toDistribution);
 
     struct Distribution {
         uint256 amount;         // Amount of DAI being distributed during the event
@@ -38,9 +38,9 @@ contract DefiModuleBase is Module, DefiOperatorRole {
     }
 
     // == Public functions
-    function deposit(uint256 amount) public onlyDefiOperator {
+    function deposit(address sender, uint256 amount) public onlyDefiOperator {
         depositsSinceLastDistribution = depositsSinceLastDistribution.add(amount);
-        depositInternal(amount);
+        depositInternal(sender, amount);
     }
     function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
         withdrawalsSinceLastDistribution = withdrawalsSinceLastDistribution.add(amount);
@@ -70,7 +70,7 @@ contract DefiModuleBase is Module, DefiOperatorRole {
     }
 
     // == Abstract functions to be defined in realization ==
-    function depositInternal(uint256 amount) internal;
+    function depositInternal(address sender, uint256 amount) internal;
     function withdrawInternal(address beneficiary, uint256 amount) internal;
     function poolBalanceOfDAI() internal view returns(uint256);
     function totalSupplyOfPTK() internal view returns(uint256);
@@ -89,6 +89,7 @@ contract DefiModuleBase is Module, DefiOperatorRole {
     function _createDistribution() internal {
         Distribution storage prev = distributions[distributions.length - 1]; //This is safe because _createInitialDistribution called in initialize.
         uint256 currentBalanceOfDAI = poolBalanceOfDAI();
+        uint256 totalPTK = totalSupplyOfPTK();
 
         // This calculation expects that, without deposit/withdrawals, DAI balance can only be increased
         // Such assumption may be wrong if underlying system (Compound) is compromised.
@@ -101,18 +102,21 @@ contract DefiModuleBase is Module, DefiOperatorRole {
         if (distributionAmount == 0) return;
 
         distributions.push(Distribution({
-            amount:uint256(distributionAmount),
+            amount:distributionAmount,
             balance: currentBalanceOfDAI,
-            totalPTK: totalSupplyOfPTK()
+            totalPTK: totalPTK
         }));
         depositsSinceLastDistribution = 0;
         withdrawalsSinceLastDistribution = 0;
+        emit InvestmentDistributionCreated(distributionAmount, currentBalanceOfDAI, totalPTK);
     }
 
     function _updateUserBalance(address account, uint256 toDistribution) internal {
         InvestmentBalance storage ib = balances[account];
-        uint256 interest = _calculateDistributedAmount(ib.nextDistribution, toDistribution, ib.ptkBalance);
-        ib.availableBalance = ib.availableBalance.add(interest); 
+        uint256 fromDistribution = ib.nextDistribution;
+        uint256 interest = _calculateDistributedAmount(fromDistribution, toDistribution, ib.ptkBalance);
+        ib.availableBalance = ib.availableBalance.add(interest);
+        emit InvestmentDistributionsClaimed(account, ib.ptkBalance, interest, fromDistribution, toDistribution);
     }
 
     function _calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 ptkBalance) internal view returns(uint256) {
