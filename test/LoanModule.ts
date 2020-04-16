@@ -5,6 +5,7 @@ import {
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleContract, LoanModuleInstance,
     CurveModuleContract, CurveModuleInstance,
+    DefiModuleStubContract, DefiModuleStubInstance,
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
@@ -26,6 +27,7 @@ const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModule = artifacts.require("LoanModule");
 const CurveModule = artifacts.require("CurveModule");
+const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
@@ -41,6 +43,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
+    let defi: DefiModuleStubInstance; 
 
     let withdrawFeePercent:BN, percentDivider:BN;
 
@@ -56,6 +59,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
+
+        defi = await DefiModuleStub.new();
+        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("defi", defi.address, true, {from: owner});  
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
@@ -98,17 +105,17 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-        let currentLimits = await loanm.limits();
-        await loanm.setLimits(
-            currentLimits[0],
-            currentLimits[1],
-            currentLimits[2],
-            currentLimits[3],
-            currentLimits[4],
-            3,
-            currentLimits[6],
-            {from: owner}
-        );
+        // let currentLimits = await loanm.limits();
+        // await loanm.setLimits(
+        //     currentLimits[0],
+        //     currentLimits[1],
+        //     currentLimits[2],
+        //     currentLimits[3],
+        //     currentLimits[4],
+        //     3,
+        //     currentLimits[6],
+        //     {from: owner}
+        // );
 
 
         for(let i=0; i < 3; i++){
@@ -131,17 +138,17 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should respect a limit of open debt proposals per user', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
-        let currentLimits = await loanm.limits();
-        await loanm.setLimits(
-            currentLimits[0],
-            currentLimits[1],
-            currentLimits[2],
-            currentLimits[3],
-            currentLimits[4],
-            1,
-            currentLimits[6],
-            {from: owner}
-        );
+        // let currentLimits = await loanm.limits();
+        // await loanm.setLimits(
+        //     currentLimits[0],
+        //     currentLimits[1],
+        //     currentLimits[2],
+        //     currentLimits[3],
+        //     currentLimits[4],
+        //     1,
+        //     currentLimits[6],
+        //     {from: owner}
+        // );
 
         //First proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');

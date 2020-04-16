@@ -16,6 +16,11 @@ declare global {
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
+      require(name: "DefiModuleBase"): TruffleContracts.DefiModuleBaseContract;
+      require(name: "DefiModuleStub"): TruffleContracts.DefiModuleStubContract;
+      require(
+        name: "DefiOperatorRole"
+      ): TruffleContracts.DefiOperatorRoleContract;
       require(
         name: "DistributionToken"
       ): TruffleContracts.DistributionTokenContract;
@@ -34,6 +39,7 @@ declare global {
       require(name: "IAccessModule"): TruffleContracts.IAccessModuleContract;
       require(name: "ICErc20"): TruffleContracts.ICErc20Contract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
+      require(name: "IDefiModule"): TruffleContracts.IDefiModuleContract;
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
       require(
