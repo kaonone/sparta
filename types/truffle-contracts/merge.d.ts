@@ -44,6 +44,9 @@ declare global {
       require(
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;
+      require(
+        name: "ILoanLimitsModule"
+      ): TruffleContracts.ILoanLimitsModuleContract;
       require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(

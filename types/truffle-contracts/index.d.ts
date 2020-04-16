@@ -133,6 +133,11 @@ export interface ILiquidityModuleContract
   "new"(meta?: Truffle.TransactionDetails): Promise<ILiquidityModuleInstance>;
 }
 
+export interface ILoanLimitsModuleContract
+  extends Truffle.Contract<ILoanLimitsModuleInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<ILoanLimitsModuleInstance>;
+}
+
 export interface ILoanModuleContract
   extends Truffle.Contract<ILoanModuleInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<ILoanModuleInstance>;
@@ -4356,6 +4361,50 @@ export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+}
+
+export interface ILoanLimitsModuleInstance extends Truffle.ContractInstance {
+  get(
+    limit: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
+  set: {
+    (
+      limit: number | BN | string,
+      value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      limit: number | BN | string,
+      value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      limit: number | BN | string,
+      value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      limit: number | BN | string,
+      value: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  debtInterestMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  pledgePercentMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  lMinPledgeMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  debtLoadMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  maxOpenProposalsPerUser(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  minCancelProposalTimeout(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface ILoanModuleInstance extends Truffle.ContractInstance {

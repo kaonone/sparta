@@ -5,6 +5,7 @@ import {
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
+    DefiModuleStubContract, DefiModuleStubInstance,
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
@@ -24,6 +25,7 @@ const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
+const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
@@ -37,6 +39,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
+    let defi: DefiModuleStubInstance; 
 
     before(async () => {
         //Setup system contracts
@@ -50,6 +53,10 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
+
+        defi = await DefiModuleStub.new();
+        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("defi", defi.address, true, {from: owner});  
 
         access = await AccessModule.new();
         await (<any> access).methods['initialize(address)'](pool.address, {from: owner});
