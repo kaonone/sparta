@@ -7,9 +7,9 @@ import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
+import "../../interfaces/curve/ILoanLimitsModule.sol";
 import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
-import "./LoanLimitsModule.sol";
 
 contract LoanModule is Module, ILoanModule {
     using SafeMath for uint256;
@@ -731,8 +731,8 @@ contract LoanModule is Module, ILoanModule {
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }
 
-    function limits() internal view returns(LoanLimitsModule) {
-        return LoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
+    function limits() internal view returns(ILoanLimitsModule) {
+        return ILoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
     }
 
     function increaseActiveDebts(address borrower) private {
