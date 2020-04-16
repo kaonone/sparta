@@ -98,17 +98,17 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-        let currentLimits = await loanm.limits();
-        await loanm.setLimits(
-            currentLimits[0],
-            currentLimits[1],
-            currentLimits[2],
-            currentLimits[3],
-            currentLimits[4],
-            3,
-            currentLimits[6],
-            {from: owner}
-        );
+        // let currentLimits = await loanm.limits();
+        // await loanm.setLimits(
+        //     currentLimits[0],
+        //     currentLimits[1],
+        //     currentLimits[2],
+        //     currentLimits[3],
+        //     currentLimits[4],
+        //     3,
+        //     currentLimits[6],
+        //     {from: owner}
+        // );
 
 
         for(let i=0; i < 3; i++){
@@ -131,17 +131,17 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should respect a limit of open debt proposals per user', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
-        let currentLimits = await loanm.limits();
-        await loanm.setLimits(
-            currentLimits[0],
-            currentLimits[1],
-            currentLimits[2],
-            currentLimits[3],
-            currentLimits[4],
-            1,
-            currentLimits[6],
-            {from: owner}
-        );
+        // let currentLimits = await loanm.limits();
+        // await loanm.setLimits(
+        //     currentLimits[0],
+        //     currentLimits[1],
+        //     currentLimits[2],
+        //     currentLimits[3],
+        //     currentLimits[4],
+        //     1,
+        //     currentLimits[6],
+        //     {from: owner}
+        // );
 
         //First proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');

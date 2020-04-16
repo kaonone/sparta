@@ -9,6 +9,7 @@ import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
+import "./LoanLimitsModule.sol";
 
 contract LoanModule is Module, ILoanModule {
     using SafeMath for uint256;
@@ -53,22 +54,11 @@ contract LoanModule is Module, ILoanModule {
         bool defaultExecuted;       // If debt default is already executed by executeDebtDefault()
     }
 
-    struct LoanLimits {
-        uint256 lDebtAmountMin;     // Minimal amount of proposed credit (DebtProposal.lAmount)
-        uint256 debtInterestMin;    // Minimal value of debt interest
-        uint256 pledgePercentMin;   // Minimal pledge as percent of credit collateral amount. Value is divided to PLEDGE_PERCENT_MULTIPLIER for calculations
-        uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
-        uint256 debtLoadMax;        // Maximal ratio LoanModule.lDebts/(FundsModule.lBalance+LoanModule.lDebts)<=debtLoadMax; multiplied to DEBT_LOAD_MULTIPLIER
-        uint256 maxOpenProposalsPerUser;  // How many open proposals are allowed for user
-        uint256 minCancelProposalTimeout; // Minimal time (seconds) before a proposal can be cancelled
-    }
-
     mapping(address=>DebtProposal[]) public debtProposals;
     mapping(address=>Debt[]) public debts;                 
 
     uint256 private lDebts;
     uint256 private lProposals;
-    LoanLimits public limits;
 
     mapping(address=>uint256) public openProposals;         // Counts how many open proposals the address has 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
@@ -81,15 +71,6 @@ contract LoanModule is Module, ILoanModule {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        setLimits(
-            100*10**18,                         // 100 DAI min credit
-            INTEREST_MULTIPLIER*10/100,         // 10% min interest
-            PLEDGE_PERCENT_MULTIPLIER*10/100,   // 10% min pledge 
-            500*10**18,                         // 500 DAI max minimal pledge
-            DEBT_LOAD_MULTIPLIER*50/100,        // 50% max debt load
-            1,                                  // 1 open proposal per user
-            7*24*60*60                          // 7-day timeout before cancelling proposal
-        );
     }
 
     /**
@@ -102,9 +83,9 @@ contract LoanModule is Module, ILoanModule {
      */
     function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) 
     public operationAllowed(IAccessModule.Operation.CreateDebtProposal) returns(uint256) {
-        require(debtLAmount >= limits.lDebtAmountMin, "LoanModule: debtLAmount should be >= lDebtAmountMin");
-        require(interest >= limits.debtInterestMin, "LoanModule: interest should be >= debtInterestMin");
-        require(openProposals[_msgSender()] < limits.maxOpenProposalsPerUser, "LoanModule: borrower has too many open proposals");
+        require(debtLAmount >= limits().lDebtAmountMin(), "LoanModule: debtLAmount should be >= lDebtAmountMin");
+        require(interest >= limits().debtInterestMin(), "LoanModule: interest should be >= debtInterestMin");
+        require(openProposals[_msgSender()] < limits().maxOpenProposalsPerUser(), "LoanModule: borrower has too many open proposals");
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
         uint256 cpAmount = calculatePoolExit(clAmount);
@@ -226,7 +207,7 @@ contract LoanModule is Module, ILoanModule {
     function cancelDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.CancelDebtProposal) {
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(now.sub(p.created) > limits.minCancelProposalTimeout, "LoanModule: proposal can not be canceled now");
+        require(now.sub(p.created) > limits().minCancelProposalTimeout(), "LoanModule: proposal can not be canceled now");
         require(!p.executed, "LoanModule: DebtProposal is already executed");
         for (uint256 i=0; i < p.supporters.length; i++){
             address supporter = p.supporters[i];                //first supporter is borrower himself
@@ -242,7 +223,7 @@ contract LoanModule is Module, ILoanModule {
         p.descriptionHash = 0;
         p.pCollected = 0;   
         p.lCovered = 0;
-        decreaseOpenProposals(_msgSender());
+        // decreaseOpenProposals(_msgSender());
         emit DebtProposalCanceled(_msgSender(), proposal);
     }
 
@@ -274,7 +255,7 @@ contract LoanModule is Module, ILoanModule {
         lDebts = lDebts.add(p.lAmount);
 
         //uint256 debtLoad = DEBT_LOAD_MULTIPLIER.mul(lDebts).div(fundsModule().lBalance().add(lDebts.sub(p.lAmount)));
-        uint256 maxDebts = limits.debtLoadMax.mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
+        uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
         require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
 
         //Move locked pTokens to Funds
@@ -285,7 +266,7 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().lockPTokens(p.supporters, amounts);
 
-        decreaseOpenProposals(_msgSender());
+        // decreaseOpenProposals(_msgSender());
         increaseActiveDebts(_msgSender());
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
@@ -485,25 +466,6 @@ contract LoanModule is Module, ILoanModule {
         emit UnlockedPledgeWithdraw(_msgSender(), borrower, dbt.proposal, debt, pAmount);
     }
 
-    function setLimits(
-        uint256 lDebtAmountMin, 
-        uint256 debtInterestMin, 
-        uint256 pledgePercentMin, 
-        uint256 lMinPledgeMax,
-        uint256 debtLoadMax,
-        uint256 maxOpenProposalsPerUser,
-        uint256 minCancelProposalTimeout
-    ) public onlyOwner {
-        require(lDebtAmountMin > 0, "LoanModule: lDebtAmountMin should be > 0");
-        limits.lDebtAmountMin = lDebtAmountMin;
-        limits.debtInterestMin = debtInterestMin;
-        limits.pledgePercentMin = pledgePercentMin;
-        limits.lMinPledgeMax = lMinPledgeMax;
-        limits.debtLoadMax = debtLoadMax;
-        limits.maxOpenProposalsPerUser = maxOpenProposalsPerUser;
-        limits.minCancelProposalTimeout = minCancelProposalTimeout;
-    }
-
     /**
      * @notice This function is only used for testing purpuses (test liquidations)
      * @dev SHOULD BE DELETED BEFORE MAINNET RELEASE
@@ -615,8 +577,9 @@ contract LoanModule is Module, ILoanModule {
         uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         maxLPledge = fullCollateralLAmount.sub(p.lCovered);
 
-        minLPledge = limits.pledgePercentMin.mul(fullCollateralLAmount).div(PLEDGE_PERCENT_MULTIPLIER);
-        if (minLPledge > limits.lMinPledgeMax) minLPledge = limits.lMinPledgeMax;
+        minLPledge = limits().pledgePercentMin().mul(fullCollateralLAmount).div(PLEDGE_PERCENT_MULTIPLIER);
+        uint256 lMinPledgeMax = limits().lMinPledgeMax();
+        if (minLPledge > lMinPledgeMax) minLPledge = lMinPledgeMax;
         if (minLPledge > maxLPledge) minLPledge = maxLPledge;
     }
 
@@ -765,6 +728,10 @@ contract LoanModule is Module, ILoanModule {
 
     function pToken() internal view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));
+    }
+
+    function limits() internal view returns(LoanLimitsModule) {
+        return LoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
     }
 
     function increaseActiveDebts(address borrower) private {
