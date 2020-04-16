@@ -1,22 +1,15 @@
 pragma solidity ^0.5.12;
 
-contract LoanLimitsModule is Module {
+import "../../common/Module.sol";
+import "../../interfaces/curve/ILoanLimitsModule.sol";
+
+contract LoanLimitsModule is Module, ILoanLimitsModule{
     // This constants are copied from LoanModule   
     uint256 public constant INTEREST_MULTIPLIER = 10**3;
     uint256 public constant PLEDGE_PERCENT_MULTIPLIER = 10**3;
     uint256 public constant DEBT_LOAD_MULTIPLIER = 10**3;
 
 
-    // List of limit types. See LoanLimits struct for descriptions
-    enum LoanLimitType {
-        L_DEBT_AMOUNT_MIN,
-        DEBT_INTEREST_MIN,
-        PLEDGE_PERCENT_MIN,
-        L_MIN_PLEDGE_MAX,    
-        DEBT_LOAD_MAX,       
-        MAX_OPEN_PROPOSALS_PERUSER,
-        MIN_CANCEL_PROPOSAL_TIMEOUT
-    }
 
     // struct LoanLimits {
     //     uint256 lDebtAmountMin;     // Minimal amount of proposed credit (DebtProposal.lAmount)
