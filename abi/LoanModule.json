@@ -606,6 +606,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "created",
+        "type": "uint256"
+      },
+      {
         "internalType": "bool",
         "name": "executed",
         "type": "bool"
@@ -725,6 +730,37 @@
       {
         "internalType": "uint256",
         "name": "debtLoadMax",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxOpenProposalsPerUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minCancelProposalTimeout",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "openProposals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -1078,6 +1114,16 @@
       {
         "internalType": "uint256",
         "name": "debtLoadMax",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxOpenProposalsPerUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minCancelProposalTimeout",
         "type": "uint256"
       }
     ],

@@ -40,6 +40,7 @@ contract LoanModule is Module, ILoanModule {
         address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
         uint256 lCovered;           //Amount of liquid tokens, covered by pledges
         uint256 pCollected;         //How many pTokens were locked for this proposal
+        uint256 created;            //Timestamp when proposal was created 
         bool executed;              //If Debt is created for this proposal
     }
 
@@ -58,6 +59,8 @@ contract LoanModule is Module, ILoanModule {
         uint256 pledgePercentMin;   // Minimal pledge as percent of credit collateral amount. Value is divided to PLEDGE_PERCENT_MULTIPLIER for calculations
         uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
         uint256 debtLoadMax;        // Maximal ratio LoanModule.lDebts/(FundsModule.lBalance+LoanModule.lDebts)<=debtLoadMax; multiplied to DEBT_LOAD_MULTIPLIER
+        uint256 maxOpenProposalsPerUser;  // How many open proposals are allowed for user
+        uint256 minCancelProposalTimeout; // Minimal time (seconds) before a proposal can be cancelled
     }
 
     mapping(address=>DebtProposal[]) public debtProposals;
@@ -67,6 +70,7 @@ contract LoanModule is Module, ILoanModule {
     uint256 private lProposals;
     LoanLimits public limits;
 
+    mapping(address=>uint256) public openProposals;         // Counts how many open proposals the address has 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
     modifier operationAllowed(IAccessModule.Operation operation) {
@@ -77,8 +81,15 @@ contract LoanModule is Module, ILoanModule {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        //100 DAI min credit, 10% min interest, 10% min pledge, 500 DAI max minimal pledge, 50% max debt load
-        setLimits(100*10**18, INTEREST_MULTIPLIER*10/100, PLEDGE_PERCENT_MULTIPLIER*10/100, 500*10**18, DEBT_LOAD_MULTIPLIER*50/100);
+        setLimits(
+            100*10**18,                         // 100 DAI min credit
+            INTEREST_MULTIPLIER*10/100,         // 10% min interest
+            PLEDGE_PERCENT_MULTIPLIER*10/100,   // 10% min pledge 
+            500*10**18,                         // 500 DAI max minimal pledge
+            DEBT_LOAD_MULTIPLIER*50/100,        // 50% max debt load
+            1,                                  // 1 open proposal per user
+            7*24*60*60                          // 7-day timeout before cancelling proposal
+        );
     }
 
     /**
@@ -93,6 +104,7 @@ contract LoanModule is Module, ILoanModule {
     public operationAllowed(IAccessModule.Operation.CreateDebtProposal) returns(uint256) {
         require(debtLAmount >= limits.lDebtAmountMin, "LoanModule: debtLAmount should be >= lDebtAmountMin");
         require(interest >= limits.debtInterestMin, "LoanModule: interest should be >= debtInterestMin");
+        require(openProposals[_msgSender()] < limits.maxOpenProposalsPerUser, "LoanModule: borrower has too many open proposals");
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
         uint256 cpAmount = calculatePoolExit(clAmount);
@@ -105,9 +117,11 @@ contract LoanModule is Module, ILoanModule {
             supporters: new address[](0),
             lCovered: 0,
             pCollected: 0,
+            created: now,
             executed: false
         }));
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
+        increaseOpenProposals(_msgSender());
         emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
 
         //Add pldege of the creator
@@ -212,6 +226,7 @@ contract LoanModule is Module, ILoanModule {
     function cancelDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.CancelDebtProposal) {
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
         require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(now.sub(p.created) > limits.minCancelProposalTimeout, "LoanModule: proposal can not be canceled now");
         require(!p.executed, "LoanModule: DebtProposal is already executed");
         for (uint256 i=0; i < p.supporters.length; i++){
             address supporter = p.supporters[i];                //first supporter is borrower himself
@@ -226,7 +241,8 @@ contract LoanModule is Module, ILoanModule {
         p.interest = 0;
         p.descriptionHash = 0;
         p.pCollected = 0;   
-        p.lCovered = 0;    
+        p.lCovered = 0;
+        decreaseOpenProposals(_msgSender());
         emit DebtProposalCanceled(_msgSender(), proposal);
     }
 
@@ -269,6 +285,7 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().lockPTokens(p.supporters, amounts);
 
+        decreaseOpenProposals(_msgSender());
         increaseActiveDebts(_msgSender());
         fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
         emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
@@ -473,7 +490,9 @@ contract LoanModule is Module, ILoanModule {
         uint256 debtInterestMin, 
         uint256 pledgePercentMin, 
         uint256 lMinPledgeMax,
-        uint256 debtLoadMax
+        uint256 debtLoadMax,
+        uint256 maxOpenProposalsPerUser,
+        uint256 minCancelProposalTimeout
     ) public onlyOwner {
         require(lDebtAmountMin > 0, "LoanModule: lDebtAmountMin should be > 0");
         limits.lDebtAmountMin = lDebtAmountMin;
@@ -481,6 +500,8 @@ contract LoanModule is Module, ILoanModule {
         limits.pledgePercentMin = pledgePercentMin;
         limits.lMinPledgeMax = lMinPledgeMax;
         limits.debtLoadMax = debtLoadMax;
+        limits.maxOpenProposalsPerUser = maxOpenProposalsPerUser;
+        limits.minCancelProposalTimeout = minCancelProposalTimeout;
     }
 
     /**
@@ -752,6 +773,14 @@ contract LoanModule is Module, ILoanModule {
 
     function decreaseActiveDebts(address borrower) private {
         activeDebts[borrower] = activeDebts[borrower].sub(1);
+    }
+
+    function increaseOpenProposals(address borrower) private {
+        openProposals[borrower] = openProposals[borrower].add(1);
+    }
+
+    function decreaseOpenProposals(address borrower) private {
+        openProposals[borrower] = openProposals[borrower].sub(1);
     }
 
     function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
