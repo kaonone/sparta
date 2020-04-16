@@ -12,7 +12,7 @@ interface ILoanLimitsModule {
         PLEDGE_PERCENT_MIN,
         L_MIN_PLEDGE_MAX,    
         DEBT_LOAD_MAX,       
-        MAX_OPEN_PROPOSALS_PERUSER,
+        MAX_OPEN_PROPOSALS_PER_USER,
         MIN_CANCEL_PROPOSAL_TIMEOUT
     }
 

@@ -56,7 +56,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         PLEDGE_PERCENT_MIN,
         L_MIN_PLEDGE_MAX,    
         DEBT_LOAD_MAX,       
-        MAX_OPEN_PROPOSALS_PERUSER,
+        MAX_OPEN_PROPOSALS_PER_USER,
         MIN_CANCEL_PROPOSAL_TIMEOUT
     }
 
@@ -122,7 +122,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PERUSER, 3);
+        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PER_USER, 3, {from: owner});
 
         for(let i=0; i < 3; i++){
             //Prepare Borrower account
@@ -143,7 +143,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     });
     it('should respect a limit of open debt proposals per user', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PERUSER, 1);
+        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PER_USER, 1, {from: owner});
 
         //First proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');
@@ -179,7 +179,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         await time.increase(minCancelProposalTimeout.addn(1));
         let receipt = await loanm.cancelDebtProposal(0, {from: borrower})
-        expectEvent(receipt, 'DebtProposalCanceled', {'sender':borrower, 'proposal':0});
+        expectEvent(receipt, 'DebtProposalCanceled', {'sender':borrower, 'proposal':'0'});
     });
 
 
@@ -279,6 +279,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     });
     it('should cancel proposal and return all locked ptk', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+        let minCancelProposalTimeout = await loanLimits.minCancelProposalTimeout();
 
         let initialBalances = new Map<string,BN>();
         let lDebtAmount = w3random.interval(100, 200, 'ether');
@@ -320,7 +321,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             pPledge = findEventArgs(receipt, 'PledgeAdded')['pAmount'];
             pLockedTotal = pLockedTotal.add(pPledge);
         }
+
         // Cancel proposal
+        await time.increase(minCancelProposalTimeout.addn(1));
         //console.log('pLockedTotal', pLockedTotal.toString());
         let pFundsBalance = await pToken.balanceOf(funds.address);
         //console.log('funds balance before cancel', pFundsBalance.toString());
