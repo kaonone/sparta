@@ -1,7 +1,5 @@
 pragma solidity ^0.5.12;
 
-import "./LoanModule.sol";
-
 contract LoanLimitsModule is Module {
     // This constants are copied from LoanModule   
     uint256 public constant INTEREST_MULTIPLIER = 10**3;
