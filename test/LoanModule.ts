@@ -98,6 +98,18 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+        let currentLimits = await loanm.limits();
+        await loanm.setLimits(
+            currentLimits[0],
+            currentLimits[1],
+            currentLimits[2],
+            currentLimits[3],
+            currentLimits[4],
+            3,
+            currentLimits[6],
+            {from: owner}
+        );
+
 
         for(let i=0; i < 3; i++){
             //Prepare Borrower account
@@ -116,6 +128,38 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             expect((<any>proposal).executed).to.be.false;                       //executed 
         }            
     });
+    it('should respect a limit of open debt proposals per user', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let currentLimits = await loanm.limits();
+        await loanm.setLimits(
+            currentLimits[0],
+            currentLimits[1],
+            currentLimits[2],
+            currentLimits[3],
+            currentLimits[4],
+            1,
+            currentLimits[6],
+            {from: owner}
+        );
+
+        //First proposal
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.divn(2).addn(1);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
+        await prepareBorrower(pAmountMinWei);
+        await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower});
+
+        //Second proposal
+        await prepareBorrower(pAmountMinWei);
+        await expectRevert(
+            loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower}),
+            "LoanModule: borrower has too many open proposals"
+        );
+    });
+
+
+
     it('should create pledge in debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
