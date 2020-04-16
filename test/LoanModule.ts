@@ -153,9 +153,31 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Second proposal
         await prepareBorrower(pAmountMinWei);
         await expectRevert(
-            loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower}),
+            loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 2'), {from: borrower}),
             "LoanModule: borrower has too many open proposals"
         );
+    });
+    it('should respect a timeout before cancel debt proposal', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        let currentLimits = await loanm.limits();
+
+        //Create proposal
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lcWei = lDebtWei.divn(2).addn(1);
+        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
+        await prepareBorrower(pAmountMinWei);
+        await loanm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower});
+
+        //Try cancel proposal
+        await expectRevert(
+            loanm.cancelDebtProposal(0, {from: borrower}),
+            "LoanModule: proposal can not be canceled now"
+        );
+
+        await time.increase((<any>currentLimits).minCancelProposalTimeout.add(1));
+        let receipt = await loanm.cancelDebtProposal(0, {from: borrower})
+        expectEvent(receipt, 'DebtProposalCanceled', {'sender':borrower, 'proposal':0});
     });
 
 
