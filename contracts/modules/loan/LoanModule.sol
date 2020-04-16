@@ -102,7 +102,7 @@ contract LoanModule is Module, ILoanModule {
             executed: false
         }));
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
-        increaseOpenProposals(_msgSender());
+        //increaseOpenProposals(_msgSender());
         emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
 
         //Add pldege of the creator
@@ -742,13 +742,13 @@ contract LoanModule is Module, ILoanModule {
         activeDebts[borrower] = activeDebts[borrower].sub(1);
     }
 
-    function increaseOpenProposals(address borrower) private {
-        openProposals[borrower] = openProposals[borrower].add(1);
-    }
+    // function increaseOpenProposals(address borrower) private {
+    //     openProposals[borrower] = openProposals[borrower].add(1);
+    // }
 
-    function decreaseOpenProposals(address borrower) private {
-        openProposals[borrower] = openProposals[borrower].sub(1);
-    }
+    // function decreaseOpenProposals(address borrower) private {
+    //     openProposals[borrower] = openProposals[borrower].sub(1);
+    // }
 
     function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
         Debt storage d = debts[borrower][debt];

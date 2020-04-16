@@ -4,6 +4,7 @@ import {
     AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleContract, LoanModuleInstance,
+    LoanLimitsModuleContract, LoanLimitsModuleInstance,
     CurveModuleContract, CurveModuleInstance,
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
@@ -25,6 +26,7 @@ const FundsModule = artifacts.require("FundsModule");
 const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModule = artifacts.require("LoanModule");
+const LoanLimitsModule = artifacts.require("LoanLimitsModule");
 const CurveModule = artifacts.require("CurveModule");
 
 const PToken = artifacts.require("PToken");
@@ -38,11 +40,22 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanm: LoanModuleInstance; 
+    let loanLimits: LoanLimitsModuleInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
 
     let withdrawFeePercent:BN, percentDivider:BN;
+
+    enum LoanLimitType {
+        L_DEBT_AMOUNT_MIN,
+        DEBT_INTEREST_MIN,
+        PLEDGE_PERCENT_MIN,
+        L_MIN_PLEDGE_MAX,    
+        DEBT_LOAD_MAX,       
+        MAX_OPEN_PROPOSALS_PERUSER,
+        MIN_CANCEL_PROPOSAL_TIMEOUT
+    }
 
     before(async () => {
         //Setup system contracts
@@ -69,6 +82,10 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         liqm = await LiquidityModule.new();
         await (<any> liqm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("liquidity", liqm.address, true, {from: owner});  
+
+        loanLimits = await LoanLimitsModule.new();
+        await (<any> loanLimits).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("loan_limits", loanLimits.address, true, {from: owner});  
 
         loanm = await LoanModule.new();
         await (<any> loanm).methods['initialize(address)'](pool.address, {from: owner});
@@ -98,18 +115,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     
     it('should create several debt proposals and take user pTokens', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-        // let currentLimits = await loanm.limits();
-        // await loanm.setLimits(
-        //     currentLimits[0],
-        //     currentLimits[1],
-        //     currentLimits[2],
-        //     currentLimits[3],
-        //     currentLimits[4],
-        //     3,
-        //     currentLimits[6],
-        //     {from: owner}
-        // );
-
+        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PERUSER, 3);
 
         for(let i=0; i < 3; i++){
             //Prepare Borrower account
@@ -130,18 +136,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     });
     it('should respect a limit of open debt proposals per user', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
-
-        // let currentLimits = await loanm.limits();
-        // await loanm.setLimits(
-        //     currentLimits[0],
-        //     currentLimits[1],
-        //     currentLimits[2],
-        //     currentLimits[3],
-        //     currentLimits[4],
-        //     1,
-        //     currentLimits[6],
-        //     {from: owner}
-        // );
+        await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PERUSER, 1);
 
         //First proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');
@@ -160,7 +155,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     it('should respect a timeout before cancel debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
-        let currentLimits = await loanm.limits();
+        let minCancelProposalTimeout = await loanLimits.minCancelProposalTimeout();
 
         //Create proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');
@@ -175,7 +170,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             "LoanModule: proposal can not be canceled now"
         );
 
-        await time.increase((<any>currentLimits).minCancelProposalTimeout.add(1));
+        await time.increase(minCancelProposalTimeout.addn(1));
         let receipt = await loanm.cancelDebtProposal(0, {from: borrower})
         expectEvent(receipt, 'DebtProposalCanceled', {'sender':borrower, 'proposal':0});
     });
