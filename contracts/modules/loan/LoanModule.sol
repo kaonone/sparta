@@ -7,6 +7,7 @@ import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
+import "../../interfaces/curve/ILoanProposalsModule.sol";
 import "../../interfaces/curve/ILoanLimitsModule.sol";
 import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
@@ -27,24 +28,6 @@ contract LoanModule is Module, ILoanModule {
     uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER = 10**3;
     uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/2;
 
-    struct DebtPledge {
-        uint256 senderIndex;  //Index of pledge sender in the array
-        uint256 lAmount;      //Amount of liquid tokens, covered by this pledge
-        uint256 pAmount;      //Amount of pTokens locked for this pledge
-    }
-
-    struct DebtProposal {
-        uint256 lAmount;             //Amount of proposed credit (in liquid token)
-        uint256 interest;            //Annual interest rate multiplied by INTEREST_MULTIPLIER
-        bytes32 descriptionHash;     //Hash of description, description itself is stored on Swarm   
-        mapping(address => DebtPledge) pledges;    //Map of all user pledges (this value will not change after proposal )
-        address[] supporters;       //Array of all supporters, first supporter (with zero index) is borrower himself
-        uint256 lCovered;           //Amount of liquid tokens, covered by pledges
-        uint256 pCollected;         //How many pTokens were locked for this proposal
-        uint256 created;            //Timestamp when proposal was created 
-        bool executed;              //If Debt is created for this proposal
-    }
-
     struct Debt {
         uint256 proposal;           // Index of DebtProposal in adress's proposal list
         uint256 lAmount;            // Current amount of debt (in liquid token). If 0 - debt is fully paid
@@ -54,13 +37,10 @@ contract LoanModule is Module, ILoanModule {
         bool defaultExecuted;       // If debt default is already executed by executeDebtDefault()
     }
 
-    mapping(address=>DebtProposal[]) public debtProposals;
     mapping(address=>Debt[]) public debts;                 
 
     uint256 private lDebts;
-    uint256 private lProposals;
 
-    mapping(address=>uint256) public openProposals;         // Counts how many open proposals the address has 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
     modifier operationAllowed(IAccessModule.Operation operation) {
@@ -74,202 +54,32 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
-     * @notice Create DebtProposal
-     * @param debtLAmount Amount of debt in liquid tokens
-     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
-     * @param pAmountMax Max amount of pTokens to use as collateral
-     * @param descriptionHash Hash of loan description
-     * @return Index of created DebtProposal
-     */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) 
-    public operationAllowed(IAccessModule.Operation.CreateDebtProposal) returns(uint256) {
-        require(debtLAmount >= limits().lDebtAmountMin(), "LoanModule: debtLAmount should be >= lDebtAmountMin");
-        require(interest >= limits().debtInterestMin(), "LoanModule: interest should be >= debtInterestMin");
-        require(openProposals[_msgSender()] < limits().maxOpenProposalsPerUser(), "LoanModule: borrower has too many open proposals");
-        uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
-        uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
-        uint256 cpAmount = calculatePoolExit(clAmount);
-        require(cpAmount <= pAmountMax, "LoanModule: pAmountMax is too low");
-
-        debtProposals[_msgSender()].push(DebtProposal({
-            lAmount: debtLAmount,
-            interest: interest,
-            descriptionHash: descriptionHash,
-            supporters: new address[](0),
-            lCovered: 0,
-            pCollected: 0,
-            created: now,
-            executed: false
-        }));
-        uint256 proposalIndex = debtProposals[_msgSender()].length-1;
-        increaseOpenProposals(_msgSender());
-        emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
-
-        //Add pldege of the creator
-        DebtProposal storage prop = debtProposals[_msgSender()][proposalIndex];
-        prop.supporters.push(_msgSender());
-        prop.pledges[_msgSender()] = DebtPledge({
-            senderIndex: 0,
-            lAmount: clAmount,
-            pAmount: cpAmount
-        });
-        prop.lCovered = prop.lCovered.add(clAmount);
-        prop.pCollected = prop.pCollected.add(cpAmount);
-        lProposals = lProposals.add(clAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
-
-        fundsModule().depositPTokens(_msgSender(), cpAmount);
-        emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, cpAmount);
-        return proposalIndex;
-    }
-
-    /**
-     * @notice Add pledge to DebtProposal
-     * @param borrower Address of borrower
-     * @param proposal Index of borroers's proposal
-     * @param pAmount Amount of pTokens to use as collateral
-     * @param lAmountMin Minimal amount of liquid tokens to cover by this pledge
-     * 
-     * There is a case, when pAmount is too high for this debt, in this case only part of pAmount will be used.
-     * In such edge case we may return less then lAmountMin, but price limit lAmountMin/pAmount will be honored.
-     */
-    function addPledge(address borrower, uint256 proposal, uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.AddPledge) {
-        require(_msgSender() != borrower, "LoanModule: Borrower can not add pledge");
-        DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
-        // p.lCovered/p.pCollected should be the same as original liquidity token to pToken exchange rate
-        (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount); 
-        require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
-        (uint256 minLPledgeAmount, uint256 maxLPledgeAmount)= getPledgeRequirements(borrower, proposal);
-        require(maxLPledgeAmount > 0, "LoanModule: DebtProposal is already funded");
-        require(lAmount >= minLPledgeAmount, "LoanModule: pledge is too low");
-        if (lAmount > maxLPledgeAmount) {
-            uint256 pAmountOld = pAmount;
-            lAmount = maxLPledgeAmount;
-            pAmount = calculatePoolExit(lAmount);
-            assert(pAmount <= pAmountOld); // "<=" is used to handle tiny difference between lAmount and maxLPledgeAmount
-        } 
-        if (p.pledges[_msgSender()].senderIndex == 0) {
-            p.supporters.push(_msgSender());
-            p.pledges[_msgSender()] = DebtPledge({
-                senderIndex: p.supporters.length-1,
-                lAmount: lAmount,
-                pAmount: pAmount
-            });
-        } else {
-            p.pledges[_msgSender()].lAmount = p.pledges[_msgSender()].lAmount.add(lAmount);
-            p.pledges[_msgSender()].pAmount = p.pledges[_msgSender()].pAmount.add(pAmount);
-        }
-        p.lCovered = p.lCovered.add(lAmount);
-        p.pCollected = p.pCollected.add(pAmount);
-        lProposals = lProposals.add(lAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
-        fundsModule().depositPTokens(_msgSender(), pAmount);
-        emit PledgeAdded(_msgSender(), borrower, proposal, lAmount, pAmount);
-    }
-
-    /**
-     * @notice Withdraw pledge from DebtProposal
-     * @param borrower Address of borrower
-     * @param proposal Index of borrowers's proposal
-     * @param pAmount Amount of pTokens to withdraw
-     */
-    function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public operationAllowed(IAccessModule.Operation.WithdrawPledge) {
-        require(_msgSender() != borrower, "LoanModule: Borrower can not withdraw pledge");
-        DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
-        DebtPledge storage pledge = p.pledges[_msgSender()];
-        require(pAmount <= pledge.pAmount, "LoanModule: Can not withdraw more than locked");
-        uint256 lAmount; 
-        if (pAmount == pledge.pAmount) {
-            // User withdraws whole pledge
-            lAmount = pledge.lAmount;
-        } else {
-            // pAmount < pledge.pAmount
-            lAmount = pledge.lAmount.mul(pAmount).div(pledge.pAmount);
-            assert(lAmount < pledge.lAmount);
-        }
-        pledge.pAmount = pledge.pAmount.sub(pAmount);
-        pledge.lAmount = pledge.lAmount.sub(lAmount);
-        p.pCollected = p.pCollected.sub(pAmount);
-        p.lCovered = p.lCovered.sub(lAmount);
-        lProposals = lProposals.sub(lAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
-
-        //Check new min/max pledge AFTER current collateral is adjusted to new values
-        //Pledge left should either be 0 or >= minLPledgeAmount
-        (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
-        require(pledge.lAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
-
-        fundsModule().withdrawPTokens(_msgSender(), pAmount);
-        emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
-    }
-
-    function cancelDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.CancelDebtProposal) {
-        DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(now.sub(p.created) > limits().minCancelProposalTimeout(), "LoanModule: proposal can not be canceled now");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
-        for (uint256 i=0; i < p.supporters.length; i++){
-            address supporter = p.supporters[i];                //first supporter is borrower himself
-            DebtPledge storage pledge = p.pledges[supporter];
-            lProposals = lProposals.sub(pledge.lAmount);
-            fundsModule().withdrawPTokens(supporter, pledge.pAmount);
-            emit PledgeWithdrawn(supporter, _msgSender(), proposal, pledge.lAmount, pledge.pAmount);
-            delete p.pledges[supporter];
-        }
-        delete p.supporters;
-        p.lAmount = 0;      //Mark proposal as deleted
-        p.interest = 0;
-        p.descriptionHash = 0;
-        p.pCollected = 0;   
-        p.lCovered = 0;
-        decreaseOpenProposals(_msgSender());
-        emit DebtProposalCanceled(_msgSender(), proposal);
-    }
-
-    /**
      * @notice Execute DebtProposal
      * @dev Creates Debt using data of DebtProposal
      * @param proposal Index of DebtProposal
      * @return Index of created Debt
      */
-    function executeDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.ExecuteDebtProposal) returns(uint256) {
-        DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(getRequiredPledge(_msgSender(), proposal) == 0, "LoanModule: DebtProposal is not fully funded");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
+    function createDebt(address borrower, uint256 proposal, uint256 lAmount) public returns(uint256) {
+        require(_msgSender() == getModuleAddress(MODULE_LOAN_PROPOSALS), "LoanModule: requests only accepted from LoanProposalsModule");
+        //TODO: check there is no debt for this proposal
         debts[_msgSender()].push(Debt({
             proposal: proposal,
-            lAmount: p.lAmount,
+            lAmount: lAmount,
             lastPayment: now,
             pInterest: 0,
             defaultExecuted: false
         }));
-        // We do not initialize pledges map here to save gas!
-        // Instead we check PledgeAmount.initialized field and do lazy initialization
-        p.executed = true;
         uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
 
-        // NOTE: calculations below expect p.lCovered == p.lAmount. This may be wrong if COLLATERAL_TO_DEBT_RATIO != 1
-        lProposals = lProposals.sub(p.lCovered);
-        lDebts = lDebts.add(p.lAmount);
+        uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts)).div(DEBT_LOAD_MULTIPLIER);
 
-        //uint256 debtLoad = DEBT_LOAD_MULTIPLIER.mul(lDebts).div(fundsModule().lBalance().add(lDebts.sub(p.lAmount)));
-        uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
-        require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
+        lDebts = lDebts.add(lAmount);
+        require(lDebts <= maxDebts, "LoanModule: Debt can not be created now because of debt loan limit");
 
-        //Move locked pTokens to Funds
-        uint256[] memory amounts = new uint256[](p.supporters.length);
-        for (uint256 i=0; i < p.supporters.length; i++) {
-            address supporter = p.supporters[i];
-            amounts[i] = p.pledges[supporter].pAmount;
-        }
-        fundsModule().lockPTokens(p.supporters, amounts);
+        //Move locked pTokens to Funds - done in LoanProposals
 
-        decreaseOpenProposals(_msgSender());
-        increaseActiveDebts(_msgSender());
-        fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
-        emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
+        increaseActiveDebts(borrower);
+        fundsModule().withdrawLTokens(borrower, lAmount);
         return debtIdx;
     }
 
@@ -279,13 +89,15 @@ contract LoanModule is Module, ILoanModule {
      * @param lAmount Amount of liquid tokens to repay (it will not take more than needed for full debt repayment)
      */
     function repay(uint256 debt, uint256 lAmount) public operationAllowed(IAccessModule.Operation.Repay) {
-        Debt storage d = debts[_msgSender()][debt];
+        address borrower = _msgSender();
+        Debt storage d = debts[borrower][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
-        DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
-        uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 pledgeLAmount, /*uint256 pledgePAmount*/)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+
+        uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
 
         uint256 actualInterest;
         if (lAmount < lInterest) {
@@ -306,9 +118,9 @@ contract LoanModule is Module, ILoanModule {
 
         uint256 pInterest = calculatePoolEnter(actualInterest);
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lCovered);
+        uint256 poolInterest = pInterest.mul(pledgeLAmount).div(lCovered);
 
-        fundsModule().depositLTokens(_msgSender(), lAmount); 
+        fundsModule().depositLTokens(borrower, lAmount); 
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
@@ -316,22 +128,24 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
-            decreaseActiveDebts(_msgSender());
-            withdrawUnlockedPledge(_msgSender(), debt);
+            decreaseActiveDebts(borrower);
+            withdrawUnlockedPledge(borrower, debt);
         }
     }
 
     function repayPTK(uint256 debt, uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Repay) {
-        Debt storage d = debts[_msgSender()][debt];
+        address borrower = _msgSender();
+        Debt storage d = debts[borrower][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
-        DebtProposal storage p = debtProposals[_msgSender()][d.proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
 
         (, uint256 lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
 
-        uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
         uint256 actualInterest;
         if (lAmount < lInterest) {
             uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
@@ -355,9 +169,9 @@ contract LoanModule is Module, ILoanModule {
         //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
         uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+        uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
 
-        liquidityModule().withdrawForRepay(_msgSender(), pAmount);
+        liquidityModule().withdrawForRepay(borrower, pAmount);
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
@@ -365,8 +179,8 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
-            decreaseActiveDebts(_msgSender());
-            withdrawUnlockedPledge(_msgSender(), debt);
+            decreaseActiveDebts(borrower);
+            withdrawUnlockedPledge(borrower, debt);
         }
     }
 
@@ -385,8 +199,9 @@ contract LoanModule is Module, ILoanModule {
             // bool isDefaulted = _isDebtDefaultTimeReached(d);
             // if (isUnpaid && !isDefaulted){                      
             if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
-                DebtProposal storage p = debtProposals[borrower][d.proposal];
-                uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
+                = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+                uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
                 totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
                 totalLFee = totalLFee.add(calculateExitFee(lInterest));
 
@@ -395,7 +210,7 @@ contract LoanModule is Module, ILoanModule {
                 //current liquidity already includes totalLFee, which was never actually withdrawn, so we need to remove it here
                 uint256 pInterest = calculatePoolEnter(lInterest, lInterest.add(totalLFee)); 
                 d.pInterest = d.pInterest.add(pInterest);
-                uint256 poolInterest = pInterest.mul(p.pledges[_msgSender()].lAmount).div(p.lAmount);
+                uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
                 totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
 
@@ -425,15 +240,16 @@ contract LoanModule is Module, ILoanModule {
         require(dbt.lAmount > 0, "LoanModule: debt is fully repaid");
         require(!dbt.defaultExecuted, "LoanModule: default is already executed");
         require(_isDebtDefaultTimeReached(dbt), "LoanModule: not enough time passed");
-        DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
-        DebtPledge storage borrowerPledge = proposal.pledges[borrower];
+
+        (uint256 proposalLAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge)
+        = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
 
         withdrawDebtDefaultPayment(borrower, debt);
 
-        uint256 pLockedBorrower = borrowerPledge.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
-        uint256 pUnlockedBorrower = borrowerPledge.pAmount.sub(pLockedBorrower);
-        uint256 pSupportersPledge = proposal.pCollected.sub(borrowerPledge.pAmount);
-        uint256 pLockedSupportersPledge = pSupportersPledge.mul(dbt.lAmount).div(proposal.lAmount);
+        uint256 pLockedBorrower = pPledge.mul(dbt.lAmount).div(proposalLAmount);
+        uint256 pUnlockedBorrower = pPledge.sub(pLockedBorrower);
+        uint256 pSupportersPledge = pCollected.sub(pPledge);
+        uint256 pLockedSupportersPledge = pSupportersPledge.mul(dbt.lAmount).div(proposalLAmount);
         uint256 pLocked = pLockedBorrower.add(pLockedSupportersPledge);
         dbt.defaultExecuted = true;
         lDebts = lDebts.sub(dbt.lAmount);
@@ -503,19 +319,20 @@ contract LoanModule is Module, ILoanModule {
     function calculatePledgeInfo(address borrower, uint256 debt, address supporter) public view
     returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
-        DebtProposal storage proposal = debtProposals[borrower][dbt.proposal];
-        require(proposal.lAmount > 0 && proposal.executed, "LoanModule: DebtProposal not found");
+
+        (uint256 proposalLAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge)
+        = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, supporter);
 
         pWithdrawn = dbt.claimedPledges[supporter];
 
-        DebtPledge storage dp = proposal.pledges[supporter];
+        // DebtPledge storage dp = proposal.pledges[supporter];
 
         if (supporter == borrower) {
             if (dbt.lAmount == 0) {
                 pLocked = 0;
-                pUnlocked = dp.pAmount;
+                pUnlocked = pPledge;
             } else {
-                pLocked = dp.pAmount;
+                pLocked = pPledge;
                 pUnlocked = 0;
                 if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
                     pLocked = 0; 
@@ -523,18 +340,17 @@ contract LoanModule is Module, ILoanModule {
             }
             pInterest = 0;
         }else{
-            uint256 lPledge = dp.lAmount;
-            uint256 pPledge = dp.pAmount;
-            pLocked = pPledge.mul(dbt.lAmount).div(proposal.lAmount);
+            pLocked = pPledge.mul(dbt.lAmount).div(proposalLAmount);
             assert(pLocked <= pPledge);
             pUnlocked = pPledge.sub(pLocked);
-            pInterest = dbt.pInterest.mul(lPledge).div(proposal.lCovered);
+            pInterest = dbt.pInterest.mul(lPledge).div(lCovered);
             assert(pInterest <= dbt.pInterest);
             if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
-                DebtPledge storage dpb = proposal.pledges[borrower];
-                uint256 pLockedBorrower = dpb.pAmount.mul(dbt.lAmount).div(proposal.lAmount);
-                uint256 pUnlockedBorrower = dpb.pAmount.sub(pLockedBorrower);
-                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(proposal.lCovered.sub(dpb.lAmount));
+                // DebtPledge storage dpb = proposal.pledges[borrower];
+                (, , , , uint256 bpledgeLAmount, uint256 bpledgePAmount) = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
+                uint256 pLockedBorrower = bpledgePAmount.mul(dbt.lAmount).div(proposalLAmount);
+                uint256 pUnlockedBorrower = bpledgePAmount.sub(pLockedBorrower);
+                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(lCovered.sub(bpledgeLAmount));
                 if (pCompensation > pLocked) {
                     pCompensation = pLocked;
                 }
@@ -549,41 +365,6 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
-     * @notice Calculates how many tokens are not yet covered by borrower or supporters
-     * @param borrower Borrower address
-     * @param proposal Proposal index
-     * @return amounts of liquid tokens currently required to fully cover proposal
-     */
-    function getRequiredPledge(address borrower, uint256 proposal) public view returns(uint256){
-        DebtProposal storage p = debtProposals[borrower][proposal];
-        if (p.executed) return 0;
-        uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
-        return  fullCollateralLAmount.sub(p.lCovered);
-    }
-
-    /**
-     * @notice Calculates pledge requirements
-     * Max allowed pledge = how many tokens are not yet covered by borrower or supporters.
-     * @param borrower Borrower address
-     * @param proposal Proposal index
-     * @return minimal allowed pledge, maximal allowed pledge
-     */
-    function getPledgeRequirements(address borrower, uint256 proposal) public view returns(uint256 minLPledge, uint256 maxLPledge){
-        // uint256 pledgePercentMin;   // Minimal pledge as percent of credit amount. Value is divided to PLEDGE_PERCENT_MULTIPLIER for calculations
-        // uint256 lMinPledgeMax;      // Maximal value of minimal pledge (in liquid tokens), works together with pledgePercentMin
-
-        DebtProposal storage p = debtProposals[borrower][proposal];
-        if (p.executed) return (0, 0);
-        uint256 fullCollateralLAmount = p.lAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
-        maxLPledge = fullCollateralLAmount.sub(p.lCovered);
-
-        minLPledge = limits().pledgePercentMin().mul(fullCollateralLAmount).div(PLEDGE_PERCENT_MULTIPLIER);
-        uint256 lMinPledgeMax = limits().lMinPledgeMax();
-        if (minLPledge > lMinPledgeMax) minLPledge = lMinPledgeMax;
-        if (minLPledge > maxLPledge) minLPledge = maxLPledge;
-    }
-
-    /**
      * @notice Calculates current pledge state
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
@@ -594,10 +375,10 @@ contract LoanModule is Module, ILoanModule {
         if (d.lAmount == 0) {
             return (0, 0);
         }
-        DebtProposal storage p = debtProposals[borrower][d.proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
 
-        uint256 interest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+        uint256 interestRate = loanProposals().getProposalInterestRate(borrower, d.proposal);
+
+        uint256 interest = calculateInterestPayment(d.lAmount, interestRate, d.lastPayment, now);
         return (d.lAmount, interest);
     }
 
@@ -625,8 +406,8 @@ contract LoanModule is Module, ILoanModule {
             bool isUnpaid = (d.lAmount != 0);
             bool isDefaulted = _isDebtDefaultTimeReached(d);
             if (isUnpaid && !isDefaulted){
-                DebtProposal storage p = debtProposals[borrower][d.proposal];
-                uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+                uint256 interestRate = loanProposals().getProposalInterestRate(borrower, d.proposal);
+                uint256 lInterest = calculateInterestPayment(d.lAmount, interestRate, d.lastPayment, now);
                 uint256 lInterestPerSecond = lInterest.div(now.sub(d.lastPayment));
                 totalLInterest = totalLInterest.add(lInterest);
                 totalLInterestPerSecond = totalLInterestPerSecond.add(lInterestPerSecond);
@@ -643,16 +424,6 @@ contract LoanModule is Module, ILoanModule {
      */
     function totalLDebts() public view returns(uint256){
         return lDebts;
-    }
-
-    /**
-     * @notice Total amount of collateral locked in proposals
-     * Although this is measured in liquid tokens, it's not actual tokens,
-     * just a value wich is supposed to represent the collateral locked in proposals.
-     * @return Sum of all collaterals in proposals
-     */
-    function totalLProposals() public view returns(uint256){
-        return lProposals;
     }
 
     /**
@@ -734,6 +505,10 @@ contract LoanModule is Module, ILoanModule {
         return ILoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
     }
 
+    function loanProposals() internal view returns(ILoanProposalsModule) {
+        return ILoanProposalsModule(getModuleAddress(MODULE_LOAN_PROPOSALS));
+    }
+
     function increaseActiveDebts(address borrower) private {
         activeDebts[borrower] = activeDebts[borrower].add(1);
     }
@@ -742,18 +517,13 @@ contract LoanModule is Module, ILoanModule {
         activeDebts[borrower] = activeDebts[borrower].sub(1);
     }
 
-    function increaseOpenProposals(address borrower) private {
-        openProposals[borrower] = openProposals[borrower].add(1);
-    }
-
-    function decreaseOpenProposals(address borrower) private {
-        openProposals[borrower] = openProposals[borrower].sub(1);
-    }
-
     function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
         Debt storage d = debts[borrower][debt];
-        DebtProposal storage p = debtProposals[borrower][d.proposal];
-        uint256 lInterest = calculateInterestPayment(d.lAmount, p.interest, d.lastPayment, now);
+
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, uint256 pPledge)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+
+        uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
         uint256 lAmount = d.lAmount.add(lInterest);
         uint256 pAmount = calculatePoolExitWithFee(lAmount);
         uint256 pBalance = pToken().balanceOf(borrower);
@@ -781,7 +551,7 @@ contract LoanModule is Module, ILoanModule {
         //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
         uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(p.pledges[borrower].lAmount).div(p.lAmount);
+        uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
 
         liquidityModule().withdrawForRepay(borrower, pAmount);
         fundsModule().distributePTokens(poolInterest);
