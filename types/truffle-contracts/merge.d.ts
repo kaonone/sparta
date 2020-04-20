@@ -49,6 +49,9 @@ declare global {
         name: "ILoanLimitsModule"
       ): TruffleContracts.ILoanLimitsModuleContract;
       require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
+      require(
+        name: "ILoanProposalsModule"
+      ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(
         name: "ITestnetCompoundDAI"
@@ -61,6 +64,9 @@ declare global {
       ): TruffleContracts.LoanLimitsModuleContract;
       require(name: "LoanModule"): TruffleContracts.LoanModuleContract;
       require(name: "LoanModuleStub"): TruffleContracts.LoanModuleStubContract;
+      require(
+        name: "LoanProposalsModule"
+      ): TruffleContracts.LoanProposalsModuleContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Module"): TruffleContracts.ModuleContract;
       require(name: "ModuleNames"): TruffleContracts.ModuleNamesContract;
