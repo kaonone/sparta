@@ -5,41 +5,9 @@ pragma solidity ^0.5.12;
  * @dev Funds module is responsible for deposits, withdrawals, debt proposals, debts and repay.
  */
 interface ILoanModule {
-    event DebtProposalCreated(address indexed sender, uint256 proposal, uint256 lAmount, uint256 interest, bytes32 descriptionHash);
-    event PledgeAdded(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
-    event PledgeWithdrawn(address indexed sender, address indexed borrower, uint256 proposal, uint256 lAmount, uint256 pAmount);
-    event DebtProposalCanceled(address indexed sender, uint256 proposal);
-    event DebtProposalExecuted(address indexed sender, uint256 proposal, uint256 debt, uint256 lAmount);
     event Repay(address indexed sender, uint256 debt, uint256 lDebtLeft, uint256 lFullPaymentAmount, uint256 lInterestPaid, uint256 pInterestPaid, uint256 newlastPayment);
     event UnlockedPledgeWithdraw(address indexed sender, address indexed borrower, uint256 proposal, uint256 debt, uint256 pAmount);
     event DebtDefaultExecuted(address indexed borrower, uint256 debt, uint256 pBurned);
-
-    /**
-     * @notice Create DebtProposal
-     * @param debtLAmount Amount of debt in liquid tokens
-     * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
-     * @param pAmountMax Max amount of pTokens to use as collateral
-     * @param descriptionHash Hash of loan description
-     * @return Index of created DebtProposal
-     */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) external returns(uint256);
-
-    /**
-     * @notice Add pledge to DebtProposal
-     * @param borrower Address of borrower
-     * @param proposal Index of borroers's proposal
-     * @param pAmount Amount of pTokens to use as collateral
-     * @param lAmountMin Minimal amount of liquid tokens to cover by this pledge
-     */
-    function addPledge(address borrower, uint256 proposal, uint256 pAmount, uint256 lAmountMin) external;
-
-    /**
-     * @notice Withdraw pledge from DebtProposal
-     * @param borrower Address of borrower
-     * @param proposal Index of borrowers's proposal
-     * @param pAmount Amount of pTokens to withdraw
-     */
-    function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) external;
 
     /**
      * @notice Execute DebtProposal
