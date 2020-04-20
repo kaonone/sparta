@@ -13,7 +13,7 @@ contract ModuleNames {
     string public constant MODULE_LIQUIDITY         = "liquidity";
     string public constant MODULE_LOAN              = "loan";
     string public constant MODULE_LOAN_LIMTS        = "loan_limits";
-    string public constant MODULE_LOAN_PROPOSALS    = "loan_limits";
+    string public constant MODULE_LOAN_PROPOSALS    = "loan_proposals";
 
     // External Modules (used to store addresses of external contracts)
     string public constant MODULE_LTOKEN            = "ltoken";
