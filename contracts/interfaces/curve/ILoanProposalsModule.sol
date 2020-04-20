@@ -65,7 +65,7 @@ interface ILoanProposalsModule {
     returns(uint256 lAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge);
 
     /**
-    * @dev Returns interest rate of proposal. Usefule when only this value is required
+    * @dev Returns interest rate of proposal. Usefull when only this value is required
     */
     function getProposalInterestRate(address borrower, uint256 proposal) external view returns(uint256);
 }

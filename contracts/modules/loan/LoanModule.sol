@@ -241,7 +241,7 @@ contract LoanModule is Module, ILoanModule {
         require(!dbt.defaultExecuted, "LoanModule: default is already executed");
         require(_isDebtDefaultTimeReached(dbt), "LoanModule: not enough time passed");
 
-        (uint256 proposalLAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge)
+        (uint256 proposalLAmount, /*uint256 lCovered*/, uint256 pCollected, /*uint256 interest*/, /*uint256 lPledge*/, uint256 pPledge)
         = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
 
         withdrawDebtDefaultPayment(borrower, debt);
@@ -321,7 +321,7 @@ contract LoanModule is Module, ILoanModule {
     returns(uint256 pLocked, uint256 pUnlocked, uint256 pInterest, uint256 pWithdrawn){
         Debt storage dbt = debts[borrower][debt];
 
-        (uint256 proposalLAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge)
+        (uint256 proposalLAmount, uint256 lCovered, /*uint256 pCollected*/, /*uint256 interest*/, uint256 lPledge, uint256 pPledge)
         = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, supporter);
 
         pWithdrawn = dbt.claimedPledges[supporter];
@@ -521,7 +521,7 @@ contract LoanModule is Module, ILoanModule {
     function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
         Debt storage d = debts[borrower][debt];
 
-        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, uint256 pPledge)
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
         = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
 
         uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);

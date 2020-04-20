@@ -10,12 +10,14 @@ interface ILoanModule {
     event DebtDefaultExecuted(address indexed borrower, uint256 debt, uint256 pBurned);
 
     /**
-     * @notice Execute DebtProposal
-     * @dev Creates Debt using data of DebtProposal
+     * @notice Creates Debt from proposal
+     * @dev Used by LoanProposalModule to create debt
+     * @param borrower Address of borrower
      * @param proposal Index of DebtProposal
+     * @param lAmount Amount of the loan
      * @return Index of created Debt
      */
-    function executeDebtProposal(uint256 proposal) external returns(uint256);
+    function createDebt(address borrower, uint256 proposal, uint256 lAmount) external returns(uint256);
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens

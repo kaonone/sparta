@@ -223,44 +223,29 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      * @return Index of created Debt
      */
     function executeDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.ExecuteDebtProposal) returns(uint256) {
-        // DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        // require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        // require(getRequiredPledge(_msgSender(), proposal) == 0, "LoanModule: DebtProposal is not fully funded");
-        // require(!p.executed, "LoanModule: DebtProposal is already executed");
-        // debts[_msgSender()].push(Debt({
-        //     proposal: proposal,
-        //     lAmount: p.lAmount,
-        //     lastPayment: now,
-        //     pInterest: 0,
-        //     defaultExecuted: false
-        // }));
-        // // We do not initialize pledges map here to save gas!
-        // // Instead we check PledgeAmount.initialized field and do lazy initialization
-        // p.executed = true;
-        // uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
+        address borrower = _msgSender();
+        DebtProposal storage p = debtProposals[borrower][proposal];
+        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
+        require(getRequiredPledge(borrower, proposal) == 0, "LoanModule: DebtProposal is not fully funded");
+        require(!p.executed, "LoanModule: DebtProposal is already executed");
 
-        // // NOTE: calculations below expect p.lCovered == p.lAmount. This may be wrong if COLLATERAL_TO_DEBT_RATIO != 1
-        // lProposals = lProposals.sub(p.lCovered);
-        // lDebts = lDebts.add(p.lAmount);
+        p.executed = true;
 
-        // //uint256 debtLoad = DEBT_LOAD_MULTIPLIER.mul(lDebts).div(fundsModule().lBalance().add(lDebts.sub(p.lAmount)));
-        // uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts.sub(p.lAmount))).div(DEBT_LOAD_MULTIPLIER);
-        // require(lDebts <= maxDebts, "LoanModule: DebtProposal can not be executed now because of debt loan limit");
+        lProposals = lProposals.sub(p.lCovered);
 
-        //TODO
-        // //Move locked pTokens to Funds
-        // uint256[] memory amounts = new uint256[](p.supporters.length);
-        // for (uint256 i=0; i < p.supporters.length; i++) {
-        //     address supporter = p.supporters[i];
-        //     amounts[i] = p.pledges[supporter].pAmount;
-        // }
-        // fundsModule().lockPTokens(p.supporters, amounts);
+        //Move locked pTokens to Funds
+        uint256[] memory amounts = new uint256[](p.supporters.length);
+        for (uint256 i=0; i < p.supporters.length; i++) {
+            address supporter = p.supporters[i];
+            amounts[i] = p.pledges[supporter].pAmount;
+        }
 
-        // decreaseOpenProposals(_msgSender());
-        // increaseActiveDebts(_msgSender());
-        // fundsModule().withdrawLTokens(_msgSender(), p.lAmount);
-        // emit DebtProposalExecuted(_msgSender(), proposal, debtIdx, p.lAmount);
-        // return debtIdx;
+        fundsModule().lockPTokens(p.supporters, amounts);
+
+        uint256 debtIdx = loanModule().createDebt(borrower, proposal, p.lAmount);
+        decreaseOpenProposals(borrower);
+        emit DebtProposalExecuted(borrower, proposal, debtIdx, p.lAmount);
+        return debtIdx;
     }
 
     function getProposalAndPledgeInfo(address borrower, uint256 proposal, address supporter) public view returns(
@@ -394,6 +379,9 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }
 
+    function loanModule() internal view returns(ILoanModule) {
+        return ILoanModule(getModuleAddress(MODULE_LOAN));
+    }
     function limits() internal view returns(ILoanLimitsModule) {
         return ILoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
     }
