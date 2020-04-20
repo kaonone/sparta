@@ -139,14 +139,30 @@ contract LoanModule is Module, ILoanModule {
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
 
-        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
-        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
-
         (, uint256 lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
 
+        (uint256 actualPAmount, uint256 actualInterest, uint256 pInterest, uint256 poolInterest) 
+            = repayPTK_calculateInterestAndUpdateDebt(borrower, d, lAmount);
+
+        liquidityModule().withdrawForRepay(borrower, actualPAmount);
+        fundsModule().distributePTokens(poolInterest);
+        fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
+
+        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
+
+        if (d.lAmount == 0) {
+            //Debt is fully repaid
+            decreaseActiveDebts(borrower);
+            withdrawUnlockedPledge(borrower, debt);
+        }
+    }
+    function repayPTK_calculateInterestAndUpdateDebt(address borrower, Debt storage d, uint256 lAmount) private 
+    returns(uint256 pAmount, uint256 actualInterest, uint256 pInterest, uint256 poolInterest){
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+
         uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
-        uint256 actualInterest;
         if (lAmount < lInterest) {
             uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
             assert(d.lastPayment + paidTime <= now);
@@ -167,21 +183,9 @@ contract LoanModule is Module, ILoanModule {
         }
 
         //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
-        uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
+        pInterest = calculatePoolEnter(actualInterest, lAmount); 
         d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
-
-        liquidityModule().withdrawForRepay(borrower, pAmount);
-        fundsModule().distributePTokens(poolInterest);
-        fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
-
-        emit Repay(_msgSender(), debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
-
-        if (d.lAmount == 0) {
-            //Debt is fully repaid
-            decreaseActiveDebts(borrower);
-            withdrawUnlockedPledge(borrower, debt);
-        }
+        poolInterest = pInterest.mul(lPledge).div(lCovered);
     }
 
     function repayAllInterest(address borrower) public {
@@ -199,22 +203,12 @@ contract LoanModule is Module, ILoanModule {
             // bool isDefaulted = _isDebtDefaultTimeReached(d);
             // if (isUnpaid && !isDefaulted){                      
             if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
-                (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
-                = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
-                uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
-                totalPWithdraw = totalPWithdraw.add(calculatePoolExitWithFee(lInterest, totalLFee));
-                totalLFee = totalLFee.add(calculateExitFee(lInterest));
-
-                //Update debt
-                d.lastPayment = now;
-                //current liquidity already includes totalLFee, which was never actually withdrawn, so we need to remove it here
-                uint256 pInterest = calculatePoolEnter(lInterest, lInterest.add(totalLFee)); 
-                d.pInterest = d.pInterest.add(pInterest);
-                uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
+                (uint256 pWithdrawn, uint256 lFee, uint256 poolInterest, uint256 pInterestToMint) 
+                    = repayInterestForDebt(borrower, uint256(i), d, totalLFee);
+                totalPWithdraw = totalPWithdraw.add(pWithdrawn);
+                totalLFee = totalLFee.add(lFee);
                 totalPInterestToDistribute = totalPInterestToDistribute.add(poolInterest);
-                totalPInterestToMint = totalPInterestToMint.add(pInterest.sub(poolInterest));
-
-                emit Repay(borrower, uint256(i), d.lAmount, lInterest, lInterest, pInterest, d.lastPayment);
+                totalPInterestToMint = totalPInterestToMint.add(pInterestToMint);
 
                 activeDebtCount++;
                 if (activeDebtCount >= activeDebts[borrower]) break;
@@ -228,6 +222,26 @@ contract LoanModule is Module, ILoanModule {
             assert(totalPInterestToDistribute == 0);
             assert(totalPInterestToMint == 0);
         }
+    }
+    function repayInterestForDebt(address borrower, uint256 debt, Debt storage d, uint256 totalLFee) private 
+    returns(uint256 pWithdrawn, uint256 lFee, uint256 poolInterest, uint256 pInterestToMint) {
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+        uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
+        pWithdrawn = calculatePoolExitWithFee(lInterest, totalLFee);
+        lFee = calculateExitFee(lInterest);
+
+        //Update debt
+        d.lastPayment = now;
+        //current liquidity already includes totalLFee, which was never actually withdrawn, so we need to remove it here
+        uint256 pInterest = calculatePoolEnter(lInterest, lInterest.add(totalLFee)); 
+        d.pInterest = d.pInterest.add(pInterest);
+        poolInterest = pInterest.mul(lPledge).div(lCovered);
+        pInterestToMint = pInterest.sub(poolInterest); //We substract interest that will be minted during distribution
+        emitRepay(borrower, debt, d, lInterest, lInterest, pInterest);
+    }
+    function emitRepay(address borrower, uint256 debt, Debt storage d, uint256 lFullPaymentAmount, uint256 lInterestPaid, uint256 pInterestPaid) private {
+        emit Repay(borrower, debt, d.lAmount, lFullPaymentAmount, lInterestPaid, pInterestPaid, d.lastPayment);
     }
 
     /**
@@ -346,21 +360,25 @@ contract LoanModule is Module, ILoanModule {
             pInterest = dbt.pInterest.mul(lPledge).div(lCovered);
             assert(pInterest <= dbt.pInterest);
             if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
-                // DebtPledge storage dpb = proposal.pledges[borrower];
-                (, , , , uint256 bpledgeLAmount, uint256 bpledgePAmount) = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
-                uint256 pLockedBorrower = bpledgePAmount.mul(dbt.lAmount).div(proposalLAmount);
-                uint256 pUnlockedBorrower = bpledgePAmount.sub(pLockedBorrower);
-                uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(lCovered.sub(bpledgeLAmount));
-                if (pCompensation > pLocked) {
-                    pCompensation = pLocked;
-                }
-                if (dbt.defaultExecuted) {
-                    pLocked = 0;
-                    pUnlocked = pUnlocked.add(pCompensation);
-                }else {
-                    pLocked = pCompensation;
-                }
+                (pLocked, pUnlocked) = calculatePledgeInfoForDefault(borrower, dbt, proposalLAmount, lCovered, lPledge);
             }
+        }
+    }
+
+    function calculatePledgeInfoForDefault(address borrower, Debt storage dbt, uint256 proposalLAmount, uint256 lCovered, uint256 lPledge) private view
+    returns(uint256 pLocked, uint256 pUnlocked){
+        (, , , , uint256 bpledgeLAmount, uint256 bpledgePAmount) = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
+        uint256 pLockedBorrower = bpledgePAmount.mul(dbt.lAmount).div(proposalLAmount);
+        uint256 pUnlockedBorrower = bpledgePAmount.sub(pLockedBorrower);
+        uint256 pCompensation = pUnlockedBorrower.mul(lPledge).div(lCovered.sub(bpledgeLAmount));
+        if (pCompensation > pLocked) {
+            pCompensation = pLocked;
+        }
+        if (dbt.defaultExecuted) {
+            pLocked = 0;
+            pUnlocked = pUnlocked.add(pCompensation);
+        }else {
+            pLocked = pCompensation;
         }
     }
 
@@ -520,10 +538,8 @@ contract LoanModule is Module, ILoanModule {
     function withdrawDebtDefaultPayment(address borrower, uint256 debt) private {
         Debt storage d = debts[borrower][debt];
 
-        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, uint256 interest, uint256 lPledge, /*uint256 pPledge*/)
-        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+        uint256 lInterest = calculateInterestPayment(d.lAmount, loanProposals().getProposalInterestRate(borrower, d.proposal), d.lastPayment, now);
 
-        uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
         uint256 lAmount = d.lAmount.add(lInterest);
         uint256 pAmount = calculatePoolExitWithFee(lAmount);
         uint256 pBalance = pToken().balanceOf(borrower);
@@ -533,32 +549,40 @@ contract LoanModule is Module, ILoanModule {
             pAmount = pBalance;
             (, lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
         }
+
+        (uint256 pInterest, uint256 poolInterest) 
+            = withdrawDebtDefaultPayment_calculatePInterest(borrower, d, lAmount, lInterest); 
+        d.pInterest = d.pInterest.add(pInterest);
         
-        uint256 actualInterest;
         if (lAmount < lInterest) {
             uint256 paidTime = now.sub(d.lastPayment).mul(lAmount).div(lInterest);
             assert(d.lastPayment + paidTime <= now);
             d.lastPayment = d.lastPayment.add(paidTime);
-            actualInterest = lAmount;
+            lInterest = lAmount;
         } else {
             d.lastPayment = now;
             uint256 debtReturned = lAmount.sub(lInterest);
             d.lAmount = d.lAmount.sub(debtReturned);
             lDebts = lDebts.sub(debtReturned);
-            actualInterest = lInterest;
         }
 
-        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
-        uint256 pInterest = calculatePoolEnter(actualInterest, lAmount); 
-        d.pInterest = d.pInterest.add(pInterest);
-        uint256 poolInterest = pInterest.mul(lPledge).div(lCovered);
 
         liquidityModule().withdrawForRepay(borrower, pAmount);
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
-        emit Repay(borrower, debt, d.lAmount, lAmount, actualInterest, pInterest, d.lastPayment);
+        emit Repay(borrower, debt, d.lAmount, lAmount, lInterest, pInterest, d.lastPayment);
     }
+    function withdrawDebtDefaultPayment_calculatePInterest(address borrower, Debt storage d, uint256 lAmount, uint256 lInterest) private view 
+    returns(uint256 pInterest, uint256 poolInterest) {
+        (/*uint256 proposalLAmount*/, uint256 lCovered, /*uint256 pCollected*/, /*uint256 interest*/, uint256 lPledge, /*uint256 pPledge*/)
+        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+        poolInterest = pInterest.mul(lPledge).div(lCovered);
+
+        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
+        pInterest = calculatePoolEnter(lInterest, lAmount); 
+    }
+
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
         uint256 timeSinceLastPayment = now.sub(dbt.lastPayment);
