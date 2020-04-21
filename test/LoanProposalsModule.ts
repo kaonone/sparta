@@ -49,6 +49,8 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
     let lToken: FreeDAIInstance;
 
     let withdrawFeePercent:BN, percentDivider:BN;
+    let collateralToDebtRatio:BN, collateralToDebtMultiplier:BN;
+    let borrowerCollateralToFullCollateralRatio:BN, borrowerCollateralToFullCollateralMultiplier:BN;
 
     enum LoanLimitType {
         L_DEBT_AMOUNT_MIN,
@@ -113,6 +115,11 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         curve.setWithdrawFee(new BN(5), {from: owner});
         withdrawFeePercent = await curve.withdrawFeePercent();
         percentDivider = await curve.PERCENT_DIVIDER();
+
+        collateralToDebtRatio = await loanpm.COLLATERAL_TO_DEBT_RATIO();
+        collateralToDebtMultiplier = await loanpm.COLLATERAL_TO_DEBT_RATIO_MULTIPLIER();
+        borrowerCollateralToFullCollateralRatio = await loanpm.BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO();
+        borrowerCollateralToFullCollateralMultiplier = await loanpm.BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER();
 
         //Save snapshot
         snap = await Snapshot.create(web3.currentProvider);

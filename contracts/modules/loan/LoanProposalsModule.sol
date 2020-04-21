@@ -15,18 +15,12 @@ import "../../common/Module.sol";
 contract LoanProposalsModule is Module, ILoanProposalsModule {
     using SafeMath for uint256;
 
-    uint256 public constant INTEREST_MULTIPLIER = 10**3;    // Multiplier to store interest rate (decimal) in int
-    uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
-
-    uint256 public constant DEBT_REPAY_DEADLINE_PERIOD = 90*24*60*60;   //Period before debt without payments may be defaulted
-
     uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;
-    uint256 public constant COLLATERAL_TO_DEBT_RATIO = /*1.0* */COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
+    uint256 public constant COLLATERAL_TO_DEBT_RATIO = COLLATERAL_TO_DEBT_RATIO_MULTIPLIER * 3 / 2; // Regulates how many collateral is required 
     uint256 public constant PLEDGE_PERCENT_MULTIPLIER = 10**3;
-    uint256 public constant DEBT_LOAD_MULTIPLIER = 10**3;
 
     uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER = 10**3;
-    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/2;
+    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/3;
 
     struct DebtPledge {
         uint256 senderIndex;  //Index of pledge sender in the array
