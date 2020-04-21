@@ -128,7 +128,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await snap.revert();
     });
 
-    
     it('should repay debt and interest', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
@@ -215,7 +214,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(debtLRequiredPayments[0]).to.be.bignumber.eq(new BN(0));
         expect(debtLRequiredPayments[1]).to.be.bignumber.eq(new BN(0));
     });
-    
+
     it('should partially redeem pledge from debt', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 

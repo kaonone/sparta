@@ -144,6 +144,7 @@ contract LoanModule is Module, ILoanModule {
 
         (uint256 actualPAmount, uint256 actualInterest, uint256 pInterest, uint256 poolInterest) 
             = repayPTK_calculateInterestAndUpdateDebt(borrower, d, lAmount);
+        if(actualPAmount == 0) actualPAmount = pAmount; // Fix of stack too deep if send original pAmount to repayPTK_calculateInterestAndUpdateDebt
 
         liquidityModule().withdrawForRepay(borrower, actualPAmount);
         fundsModule().distributePTokens(poolInterest);
