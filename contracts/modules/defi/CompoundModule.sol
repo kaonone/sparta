@@ -18,13 +18,16 @@ contract CompoundModule is DefiModuleBase {
         ltoken.approve(address(cdai), amount);
         cdai.mint(amount);
     }
+
     function withdrawInternal(address beneficiary, uint256 amount) internal {
         cDAI().redeemUnderlying(amount);
         lToken().transfer(beneficiary, amount);
     }
+
     function poolBalanceOfDAI() internal returns(uint256) {
         return cDAI().balanceOfUnderlying(address(this));
     }
+    
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
     }

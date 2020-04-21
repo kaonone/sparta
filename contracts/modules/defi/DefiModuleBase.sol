@@ -21,6 +21,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         uint256 balance;        // Total amount of DAI stored
         uint256 totalPTK;       // Total shares (PTK distribution supply) before distribution
     }
+
     struct InvestmentBalance {
         uint256 ptkBalance;             // User's share of PTK
         uint256 availableBalance;       // Amount of DAI available to redeem
@@ -43,23 +44,27 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         depositsSinceLastDistribution = depositsSinceLastDistribution.add(amount);
         depositInternal(sender, amount);
     }
+
     function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
         withdrawalsSinceLastDistribution = withdrawalsSinceLastDistribution.add(amount);
         withdrawInternal(beneficiary, amount);
     }
+
     function withdrawInterest() public {
         InvestmentBalance storage ib = balances[_msgSender()];
-        if(ib.availableBalance > 0) {
+        if (ib.availableBalance > 0) {
             withdrawInternal(_msgSender(), ib.availableBalance);
         }
     }
+
     /**
      * @notice Update user balance with interest received
      * @param account Address of the user
      */
-    function claimDistributions(address account) external {
+    function claimDistributions(address account) public {
         _updateUserBalance(account, distributions.length);
     }
+
     /**
      * @notice Update state of user balance for next distributions
      * @param account Address of the user
@@ -77,7 +82,6 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function totalSupplyOfPTK() internal view returns(uint256);
 
     // == Internal functions of DefiModule
-
     function _createInitialDistribution() internal {
         assert(distributions.length == 0);
         distributions.push(Distribution({
@@ -121,7 +125,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     function _calculateDistributedAmount(uint256 fromDistribution, uint256 toDistribution, uint256 ptkBalance) internal view returns(uint256) {
-        if(ptkBalance == 0) return 0;
+        if (ptkBalance == 0) return 0;
         uint256 next = fromDistribution;
         uint256 totalInterest;
         while (next < toDistribution) {

@@ -7,6 +7,7 @@ pragma solidity ^0.5.12;
  * Original interface name: CErc20Interface
  * but we use our naming covention.
  */
+//solhint-disable func-order
 contract ICErc20 { 
 
 

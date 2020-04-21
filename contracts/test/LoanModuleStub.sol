@@ -73,10 +73,10 @@ contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
 
     function getProposalAndPledgeInfo(address, uint256, address) public view
     returns(uint256 lAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge) {
-        return (0,0,0,0,0,0);
+        return (0, 0, 0, 0, 0, 0);
     }
 
-    function getProposalInterestRate(address, uint256) external view returns(uint256){
+    function getProposalInterestRate(address, uint256) public view returns(uint256){
         return 0;
     }
 

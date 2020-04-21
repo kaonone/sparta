@@ -46,7 +46,7 @@ contract TestnetCErc20Proxy is Base {
         require(cDAI.transfer(_msgSender(), transfered), "TestnetCErc20Proxy: failed to transfer minted cDAI");
     }
 
-    function redeem(uint256 redeemTokens) external returns (uint256) {
+    function redeem(uint256 redeemTokens) public returns (uint256) {
         // Transfer cDAI to proxy
         cDAI.transferFrom(_msgSender(), address(this), redeemTokens);
 
@@ -66,7 +66,7 @@ contract TestnetCErc20Proxy is Base {
         akropolisDAI.transfer(_msgSender(), transfered);
     }
 
-    function redeemUnderlying(uint256 redeemAmount) external returns (uint256) {
+    function redeemUnderlying(uint256 redeemAmount) public returns (uint256) {
         // Calculate amount of required cDAI
         uint256 exchangeRateMantissa = cDAI.exchangeRateCurrent();
         uint256 redeemTokens = divScalarByExpTruncate(redeemAmount, exchangeRateMantissa);
@@ -90,20 +90,20 @@ contract TestnetCErc20Proxy is Base {
         akropolisDAI.transfer(_msgSender(), transfered);
     }
 
-
     // === Directly proxied functions ===
-    function balanceOf(address owner) public view returns (uint){
-        return cDAI.balanceOf(owner);
-    }
     function balanceOfUnderlying(address owner) public returns (uint) {
         return cDAI.balanceOfUnderlying(owner);
     }
+
     function exchangeRateCurrent() public returns (uint) {
         return cDAI.exchangeRateCurrent();
     }
+    
+    function balanceOf(address owner) public view returns (uint){
+        return cDAI.balanceOf(owner);
+    }
 
     // === Math ===
-
     /**
      * @dev Divide a scalar by an Exp mantissa, then truncate to return an unsigned integer.
      * This is simplified version of Exponential.divScalarByExpTruncate()
