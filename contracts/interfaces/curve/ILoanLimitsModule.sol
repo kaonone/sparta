@@ -16,8 +16,8 @@ interface ILoanLimitsModule {
         MIN_CANCEL_PROPOSAL_TIMEOUT
     }
 
-    function get(LoanLimitType limit) external view returns(uint256);
     function set(LoanLimitType limit, uint256 value) external;
+    function get(LoanLimitType limit) external view returns(uint256);
 
     function lDebtAmountMin() external view returns(uint256);
     function debtInterestMin() external view returns(uint256);

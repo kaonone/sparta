@@ -258,10 +258,10 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         ){
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "LoanProposalModule: DebtProposal not found");
-        lAmount     = p.lAmount;
-        lCovered    = p.lCovered;
-        pCollected  = p.pCollected;
-        interest    = p.interest;
+        lAmount = p.lAmount;
+        lCovered = p.lCovered;
+        pCollected = p.pCollected;
+        interest = p.interest;
         lPledge = p.pledges[supporter].lAmount;
         pPledge = p.pledges[supporter].pAmount;
     }
@@ -316,7 +316,6 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
     function totalLProposals() public view returns(uint256){
         return lProposals;
     }
-
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
@@ -382,6 +381,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
     function loanModule() internal view returns(ILoanModule) {
         return ILoanModule(getModuleAddress(MODULE_LOAN));
     }
+    
     function limits() internal view returns(ILoanLimitsModule) {
         return ILoanLimitsModule(getModuleAddress(MODULE_LOAN_LIMTS));
     }
