@@ -135,12 +135,13 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         for(let i=0; i < 3; i++){
             //Prepare Borrower account
             let lDebtWei = w3random.interval(100, 200, 'ether');
-            let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-            let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-            await prepareBorrower(pAmountMinWei);
+            let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+            let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+            let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+            await prepareBorrower(pAmountMaxWei);
 
             //Create Debt Proposal
-            let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+            let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
             expectEvent(receipt, 'DebtProposalCreated', {'sender':borrower, 'proposal':String(i), 'lAmount':lDebtWei});
 
             let proposal = await loanpm.debtProposals(borrower, i);
@@ -153,17 +154,24 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
         await loanLimits.set(LoanLimitType.MAX_OPEN_PROPOSALS_PER_USER, 1, {from: owner});
 
-        //First proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.divn(2).addn(1);
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
-        await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower});
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
 
-        //Second proposal
-        await prepareBorrower(pAmountMinWei);
+        let maxOpenProposalsPerUser = (await loanLimits.maxOpenProposalsPerUser()).toNumber();
+
+        //Allowed proposals
+        for(let i=0; i < maxOpenProposalsPerUser; i++){
+            let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+            await prepareBorrower(pAmountMaxWei);
+            await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test 1'), {from: borrower});
+        }
+
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
+        //Too many proposals
         await expectRevert(
-            loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 2'), {from: borrower}),
+            loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test 2'), {from: borrower}),
             "LoanProposalsModule: borrower has too many open proposals"
         );
     });
@@ -174,10 +182,11 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
 
         //Create proposal
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.divn(2).addn(1);
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
-        await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test 1'), {from: borrower});
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
+        await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test 1'), {from: borrower});
 
         //Try cancel proposal
         await expectRevert(
@@ -197,14 +206,13 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
 
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        // console.log('lcWei', lcWei.toString());
-        // console.log('pAmountMinWei', pAmountMinWei.toString());
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
@@ -226,12 +234,13 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
 
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
@@ -260,12 +269,13 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
 
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         //console.log(proposalIdx);
 
@@ -291,14 +301,16 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
 
         let initialBalances = new Map<string,BN>();
         let lDebtAmount = w3random.interval(100, 200, 'ether');
-        let pDebtAmount = await funds.calculatePoolExit(lDebtAmount);
-        await prepareBorrower(pDebtAmount.divn(2));
+        let lfullCollateral = lDebtAmount.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
         initialBalances.set(borrower, await pToken.balanceOf(borrower));
         let lProposalsBefore = await loanpm.totalLProposals();
 
         // Create Proposal
         let pLockedTotal = new BN('0');
-        let receipt = await loanpm.createDebtProposal(lDebtAmount, '100', pDebtAmount.divn(2), web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtAmount, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
         let pPledge = findEventArgs(receipt, 'PledgeAdded')['pAmount'];
         pLockedTotal = pLockedTotal.add(pPledge);

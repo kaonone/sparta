@@ -616,11 +616,13 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
     async function createDebt(debtLAmount:BN, supporter:string|Array<string>){
         //Prepare Borrower account
-        let pAmountMinWei = (await funds.calculatePoolExit(debtLAmount)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = debtLAmount.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
+        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporters
