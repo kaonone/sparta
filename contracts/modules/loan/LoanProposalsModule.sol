@@ -54,7 +54,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
 
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
-        require(am.isOperationAllowed(operation, _msgSender()), "LoanModule: operation not allowed");
+        require(am.isOperationAllowed(operation, _msgSender()), "LoanProposalsModule: operation not allowed");
         _;
     }
 
@@ -72,13 +72,13 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      */
     function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) 
     public operationAllowed(IAccessModule.Operation.CreateDebtProposal) returns(uint256) {
-        require(debtLAmount >= limits().lDebtAmountMin(), "LoanModule: debtLAmount should be >= lDebtAmountMin");
-        require(interest >= limits().debtInterestMin(), "LoanModule: interest should be >= debtInterestMin");
-        require(openProposals[_msgSender()] < limits().maxOpenProposalsPerUser(), "LoanModule: borrower has too many open proposals");
+        require(debtLAmount >= limits().lDebtAmountMin(), "LoanProposalsModule: debtLAmount should be >= lDebtAmountMin");
+        require(interest >= limits().debtInterestMin(), "LoanProposalsModule: interest should be >= debtInterestMin");
+        require(openProposals[_msgSender()] < limits().maxOpenProposalsPerUser(), "LoanProposalsModule: borrower has too many open proposals");
         uint256 fullCollateralLAmount = debtLAmount.mul(COLLATERAL_TO_DEBT_RATIO).div(COLLATERAL_TO_DEBT_RATIO_MULTIPLIER);
         uint256 clAmount = fullCollateralLAmount.mul(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO).div(BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER);
         uint256 cpAmount = calculatePoolExit(clAmount);
-        require(cpAmount <= pAmountMax, "LoanModule: pAmountMax is too low");
+        require(cpAmount <= pAmountMax, "LoanProposalsModule: pAmountMax is too low");
 
         debtProposals[_msgSender()].push(DebtProposal({
             lAmount: debtLAmount,
@@ -122,16 +122,16 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      * In such edge case we may return less then lAmountMin, but price limit lAmountMin/pAmount will be honored.
      */
     function addPledge(address borrower, uint256 proposal, uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.AddPledge) {
-        require(_msgSender() != borrower, "LoanModule: Borrower can not add pledge");
+        require(_msgSender() != borrower, "LoanProposalsModule: Borrower can not add pledge");
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanProposalsModule: DebtProposal not found");
+        require(!p.executed, "LoanProposalsModule: DebtProposal is already executed");
         // p.lCovered/p.pCollected should be the same as original liquidity token to pToken exchange rate
         (uint256 lAmount, , ) = calculatePoolExitInverse(pAmount); 
-        require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
+        require(lAmount >= lAmountMin, "LoanProposalsModule: Minimal amount is too high");
         (uint256 minLPledgeAmount, uint256 maxLPledgeAmount)= getPledgeRequirements(borrower, proposal);
-        require(maxLPledgeAmount > 0, "LoanModule: DebtProposal is already funded");
-        require(lAmount >= minLPledgeAmount, "LoanModule: pledge is too low");
+        require(maxLPledgeAmount > 0, "LoanProposalsModule: DebtProposal is already funded");
+        require(lAmount >= minLPledgeAmount, "LoanProposalsModule: pledge is too low");
         if (lAmount > maxLPledgeAmount) {
             uint256 pAmountOld = pAmount;
             lAmount = maxLPledgeAmount;
@@ -163,12 +163,12 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      * @param pAmount Amount of pTokens to withdraw
      */
     function withdrawPledge(address borrower, uint256 proposal, uint256 pAmount) public operationAllowed(IAccessModule.Operation.WithdrawPledge) {
-        require(_msgSender() != borrower, "LoanModule: Borrower can not withdraw pledge");
+        require(_msgSender() != borrower, "LoanProposalsModule: Borrower can not withdraw pledge");
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanProposalsModule: DebtProposal not found");
+        require(!p.executed, "LoanProposalsModule: DebtProposal is already executed");
         DebtPledge storage pledge = p.pledges[_msgSender()];
-        require(pAmount <= pledge.pAmount, "LoanModule: Can not withdraw more than locked");
+        require(pAmount <= pledge.pAmount, "LoanProposalsModule: Can not withdraw more than locked");
         uint256 lAmount; 
         if (pAmount == pledge.pAmount) {
             // User withdraws whole pledge
@@ -187,7 +187,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         //Check new min/max pledge AFTER current collateral is adjusted to new values
         //Pledge left should either be 0 or >= minLPledgeAmount
         (uint256 minLPledgeAmount,)= getPledgeRequirements(borrower, proposal); 
-        require(pledge.lAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanModule: pledge left is too small");
+        require(pledge.lAmount >= minLPledgeAmount || pledge.pAmount == 0, "LoanProposalsModule: pledge left is too small");
 
         fundsModule().withdrawPTokens(_msgSender(), pAmount);
         emit PledgeWithdrawn(_msgSender(), borrower, proposal, lAmount, pAmount);
@@ -195,9 +195,9 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
 
     function cancelDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.CancelDebtProposal) {
         DebtProposal storage p = debtProposals[_msgSender()][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(now.sub(p.created) > limits().minCancelProposalTimeout(), "LoanModule: proposal can not be canceled now");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanProposalsModule: DebtProposal not found");
+        require(now.sub(p.created) > limits().minCancelProposalTimeout(), "LoanProposalsModule: proposal can not be canceled now");
+        require(!p.executed, "LoanProposalsModule: DebtProposal is already executed");
         for (uint256 i=0; i < p.supporters.length; i++){
             address supporter = p.supporters[i];                //first supporter is borrower himself
             DebtPledge storage pledge = p.pledges[supporter];
@@ -225,9 +225,9 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
     function executeDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.ExecuteDebtProposal) returns(uint256) {
         address borrower = _msgSender();
         DebtProposal storage p = debtProposals[borrower][proposal];
-        require(p.lAmount > 0, "LoanModule: DebtProposal not found");
-        require(getRequiredPledge(borrower, proposal) == 0, "LoanModule: DebtProposal is not fully funded");
-        require(!p.executed, "LoanModule: DebtProposal is already executed");
+        require(p.lAmount > 0, "LoanProposalsModule: DebtProposal not found");
+        require(getRequiredPledge(borrower, proposal) == 0, "LoanProposalsModule: DebtProposal is not fully funded");
+        require(!p.executed, "LoanProposalsModule: DebtProposal is already executed");
 
         p.executed = true;
 
