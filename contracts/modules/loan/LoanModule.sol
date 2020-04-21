@@ -62,14 +62,14 @@ contract LoanModule is Module, ILoanModule {
     function createDebt(address borrower, uint256 proposal, uint256 lAmount) public returns(uint256) {
         require(_msgSender() == getModuleAddress(MODULE_LOAN_PROPOSALS), "LoanModule: requests only accepted from LoanProposalsModule");
         //TODO: check there is no debt for this proposal
-        debts[_msgSender()].push(Debt({
+        debts[borrower].push(Debt({
             proposal: proposal,
             lAmount: lAmount,
             lastPayment: now,
             pInterest: 0,
             defaultExecuted: false
         }));
-        uint256 debtIdx = debts[_msgSender()].length-1; //It's important to save index before calling external contract
+        uint256 debtIdx = debts[borrower].length-1; //It's important to save index before calling external contract
 
         uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts)).div(DEBT_LOAD_MULTIPLIER);
 
@@ -394,7 +394,6 @@ contract LoanModule is Module, ILoanModule {
         if (d.lAmount == 0) {
             return (0, 0);
         }
-
         uint256 interestRate = loanProposals().getProposalInterestRate(borrower, d.proposal);
 
         uint256 interest = calculateInterestPayment(d.lAmount, interestRate, d.lastPayment, now);
