@@ -350,22 +350,24 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         let lProposalsAfter = await loanpm.totalLProposals();
         expect(lProposalsAfter).to.be.bignumber.equal(lProposalsBefore);            
     });
-
     it('should execute successful debt proposal', async () => {
         await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
 
         //Prepare Borrower account
         let lDebtWei = w3random.interval(100, 200, 'ether');
-        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporter
+        let expectlPledge = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier).sub(lBorrowerCollateral);
         let lPledge = await loanpm.getRequiredPledge(borrower, proposalIdx);
+        expectEqualBN(lPledge, expectlPledge);
         let pPledge = await funds.calculatePoolExit(lPledge);
         await prepareSupporter(pPledge, otherAccounts[0]);
         await loanpm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
@@ -373,19 +375,50 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         receipt = await loanpm.executeDebtProposal(proposalIdx, {from: borrower});
         expectEvent(receipt, 'DebtProposalExecuted', {'sender':borrower, 'proposal':String(proposalIdx), 'lAmount':lDebtWei});
     });
+    it('should not execute unsuccessful debt proposal', async () => {
+        await prepareLiquidity(w3random.interval(1000, 100000, 'ether'));
+
+        //Prepare Borrower account
+        let lDebtWei = w3random.interval(100, 200, 'ether');
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
+        let borrowerPAmountBefore = await pToken.balanceOf(borrower);
+
+        //Create Debt Proposal
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
+        let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
+        let borrowerPAmountAfter = await pToken.balanceOf(borrower);        
+        expectEqualBN(borrowerPAmountAfter, borrowerPAmountBefore.sub(pAmountMaxWei));
+
+        //Add supporter
+        let expectlPledge = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier).sub(lBorrowerCollateral);
+        let lPledge = await loanpm.getRequiredPledge(borrower, proposalIdx);
+        expectEqualBN(lPledge, expectlPledge);
+        let pPledge = await funds.calculatePoolExit(lPledge.divn(2));
+        await prepareSupporter(pPledge, otherAccounts[0]);
+        await loanpm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
+
+        await expectRevert(
+            loanpm.executeDebtProposal(proposalIdx, {from: borrower}),
+            'LoanProposalsModule: DebtProposal is not fully funded'
+        );
+    });
+
     it('should not execute successful debt proposal if debt load is too high', async () => {
         let liquidity = w3random.interval(200, 400, 'ether')
         await prepareLiquidity(liquidity);
 
         //Prepare Borrower account
         let lDebtWei = liquidity.div(new BN(2)).add(new BN(1));
-        //console.log('lDebtWei', lDebtWei.toString());
-        let lcWei = lDebtWei.div(new BN(2)).add(new BN(1));
-        let pAmountMinWei = (await funds.calculatePoolExit(lDebtWei)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = lDebtWei.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower});
+        let receipt = await loanpm.createDebtProposal(lDebtWei, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower});
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporter
