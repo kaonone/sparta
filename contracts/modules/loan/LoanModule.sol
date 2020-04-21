@@ -361,13 +361,13 @@ contract LoanModule is Module, ILoanModule {
             pInterest = dbt.pInterest.mul(lPledge).div(lCovered);
             assert(pInterest <= dbt.pInterest);
             if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
-                (pLocked, pUnlocked) = calculatePledgeInfoForDefault(borrower, dbt, proposalLAmount, lCovered, lPledge);
+                (pLocked, pUnlocked) = calculatePledgeInfoForDefault(borrower, dbt, proposalLAmount, lCovered, lPledge, pLocked, pUnlocked);
             }
         }
     }
 
-    function calculatePledgeInfoForDefault(address borrower, Debt storage dbt, uint256 proposalLAmount, uint256 lCovered, uint256 lPledge) private view
-    returns(uint256 pLocked, uint256 pUnlocked){
+    function calculatePledgeInfoForDefault(address borrower, Debt storage dbt, uint256 proposalLAmount, uint256 lCovered, uint256 lPledge, uint256 pLocked, uint256 pUnlocked) private view
+    returns(uint256, uint256){
         (, , , , uint256 bpledgeLAmount, uint256 bpledgePAmount) = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
         uint256 pLockedBorrower = bpledgePAmount.mul(dbt.lAmount).div(proposalLAmount);
         uint256 pUnlockedBorrower = bpledgePAmount.sub(pLockedBorrower);
@@ -381,6 +381,7 @@ contract LoanModule is Module, ILoanModule {
         }else {
             pLocked = pCompensation;
         }
+        return (pLocked, pUnlocked);
     }
 
     /**
