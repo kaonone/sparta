@@ -11,9 +11,12 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
 * Pool: `0x89d6B368Db35B75373aA7ECd5cA7311EF5dBb615`
 * PToken: `0x9b1b9E0355d9fa5446F88ce2CD48017307465EDD`
+* CompoundModule:
 * CurveModule: `0xC1BfE7636a244497BFc7D9D6C4419eD98f2fcd70`
 * AccessModule: `0xD13e1930E46C5412B9adbE3B0c091E9e9b41af91`
 * LiquidityModule: `0xCBA406Cd5cEc74E7F23bF7C87b60322Cc0Fb451e`
+* LoanLimitsModule: 
+* LoanProposalsModule: 
 * LoanModule: `0xB7C9389735513B4313198d93e9fc835066b5F1fC`
 * FundsModule: `0x3946fC3545Cef33d379466D3DC945Ca7e0181F1c`
 
@@ -43,6 +46,10 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("ptoken", PToken.address)`
+1. CompoundModule
+   1. Deploy proxy and contract instance
+   1. Call `initialize(Pool.address)`
+   1. Register in pool: `Pool.set("defi", CompoundModule.address)`
 1. CurveModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
@@ -55,9 +62,15 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("liquidity", LiquidityModule.address)`
-1. LoanModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
+1. LoanModule, LoanLimitsModule, LoanProposalsModule
+   1. Deploy proxy and contract instance of LoanLimitsModule
+   1. Call `LoanLimitsModule.initialize(Pool.address)`
+   1. Register in pool: `Pool.set("loan_limits", LoanLimitsModule.address)`
+   1. Deploy proxy and contract instance of LoanProposalsModule
+   1. Call `LoanProposalsModule.initialize(Pool.address)`
+   1. Register in pool: `Pool.set("loan_proposals", LoanProposalsModule.address)`
+   1. Deploy proxy and contract instance of LoanModule
+   1. Call `LoanModule.initialize(Pool.address)`
    1. Register in pool: `Pool.set("loan", LoanModule.address)`
 1. FundsModule
    1. Deploy proxy and contract instance
