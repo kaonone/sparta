@@ -1,4 +1,4 @@
-import { DefiModuleStubInstance, VotesModuleInstance, PoolContract, PoolInstance } from "../types/truffle-contracts/index";
+import { CurveModuleInstance, VotesModuleInstance, PoolContract, PoolInstance } from "../types/truffle-contracts/index";
 // tslint:disable-next-line:no-var-requires
 const { BN, constants, expectEvent, shouldFail } = require("@openzeppelin/test-helpers");
 // tslint:disable-next-line:no-var-requires
@@ -8,12 +8,12 @@ const Pool = artifacts.require("Pool");
 
 const VotesModule = artifacts.require("VotesModule");
 
-const DefiModuleStub = artifacts.require("DefiModuleStub");
+const CurveModule = artifacts.require("CurveModule");
 
 contract("Module", async ([_, owner, ...otherAccounts]) => {
     let pool: PoolInstance;
     let votes: VotesModuleInstance; 
-    let defi: DefiModuleStubInstance;
+    let curve: CurveModuleInstance;
   
     beforeEach(async () => {
         pool = await Pool.new();
@@ -29,11 +29,11 @@ contract("Module", async ([_, owner, ...otherAccounts]) => {
     });
   
     it("should get next module", async () => {
-        defi = await DefiModuleStub.new();
-        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        curve = await CurveModule.new();
+        await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("votes", votes.address, true, {from: owner}); 
-        await pool.set("compound", defi.address, true, {from: owner});
-        (await pool.next(votes.address)).should.equal(defi.address);
+        await pool.set("curve", curve.address, true, {from: owner});
+        (await pool.next(votes.address)).should.equal(curve.address);
     });
 
     it("should get module by name", async () => {
