@@ -1,7 +1,6 @@
 import { 
     PoolContract, PoolInstance, 
     PTokenContract, PTokenInstance, 
-    DefiModuleStubContract, DefiModuleStubInstance,
     FundsModuleStubContract, FundsModuleStubInstance
 } from "../types/truffle-contracts/index";
 
@@ -18,23 +17,17 @@ const w3random = require("./utils/w3random");
 const Pool = artifacts.require("Pool");
 const PToken = artifacts.require("PToken");
 const FundsModuleStub = artifacts.require("FundsModuleStub");
-const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 contract("PToken", async ([_, owner, ...otherAccounts]) => {
     let snap: Snapshot;
     let pool: PoolInstance;
     let pToken: PTokenInstance;
     let funds: FundsModuleStubInstance;
-    let defi: DefiModuleStubInstance; 
   
     before(async () => {
         //Setup system contracts
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
-
-        defi = await DefiModuleStub.new();
-        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("defi", defi.address, true, {from: owner});  
 
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});

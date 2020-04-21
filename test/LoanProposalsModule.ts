@@ -7,7 +7,6 @@ import {
     LoanProposalsModuleContract, LoanProposalsModuleInstance,
     LoanLimitsModuleContract, LoanLimitsModuleInstance,
     CurveModuleContract, CurveModuleInstance,
-    DefiModuleStubContract, DefiModuleStubInstance,
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
@@ -31,7 +30,6 @@ const LoanModule = artifacts.require("LoanModule");
 const LoanProposalsModule = artifacts.require("LoanProposalsModule");
 const LoanLimitsModule = artifacts.require("LoanLimitsModule");
 const CurveModule = artifacts.require("CurveModule");
-const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
@@ -49,7 +47,6 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
-    let defi: DefiModuleStubInstance; 
 
     let withdrawFeePercent:BN, percentDivider:BN;
 
@@ -75,10 +72,6 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
-
-        defi = await DefiModuleStub.new();
-        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("defi", defi.address, true, {from: owner});  
 
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
