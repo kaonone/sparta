@@ -10140,6 +10140,13 @@ truffle-config@1.1.16:
     truffle-error "^0.0.5"
     truffle-provider "^0.1.12"
 
+truffle-contract-size@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/truffle-contract-size/-/truffle-contract-size-1.0.1.tgz#15c56b78c834659fb24e31df32355a738b57d369"
+  integrity sha512-1/hiiIIWZk4PlFZcV7IYp8BkSv7iipeNIIQuJ94E4q6gL4dgoeRmkIWVV/RmMz2nVGuqBpSeImoxcPNVlO6uwg==
+  dependencies:
+    cli-table "^0.3.1"
+
 truffle-error@^0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/truffle-error/-/truffle-error-0.0.5.tgz#6b5740c9f3aac74f47b85d654fff7fe2c1fc5e0e"

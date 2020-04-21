@@ -32,7 +32,7 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @param pAmountMin Minimal amout of pTokens suitable for sender
      */ 
     function deposit(uint256 lAmount, uint256 pAmountMin) public operationAllowed(IAccessModule.Operation.Deposit) {
-        require(lAmount > 0, "LiquidityModule: amount should not be 0");
+        require(lAmount > 0, "LiquidityModule: lAmount should not be 0");
         require(lAmount >= limits.lDepositMin, "LiquidityModule: amount should be >= lDepositMin");
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
         require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
@@ -48,7 +48,7 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
-        require(pAmount > 0, "LiquidityModule: amount should not be 0");
+        require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
         loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
@@ -67,7 +67,7 @@ contract LiquidityModule is Module, ILiquidityModule {
      */
     function withdrawForRepay(address borrower, uint256 pAmount) public {
         require(_msgSender() == getModuleAddress(MODULE_LOAN), "LiquidityModule: call only allowed from LoanModule");
-        require(pAmount > 0, "LiquidityModule: amount should not be 0");
+        require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         //require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin"); //Limit disabled, because this is actually repay
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         uint256 availableLiquidity = fundsModule().lBalance();

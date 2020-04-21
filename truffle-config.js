@@ -46,7 +46,7 @@ const mocha = process.env.GAS_REPORTER ? mochaGasSettings : {}
 module.exports = {
 
 
-  plugins: ["truffle-security", "solidity-coverage"],
+  plugins: ["truffle-security", "solidity-coverage", "truffle-contract-size"],
 
   test_file_extension_regexp: /.*\.ts$/,
   /**

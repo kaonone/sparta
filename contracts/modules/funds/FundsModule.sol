@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/curve/ICurveModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
+import "../../interfaces/curve/ILoanProposalsModule.sol";
 import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
 import "./FundsOperatorRole.sol";
@@ -184,7 +185,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
-        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lProposals = loanProposalsModule().totalLProposals();
         return curveModule().calculateExit(lBalance.sub(lProposals), lAmount);
     }
 
@@ -194,7 +195,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pTokens to burn/lock
      */
     function calculatePoolExitWithFee(uint256 lAmount) public view returns(uint256) {
-        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lProposals = loanProposalsModule().totalLProposals();
         return curveModule().calculateExitWithFee(lBalance.sub(lProposals), lAmount);
     }
 
@@ -205,7 +206,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pTokens to burn/lock
      */
     function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
-        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lProposals = loanProposalsModule().totalLProposals();
         return curveModule().calculateExitWithFee(lBalance.sub(liquidityCorrection).sub(lProposals), lAmount);
     }
 
@@ -215,13 +216,13 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
-        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lProposals = loanProposalsModule().totalLProposals();
         return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
     }
 
     function emitStatus() private {
         uint256 lDebts = loanModule().totalLDebts();
-        uint256 lProposals = loanModule().totalLProposals();
+        uint256 lProposals = loanProposalsModule().totalLProposals();
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
         if (lBalance >= STATUS_PRICE_AMOUNT) {
@@ -238,6 +239,10 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     
     function loanModule() private view returns(ILoanModule) {
         return ILoanModule(getModuleAddress(MODULE_LOAN));
+    }
+
+    function loanProposalsModule() private view returns(ILoanProposalsModule) {
+        return ILoanProposalsModule(getModuleAddress(MODULE_LOAN_PROPOSALS));
     }
 
     function pToken() private view returns(IPToken){

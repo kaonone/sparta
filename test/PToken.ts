@@ -89,6 +89,18 @@ contract("PToken", async ([_, owner, ...otherAccounts]) => {
         let receipt = await pToken.burn(amount, {from: otherAccounts[0]});
         expectEvent(receipt, 'Transfer', {'from':otherAccounts[0], 'to':constants.ZERO_ADDRESS, 'value':amount});
     });
+    it("should not distribute to a new user", async () => {
+        await pToken.mint(otherAccounts[0], w3random.interval(1000, 5000, 'ether'), {from: owner});
+        await pToken.distribute(w3random.interval(1000, 5000, 'ether'), {from: owner});
+        time.increase(24*60*60);
+
+        let pAmount = w3random.interval(10, 20, 'ether');
+        await pToken.mint(otherAccounts[1], pAmount, {from: owner});
+        time.increase(24*60*60);
+        await (<any>pToken).methods['claimDistributions(address)'](otherAccounts[1]);
+        let pBalance = await pToken.balanceOf(otherAccounts[1]);
+        expect(pBalance).to.be.bignumber.eq(pAmount);
+    });
     it("should distribute tokens", async () => {
         let amountU1 = w3random.interval(1, 1000, 'ether');
         // console.log('amountU1', amountU1.toString());

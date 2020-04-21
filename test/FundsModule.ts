@@ -31,6 +31,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
     let pool: PoolInstance;
     let funds: FundsModuleInstance; 
     let loanm: LoanModuleStubInstance; 
+    let loanpm: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
@@ -55,6 +56,9 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         loanm = await LoanModuleStub.new();
         await (<any> loanm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("loan", loanm.address, true, {from: owner});  
+        loanpm = await LoanModuleStub.new();
+        await (<any> loanpm).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("loan_proposals", loanpm.address, true, {from: owner});  
 
         funds = await FundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});

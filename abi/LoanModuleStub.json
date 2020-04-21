@@ -381,6 +381,36 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "MODULE_LOAN_LIMTS",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "MODULE_LOAN_PROPOSALS",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "MODULE_LTOKEN",
     "outputs": [
       {
@@ -515,13 +545,7 @@
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_pool",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "initialize",
     "outputs": [],
     "payable": false,
@@ -530,7 +554,13 @@
   },
   {
     "constant": false,
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_pool",
+        "type": "address"
+      }
+    ],
     "name": "initialize",
     "outputs": [],
     "payable": false,
@@ -638,6 +668,37 @@
       }
     ],
     "name": "executeDebtProposal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "createDebt",
     "outputs": [
       {
         "internalType": "uint256",
@@ -810,6 +871,88 @@
       }
     ],
     "name": "getRequiredPledge",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getProposalAndPledgeInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lCovered",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pCollected",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interest",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lPledge",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pPledge",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "getProposalInterestRate",
     "outputs": [
       {
         "internalType": "uint256",

@@ -21,21 +21,22 @@ const PoolContract = artifacts.require("Pool");
 
 contract("Create Proxy", async ([_, owner,  ...otherAccounts]) => {
 
-    let project: any;
-    let creatorAddress: string;
-  
-    beforeEach(async () => {
-      project = await TestHelper();
-      creatorAddress = await ZWeb3.defaultAccount();
-    });
-  
-    it("should create proxy", async () => {
-      const proxy = await project.createProxy(Pool, { initMethod: "initialize",
-      // tslint:disable-next-line:object-literal-sort-keys
-      initArgs: [owner], from: creatorAddress });
-      const pool = await PoolContract.at(proxy.address);
+        let project: any;
+        let creatorAddress: string;
+    
+        beforeEach(async () => {
+            project = await TestHelper();
+            creatorAddress = await ZWeb3.defaultAccount();
+        });
+    
+        it("should create proxy", async () => {
+            const proxy = await project.createProxy(Pool, { initMethod: "initialize",
+                // tslint:disable-next-line:object-literal-sort-keys
+                initArgs: [owner], from: creatorAddress 
+            });
+            const pool = await PoolContract.at(proxy.address);
 
-      await pool.setMetadata("creditPool", "Great Pool",  {from: creatorAddress });
-      (await pool.owner()).should.equal(owner);
-    });
+            await pool.setMetadata("creditPool", "Great Pool",  {from: creatorAddress });
+            (await pool.owner()).should.equal(owner);
+        });
 });

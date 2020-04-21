@@ -38,13 +38,25 @@ declare global {
       require(
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;
+      require(
+        name: "ILoanLimitsModule"
+      ): TruffleContracts.ILoanLimitsModuleContract;
       require(name: "ILoanModule"): TruffleContracts.ILoanModuleContract;
+      require(
+        name: "ILoanProposalsModule"
+      ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(
         name: "LiquidityModule"
       ): TruffleContracts.LiquidityModuleContract;
+      require(
+        name: "LoanLimitsModule"
+      ): TruffleContracts.LoanLimitsModuleContract;
       require(name: "LoanModule"): TruffleContracts.LoanModuleContract;
       require(name: "LoanModuleStub"): TruffleContracts.LoanModuleStubContract;
+      require(
+        name: "LoanProposalsModule"
+      ): TruffleContracts.LoanProposalsModuleContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Module"): TruffleContracts.ModuleContract;
       require(name: "ModuleNames"): TruffleContracts.ModuleNamesContract;

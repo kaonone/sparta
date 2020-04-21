@@ -4,6 +4,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../interfaces/curve/IFundsModule.sol";
 import "../interfaces/curve/ILoanModule.sol";
+import "../interfaces/curve/ILoanProposalsModule.sol";
 import "../token/pTokens/PToken.sol";
 import "../common/Module.sol";
 
@@ -11,7 +12,7 @@ import "../common/Module.sol";
  * @notice
  * Stub of LoanModule to allow tests of FundsModule and LiquidityModule
  */
-contract LoanModuleStub is Module, ILoanModule {
+contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
     uint256 private lDebts;
     mapping (address=>bool) hasDebts;
 
@@ -32,6 +33,10 @@ contract LoanModuleStub is Module, ILoanModule {
     }
 
     function executeDebtProposal(uint256) public returns(uint256){
+        hasDebts[_msgSender()] = true;
+    }
+
+    function createDebt(address, uint256, uint256) public returns(uint256){
         hasDebts[_msgSender()] = true;
     }
 
@@ -66,6 +71,15 @@ contract LoanModuleStub is Module, ILoanModule {
         return 0;
     }
 
+    function getProposalAndPledgeInfo(address, uint256, address) public view
+    returns(uint256 lAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge) {
+        return (0, 0, 0, 0, 0, 0);
+    }
+
+    function getProposalInterestRate(address, uint256) public view returns(uint256){
+        return 0;
+    }
+
     function getDebtRequiredPayments(address, uint256) public view returns(uint256, uint256) {
         this; // silence state mutability warning
         return (0, 0);
@@ -94,5 +108,6 @@ contract LoanModuleStub is Module, ILoanModule {
     function calculateInterestPayment(uint256, uint256, uint256, uint) public pure returns(uint256){
         return 0;
     }
+
 
 }

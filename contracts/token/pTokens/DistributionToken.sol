@@ -37,7 +37,9 @@ contract DistributionToken is ERC20, ERC20Mintable {
 
     function claimDistributions(address account) external returns(uint256) {
         _createDistributionIfReady();
-        return _updateUserBalance(account, distributions.length);
+        uint256 amount = _updateUserBalance(account, distributions.length);
+        if (amount > 0) userBalanceChanged(account);
+        return amount;
     }
     
     /**
@@ -48,20 +50,24 @@ contract DistributionToken is ERC20, ERC20Mintable {
     function claimDistributions(address account, uint256 toDistribution) external returns(uint256) {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
-        return _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
+        uint256 amount = _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
+        if (amount > 0) userBalanceChanged(account);
+        return amount;
     }
 
     function claimDistributions(address[] calldata accounts) external {
         _createDistributionIfReady();
         for (uint256 i=0; i < accounts.length; i++){
-            _updateUserBalance(accounts[i], distributions.length);
+            uint256 amount = _updateUserBalance(accounts[i], distributions.length);
+            if (amount > 0) userBalanceChanged(accounts[i]);
         }
     }
 
     function claimDistributions(address[] calldata accounts, uint256 toDistribution) external {
         require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
         for (uint256 i=0; i < accounts.length; i++){
-            _updateUserBalance(accounts[i], toDistribution+1);
+            uint256 amount = _updateUserBalance(accounts[i], toDistribution+1);
+            if (amount > 0) userBalanceChanged(accounts[i]);
         }
     }
 
@@ -104,24 +110,46 @@ contract DistributionToken is ERC20, ERC20Mintable {
         return distributions.length;
     }
 
+    /**
+     * @notice Balance of account, which is counted for distributions
+     * It only represents already distributed balance.
+     * @dev This function should be overloaded to include balance of tokens stored in proposals
+     */
+    function distributionBalanceOf(address account) public view returns(uint256) {
+        return balanceOf(account);
+    }
+
+    /**
+     * @notice Total supply which is counted for distributions
+     * It only represents already distributed tokens
+     * @dev This function should be overloaded to exclude tokens locked in loans
+     */
+    function distributionTotalSupply() public view returns(uint256){
+        return totalSupply();
+    }
+
     // Override functions that change user balance
     function _transfer(address sender, address recipient, uint256 amount) internal {
         _createDistributionIfReady();
         _updateUserBalance(sender);
         _updateUserBalance(recipient);
         super._transfer(sender, recipient, amount);
+        userBalanceChanged(sender);
+        userBalanceChanged(recipient);
     }
 
     function _mint(address account, uint256 amount) internal {
         _createDistributionIfReady();
         _updateUserBalance(account);
         super._mint(account, amount);
+        userBalanceChanged(account);
     }
     
     function _burn(address account, uint256 amount) internal {
         _createDistributionIfReady();
         _updateUserBalance(account);
         super._burn(account, amount);
+        userBalanceChanged(account);
     }
 
     function _updateUserBalance(address account) internal returns(uint256) {
@@ -132,8 +160,8 @@ contract DistributionToken is ERC20, ERC20Mintable {
         uint256 fromDistribution = nextDistributions[account];
         if (fromDistribution >= toDistribution) return 0;
         uint256 distributionAmount = calculateClaimAmount(account, toDistribution);
-        if (distributionAmount == 0) return 0;
         nextDistributions[account] = toDistribution;
+        if (distributionAmount == 0) return 0;
         super._transfer(address(this), account, distributionAmount);
         emit DistributionsClaimed(account, distributionAmount, fromDistribution, toDistribution);
         return distributionAmount;
@@ -159,21 +187,9 @@ contract DistributionToken is ERC20, ERC20Mintable {
     }
 
     /**
-     * @notice Balance of account, which is counted for distributions
-     * It only represents already distributed balance.
-     * @dev This function should be overloaded to include balance of tokens stored in proposals
+     * @dev This is a placeholder, which may be overrided to notify other contracts of PTK balance change
      */
-    function distributionBalanceOf(address account) internal view returns(uint256) {
-        return balanceOf(account);
-    }
-
-    /**
-     * @notice Total supply which is counted for distributions
-     * It only represents already distributed tokens
-     * @dev This function should be overloaded to exclude tokens locked in loans
-     */
-    function distributionTotalSupply() internal view returns(uint256){
-        return totalSupply();
+    function userBalanceChanged(address /*account*/) internal {
     }
 
     /**
