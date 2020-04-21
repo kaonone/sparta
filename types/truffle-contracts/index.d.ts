@@ -4406,11 +4406,6 @@ export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface ILoanLimitsModuleInstance extends Truffle.ContractInstance {
-  get(
-    limit: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   set: {
     (
       limit: number | BN | string,
@@ -4433,6 +4428,11 @@ export interface ILoanLimitsModuleInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  get(
+    limit: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -5335,11 +5335,6 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  get(
-    limit: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   set: {
     (
       limit: number | BN | string,
@@ -5362,6 +5357,11 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
+
+  get(
+    limit: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -7452,11 +7452,6 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  balanceOf(
-    owner: string | BN,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   balanceOfUnderlying: {
     (owner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
@@ -7483,6 +7478,11 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
+
+  balanceOf(
+    owner: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface TestSQRTInstance extends Truffle.ContractInstance {
