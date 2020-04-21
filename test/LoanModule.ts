@@ -590,9 +590,12 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
         expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser, 18, -6);
         expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal, 18, -6);
+
+        let claimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum});
+
         let pBalanceAfter = await pToken.balanceOf(borrower);
         //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
-        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(pWithdrawWeiTotal));
+        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(withrawEvents[1].args.pAmount).add(claimEvents[0].args.amount));
     });
 
     // it('should correctly calculate totalLDebts()', async () => {
