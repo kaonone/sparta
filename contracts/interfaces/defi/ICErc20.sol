@@ -16,15 +16,15 @@ contract ICErc20 {
     function transfer(address dst, uint amount) external returns (bool);
     function transferFrom(address src, address dst, uint amount) external returns (bool);
     function approve(address spender, uint amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint);
-    function balanceOf(address owner) external view returns (uint);
-    function balanceOfUnderlying(address owner) external returns (uint);
-    function exchangeRateCurrent() external returns (uint);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function balanceOf(address owner) external view returns (uint256);
+    function balanceOfUnderlying(address owner) external returns (uint256);
+    function exchangeRateCurrent() external returns (uint256);
 
      /*** User Interface of CErc20Interface ***/
 
-    function mint(uint mintAmount) external returns (uint);
-    function redeem(uint redeemTokens) external returns (uint);
-    function redeemUnderlying(uint redeemAmount) external returns (uint);
+    function mint(uint mintAmount) external returns (uint256);
+    function redeem(uint redeemTokens) external returns (uint256);
+    function redeemUnderlying(uint redeemAmount) external returns (uint256);
 
 }

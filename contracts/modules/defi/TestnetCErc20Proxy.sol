@@ -1,17 +1,20 @@
 pragma solidity ^0.5.12;
 
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/defi/ICErc20.sol";
 import "../../interfaces/defi/ITestnetCompoundDAI.sol";
 import "../../token/FreeDAI.sol";
 import "../../common/Base.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 
-contract TestnetCErc20Proxy is Base {
+contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
     using SafeMath for uint256;
 
     ITestnetCompoundDAI public testnetDAI;
     FreeDAI public akropolisDAI;
     ICErc20 public cDAI;
+
+    mapping (address => mapping (address => uint256)) private _allowances;
 
     function initialize(address _akropolisDAI, address _testnetDAI) public initializer {
         Base.initialize();
@@ -90,25 +93,46 @@ contract TestnetCErc20Proxy is Base {
         akropolisDAI.transfer(_msgSender(), transfered);
     }
 
-    // === Directly proxied functions ===
-    function balanceOfUnderlying(address owner) public returns (uint) {
-        return cDAI.balanceOfUnderlying(owner);
+    // === Modified proxied functions, wich require additional Approval on original cDAI ===
+    function transfer(address recipient, uint amount) public returns (bool) {
+        return cDAI.transferFrom(_msgSender(), recipient, amount);
     }
 
-    function exchangeRateCurrent() public returns (uint) {
-        return cDAI.exchangeRateCurrent();
+    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool){
+        address spender = _msgSender();
+        _allowances[sender][spender] = _allowances[sender][spender].sub(amount, "TestnetCErc20Proxy: transfer amount exceeds allowance");
+        return cDAI.transferFrom(sender, recipient, amount);
     }
-    
-    function balanceOf(address owner) public view returns (uint){
+
+    function approve(address spender, uint amount) public returns (bool) {
+        address owner = _msgSender();
+        _allowances[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
+    }
+
+    function allowance(address owner, address spender) public view returns (uint256) {
+        return _allowances[owner][spender];
+    }
+
+    // === Directly proxied functions ===
+    function balanceOf(address owner) public view returns (uint256){
         return cDAI.balanceOf(owner);
     }
 
+    function balanceOfUnderlying(address owner) public returns (uint256) {
+        return cDAI.balanceOfUnderlying(owner);
+    }
+
+    function exchangeRateCurrent() public returns (uint256) {
+        return cDAI.exchangeRateCurrent();
+    }
+    
     // === Math ===
     /**
      * @dev Divide a scalar by an Exp mantissa, then truncate to return an unsigned integer.
      * This is simplified version of Exponential.divScalarByExpTruncate()
      */
-    function divScalarByExpTruncate(uint scalar, uint256 divisorMantissa) pure private returns(uint256){
+    function divScalarByExpTruncate(uint256 scalar, uint256 divisorMantissa) pure private returns(uint256){
         return scalar.mul(1e18).div(divisorMantissa);
     }
 

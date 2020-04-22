@@ -2,8 +2,8 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/token/IPToken.sol";
+import "../../interfaces/defi/ICErc20.sol";
 import "./DefiModuleBase.sol";
-import "./TestnetCErc20Proxy.sol";
 
 contract CompoundModule is DefiModuleBase {
 
@@ -13,7 +13,7 @@ contract CompoundModule is DefiModuleBase {
 
     function depositInternal(address sender, uint256 amount) internal {
         IERC20 ltoken = lToken();
-        TestnetCErc20Proxy cdai = cDAI();
+        ICErc20 cdai = cDAI();
         ltoken.transferFrom(sender, address(this), amount);
         ltoken.approve(address(cdai), amount);
         cdai.mint(amount);
@@ -32,8 +32,8 @@ contract CompoundModule is DefiModuleBase {
         return pToken().distributionTotalSupply();
     }
 
-    function cDAI() private view returns(TestnetCErc20Proxy){
-        return TestnetCErc20Proxy(getModuleAddress(MODULE_CDAI));
+    function cDAI() private view returns(ICErc20){
+        return ICErc20(getModuleAddress(MODULE_CDAI));
     }
 
     function lToken() private view returns(IERC20){
