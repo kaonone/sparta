@@ -51,18 +51,11 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     function withdrawInterest() public {
+        _updateUserBalance(_msgSender(), distributions.length);
         InvestmentBalance storage ib = balances[_msgSender()];
         if (ib.availableBalance > 0) {
             withdrawInternal(_msgSender(), ib.availableBalance);
         }
-    }
-
-    /**
-     * @notice Update user balance with interest received
-     * @param account Address of the user
-     */
-    function claimDistributions(address account) public {
-        _updateUserBalance(account, distributions.length);
     }
 
     /**
@@ -73,6 +66,38 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function updatePTKBalance(address account, uint256 ptkBalance) public onlyDefiOperator {
         _updateUserBalance(account, distributions.length);
         balances[account].ptkBalance = ptkBalance;
+    }
+
+    /**
+     * @Notice Returns full DAI balance of the pool. Useful to transfer all funds to another module.
+     * @dev Note, this call MAY CHANGE state  (internal DAI balance in Compound, for example)
+     */
+    function poolBalance() public {
+        return poolBalanceOfDAI();
+    }
+
+    /**
+     * @notice Update user balance with interest received
+     * @param account Address of the user
+     */
+    function claimDistributions(address account) public {
+        _updateUserBalance(account, distributions.length);
+    }
+
+    function claimDistributions(address account, uint256 toDistribution) public {
+        require(toDistribution <= distributions.length, "DefiModuleBase: lastDistribution too hight");
+        _updateUserBalance(account, toDistribution);
+    }
+
+    /**
+     * @notice Returns how many DAI can be withdrawn by withdrawInterest()
+     * @param account Account to check
+     * @returns Amount of DAI which will be withdrawn by withdrawInterest()
+     */
+    function availableInterest(address account) public returns (uint256) {
+        InvestmentBalance storage ib = balances[_msgSender()];
+        uint256 unclaimed = _calculateDistributedAmount(ib.nextDistribution, distributions.length, ib.ptkBalance);
+        return ib.availableBalance.add(unclaimed);
     }
 
     // == Abstract functions to be defined in realization ==
