@@ -11,11 +11,17 @@ declare global {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
       require(name: "Base"): TruffleContracts.BaseContract;
+      require(
+        name: "BaseFundsModule"
+      ): TruffleContracts.BaseFundsModuleContract;
       require(name: "BondingCurve"): TruffleContracts.BondingCurveContract;
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
+      require(
+        name: "DefiFundsModule"
+      ): TruffleContracts.DefiFundsModuleContract;
       require(name: "DefiModuleBase"): TruffleContracts.DefiModuleBaseContract;
       require(name: "DefiModuleStub"): TruffleContracts.DefiModuleStubContract;
       require(

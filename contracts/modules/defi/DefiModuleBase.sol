@@ -69,10 +69,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     /**
-     * @Notice Returns full DAI balance of the pool. Useful to transfer all funds to another module.
+     * @notice Full DAI balance of the pool. Useful to transfer all funds to another module.
      * @dev Note, this call MAY CHANGE state  (internal DAI balance in Compound, for example)
      */
-    function poolBalance() public {
+    function poolBalance() public returns(uint256) {
         return poolBalanceOfDAI();
     }
 
@@ -92,10 +92,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     /**
      * @notice Returns how many DAI can be withdrawn by withdrawInterest()
      * @param account Account to check
-     * @returns Amount of DAI which will be withdrawn by withdrawInterest()
+     * @return Amount of DAI which will be withdrawn by withdrawInterest()
      */
-    function availableInterest(address account) public returns (uint256) {
-        InvestmentBalance storage ib = balances[_msgSender()];
+    function availableInterest(address account) public view returns (uint256) {
+        InvestmentBalance storage ib = balances[account];
         uint256 unclaimed = _calculateDistributedAmount(ib.nextDistribution, distributions.length, ib.ptkBalance);
         return ib.availableBalance.add(unclaimed);
     }

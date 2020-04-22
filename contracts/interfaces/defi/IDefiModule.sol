@@ -1,10 +1,10 @@
 pragma solidity ^0.5.12;
 
-
-contract IDefiModule { 
+//solhint-disable func-order
+interface IDefiModule { 
     //Info
-    function poolBalance() external();
-    function availableInterest(address account) external returns (uint256)
+    function poolBalance() external returns(uint256);
+    function availableInterest(address account) external view returns (uint256);
 
     // Actions for user
     function withdrawInterest() external;
