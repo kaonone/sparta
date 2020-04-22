@@ -1,6 +1,6 @@
 import {
     PoolContract, PoolInstance, 
-    FundsModuleContract, FundsModuleInstance, 
+    BaseFundsModuleContract, BaseFundsModuleInstance, 
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
     DefiModuleStubContract, DefiModuleStubInstance,
@@ -19,7 +19,7 @@ const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
-const FundsModule = artifacts.require("FundsModule");
+const BaseFundsModule = artifacts.require("BaseFundsModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
 const DefiModuleStub = artifacts.require("DefiModuleStub");
@@ -27,11 +27,11 @@ const DefiModuleStub = artifacts.require("DefiModuleStub");
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
 
-contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, ...otherAccounts]) => {
+contract("BaseFundsModule", async ([_, owner, liquidityProvider, borrower, tester, ...otherAccounts]) => {
     let snap: Snapshot;
 
     let pool: PoolInstance;
-    let funds: FundsModuleInstance; 
+    let funds: BaseFundsModuleInstance; 
     let loanm: LoanModuleStubInstance; 
     let loanpm: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
@@ -67,7 +67,7 @@ contract("FundsModule", async ([_, owner, liquidityProvider, borrower, tester, .
         await (<any> loanpm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("loan_proposals", loanpm.address, true, {from: owner});  
 
-        funds = await FundsModule.new();
+        funds = await BaseFundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});

@@ -24,7 +24,25 @@ contract DefiModuleStub is Module, IDefiModule {
         this;
     }
 
+    function claimDistributions(address) external {
+        this;
+    }
+
+    function claimDistributions(address, uint256) external {
+        this;
+    }
+
     function updatePTKBalance(address, uint256) external  {
         this;
     }
+
+    function poolBalance() external returns(uint256) {
+        this;
+        return 0;
+    }
+
+    function availableInterest(address) external view returns (uint256) {
+        return 0;
+    }
+
 }
