@@ -52,6 +52,8 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let defi: DefiModuleStubInstance; 
 
     let withdrawFeePercent:BN, percentDivider:BN;
+    let collateralToDebtRatio:BN, collateralToDebtMultiplier:BN;
+    let borrowerCollateralToFullCollateralRatio:BN, borrowerCollateralToFullCollateralMultiplier:BN;
 
     enum LoanLimitType {
         L_DEBT_AMOUNT_MIN,
@@ -120,6 +122,11 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         curve.setWithdrawFee(new BN(5), {from: owner});
         withdrawFeePercent = await curve.withdrawFeePercent();
         percentDivider = await curve.PERCENT_DIVIDER();
+
+        collateralToDebtRatio = await loanpm.COLLATERAL_TO_DEBT_RATIO();
+        collateralToDebtMultiplier = await loanpm.COLLATERAL_TO_DEBT_RATIO_MULTIPLIER();
+        borrowerCollateralToFullCollateralRatio = await loanpm.BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO();
+        borrowerCollateralToFullCollateralMultiplier = await loanpm.BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER();
 
         //Save snapshot
         snap = await Snapshot.create(web3.currentProvider);
@@ -432,7 +439,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(borrowerLockedPTK).to.be.bignumber.gt(lockedPTK);
         let extraPTK = borrowerLockedPTK.sub(lockedPTK);
 
-        let distributedPTK = repayPInterest.div(new BN(2));
+        let distributedPTK = repayPInterest.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
         //console.log('distributedPTK', distributedPTK.toString(), distrCreatedEvents[0].args.amount.toString());
         expectEqualBN(distributedPTK, distrCreatedEvents[0].args.amount);
         //distributionSupplyExpected = distributionSupplyExpected.add(distributedPTK);
@@ -616,11 +623,13 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
     async function createDebt(debtLAmount:BN, supporter:string|Array<string>){
         //Prepare Borrower account
-        let pAmountMinWei = (await funds.calculatePoolExit(debtLAmount)).div(new BN(2));
-        await prepareBorrower(pAmountMinWei);
+        let lfullCollateral = debtLAmount.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
+        let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
+        let pAmountMaxWei = (await funds.calculatePoolExit(lBorrowerCollateral))
+        await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMinWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
+        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMaxWei, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporters

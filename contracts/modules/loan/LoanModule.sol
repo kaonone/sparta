@@ -21,13 +21,7 @@ contract LoanModule is Module, ILoanModule {
 
     uint256 public constant DEBT_REPAY_DEADLINE_PERIOD = 90*24*60*60;   //Period before debt without payments may be defaulted
 
-    uint256 public constant COLLATERAL_TO_DEBT_RATIO_MULTIPLIER = 10**3;
-    uint256 public constant COLLATERAL_TO_DEBT_RATIO = /*1.0* */COLLATERAL_TO_DEBT_RATIO_MULTIPLIER; // Regulates how many collateral is required 
-    uint256 public constant PLEDGE_PERCENT_MULTIPLIER = 10**3;
     uint256 public constant DEBT_LOAD_MULTIPLIER = 10**3;
-
-    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER = 10**3;
-    uint256 public constant BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO = BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER/2;
 
     struct Debt {
         uint256 proposal;           // Index of DebtProposal in adress's proposal list
@@ -279,7 +273,6 @@ contract LoanModule is Module, ILoanModule {
         }
         fundsModule().burnLockedPTokens(pLocked.add(pExtra));
         decreaseActiveDebts(borrower);
-        fundsModule().emitStatusEvent();    // lDebts changes, so we need to emit status, and there was no depositLTokens/withdrawLTokens to do it for us
         emit DebtDefaultExecuted(borrower, debt, pLocked);
     }
 

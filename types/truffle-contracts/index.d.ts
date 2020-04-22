@@ -5381,20 +5381,6 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
 export interface LoanModuleInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   DEBT_REPAY_DEADLINE_PERIOD(
@@ -5426,10 +5412,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  PLEDGE_PERCENT_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
 
   activeDebts(
     arg0: string | BN,
@@ -6113,8 +6095,6 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
 }
 
 export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
   BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -6128,14 +6108,6 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
   COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
-
-  DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  DEBT_REPAY_DEADLINE_PERIOD(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
