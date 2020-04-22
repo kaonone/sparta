@@ -35,7 +35,6 @@ declare global {
       require(name: "ERC20Detailed"): TruffleContracts.ERC20DetailedContract;
       require(name: "ERC20Mintable"): TruffleContracts.ERC20MintableContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
-      require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
         name: "FundsModuleStub"
       ): TruffleContracts.FundsModuleStubContract;

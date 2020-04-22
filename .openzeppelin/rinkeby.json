@@ -616,7 +616,7 @@
         "storageDiff": []
       }
     },
-    "FundsModule": {
+    "BaseFundsModule": {
       "address": "0x4dB9Bb6Cc59A6Cb7132A65216142f5730b16b29f",
       "constructorCode": "6080604052613049806100136000396000f3fe",
       "bodyBytecodeHash": "e519643807790c1e429719e450cba316ca59441ad62a917b41242bb5931c5752",
@@ -729,16 +729,16 @@
           "src": "448:29:18"
         },
         {
-          "contract": "FundsModule",
-          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
+          "contract": "BaseFundsModule",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\BaseFundsModule.sol",
           "label": "lBalance",
           "astId": 1716,
           "type": "t_uint256",
           "src": "712:23:17"
         },
         {
-          "contract": "FundsModule",
-          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\FundsModule.sol",
+          "contract": "BaseFundsModule",
+          "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\funds\\BaseFundsModule.sol",
           "label": "pBalances",
           "astId": 1720,
           "type": "t_mapping<t_uint256>",
@@ -1718,7 +1718,7 @@
         "kind": "Upgradeable"
       }
     ],
-    "akropolis-pool/FundsModule": [
+    "akropolis-pool/BaseFundsModule": [
       {
         "address": "0x3946fC3545Cef33d379466D3DC945Ca7e0181F1c",
         "version": "1.0.0",

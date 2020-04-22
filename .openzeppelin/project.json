@@ -8,7 +8,7 @@
     "AccessModule": "AccessModule",
     "LiquidityModule": "LiquidityModule",
     "LoanModule": "LoanModule",
-    "FundsModule": "FundsModule"
+    "BaseFundsModule": "BaseFundsModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
