@@ -134,7 +134,7 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
         let ptkForUser = w3random.interval(10, 50, 'ether');
         await funds.mintPTokens(owner, ptkForOwner, {from: owner});
         await funds.mintPTokens(user, ptkForUser, {from: owner});
-        console.log(ptkForUser, ptkForOwner);
+        //console.log(ptkForUser, ptkForOwner);
 
         let timeShift = w3random.interval(30*24*60*60, 89*24*60*60)
         await time.increase(timeShift);
@@ -148,18 +148,18 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
         let expectedFullInterest = beforeTimeShift.cDaiUnderlying.mul(interesRate).mul(timeShift).div(expScale).div(annualSeconds);
         expectEqualBN(beforeWithdrawInterest.cDaiUnderlying, beforeTimeShift.cDaiUnderlying.add(expectedFullInterest), 18, -5);
 
-        await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
+        // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
 
-        // let receipt = await defim.withdrawInterest({from: user});
-        // expectEvent(receipt, 'WithdrawInterest', {'account':user});
+        let receipt = await defim.withdrawInterest({from: user});
+        expectEvent(receipt, 'WithdrawInterest', {'account':user});
 
-        // let afterWithdrawInterest = {
-        //     userDai: await dai.balanceOf(user),
-        //     defimCDai: await cDai.balanceOf(defim.address),
-        //     cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
-        // };
-        // let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
-        // expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
+        let afterWithdrawInterest = {
+            userDai: await dai.balanceOf(user),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+        };
+        let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
+        expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
 
     });
 

@@ -164,6 +164,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         uint256 fromDistribution = ib.nextDistribution;
         uint256 interest = _calculateDistributedAmount(fromDistribution, toDistribution, ib.ptkBalance);
         ib.availableBalance = ib.availableBalance.add(interest);
+        ib.nextDistribution = toDistribution;
         emit InvestmentDistributionsClaimed(account, ib.ptkBalance, interest, fromDistribution, toDistribution);
     }
 
