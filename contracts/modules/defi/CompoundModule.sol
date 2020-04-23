@@ -42,12 +42,12 @@ contract CompoundModule is DefiModuleBase {
         (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_CDAI));
         require(success, "CompoundModule: Pool error on get(cdai)");
         address cDai = abi.decode(result, (address));
-        if(cDai != ZERO_ADDRESS) poolDAI = ICErc20(cDai).balanceOfUnderlying(address(this)); // else poolDAI == 0;
+        if (cDai != ZERO_ADDRESS) poolDAI = ICErc20(cDai).balanceOfUnderlying(address(this)); // else poolDAI == 0;
 
         (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_PTOKEN));
         require(success, "CompoundModule: Pool error on get(ptoken)");
         address ptk = abi.decode(result, (address));
-        if(ptk != ZERO_ADDRESS) totalPTK = IPToken(ptk).distributionTotalSupply(); // else totalPTK == 0;
+        if (ptk != ZERO_ADDRESS) totalPTK = IPToken(ptk).distributionTotalSupply(); // else totalPTK == 0;
     }
 
     function cDAI() private view returns(ICErc20){
