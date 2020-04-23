@@ -117,14 +117,16 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function withdrawInternal(address beneficiary, uint256 amount) internal;
     function poolBalanceOfDAI() internal /*view*/ returns(uint256); //This is not a view function because cheking cDAI balance may update it
     function totalSupplyOfPTK() internal view returns(uint256);
+    function initialBalances() internal returns(uint256 poolDAI, uint256 totalPTK); //This is not a view function because cheking cDAI balance may update it
 
     // == Internal functions of DefiModule
     function _createInitialDistribution() internal {
         assert(distributions.length == 0);
+        (uint256 poolDAI, uint256 totalPTK) = initialBalances();
         distributions.push(Distribution({
             amount:0,
-            balance: poolBalanceOfDAI(),
-            totalPTK: totalSupplyOfPTK()
+            balance: poolDAI,
+            totalPTK: totalPTK
         }));
     }
 

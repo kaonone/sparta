@@ -50,14 +50,13 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
         funds = await FundsModuleStub.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
 
+        defim = await CompoundModule.new();
+        await (<any> defim).methods['initialize(address)'](pool.address, {from: owner});
+
         await pool.set('ltoken', dai.address, false, {from: owner});
         await pool.set('cdai', cDai.address, false, {from: owner});
         await pool.set('ptoken', pToken.address, false, {from: owner});
         await pool.set('funds', funds.address, false, {from: owner});
-
-        defim = await CompoundModule.new();
-        await (<any> defim).methods['initialize(address)'](pool.address, {from: owner});
-
         await pool.set('defi', defim.address, false, {from: owner});
         await pToken.addMinter(funds.address, {from: owner});
         await defim.addDefiOperator(funds.address, {from: owner});
