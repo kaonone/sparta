@@ -15,6 +15,7 @@ declare global {
         name: "BaseFundsModule"
       ): TruffleContracts.BaseFundsModuleContract;
       require(name: "BondingCurve"): TruffleContracts.BondingCurveContract;
+      require(name: "CErc20Stub"): TruffleContracts.CErc20StubContract;
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;

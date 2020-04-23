@@ -16,10 +16,11 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
 
     mapping (address => mapping (address => uint256)) private _allowances;
 
-    function initialize(address _akropolisDAI, address _testnetDAI) public initializer {
+    function initialize(address _akropolisDAI, address _testnetDAI, address _cDAI) public initializer {
         Base.initialize();
         akropolisDAI = FreeDAI(_akropolisDAI);
         testnetDAI = ITestnetCompoundDAI(_testnetDAI);
+        cDAI = ICErc20(_cDAI);
     }
 
     // === Modified proxied functions ===
