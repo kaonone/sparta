@@ -13,8 +13,7 @@ import "./DefiOperatorRole.sol";
 contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     using SafeMath for uint256;
 
-    event InvestmentDistributionCreated(uint256 amount, uint256 currentBalance, uint256 totalShares);
-    event InvestmentDistributionsClaimed(address account, uint256 shares, uint256 amount, uint256 fromDistribution, uint256 toDistribution);
+    uint256 public constant DISTRIBUTION_AGGREGATION_PERIOD = 24*60*60;
 
     struct Distribution {
         uint256 amount;         // Amount of DAI being distributed during the event
@@ -29,6 +28,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     Distribution[] public distributions;                    // Array of all distributions
+    uint256 public nextDistributionTimestamp;               //Timestamp when next distribuition should be fired
     mapping(address => InvestmentBalance) public balances;  // Map account to first distribution not yet processed
     uint256 depositsSinceLastDistribution;                  // Amount DAI deposited since last distribution;
     uint256 withdrawalsSinceLastDistribution;               // Amount DAI withdrawn since last distribution;
@@ -43,18 +43,22 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function deposit(address sender, uint256 amount) public onlyDefiOperator {
         depositsSinceLastDistribution = depositsSinceLastDistribution.add(amount);
         depositInternal(sender, amount);
+        emit Deposit(amount);
     }
 
     function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
         withdrawalsSinceLastDistribution = withdrawalsSinceLastDistribution.add(amount);
         withdrawInternal(beneficiary, amount);
+        emit Withdraw(amount);
     }
 
     function withdrawInterest() public {
+        _createDistributionIfReady();
         _updateUserBalance(_msgSender(), distributions.length);
         InvestmentBalance storage ib = balances[_msgSender()];
         if (ib.availableBalance > 0) {
             withdrawInternal(_msgSender(), ib.availableBalance);
+            emit WithdrawInterest(_msgSender(), ib.availableBalance);
         }
     }
 
@@ -63,9 +67,12 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
      * @param account Address of the user
      * @param ptkBalance New PTK balance of the user
      */
-    function updatePTKBalance(address account, uint256 ptkBalance) public onlyDefiOperator {
+    function updatePTKBalance(address account, uint256 ptkBalance) public {
+        require(_msgSender() == getModuleAddress(MODULE_PTOKEN), "DefiModuleBase: operation only allowed for PToken");
+        _createDistributionIfReady();
         _updateUserBalance(account, distributions.length);
         balances[account].ptkBalance = ptkBalance;
+        emit PTKBalanceUpdated(account, ptkBalance);
     }
 
     /**
@@ -81,6 +88,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
      * @param account Address of the user
      */
     function claimDistributions(address account) public {
+        _createDistributionIfReady();
         _updateUserBalance(account, distributions.length);
     }
 
@@ -100,6 +108,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         return ib.availableBalance.add(unclaimed);
     }
 
+    function distributionsLength() public view returns(uint256) {
+        return distributions.length;
+    }
+
     // == Abstract functions to be defined in realization ==
     function depositInternal(address sender, uint256 amount) internal;
     function withdrawInternal(address beneficiary, uint256 amount) internal;
@@ -114,6 +126,11 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
             balance: poolBalanceOfDAI(),
             totalPTK: totalSupplyOfPTK()
         }));
+    }
+
+    function _createDistributionIfReady() internal {
+        if (now < nextDistributionTimestamp) return;
+        _createDistribution();
     }
 
     function _createDistribution() internal {
@@ -138,6 +155,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         }));
         depositsSinceLastDistribution = 0;
         withdrawalsSinceLastDistribution = 0;
+        nextDistributionTimestamp = now.sub(now % DISTRIBUTION_AGGREGATION_PERIOD).add(DISTRIBUTION_AGGREGATION_PERIOD);
         emit InvestmentDistributionCreated(distributionAmount, currentBalanceOfDAI, totalPTK);
     }
 
@@ -160,6 +178,4 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         }
         return totalInterest;
     }
-
-
 }

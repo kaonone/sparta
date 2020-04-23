@@ -1093,6 +1093,14 @@ export interface BondingCurveInstance extends Truffle.ContractInstance {
 }
 
 export interface CErc20StubInstance extends Truffle.ContractInstance {
+  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  INITIAL_RATE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  INTEREST_RATE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   allowance(
     owner: string | BN,
     spender: string | BN,
@@ -1380,6 +1388,10 @@ export interface CErc20StubInstance extends Truffle.ContractInstance {
 }
 
 export interface CompoundModuleInstance extends Truffle.ContractInstance {
+  DISTRIBUTION_AGGREGATION_PERIOD(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
@@ -1478,6 +1490,8 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN, BN]>;
 
+  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
   getModuleAddress(
     module: string,
     txDetails?: Truffle.TransactionDetails
@@ -1489,6 +1503,10 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
   ): Promise<boolean>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  nextDistributionTimestamp(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -2351,6 +2369,10 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
+  DISTRIBUTION_AGGREGATION_PERIOD(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
@@ -2414,6 +2436,10 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
   ): Promise<boolean>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  nextDistributionTimestamp(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -2591,6 +2617,8 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
     account: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
+
+  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 }
 
 export interface DefiModuleStubInstance extends Truffle.ContractInstance {

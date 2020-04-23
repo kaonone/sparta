@@ -10,11 +10,11 @@ import "../common/Base.sol";
 contract CErc20Stub is Base, ICErc20, ERC20, ERC20Detailed {
     using SafeMath for uint256;
 
+    uint256 public constant EXP_SCALE = 1e18;  //Exponential scale (see Compound Exponential)
+    uint256 public constant INTEREST_RATE = 10 * EXP_SCALE / 100;  // Annual interest 10%
+    uint256 public constant INITIAL_RATE = 200000000000000000000000000;    // Same as real cDAI
+    uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
     uint256 private constant NO_ERROR = 0;
-    uint256 private constant EXP_SCALE = 1e18;  //Exponential scale (see Compound Exponential)
-    uint256 private constant INTEREST_RATE = 10 * EXP_SCALE / 100;  // Annual interest 10%
-    uint256 private constant INITIAL_RATE = 200000000000000000000000000;    // Same as real cDAI
-    uint256 private constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
     FreeDAI underlying;
     uint256 created;
