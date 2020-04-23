@@ -7,6 +7,7 @@ import "../../interfaces/defi/ITestnetCompoundDAI.sol";
 import "../../token/FreeDAI.sol";
 import "../../common/Base.sol";
 
+//solhint-disable func-order
 contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
     using SafeMath for uint256;
 
@@ -116,10 +117,6 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
     }
 
     // === Directly proxied functions ===
-    function balanceOf(address owner) public view returns (uint256){
-        return cDAI.balanceOf(owner);
-    }
-
     function balanceOfUnderlying(address owner) public returns (uint256) {
         return cDAI.balanceOfUnderlying(owner);
     }
@@ -128,6 +125,10 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
         return cDAI.exchangeRateCurrent();
     }
     
+    function balanceOf(address owner) public view returns (uint256){
+        return cDAI.balanceOf(owner);
+    }
+
     // === Math ===
     /**
      * @dev Divide a scalar by an Exp mantissa, then truncate to return an unsigned integer.

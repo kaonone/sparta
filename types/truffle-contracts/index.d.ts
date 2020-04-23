@@ -8182,12 +8182,30 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
-    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
-    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    (
+      _akropolisDAI: string | BN,
+      _testnetDAI: string | BN,
+      _cDAI: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _akropolisDAI: string | BN,
+      _testnetDAI: string | BN,
+      _cDAI: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _akropolisDAI: string | BN,
+      _testnetDAI: string | BN,
+      _cDAI: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _akropolisDAI: string | BN,
+      _testnetDAI: string | BN,
+      _cDAI: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
   };
 
   mint: {
@@ -8326,11 +8344,6 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  balanceOf(
-    owner: string | BN,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   balanceOfUnderlying: {
     (owner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
@@ -8357,6 +8370,11 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
+
+  balanceOf(
+    owner: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 }
 
 export interface TestSQRTInstance extends Truffle.ContractInstance {

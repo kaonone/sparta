@@ -29,21 +29,25 @@ contract CErc20Stub is Base, ICErc20, ERC20, ERC20Detailed {
     function exchangeRateCurrent() public returns (uint256) {
         return _exchangeRate();
     }
+
     function balanceOfUnderlying(address owner) public returns (uint256) {
         return balanceOf(owner).mul(_exchangeRate()).div(EXP_SCALE);
     }
+
     function mint(uint mintAmount) public returns (uint256) {
         underlying.transferFrom(_msgSender(), address(this), mintAmount);
         uint256 amount = mintAmount.mul(EXP_SCALE).div(_exchangeRate());
         _mint(_msgSender(), amount);
         return NO_ERROR;
     }
+
     function redeem(uint redeemTokens) public returns (uint256) {
         uint256 redeemAmount = redeemTokens.mul(_exchangeRate()).div(EXP_SCALE);
         _burn(_msgSender(), redeemTokens);
         _sendUnderlyuing(_msgSender(), redeemAmount);
         return NO_ERROR;
     }
+    
     function redeemUnderlying(uint redeemAmount) public returns (uint256) {
         uint256 redeemTokens = redeemAmount.mul(EXP_SCALE).div(_exchangeRate());
         _burn(_msgSender(), redeemTokens);
