@@ -20,6 +20,8 @@ contract ICErc20 {
     function balanceOf(address owner) external view returns (uint256);
     function balanceOfUnderlying(address owner) external returns (uint256);
     function exchangeRateCurrent() external returns (uint256);
+    function exchangeRateStored() external view returns (uint256);
+    function accrueInterest() external returns (uint256);
 
      /*** User Interface of CErc20Interface ***/
 

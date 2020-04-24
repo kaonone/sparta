@@ -163,7 +163,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
             defimCDai: await cDai.balanceOf(defim.address),
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
         };
-        expectEqualBN(afterWithdraw.fundsDai, afterTimeShift.cDaiUnderlying);
+        expectEqualBN(afterWithdraw.fundsDai, afterTimeShift.cDaiUnderlying, 18, -5);
         expectEqualBN(afterWithdraw.cDaiDai, new BN(0));
         expectEqualBN(afterWithdraw.defimCDai, new BN(0));
     });

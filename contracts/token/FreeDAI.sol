@@ -1,5 +1,6 @@
 pragma solidity ^0.5.12;
 
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burnable.sol";
 import "../common/Base.sol";
@@ -7,7 +8,7 @@ import "../common/Base.sol";
 /**
  * @notice Simple token which everyone can mint
  */
-contract FreeDAI is Base, ERC20Detailed, ERC20Burnable {
+contract FreeDAI is Base, ERC20, ERC20Detailed, ERC20Burnable {
 
     function initialize() public initializer {
         Base.initialize();

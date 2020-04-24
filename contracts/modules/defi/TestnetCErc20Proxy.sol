@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
 
-import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/defi/ICErc20.sol";
 import "../../interfaces/defi/ITestnetCompoundDAI.sol";
@@ -8,17 +9,16 @@ import "../../token/FreeDAI.sol";
 import "../../common/Base.sol";
 
 //solhint-disable func-order
-contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
+contract TestnetCErc20Proxy is Base, ICErc20, ERC20, ERC20Detailed {
     using SafeMath for uint256;
 
     ITestnetCompoundDAI public testnetDAI;
     FreeDAI public akropolisDAI;
     ICErc20 public cDAI;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
-
     function initialize(address _akropolisDAI, address _testnetDAI, address _cDAI) public initializer {
         Base.initialize();
+        ERC20Detailed.initialize("Compound Dai Proxy", "cDAIp", 8);
         akropolisDAI = FreeDAI(_akropolisDAI);
         testnetDAI = ITestnetCompoundDAI(_testnetDAI);
         cDAI = ICErc20(_cDAI);
@@ -38,22 +38,23 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
         //Allocate Compound DAI
         uint256 testnetDAIBalance = testnetDAI.balanceOf(address(this));
         if (mintAmount > testnetDAIBalance) {
-            testnetDAI.allocateTo(address(this), testnetDAIBalance.sub(mintAmount));
+            testnetDAI.allocateTo(address(this), mintAmount - testnetDAIBalance);
         }
 
         //Mint cDAI
+        testnetDAI.approve(address(cDAI), mintAmount);
         balanceBefore = cDAI.balanceOf(address(this));
         uint256 mintErr = cDAI.mint(mintAmount);
         require(mintErr == 0, "TestnetCErc20Proxy: failed to mint cDAI");
         transfered = cDAI.balanceOf(address(this)).sub(balanceBefore);
 
         //Transfer cDAI to original sender
-        require(cDAI.transfer(_msgSender(), transfered), "TestnetCErc20Proxy: failed to transfer minted cDAI");
+        _mint(_msgSender(), transfered);
     }
 
     function redeem(uint256 redeemTokens) public returns (uint256) {
         // Transfer cDAI to proxy
-        cDAI.transferFrom(_msgSender(), address(this), redeemTokens);
+        _burn(_msgSender(), redeemTokens); //not _burnFrom so that we do not need allowance
 
         // Execute exchange
         cDAI.approve(address(cDAI), redeemTokens);
@@ -77,7 +78,7 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
         uint256 redeemTokens = divScalarByExpTruncate(redeemAmount, exchangeRateMantissa);
 
         // Transfer cDAI to proxy
-        cDAI.transferFrom(_msgSender(), address(this), redeemTokens);
+        _burn(_msgSender(), redeemTokens); //not _burnFrom so that we do not need allowance
 
         // Execute exchange
         cDAI.approve(address(cDAI), redeemTokens);
@@ -95,40 +96,29 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
         akropolisDAI.transfer(_msgSender(), transfered);
     }
 
-    // === Modified proxied functions, wich require additional Approval on original cDAI ===
-    function transfer(address recipient, uint amount) public returns (bool) {
-        return cDAI.transferFrom(_msgSender(), recipient, amount);
+    function balanceOfUnderlying(address owner) public returns (uint256) {
+        uint256 exchangeRate = cDAI.exchangeRateCurrent();
+        return mulScalarTruncate(exchangeRate, balanceOf(owner));
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool){
-        address spender = _msgSender();
-        _allowances[sender][spender] = _allowances[sender][spender].sub(amount, "TestnetCErc20Proxy: transfer amount exceeds allowance");
-        return cDAI.transferFrom(sender, recipient, amount);
-    }
-
-    function approve(address spender, uint amount) public returns (bool) {
-        address owner = _msgSender();
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
-    }
-
-    function allowance(address owner, address spender) public view returns (uint256) {
-        return _allowances[owner][spender];
+    function getBalanceOfUnderlying(address owner) public view returns (uint256) {
+        uint256 exchangeRate = cDAI.exchangeRateStored();
+        return mulScalarTruncate(exchangeRate, balanceOf(owner));
     }
 
     // === Directly proxied functions ===
-    function balanceOfUnderlying(address owner) public returns (uint256) {
-        return cDAI.balanceOfUnderlying(owner);
-    }
-
     function exchangeRateCurrent() public returns (uint256) {
         return cDAI.exchangeRateCurrent();
     }
-    
-    function balanceOf(address owner) public view returns (uint256){
-        return cDAI.balanceOf(owner);
+
+    function exchangeRateStored() public view returns (uint256) {
+        return cDAI.exchangeRateStored();
     }
 
+    function accrueInterest() public returns (uint256) {
+        return cDAI.accrueInterest();
+    }
+    
     // === Math ===
     /**
      * @dev Divide a scalar by an Exp mantissa, then truncate to return an unsigned integer.
@@ -138,4 +128,7 @@ contract TestnetCErc20Proxy is Base, ICErc20, IERC20 {
         return scalar.mul(1e18).div(divisorMantissa);
     }
 
+    function mulScalarTruncate(uint256 multiplierMantissa, uint256 scalar) pure internal returns (uint256) {
+        return multiplierMantissa.mul(scalar).div(1e18);
+    }
 }

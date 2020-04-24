@@ -29,7 +29,7 @@ contract CErc20Stub is Base, ICErc20, ERC20, ERC20Detailed {
     function exchangeRateCurrent() public returns (uint256) {
         return _exchangeRate();
     }
-
+    
     function balanceOfUnderlying(address owner) public returns (uint256) {
         return balanceOf(owner).mul(_exchangeRate()).div(EXP_SCALE);
     }
@@ -55,8 +55,16 @@ contract CErc20Stub is Base, ICErc20, ERC20, ERC20Detailed {
         return NO_ERROR;
     }
 
+    function accrueInterest() public returns (uint256) {
+        this; //Not need to do anything
+    }
+
     function getBalanceOfUnderlying(address owner) public view returns (uint256) {
         return balanceOf(owner).mul(_exchangeRate()).div(EXP_SCALE);
+    }
+
+    function exchangeRateStored() public view returns (uint256) {
+        return _exchangeRate();
     }
 
     function _sendUnderlyuing(address recipient, uint256 amount) internal {

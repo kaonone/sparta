@@ -59,7 +59,7 @@ contract("CErc20Stub", async ([_, owner, user, ...otherAccounts]) => {
         let receipt = await cDai.redeem(amount, {from: user});
 
         let daiBalanceAfter = await dai.balanceOf(user);
-        expectEqualBN(daiBalanceAfter, daiBalanceBefore.add(expectedDai), 18, -6); //Inaccuracy may be caused by time shift
+        expectEqualBN(daiBalanceAfter, daiBalanceBefore.add(expectedDai), 18, -5); //Inaccuracy may be caused by time shift
     });
 
     it("should redeem FreeDAI in exchange for cDai by underlyingBalance", async () => {
