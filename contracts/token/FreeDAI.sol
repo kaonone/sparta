@@ -8,7 +8,7 @@ import "../common/Base.sol";
 /**
  * @notice Simple token which everyone can mint
  */
-contract FreeDAI is Base, ERC20, ERC20Detailed, ERC20Burnable {
+contract FreeDAI is Base, /*ERC20,*/ ERC20Detailed, ERC20Burnable {
 
     function initialize() public initializer {
         Base.initialize();

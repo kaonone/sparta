@@ -9,16 +9,17 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 
 # Testnet (Rinkeby) deployment 
 * FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* Pool: `0x89d6B368Db35B75373aA7ECd5cA7311EF5dBb615`
-* PToken: `0x9b1b9E0355d9fa5446F88ce2CD48017307465EDD`
-* CompoundModule:
-* CurveModule: `0xC1BfE7636a244497BFc7D9D6C4419eD98f2fcd70`
-* AccessModule: `0xD13e1930E46C5412B9adbE3B0c091E9e9b41af91`
-* LiquidityModule: `0xCBA406Cd5cEc74E7F23bF7C87b60322Cc0Fb451e`
-* LoanLimitsModule: 
-* LoanProposalsModule: 
-* LoanModule: `0xB7C9389735513B4313198d93e9fc835066b5F1fC`
-* FundsModule: `0x3946fC3545Cef33d379466D3DC945Ca7e0181F1c`
+* TestnetCErc20Proxy: `0xB2d7f6Dd2cE8897149941b31262893DE97b736b1`
+* Pool: `0x3419cbb43b44984AE59Bee9f6aEa5a1043480ed9`
+* PToken: `0xF755F575F99AB9f41e3a8Dd1f4b3D283C8B9dAe3`
+* AccessModule: `0x1Ba58254401583aedDBa27A85a90Ff186a95D127`
+* CompoundModule: `0x66e6c7F7b74dA5Cb8c1D00Cf757c347bbc8902Ff`
+* DefiFundsModule: `0xE540690F30FEc93bdB74aE6456dF5DebF508b1B4`
+* CurveModule: `0xefd572564ac34555443b2B18A36FaA3710D2F0df`
+* LiquidityModule: `0x0F9C81F2c0d616559E41e3d5696FD20EdEE3a1B7`
+* LoanLimitsModule: `0x7a5f4eAc47eCca2eb021a739c04f54941b159E4b`
+* LoanProposalsModule: `0x1580b8fe00b623D9768edF1074BE9e8Ab50f2198`
+* LoanModule: `0x78ae4a0253d6eC4508b9eA274F5416dD3876E1cd`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -72,7 +73,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
    1. Deploy proxy and contract instance of LoanModule
    1. Call `LoanModule.initialize(Pool.address)`
    1. Register in pool: `Pool.set("loan", LoanModule.address)`
-1. FundsModule
+1. DefiFundsModule
    1. Deploy proxy and contract instance
    1. Call `initialize(Pool.address)`
    1. Register in pool: `Pool.set("funds", FundsModule.address)`
