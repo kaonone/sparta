@@ -414,7 +414,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(w3random.interval(30*24*60*60, 60*24*60*60));
         let blockNum2 = await web3.eth.getBlockNumber();
         let requiredPayment = await loanm.getDebtRequiredPayments(borrower, debtIdx);
-        let repayLAmount = w3random.intervalBN(debtLAmount.mul(new BN(2)).div(new BN(3)), debtLAmount.mul(new BN(3)).div(new BN(4)));
+        let repayLAmount = w3random.intervalBN(debtLAmount.muln(70).divn(100), debtLAmount.muln(90).divn(100));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         let blockNum1 = await web3.eth.getBlockNumber();
         let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
