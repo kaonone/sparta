@@ -36,6 +36,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 
 ### Required data:
 * Address of liquidity token (`LToken.address`)
+* Address of cDAI contract (`cDAI.address`)
 
 ### Deployment sequence:
 1. Pool
@@ -183,7 +184,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 When borrower repays some part of his loan, he uses some PTK (either from his balance or minted when he sends DAI to the pool).
 This PTKs are distributed to supporters, proportionally to the part of the loan they covered. The borrower himself also covered half of the loan, and his part is distributed over the whole pool.
 All users of the pool receive part of this distributions proportional to the amount of PTK they hold on their balance and in loan proposals, PTK locked as collateral for loans is not counted.
-![Distributions](/docs/diagram_distributions.jpg)
+![PTK Distributions](/docs/diagram_distributions.jpg)
 ### Distribution mechanics
 When you need to distribute some amount of tokens over all token holders one's first straight-forward idea might be to iterate through all token holders, check their balance and increase it by their part of the distribution.
 Unfortunately, this approach can hardly be used in Ethereum blockchain. All operations in EVM cost some gas. If we have a lot of token holders, gas cost for iteration through all may be higher than a gas limit for transaction (which is currently equal to gas limit for block).
@@ -196,6 +197,7 @@ When time comes (and this condition is also checked by transfers, mints and burn
 ## Defi module distributions
 Defi module transfers funds to some underlying protocol, Compound in current version. Exchange rate of DAI to Compound DAI is icreased over time. So while amount of Compound DAI stays same, amount of underlying DAI available is continiously increased.
 During distributions Defi module calculates this additional ammount, so that PTK holders can widhraw their share at any time.
+![Compound Distributions](/docs/diagram_compound_distributions.jpg)
 ### Distribution mechanics
 Defi module is configured to create distributions once a day. It stores time of next distribution and when time comes, any change of PTK balance or withdraw request will trigger a new distribution.
 With this distribution event Defi module stores how many additional DAI it can distribute, current balances of DAI and PTK.
