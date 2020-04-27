@@ -8,8 +8,8 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
 # Testnet (Rinkeby) deployment 
-* DAI: `0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea`
-* cDAI: `0x6d7f0754ffeb405d23c51ce938289d4835be3b14`
+* DAI: `0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa`
+* cDAI: `0x6D7F0754FFeb405d23C51CE938289d4835bE3b14`
 * Pool: `0x53DB2A5c8304aEE4cD31A9a10d09022e775F2EAd`
 * AccessModule: `0xC69D8057bA2484E4487b3B5E059E67822A6cbAA5`
 * PToken: `0x5b6214852c5e4E20EF4079bF73e98584FdB65228`
