@@ -179,7 +179,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 1. Call `LToken.approve(FundsModule.address, lAmount)` to allow operation.
 1. Call `LoanModule.repay(debt, lAmount)` to execute operation.
 
-## Distributions
+## PTK Distributions
 When borrower repays some part of his loan, he uses some PTK (either from his balance or minted when he sends DAI to the pool).
 This PTKs are distributed to supporters, proportionally to the part of the loan they covered. The borrower himself also covered half of the loan, and his part is distributed over the whole pool.
 All users of the pool receive part of this distributions proportional to the amount of PTK they hold on their balance and in loan proposals, PTK locked as collateral for loans is not counted.
@@ -193,4 +193,10 @@ But we also decided to aggregate all distributions during a day. This way we can
 When a distribution request is received by PToken we check if it's time to actually create new distribution. If it's not, we just add distribution amount to the accumulator.
 When time comes (and this condition is also checked by transfers, mints and burns), actual distribution is created using accumulated amount of PTK and total supply of qualified PTK.
 
-
+## Defi module distributions
+Defi module transfers funds to some underlying protocol, Compound in current version. Exchange rate of DAI to Compound DAI is icreased over time. So while amount of Compound DAI stays same, amount of underlying DAI available is continiously increased.
+During distributions Defi module calculates this additional ammount, so that PTK holders can widhraw their share at any time.
+### Distribution mechanics
+Defi module is configured to create distributions once a day. It stores time of next distribution and when time comes, any change of PTK balance or withdraw request will trigger a new distribution.
+With this distribution event Defi module stores how many additional DAI it can distribute, current balances of DAI and PTK.
+When one decides to withdraw (claim) his share of this additional DAI, Defi module iterates through all unclaimed distributions and calculates user's share of that distribution accroding to user's PTK balance and total amount of PTK at that time.
