@@ -104,7 +104,7 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
         expect(after.userDai).to.be.bignumber.eq(before.userDai.sub(amount));
         expect(after.cDaiDai).to.be.bignumber.eq(before.cDaiDai.add(amount));
         expect(after.defimCDai).to.be.bignumber.gt(before.defimCDai);
-        expectEqualBN(after.cDaiUnderlying, before.cDaiUnderlying.add(amount), 18, -6); //Accuracy may be bad because of rounding and time passed
+        expectEqualBN(after.cDaiUnderlying, before.cDaiUnderlying.add(amount), 18, -5); //Accuracy may be bad because of rounding and time passed
 
     });
 
