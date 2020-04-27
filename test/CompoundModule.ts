@@ -121,6 +121,11 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
     });
 
     it("should withdraw correct interest from Compound", async () => {
+        let amount = w3random.interval(10, 20, 'ether');
+        await (<any> dai).methods['mint(uint256)'](amount, {from: user});
+        dai.approve(defim.address, amount, {from: user});
+        await defim.deposit(user, amount, {from: owner});
+
         let beforeTimeShift = {
             userDai: await dai.balanceOf(user),
             defimCDai: await cDai.balanceOf(defim.address),
@@ -129,7 +134,7 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(beforeTimeShift.cDaiUnderlying).to.be.bignumber.gt(new BN(0)); // Ensure we have some DAI on pool balance
 
         //Mint PTK
-        let ptkForOwner = w3random.interval(100, 500, 'ether');
+        let ptkForOwner = w3random.interval(50, 100, 'ether');
         let ptkForUser = w3random.interval(10, 50, 'ether');
         await funds.mintPTokens(owner, ptkForOwner, {from: owner});
         await funds.mintPTokens(user, ptkForUser, {from: owner});
