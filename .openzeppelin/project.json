@@ -1,8 +1,6 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "FreeDAI": "FreeDAI",
-    "TestnetCErc20Proxy": "TestnetCErc20Proxy",
     "PToken": "PToken",
     "Pool": "Pool",
     "CompoundModule": "CompoundModule",
