@@ -39,48 +39,41 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * Address of cDAI contract (`cDAI.address`)
 
 ### Deployment sequence:
-1. Pool
-   1. Deploy proxy and contract instance
-   1. Call `initialize()`
-1. Liquidity token
-   1. Register in pool: `Pool.set("ltoken", LToken.address)`    
-1. PToken
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("ptoken", PToken.address)`
-1. CompoundModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("defi", CompoundModule.address)`
-1. CurveModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("curve", CurveModule.address)`
-1. AccessModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("access", CurveModule.address)`
-1. LiquidityModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("liquidity", LiquidityModule.address)`
-1. LoanModule, LoanLimitsModule, LoanProposalsModule
-   1. Deploy proxy and contract instance of LoanLimitsModule
-   1. Call `LoanLimitsModule.initialize(Pool.address)`
-   1. Register in pool: `Pool.set("loan_limits", LoanLimitsModule.address)`
-   1. Deploy proxy and contract instance of LoanProposalsModule
-   1. Call `LoanProposalsModule.initialize(Pool.address)`
-   1. Register in pool: `Pool.set("loan_proposals", LoanProposalsModule.address)`
-   1. Deploy proxy and contract instance of LoanModule
-   1. Call `LoanModule.initialize(Pool.address)`
-   1. Register in pool: `Pool.set("loan", LoanModule.address)`
-1. DefiFundsModule
-   1. Deploy proxy and contract instance
-   1. Call `initialize(Pool.address)`
-   1. Register in pool: `Pool.set("funds", FundsModule.address)`
-   1. Add LiquidityModule as FundsOperator: `FundsModule.addFundsOperator(LiquidityModule.address)`
-   1. Add LoanModule as FundsOperator: `FundsModule.addFundsOperator(LoanModule.address)`
-   1. Add FundsModule as a Minter for PToken: `PToken.addMinter(FundsModule.address)`
+1. Initialize OpenZeppelin project & add modules
+    1. `npx oz init`
+    1. `npx oz add Pool AccessModule PToken CompoundModule DefiFundsModule CurveModule LiquidityModule LoanLimitsModule LoanProposalsModule LoanModule`
+1. Deploy & initialize Pool
+    1. `npx oz create Pool --network rinkeby --init`
+    1. Save address of the pool (`Pool.address`)
+1. Deploy modules
+    1. `npx oz create AccessModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create PToken --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create CompoundModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create CurveModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create DefiFundsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create LiquidityModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create LoanLimitsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create LoanProposalsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create LoanModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. Save address of each module: `AccessModule.address`, `PToken.address`, `CompoundModule.address`, `CurveModule.address`, `DefiFundsModule.address`, `LiquidityModule.address`, `LoanLimitsModule.address`, `LoanProposalsModule.address`, `LoanModule.address`
+1. Register external contracts in Pool
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ltoken, LToken.address, true"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "cdai, cDAI.address, true"`
+1. Register modules in pool
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "access, AccessModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ptoken, PToken.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "defi, CompoundModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "curve, CurveModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "funds, DefiFundsModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "liquidity, LiquidityModule.address`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_limits, LoanLimitsModule.address, false`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_proposals, LoanProposalsModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan, LoanModule.address, false, false"`
+1. Configure modules
+    1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LiquidityModule.address`
+    1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LoanModule.address`
+    1. `npx oz send-tx --to PToken.address --network rinkeby --method addMinter --args DefiFundsModule.address`
+    1. `npx oz send-tx --to CompoundModule.address --network rinkeby --method addDefiOperator --args DefiFundsModule.address`
 
 ## Liquidity
 
@@ -128,8 +121,8 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 ### Add Pledge
 #### Required data:
 * Loan proposal identifiers:
-  * `borrower` Address of borrower
-  * `proposal` Proposal index
+    * `borrower` Address of borrower
+    * `proposal` Proposal index
 * `pAmount`  Pledge amount, PTK
 #### Required conditions:
 * Loan proposal created
@@ -146,8 +139,8 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 ### Withdraw Pledge
 #### Required data:
 * Loan proposal identifiers:
-  * `borrower` Address of borrower
-  * `proposal` Proposal index
+    * `borrower` Address of borrower
+    * `proposal` Proposal index
 * `pAmount`  Amount to withdraw, PTK
 #### Required conditions:
 * Loan proposal created
