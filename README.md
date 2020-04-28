@@ -14,7 +14,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * AccessModule: `0xC69D8057bA2484E4487b3B5E059E67822A6cbAA5`
 * PToken: `0x5b6214852c5e4E20EF4079bF73e98584FdB65228`
 * CompoundModule: `0xCB77413Ab83b6B40Dbf9111e9035adbE92a23282`
-* DefiFundsModule: `0x91fcbbD3fE3DFCEa1E96fBa2936a06291a4e3953`
+* FundsModule: `0x91fcbbD3fE3DFCEa1E96fBa2936a06291a4e3953`
 * CurveModule: `0xaF3e4Cb1122b64FCa73354ec421d0c53AA183c88`
 * LiquidityModule: `0xA8155d44CaDee6b765E6054bbd39b5A3EBD0BC39`
 * LoanLimitsModule: `0x873d123a008C305F58DfFe776626E37c4687ed9f`
