@@ -6438,12 +6438,21 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (txDetails?: Truffle.TransactionDetails): Promise<
+    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
-    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
-    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    call(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
   };
 
   set: {
@@ -6487,6 +6496,10 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
   maxOpenProposalsPerUser(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   minCancelProposalTimeout(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  allLimits(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN, BN, BN, BN, BN, BN]>;
 }
 
 export interface LoanModuleInstance extends Truffle.ContractInstance {

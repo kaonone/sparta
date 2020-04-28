@@ -180,11 +180,11 @@
       }
     },
     "LoanLimitsModule": {
-      "address": "0xFcC4a79102ffDCff68E0A75D020B3B7628aD159b",
-      "constructorCode": "6080604052611011806100136000396000f3fe",
-      "bodyBytecodeHash": "2ccd5f6e0085a970fed3c106e4ab966e420a829dfc24e0f4fbda87f908bab661",
-      "localBytecodeHash": "e5b0b7b1b32a111d4c8b034fa485b3cdf1e437cdcbf4bc6adf58d2f87232e5eb",
-      "deployedBytecodeHash": "e5b0b7b1b32a111d4c8b034fa485b3cdf1e437cdcbf4bc6adf58d2f87232e5eb",
+      "address": "0xe667BadB36D17FA34B5062e715524Aa10b799BD1",
+      "constructorCode": "60806040526110f7806100136000396000f3fe",
+      "bodyBytecodeHash": "54f2147e17ed2fdbfd9f67d792c649eab38448a0e84401280f5a2eeb23426700",
+      "localBytecodeHash": "1a99be7a510e9e85e89eb54f1a47e128b7e5bb48b287fa1a55680cb327d10a0f",
+      "deployedBytecodeHash": "1a99be7a510e9e85e89eb54f1a47e128b7e5bb48b287fa1a55680cb327d10a0f",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -221,7 +221,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 13787,
+          "astId": 13871,
           "type": "t_bool",
           "src": "757:24:60"
         },
@@ -229,7 +229,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 13789,
+          "astId": 13873,
           "type": "t_bool",
           "src": "876:25:60"
         },
@@ -237,7 +237,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 13851,
+          "astId": 13935,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:60"
         },
@@ -245,7 +245,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 13031,
+          "astId": 13115,
           "type": "t_address",
           "src": "526:22:54"
         },
@@ -253,7 +253,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 13144,
+          "astId": 13228,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:54"
         },
@@ -269,9 +269,9 @@
           "contract": "LoanLimitsModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\loan\\LoanLimitsModule.sol",
           "label": "limits",
-          "astId": 4905,
+          "astId": 4913,
           "type": "t_array:7<t_uint256>",
-          "src": "1304:17:29"
+          "src": "407:17:29"
         }
       ],
       "warnings": {
@@ -279,7 +279,9 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [],
+        "storageDiff": []
       }
     },
     "LoanProposalsModule": {
@@ -1839,7 +1841,7 @@
       {
         "address": "0x873d123a008C305F58DfFe776626E37c4687ed9f",
         "version": "1.0.0",
-        "implementation": "0xFcC4a79102ffDCff68E0A75D020B3B7628aD159b",
+        "implementation": "0xe667BadB36D17FA34B5062e715524Aa10b799BD1",
         "admin": "0xC77622905853F887cc7BA5178980d19803D5D7c0",
         "kind": "Upgradeable"
       }
