@@ -66,10 +66,9 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
         annualSeconds = await cDai.ANNUAL_SECONDS();
     });
 
-    it("should deposit DAI to Compound", async () => {
+    it("should handle deposit DAI to Compound", async () => {
         let amount = w3random.interval(100, 1000, 'ether');
         await (<any> dai).methods['mint(uint256)'](amount, {from: user});
-        dai.approve(defim.address, amount, {from: user});
 
         let before = {
             userDai: await dai.balanceOf(user),
@@ -78,7 +77,8 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
         };
 
-        let receipt = await defim.deposit(user, amount, {from: owner});
+        await dai.transfer(defim.address, amount, {from: user});
+        let receipt = await defim.handleDeposit(user, amount, {from: owner});
         expectEvent(receipt, 'Deposit', {'amount':amount});
 
         let after = {
@@ -121,11 +121,6 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
     });
 
     it("should withdraw correct interest from Compound", async () => {
-        let amount = w3random.interval(10, 20, 'ether');
-        await (<any> dai).methods['mint(uint256)'](amount, {from: user});
-        dai.approve(defim.address, amount, {from: user});
-        await defim.deposit(user, amount, {from: owner});
-
         let beforeTimeShift = {
             userDai: await dai.balanceOf(user),
             defimCDai: await cDai.balanceOf(defim.address),

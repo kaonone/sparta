@@ -21,7 +21,7 @@ interface IDefiModule {
     function claimDistributions(address account, uint256 toDistribution) external;
 
     //Actions for DefiOperator (FundsModule)
-    function deposit(address sender, uint256 amount) external;
+    function handleDeposit(address sender, uint256 amount) external;
     function withdraw(address beneficiary, uint256 amount) external;
 
     //Actions for DefiOperator (PToken)

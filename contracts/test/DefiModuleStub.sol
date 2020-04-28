@@ -12,7 +12,7 @@ import "../common/Module.sol";
  * Stub of LoanModule to allow tests of FundsModule and LiquidityModule
  */
 contract DefiModuleStub is Module, IDefiModule {
-    function deposit(address, uint256) external {
+    function handleDeposit(address, uint256) external {
         this;
     }
 

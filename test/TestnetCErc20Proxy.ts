@@ -81,7 +81,6 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
     it("should deposit DAI to Compound", async () => {
         let amount = w3random.interval(100, 1000, 'ether');
         await (<any> fdai).methods['mint(uint256)'](amount, {from: user});
-        fdai.approve(defim.address, amount, {from: user});
 
         let before = {
             userDai: await fdai.balanceOf(user),
@@ -90,7 +89,8 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
             cDaiUnderlying: await cDaiProxy.getBalanceOfUnderlying(defim.address),
         };
 
-        let receipt = await defim.deposit(user, amount, {from: owner});
+        await fdai.transfer(defim.address, amount, {from: user});
+        let receipt = await defim.handleDeposit(user, amount, {from: owner});
         expectEvent(receipt, 'Deposit', {'amount':amount});
 
         await cDaiProxy.accrueInterest();

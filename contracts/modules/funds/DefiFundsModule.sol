@@ -23,12 +23,13 @@ contract DefiFundsModule is BaseFundsModule {
 
     function depositAllToDefi() public onlyFundsOperator {
         uint256 amount = lToken().balanceOf(address(this));
-        lToken().approve(address(defiModule()), amount);
-        defiModule().deposit(address(this), amount);
+        lToken().transfer(address(defiModule()), amount);
+        defiModule().handleDeposit(address(this), amount);
     }
 
     function lTransferToFunds(address from, uint256 amount) internal {
-        defiModule().deposit(from, amount);
+        lToken().transferFrom(from, address(defiModule()), amount);
+        defiModule().handleDeposit(from, amount);
     }
 
     function lTransferFromFunds(address to, uint256 amount) internal {

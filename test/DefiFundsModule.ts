@@ -87,7 +87,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
     it("should deposit DAI to Compound", async () => {
         let amount = w3random.interval(100, 1000, 'ether');
         await (<any> dai).methods['mint(uint256)'](amount, {from: user});
-        dai.approve(defim.address, amount, {from: user});
+        dai.approve(funds.address, amount, {from: user});
 
         let before = {
             userDai: await dai.balanceOf(user),

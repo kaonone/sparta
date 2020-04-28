@@ -40,9 +40,9 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     // == Public functions
-    function deposit(address sender, uint256 amount) public onlyDefiOperator {
+    function handleDeposit(address sender, uint256 amount) public onlyDefiOperator {
         depositsSinceLastDistribution = depositsSinceLastDistribution.add(amount);
-        depositInternal(sender, amount);
+        handleDepositInternal(sender, amount);
         emit Deposit(amount);
     }
 
@@ -113,7 +113,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     // == Abstract functions to be defined in realization ==
-    function depositInternal(address sender, uint256 amount) internal;
+    function handleDepositInternal(address sender, uint256 amount) internal;
     function withdrawInternal(address beneficiary, uint256 amount) internal;
     function poolBalanceOfDAI() internal /*view*/ returns(uint256); //This is not a view function because cheking cDAI balance may update it
     function totalSupplyOfPTK() internal view returns(uint256);

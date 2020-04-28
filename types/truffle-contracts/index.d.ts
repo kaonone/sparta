@@ -1699,7 +1699,19 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  deposit: {
+  distributions(
+    arg0: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BN, BN, BN]>;
+
+  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  getModuleAddress(
+    module: string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
+  handleDeposit: {
     (
       sender: string | BN,
       amount: number | BN | string,
@@ -1721,18 +1733,6 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
-
-  distributions(
-    arg0: number | BN | string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
-
-  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  getModuleAddress(
-    module: string,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<string>;
 
   isDefiOperator(
     account: string | BN,
@@ -2745,7 +2745,7 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  deposit: {
+  handleDeposit: {
     (
       sender: string | BN,
       amount: number | BN | string,
@@ -2948,7 +2948,7 @@ export interface DefiModuleStubInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  deposit: {
+  handleDeposit: {
     (
       arg0: string | BN,
       arg1: number | BN | string,
@@ -5008,7 +5008,7 @@ export interface IDefiModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  deposit: {
+  handleDeposit: {
     (
       sender: string | BN,
       amount: number | BN | string,
