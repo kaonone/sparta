@@ -15,7 +15,7 @@ contract CompoundModule is DefiModuleBase {
         IERC20 ltoken = lToken();
         ICErc20 cdai = cDAI();
         //ltoken.transferFrom(sender, address(this), amount); //This transfer should be executed by FundsModule
-        //require(lToken.balanceOf(address(this) >= amount, "CompoundModule: not enough DAI"); //No need to check: if not enough DAI< cdai.mint() will fail
+        //require(lToken.balanceOf(address(this) >= amount, "CompoundModule: not enough DAI"); //No need to check: if not enough DAI, cdai.mint() will fail
         ltoken.approve(address(cdai), amount);
         cdai.mint(amount);
     }
