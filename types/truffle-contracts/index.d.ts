@@ -268,29 +268,9 @@ export interface WhitelistedRoleContract
 }
 
 export interface AccessModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addPauser: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -603,29 +583,9 @@ export interface BaseInstance extends Truffle.ContractInstance {
 }
 
 export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addFundsOperator: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -1629,29 +1589,9 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addDefiOperator: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -1973,29 +1913,9 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
 }
 
 export interface CurveModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   PERCENT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -2160,29 +2080,9 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addFundsOperator: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -2610,29 +2510,9 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addDefiOperator: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -2859,29 +2739,9 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
 }
 
 export interface DefiModuleStubInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
@@ -4312,29 +4172,9 @@ export interface FreeDAIInstance extends Truffle.ContractInstance {
 }
 
 export interface FundsModuleStubInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
@@ -6164,29 +6004,9 @@ export interface ITestnetCompoundDAIInstance extends Truffle.ContractInstance {
 }
 
 export interface LiquidityModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
@@ -6353,29 +6173,9 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
 
   INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   PLEDGE_PERCENT_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
@@ -6513,29 +6313,9 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   activeDebts(
     arg0: string | BN,
@@ -6822,29 +6602,9 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface LoanModuleStubInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
@@ -7233,29 +6993,9 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   PLEDGE_PERCENT_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
@@ -7554,29 +7294,9 @@ export interface MinterRoleInstance extends Truffle.ContractInstance {
 }
 
 export interface ModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
@@ -7645,29 +7365,9 @@ export interface ModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface ModuleNamesInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 }
 
 export interface OwnableInstance extends Truffle.ContractInstance {
@@ -7999,29 +7699,9 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addMinter: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -8767,29 +8447,9 @@ export interface TestSQRTInstance extends Truffle.ContractInstance {
 }
 
 export interface TokenModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
@@ -8858,29 +8518,9 @@ export interface TokenModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface VotesModuleInstance extends Truffle.ContractInstance {
-  MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_CURVE(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_DEFI(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_FUNDS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LIQUIDITY(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_LOAN_LIMTS(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
   MODULE_LOAN_PROPOSALS(
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
-
-  MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getModuleAddress(
     module: string,
