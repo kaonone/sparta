@@ -28,7 +28,7 @@ contract DefiFundsModule is BaseFundsModule {
     }
 
     function lTransferToFunds(address from, uint256 amount) internal {
-        lToken().transferFrom(from, address(defiModule()), amount);
+        require(lToken().transferFrom(from, address(defiModule()), amount), "DefiFundsModule: incoming transfer failed");
         defiModule().handleDeposit(from, amount);
     }
 
