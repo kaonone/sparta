@@ -86,7 +86,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await funds.addFundsOperator(liqm.address, {from: owner});
 
         //Do common tasks
-        lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+        await lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
 
     })
