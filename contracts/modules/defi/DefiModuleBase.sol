@@ -140,14 +140,24 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         uint256 currentBalanceOfDAI = poolBalanceOfDAI();
         uint256 totalPTK = totalSupplyOfPTK();
 
-        // This calculation expects that, without deposit/withdrawals, DAI balance can only be increased
-        // Such assumption may be wrong if underlying system (Compound) is compromised.
-        // In that case SafeMath will revert transaction and we will have to update our logic.
-        uint256 distributionAmount =
-            currentBalanceOfDAI
-            .add(withdrawalsSinceLastDistribution)
-            .sub(depositsSinceLastDistribution)
-            .sub(prev.balance);
+        // // This calculation expects that, without deposit/withdrawals, DAI balance can only be increased
+        // // Such assumption may be wrong if underlying system (Compound) is compromised.
+        // // In that case SafeMath will revert transaction and we will have to update our logic.
+        // uint256 distributionAmount =
+        //     currentBalanceOfDAI
+        //     .add(withdrawalsSinceLastDistribution)
+        //     .sub(depositsSinceLastDistribution)
+        //     .sub(prev.balance);
+        uint256 a = currentBalanceOfDAI.add(withdrawalsSinceLastDistribution);
+        uint256 b = depositsSinceLastDistribution.add(prev.balance);
+        uint256 distributionAmount;
+        if (a > b) {
+            distributionAmount = a - b;
+        }
+        // else { //For some reason our balance on underlying system decreased (for example - on first deposit, because of rounding)
+        //     distributionAmount = 0; //it is already 0
+        // }
+
         if (distributionAmount == 0) return;
 
         distributions.push(Distribution({

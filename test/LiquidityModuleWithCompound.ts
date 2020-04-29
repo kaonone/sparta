@@ -101,10 +101,10 @@ contract("LiquidityModule with CompoundModule", async ([_, owner, liquidityProvi
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
 
         //Fix cDAI rounding problem on first deposit
-        let fixAmount = web3.utils.toWei('1', 'ether');
-        await lToken.transfer(defi.address, fixAmount, {from: liquidityProvider});
-        await defi.handleDeposit(liquidityProvider, fixAmount, {from: owner});
-        await time.increase(1*60*60);
+        // let fixAmount = web3.utils.toWei('1', 'ether');
+        // await lToken.transfer(defi.address, fixAmount, {from: liquidityProvider});
+        // await defi.handleDeposit(liquidityProvider, fixAmount, {from: owner});
+        // await time.increase(1*60*60);
     })
 
     it('should allow deposit if no debts', async () => {
