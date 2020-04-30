@@ -672,11 +672,11 @@
       }
     },
     "CompoundModule": {
-      "address": "0xFD41d39FB3D838bcAd33409BEb47a0417D8dbA6f",
-      "constructorCode": "6080604052612530806100136000396000f3fe",
-      "bodyBytecodeHash": "47ed0c26f0ba0dcb56ed12d6a171f470d8577a77681ec3651be5094297100ce5",
-      "localBytecodeHash": "dde2a062d895d8a5d1a3e28b2203b3fdc707046d670240f374e2c2854db3968e",
-      "deployedBytecodeHash": "dde2a062d895d8a5d1a3e28b2203b3fdc707046d670240f374e2c2854db3968e",
+      "address": "0xc05afE7f463274A001d974f8dCeFBee0d35CCb46",
+      "constructorCode": "6080604052612532806100136000396000f3fe",
+      "bodyBytecodeHash": "8356b5564a02af46d41d6c629aaed500a85c33f6bbe5f5cf2be82143d97966c9",
+      "localBytecodeHash": "09d1f1547f941192b9f188af999f72ba7ecf163ddf6d42f70d7018c5ad30f4e8",
+      "deployedBytecodeHash": "09d1f1547f941192b9f188af999f72ba7ecf163ddf6d42f70d7018c5ad30f4e8",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -707,7 +707,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 12254,
+              "astId": 12263,
               "type": "t_mapping<t_bool>",
               "src": "150:32:47"
             }
@@ -788,7 +788,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 13890,
+          "astId": 13899,
           "type": "t_bool",
           "src": "757:24:60"
         },
@@ -796,7 +796,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 13892,
+          "astId": 13901,
           "type": "t_bool",
           "src": "876:25:60"
         },
@@ -804,7 +804,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 13954,
+          "astId": 13963,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:60"
         },
@@ -812,7 +812,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 13134,
+          "astId": 13143,
           "type": "t_address",
           "src": "526:22:54"
         },
@@ -820,7 +820,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 13247,
+          "astId": 13256,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:54"
         },
@@ -836,7 +836,7 @@
           "contract": "DefiOperatorRole",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\defi\\DefiOperatorRole.sol",
           "label": "_operators",
-          "astId": 2877,
+          "astId": 2886,
           "type": "t_struct<Roles.Role>",
           "src": "445:29:23"
         },
@@ -892,7 +892,7 @@
             "contract": "DefiOperatorRole",
             "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\defi\\DefiOperatorRole.sol",
             "label": "_operators",
-            "astId": 2877,
+            "astId": 2886,
             "type": "t_struct<Roles.Role>",
             "src": "445:29:23"
           },
@@ -1933,7 +1933,7 @@
       {
         "address": "0xCB77413Ab83b6B40Dbf9111e9035adbE92a23282",
         "version": "1.0.0",
-        "implementation": "0xFD41d39FB3D838bcAd33409BEb47a0417D8dbA6f",
+        "implementation": "0xc05afE7f463274A001d974f8dCeFBee0d35CCb46",
         "admin": "0xC77622905853F887cc7BA5178980d19803D5D7c0",
         "kind": "Upgradeable"
       }
