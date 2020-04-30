@@ -11,11 +11,26 @@ declare global {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
       require(name: "Base"): TruffleContracts.BaseContract;
+      require(
+        name: "BaseFundsModule"
+      ): TruffleContracts.BaseFundsModuleContract;
       require(name: "BondingCurve"): TruffleContracts.BondingCurveContract;
+      require(name: "CErc20Stub"): TruffleContracts.CErc20StubContract;
+      require(
+        name: "CompoundDAIStub"
+      ): TruffleContracts.CompoundDAIStubContract;
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
+      require(
+        name: "DefiFundsModule"
+      ): TruffleContracts.DefiFundsModuleContract;
+      require(name: "DefiModuleBase"): TruffleContracts.DefiModuleBaseContract;
+      require(name: "DefiModuleStub"): TruffleContracts.DefiModuleStubContract;
+      require(
+        name: "DefiOperatorRole"
+      ): TruffleContracts.DefiOperatorRoleContract;
       require(
         name: "DistributionToken"
       ): TruffleContracts.DistributionTokenContract;
@@ -24,7 +39,6 @@ declare global {
       require(name: "ERC20Detailed"): TruffleContracts.ERC20DetailedContract;
       require(name: "ERC20Mintable"): TruffleContracts.ERC20MintableContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
-      require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
         name: "FundsModuleStub"
       ): TruffleContracts.FundsModuleStubContract;
@@ -32,7 +46,9 @@ declare global {
         name: "FundsOperatorRole"
       ): TruffleContracts.FundsOperatorRoleContract;
       require(name: "IAccessModule"): TruffleContracts.IAccessModuleContract;
+      require(name: "ICErc20"): TruffleContracts.ICErc20Contract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
+      require(name: "IDefiModule"): TruffleContracts.IDefiModuleContract;
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
       require(
@@ -46,6 +62,9 @@ declare global {
         name: "ILoanProposalsModule"
       ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
+      require(
+        name: "ITestnetCompoundDAI"
+      ): TruffleContracts.ITestnetCompoundDAIContract;
       require(
         name: "LiquidityModule"
       ): TruffleContracts.LiquidityModuleContract;
@@ -65,6 +84,9 @@ declare global {
       require(name: "PauserRole"): TruffleContracts.PauserRoleContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
+      require(
+        name: "TestnetCErc20Proxy"
+      ): TruffleContracts.TestnetCErc20ProxyContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;

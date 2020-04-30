@@ -70,6 +70,8 @@ interface IFundsModule {
 
     function burnLockedPTokens(uint256 amount) external;
 
+    function emitStatusEvent() external;
+
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
      * @param lAmount Amount of liquid tokens which will be put into the pool

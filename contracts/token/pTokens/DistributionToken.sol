@@ -48,9 +48,9 @@ contract DistributionToken is ERC20, ERC20Mintable {
      * One can do this for others
      */
     function claimDistributions(address account, uint256 toDistribution) external returns(uint256) {
-        require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
+        require(toDistribution <= distributions.length, "DistributionToken: lastDistribution too hight");
         require(nextDistributions[account] < toDistribution, "DistributionToken: no distributions to claim");
-        uint256 amount = _updateUserBalance(account, toDistribution+1); //+1 is safe because we've already checked toDistribution < distributions.length
+        uint256 amount = _updateUserBalance(account, toDistribution);
         if (amount > 0) userBalanceChanged(account);
         return amount;
     }
@@ -64,9 +64,9 @@ contract DistributionToken is ERC20, ERC20Mintable {
     }
 
     function claimDistributions(address[] calldata accounts, uint256 toDistribution) external {
-        require(toDistribution < distributions.length, "DistributionToken: lastDistribution too hight");
+        require(toDistribution <= distributions.length, "DistributionToken: lastDistribution too hight");
         for (uint256 i=0; i < accounts.length; i++){
-            uint256 amount = _updateUserBalance(accounts[i], toDistribution+1);
+            uint256 amount = _updateUserBalance(accounts[i], toDistribution);
             if (amount > 0) userBalanceChanged(accounts[i]);
         }
     }
