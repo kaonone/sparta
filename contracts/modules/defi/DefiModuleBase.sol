@@ -57,8 +57,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         _updateUserBalance(_msgSender(), distributions.length);
         InvestmentBalance storage ib = balances[_msgSender()];
         if (ib.availableBalance > 0) {
-            withdrawInternal(_msgSender(), ib.availableBalance);
-            emit WithdrawInterest(_msgSender(), ib.availableBalance);
+            uint256 amount = ib.availableBalance;
+            ib.availableBalance = 0;
+            withdrawInternal(_msgSender(), amount);
+            emit WithdrawInterest(_msgSender(), amount);
         }
     }
 

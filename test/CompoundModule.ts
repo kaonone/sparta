@@ -137,15 +137,19 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
 
         let timeShift = w3random.interval(30*24*60*60, 89*24*60*60)
         await time.increase(timeShift);
+        await defim.claimDistributions(user);
 
         let beforeWithdrawInterest = {
             userDai: await dai.balanceOf(user),
             defimCDai: await cDai.balanceOf(defim.address),
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+            availableInterest: await defim.availableInterest(user)
         };
         //console.log(beforeTimeShift.cDaiUnderlying, interesRate, timeShift, expScale, annualSeconds);
         let expectedFullInterest = beforeTimeShift.cDaiUnderlying.mul(interesRate).mul(timeShift).div(expScale).div(annualSeconds);
         expectEqualBN(beforeWithdrawInterest.cDaiUnderlying, beforeTimeShift.cDaiUnderlying.add(expectedFullInterest), 18, -5);
+        let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
+        expectEqualBN(beforeWithdrawInterest.availableInterest, expectedUserInterest, 18, -5);
 
         // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
 
@@ -156,9 +160,12 @@ contract("CompoundModule", async ([_, owner, user, ...otherAccounts]) => {
             userDai: await dai.balanceOf(user),
             defimCDai: await cDai.balanceOf(defim.address),
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+            availableInterest: await defim.availableInterest(user)
         };
-        let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
         expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
+
+        expectEqualBN(afterWithdrawInterest.availableInterest, new BN(0), 18, -5);
+
 
     });
 
