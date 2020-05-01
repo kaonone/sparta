@@ -23,7 +23,6 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         require (rayTokenId == 0x0, "RAYModule: RAY token already initialized");
         _setup();
     }
-
     function onERC721Received(address, address, uint256, bytes memory) public returns (bytes4) {
         address rayTokenContract = rayStorage().getContractAddress(PORTFOLIO_MANAGER_CONTRACT);
         require(_msgSender() == rayTokenContract, "RAYModule: only accept RAY Token transfers");
