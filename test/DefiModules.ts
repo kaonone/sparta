@@ -74,7 +74,6 @@ describe("DeFi modules", function(){
             },
             before2: async function(defi:IDefiModuleInstance, protocol:string, dai:FreeDAIInstance, pool:PoolInstance, owner:string){
                 await (<RAYModuleInstance> defi).setup({from: owner});
-                let tokenId = await (<RAYModuleInstance> defi).rayTokenId();
             },
             protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
                 // let protocol = RAYStub.at(protocolAddress);
