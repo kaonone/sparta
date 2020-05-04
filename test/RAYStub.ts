@@ -19,7 +19,7 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
     const RAY_PORTFOLIO_ID = '0xcd93cf275bcc8c600887dc587ea0a16e8f0a87fa7f99560f72186069c8d3b3df';
     let dai: FreeDAIInstance;
     let ray: RayStubInstance;
-    let rayTokenId: BN;
+    let rayTokenId: string;
   
     before(async () => {
         dai = await FreeDAI.new();
@@ -32,9 +32,9 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
     it("should mint RAY token ", async () => {
         let result = await ray.mint(RAY_PORTFOLIO_ID, user, 0, {from:user});
         let transferData = findEventArgs(result, 'Transfer');
-        rayTokenId = transferData.tokenId;
-console.log(rayTokenId);        
-        expect(rayTokenId).to.be.bignumber.gt(new BN(0));
+        let rayTokenIdBN = transferData.tokenId;
+        expect(rayTokenIdBN).to.be.bignumber.gt(new BN(0));
+        rayTokenId = "0x"+rayTokenIdBN.toString('hex', 64);
     });
 
     it("should deposit DAI to RAY token", async () => {

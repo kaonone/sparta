@@ -119,7 +119,8 @@ contract RayStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
 
     function _getTokenValue(bytes32 tokenId) internal view returns(uint256) {
         TokenData storage td = tokenData[tokenId];
-        return td.value.mul(INTEREST_RATE).mul(now - td.updated).div(ANNUAL_SECONDS).div(EXP_SCALE);
+        uint256 interest = td.value.mul(INTEREST_RATE).mul(now - td.updated).div(ANNUAL_SECONDS).div(EXP_SCALE);
+        return td.value.add(interest);
     }
 
 }
