@@ -8,7 +8,7 @@ import "../../interfaces/defi/IRAYStorage.sol";
 import "./DefiModuleBase.sol";
 
 contract RAYModule is DefiModuleBase, IERC721Receiver {
-    bytes32 public constant PORTFOLIO_ID = keccak256('DaiCompound'); //keccak256('DaiBzxCompoundDydx')
+    bytes32 public constant PORTFOLIO_ID = keccak256("DaiCompound"); //keccak256("DaiBzxCompoundDydx")
     bytes32 internal constant PORTFOLIO_MANAGER_CONTRACT = keccak256("PortfolioManagerContract");
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");
     bytes4 internal constant ERC721_RECEIVER = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
@@ -20,11 +20,12 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function setup() public onlyDefiOperator {
-        require (rayTokenId == 0x0, "RAYModule: RAY token already initialized");
+        require(rayTokenId == 0x0, "RAYModule: RAY token already initialized");
         _setup();
     }
+
     function onERC721Received(address, address, uint256, bytes memory) public returns (bytes4) {
-        address rayTokenContract = rayStorage().getContractAddress(PORTFOLIO_MANAGER_CONTRACT);
+        address rayTokenContract = rayStorage().getContractAddress(RAY_TOKEN_CONTRACT);
         require(_msgSender() == rayTokenContract, "RAYModule: only accept RAY Token transfers");
         return ERC721_RECEIVER;
     }
@@ -45,10 +46,10 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
      * @dev Initialize RAY token
      */
     function _setup() internal {
-        if(rayTokenId == 0x0) return;
+        if (rayTokenId == 0x0) return;
         uint256 ourBalance = lToken().balanceOf(address(this));
         IRAY pm = rayPortfolioManager();
-        if(ourBalance > 0){
+        if (ourBalance > 0){
             lToken().approve(address(pm), ourBalance);
         }
         rayTokenId = pm.mint(PORTFOLIO_ID, address(this), 0);

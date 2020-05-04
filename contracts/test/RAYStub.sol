@@ -27,15 +27,15 @@ contract RayStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
     uint256 nextId;
     mapping(bytes32 => TokenData) tokenData;
 
-
     function initialize(address _dai) public initializer {
         Base.initialize();
         ERC721.initialize();
         ERC721Metadata.initialize("Robo Advisor for Yield", "RAY");
         dai = FreeDAI(_dai);
+        nextId = 1;
     }
 
-    function mint(bytes32 portfolioId, address beneficiary, uint256 value) external payable returns(bytes32) {
+    function mint(bytes32 portfolioId, address beneficiary, uint256 value) public payable returns(bytes32) {
         uint256 tokenId = nextId++;
         tokenData[bytes32(tokenId)] = TokenData({
             portfolioId: portfolioId,
@@ -46,14 +46,15 @@ contract RayStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
         return bytes32(tokenId);
     }
 
-    function deposit(bytes32 tokenId, uint256 value) external payable {
+    function deposit(bytes32 tokenId, uint256 value) public payable {
+        require(dai.transferFrom(_msgSender(), address(this), value), "RAYStub: failed to deposit DAI");
         TokenData storage td = tokenData[tokenId];
         uint256 currentValue = _getTokenValue(tokenId);
         td.value = currentValue.add(value);
         td.updated = now;
     }
 
-    function redeem(bytes32 tokenId, uint256 valueToWithdraw, address) external returns(uint) {
+    function redeem(bytes32 tokenId, uint256 valueToWithdraw, address) public returns(uint) {
         address tokenOwner = ownerOf(uint256(tokenId));
         require(_msgSender() == tokenOwner, "RayStub: only owner can redeem");
         TokenData storage td = tokenData[tokenId];
@@ -69,32 +70,31 @@ contract RayStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
         return ERC721_RECEIVER;
     }
 
-
-    function getTokenKey(bytes32 rayTokenId) external view returns (bytes32) {
+    function getTokenKey(bytes32 rayTokenId) public view returns (bytes32) {
         return tokenData[rayTokenId].portfolioId;
     }
 
-    function getPrincipalAddress(bytes32) external view returns (address) {
+    function getPrincipalAddress(bytes32) public view returns (address) {
         return address(dai);
     }
 
-    function getIsERC20(address principalAddress) external view returns (bool) {
+    function getIsERC20(address principalAddress) public view returns (bool) {
         return (principalAddress == address(dai));
     }
 
-    function getContractAddress(bytes32) external view returns (address) {
+    function getContractAddress(bytes32) public view returns (address) {
         return address(this);
     }
 
-    function getTokenShares(bytes32, bytes32) external view returns (uint256) {
+    function getTokenShares(bytes32, bytes32) public view returns (uint256) {
         return 0; // not used in tests
     }
 
-    function getTokenCapital(bytes32, bytes32) external view returns (uint256) {
+    function getTokenCapital(bytes32, bytes32) public view returns (uint256) {
         return 0; // not used in tests
     }
 
-    function getTokenAllowance(bytes32, bytes32) external view returns (uint256) {
+    function getTokenAllowance(bytes32, bytes32) public view returns (uint256) {
         return 0; // not used in tests
     }
 
