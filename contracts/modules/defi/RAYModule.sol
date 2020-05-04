@@ -37,8 +37,7 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function withdrawInternal(address beneficiary, uint256 amount) internal {
-        uint256 withdrawAmount = calculateWithdrawAmountWithFee(amount);
-        rayPortfolioManager().redeem(rayTokenId, withdrawAmount, address(0));
+        rayPortfolioManager().redeem(rayTokenId, amount, address(0));
         lToken().transfer(beneficiary, amount);
     }
 
@@ -87,15 +86,6 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         return pToken().distributionTotalSupply();
     }
     
-    /**
-     * @dev Calculates how mach DAI we need to ask from PortfolioManager.redeem()
-     * to receive withdrawAmount
-     */
-    function calculateWithdrawAmountWithFee(uint256 withdrawAmount) internal pure returns(uint256) {
-        //TODO: do real calculations
-        return withdrawAmount; 
-    }
-
     function rayPortfolioManager() private view returns(IRAY){
         return IRAY(rayStorage().getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
     }
