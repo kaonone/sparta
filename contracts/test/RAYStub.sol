@@ -9,7 +9,7 @@ import "../interfaces/defi/IRAYStorage.sol";
 import "../token/FreeDAI.sol";
 import "../common/Base.sol";
 
-contract RayStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burnable, ERC721Metadata {
+contract RAYStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burnable, ERC721Metadata {
     using SafeMath for uint256;
 
     uint256 public constant EXP_SCALE = 1e18;  //Exponential scale (see Compound Exponential)

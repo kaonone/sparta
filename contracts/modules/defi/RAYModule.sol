@@ -13,7 +13,7 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");
     bytes4 internal constant ERC721_RECEIVER = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
-    bytes32 rayTokenId;
+    bytes32 public rayTokenId;
 
     function initialize(address _pool) public initializer {
         DefiModuleBase.initialize(_pool);
@@ -21,7 +21,7 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
 
     function setup() public onlyDefiOperator {
         require(rayTokenId == 0x0, "RAYModule: RAY token already initialized");
-        _setup();
+        _setup(lToken());
     }
 
     function onERC721Received(address, address, uint256, bytes memory) public returns (bytes4) {
@@ -45,9 +45,9 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     /**
      * @dev Initialize RAY token
      */
-    function _setup() internal {
-        if (rayTokenId == 0x0) return;
-        uint256 ourBalance = lToken().balanceOf(address(this));
+    function _setup(IERC20 lTokenAddress) internal {
+        if (rayTokenId != 0x0) return;
+        uint256 ourBalance = lTokenAddress.balanceOf(address(this));
         IRAY pm = rayPortfolioManager();
         if (ourBalance > 0){
             lToken().approve(address(pm), ourBalance);
@@ -62,18 +62,24 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     function initialBalances() internal returns(uint256 poolDAI, uint256 totalPTK) {
         bool success;
         bytes memory result;
+
         (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_RAY));
-        require(success, "CompoundModule: Pool error on get(ray)");
+        require(success, "RAYModule: Pool error on get(ray)");
         address rayStorageAddr = abi.decode(result, (address));
-        if (rayStorageAddr != ZERO_ADDRESS){
-            _setup();
+
+        (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_LTOKEN));
+        require(success, "RAYModule: Pool error on get(ltoken)");
+        address lTokenAddr = abi.decode(result, (address));
+
+        if (rayStorageAddr != ZERO_ADDRESS && lTokenAddr != ZERO_ADDRESS){
+            _setup(IERC20(lTokenAddr));
             IRAYStorage rayStorage = IRAYStorage(rayStorageAddr);
             IRAY pm = IRAY(rayStorage.getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
             (poolDAI,) = pm.getTokenValue(PORTFOLIO_ID, rayTokenId);
         } // else poolDAI == 0;
 
         (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_PTOKEN));
-        require(success, "CompoundModule: Pool error on get(ptoken)");
+        require(success, "RAYModule: Pool error on get(ptoken)");
         address ptk = abi.decode(result, (address));
         if (ptk != ZERO_ADDRESS) totalPTK = IPToken(ptk).distributionTotalSupply(); // else totalPTK == 0;
     }

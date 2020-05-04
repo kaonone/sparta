@@ -287,8 +287,8 @@ export interface RAYModuleContract extends Truffle.Contract<RAYModuleInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<RAYModuleInstance>;
 }
 
-export interface RayStubContract extends Truffle.Contract<RayStubInstance> {
-  "new"(meta?: Truffle.TransactionDetails): Promise<RayStubInstance>;
+export interface RAYStubContract extends Truffle.Contract<RAYStubInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<RAYStubInstance>;
 }
 
 export interface TestnetCErc20ProxyContract
@@ -9178,6 +9178,8 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
+  rayTokenId(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
   renounceDefiOperator: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
@@ -9337,7 +9339,7 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
   };
 }
 
-export interface RayStubInstance extends Truffle.ContractInstance {
+export interface RAYStubInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BN>;

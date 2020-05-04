@@ -99,7 +99,7 @@ declare global {
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "RAYModule"): TruffleContracts.RAYModuleContract;
-      require(name: "RayStub"): TruffleContracts.RayStubContract;
+      require(name: "RAYStub"): TruffleContracts.RAYStubContract;
       require(
         name: "TestnetCErc20Proxy"
       ): TruffleContracts.TestnetCErc20ProxyContract;

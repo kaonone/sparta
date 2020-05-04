@@ -1,6 +1,6 @@
 import { 
     FreeDAIContract, FreeDAIInstance,
-    RayStubContract, RayStubInstance 
+    RAYStubContract, RAYStubInstance 
 } from "../types/truffle-contracts/index";
 
 // tslint:disable-next-line:no-var-requires
@@ -18,7 +18,7 @@ const RAYStub = artifacts.require("RAYStub");
 contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
     const RAY_PORTFOLIO_ID = '0xcd93cf275bcc8c600887dc587ea0a16e8f0a87fa7f99560f72186069c8d3b3df';
     let dai: FreeDAIInstance;
-    let ray: RayStubInstance;
+    let ray: RAYStubInstance;
     let rayTokenId: string;
   
     before(async () => {
