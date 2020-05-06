@@ -42,6 +42,9 @@ contract RAYStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
             updated: now,
             value: value
         });
+        if (value > 0) {
+            require(dai.transferFrom(_msgSender(), address(this), value), "RAYStub: failed to deposit DAI");
+        }
         _safeMint(beneficiary, tokenId);
         return bytes32(tokenId);
     }

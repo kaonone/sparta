@@ -72,9 +72,6 @@ describe("DeFi modules", function(){
 
                 return [defi, ray.address, interesRate];
             },
-            before2: async function(defi:IDefiModuleInstance, protocol:string, dai:FreeDAIInstance, pool:PoolInstance, owner:string){
-                await (<RAYModuleInstance> defi).setup({from: owner});
-            },
             protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
                 // let protocol = RAYStub.at(protocolAddress);
                 // let balance = await protocol.balanceOf(defiModuleAddress),
@@ -127,10 +124,6 @@ describe("DeFi modules", function(){
                 await pool.set('defi', defim.address, false, {from: owner});
                 await pToken.addMinter(funds.address, {from: owner});
                 await (<any> defim).addDefiOperator(funds.address, {from: owner});
-
-                if(moduleDef.before2) {
-                    await moduleDef.before2(defim, defiProtocolAddress, dai, pool, owner);
-                }
             });
 
             it("should deposit DAI", async () => {

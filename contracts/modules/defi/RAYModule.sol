@@ -10,6 +10,7 @@ import "./DefiModuleBase.sol";
 contract RAYModule is DefiModuleBase, IERC721Receiver {
     bytes32 public constant PORTFOLIO_ID = keccak256("DaiCompound"); //keccak256("DaiBzxCompoundDydx")
     bytes32 internal constant PORTFOLIO_MANAGER_CONTRACT = keccak256("PortfolioManagerContract");
+    bytes32 internal constant NAV_CALCULATOR_CONTRACT = keccak256("NAVCalculatorContract");
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");
     bytes4 internal constant ERC721_RECEIVER = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
@@ -19,11 +20,6 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         DefiModuleBase.initialize(_pool);
     }
 
-    function setup() public onlyDefiOperator {
-        require(rayTokenId == 0x0, "RAYModule: RAY token already initialized");
-        _setup(lToken());
-    }
-
     function onERC721Received(address, address, uint256, bytes memory) public returns (bytes4) {
         address rayTokenContract = rayStorage().getContractAddress(RAY_TOKEN_CONTRACT);
         require(_msgSender() == rayTokenContract, "RAYModule: only accept RAY Token transfers");
@@ -31,28 +27,18 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function handleDepositInternal(address, uint256 amount) internal {
-        IERC20 ltoken = lToken();
         IRAY pm = rayPortfolioManager();
-        ltoken.approve(address(pm), amount);
-        pm.deposit(rayTokenId, amount);
+        lToken().approve(address(pm), amount);
+        if (rayTokenId == 0x0) {
+            rayTokenId = pm.mint(PORTFOLIO_ID, address(this), amount);
+        } else {
+            pm.deposit(rayTokenId, amount);
+        }
     }
 
     function withdrawInternal(address beneficiary, uint256 amount) internal {
         rayPortfolioManager().redeem(rayTokenId, amount, address(0));
         lToken().transfer(beneficiary, amount);
-    }
-
-    /**
-     * @dev Initialize RAY token
-     */
-    function _setup(IERC20 lTokenAddress) internal {
-        if (rayTokenId != 0x0) return;
-        uint256 ourBalance = lTokenAddress.balanceOf(address(this));
-        IRAY pm = rayPortfolioManager();
-        if (ourBalance > 0){
-            lToken().approve(address(pm), ourBalance);
-        }
-        rayTokenId = pm.mint(PORTFOLIO_ID, address(this), 0);
     }
 
     /**
@@ -63,20 +49,7 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         bool success;
         bytes memory result;
 
-        (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_RAY));
-        require(success, "RAYModule: Pool error on get(ray)");
-        address rayStorageAddr = abi.decode(result, (address));
-
-        (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_LTOKEN));
-        require(success, "RAYModule: Pool error on get(ltoken)");
-        address lTokenAddr = abi.decode(result, (address));
-
-        if (rayStorageAddr != ZERO_ADDRESS && lTokenAddr != ZERO_ADDRESS){
-            _setup(IERC20(lTokenAddr));
-            IRAYStorage rayStorage = IRAYStorage(rayStorageAddr);
-            IRAY pm = IRAY(rayStorage.getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
-            (poolDAI,) = pm.getTokenValue(PORTFOLIO_ID, rayTokenId);
-        } // else poolDAI == 0;
+        poolDAI = poolBalanceOfDAI(); // This returns 0 immidiately if rayTokenId == 0x0, and it can not be zero only if all addresses available
 
         (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_PTOKEN));
         require(success, "RAYModule: Pool error on get(ptoken)");
@@ -85,7 +58,8 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function poolBalanceOfDAI() internal returns(uint256) {
-        (uint256 poolDAI,) = rayPortfolioManager().getTokenValue(PORTFOLIO_ID, rayTokenId);
+        if (rayTokenId == 0x0) return 0;
+        (uint256 poolDAI,) = rayNAVCalculator().getTokenValue(PORTFOLIO_ID, rayTokenId);
         return poolDAI;
     }
     
@@ -94,7 +68,19 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
     
     function rayPortfolioManager() private view returns(IRAY){
-        return IRAY(rayStorage().getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
+        return rayPortfolioManager(rayStorage());
+    }
+
+    function rayPortfolioManager(IRAYStorage rayStorage) private view returns(IRAY){
+        return IRAY(rayStorage.getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
+    }
+
+    function rayNAVCalculator() private view returns(IRAY){
+        return rayNAVCalculator(rayStorage());
+    }
+
+    function rayNAVCalculator(IRAYStorage rayStorage) private view returns(IRAY){
+        return IRAY(rayStorage.getContractAddress(NAV_CALCULATOR_CONTRACT));
     }
 
     function rayStorage() private view returns(IRAYStorage){

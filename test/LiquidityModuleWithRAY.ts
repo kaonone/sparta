@@ -95,8 +95,6 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
         await funds.addFundsOperator(liqm.address, {from: owner});
         await defi.addDefiOperator(funds.address, {from: owner});
 
-        await defi.setup({from: owner});
-
         //Do common tasks
         // access.disableWhitelist({from: owner});
         await lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
