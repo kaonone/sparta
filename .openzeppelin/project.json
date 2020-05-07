@@ -3,7 +3,7 @@
   "contracts": {
     "PToken": "PToken",
     "Pool": "Pool",
-    "CompoundModule": "CompoundModule",
+    "RAYModule": "RAYModule",
     "DefiFundsModule": "DefiFundsModule",
     "CurveModule": "CurveModule",
     "AccessModule": "AccessModule",

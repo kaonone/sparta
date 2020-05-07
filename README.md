@@ -8,18 +8,24 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
 # Testnet (Rinkeby) deployment 
+
+## External contracts
 * DAI: `0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa`
 * cDAI: `0x6D7F0754FFeb405d23C51CE938289d4835bE3b14`
-* Pool: `0x53DB2A5c8304aEE4cD31A9a10d09022e775F2EAd`
-* AccessModule: `0xC69D8057bA2484E4487b3B5E059E67822A6cbAA5`
-* PToken: `0x5b6214852c5e4E20EF4079bF73e98584FdB65228`
-* CompoundModule: `0xCB77413Ab83b6B40Dbf9111e9035adbE92a23282`
-* FundsModule: `0x91fcbbD3fE3DFCEa1E96fBa2936a06291a4e3953`
-* CurveModule: `0xaF3e4Cb1122b64FCa73354ec421d0c53AA183c88`
-* LiquidityModule: `0xA8155d44CaDee6b765E6054bbd39b5A3EBD0BC39`
-* LoanLimitsModule: `0x873d123a008C305F58DfFe776626E37c4687ed9f`
-* LoanProposalsModule: `0x26c4F1A353d2463b30280686b65fE29ca33eD003`
-* LoanModule: `0x8C599627713C6E6A56fB875994aF0ba2E115C74B`
+* RAY Storage: `0x21091e9DACac70A9E511a26CE538Ad27Ddb92AcD`
+
+## Pool contracts
+* Pool: `0xaddF2d0C18a1989b800e9a4a8D496d856bBd0413`
+* AccessModule: `0xdE833D434856a6Ba58C4De2C235C9da777e4a8B3`
+* PToken: `0xB0E4aF12900380337D6D2b85063f2b791DCAc895`
+* CompoundModule: _not deployed_
+* RAYModule: `0xBc3426D4Cf4DFe01cCc088F61b59EDb3BA099Af5`
+* FundsModule: `0x2fC82FF38325e6A4D5eD587aAfb90827c1b0FCb4`
+* CurveModule: `0x4eB5f040CEE9425516fD1930cDCE3682D9379f26`
+* LiquidityModule: `0x88c6D8073a9f4f92c503397F33C4587537a6FA7B`
+* LoanLimitsModule: `0xB2EA6fE10925d521B44a652c39982837A58B9DfC`
+* LoanProposalsModule: `0x53668dA77ddaB3D90aC0c46AdE11Ebc1f9ADCf76`
+* LoanModule: `0xf72ecaD9F29CC99F59aE3862c8948E20E7Ee1062`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
