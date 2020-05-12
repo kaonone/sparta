@@ -49,6 +49,9 @@ declare global {
       require(
         name: "FundsOperatorRole"
       ): TruffleContracts.FundsOperatorRoleContract;
+      require(
+        name: "FundsWithLoansModule"
+      ): TruffleContracts.FundsWithLoansModuleContract;
       require(name: "IAccessModule"): TruffleContracts.IAccessModuleContract;
       require(name: "ICErc20"): TruffleContracts.ICErc20Contract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
@@ -63,6 +66,9 @@ declare global {
         name: "IERC721Receiver"
       ): TruffleContracts.IERC721ReceiverContract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
+      require(
+        name: "IFundsWithLoansModule"
+      ): TruffleContracts.IFundsWithLoansModuleContract;
       require(
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;

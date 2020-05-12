@@ -164,23 +164,12 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
 
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
+     * @dev Here we assume to have no debts. This should be overriden for use with modules like LoanModule
      * @param lAmount Amount of liquid tokens which will be put into the pool
      * @return Amount of pToken which should be sent to sender
      */
     function calculatePoolEnter(uint256 lAmount) public view returns(uint256) {
-        uint256 lDebts = loanModule().totalLDebts();
-        return curveModule().calculateEnter(lBalance, lDebts, lAmount);
-    }
-
-    /**
-     * @notice Calculates how many pTokens should be given to user for increasing liquidity
-     * @param lAmount Amount of liquid tokens which will be put into the pool
-     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
-     * @return Amount of pToken which should be sent to sender
-     */
-    function calculatePoolEnter(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
-        uint256 lDebts = loanModule().totalLDebts();
-        return curveModule().calculateEnter(lBalance.sub(liquidityCorrection), lDebts, lAmount);
+        return curveModule().calculateEnter(lBalance, 0, lAmount); // 0 means no debts
     }
 
     /**
@@ -189,8 +178,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
-        uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExit(lBalance.sub(lProposals), lAmount);
+        return curveModule().calculateExit(lBalance, lAmount);
     }
 
     /**
@@ -199,19 +187,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of pTokens to burn/lock
      */
     function calculatePoolExitWithFee(uint256 lAmount) public view returns(uint256) {
-        uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitWithFee(lBalance.sub(lProposals), lAmount);
-    }
-
-    /**
-     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include part for pool
-     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
-     * @return Amount of pTokens to burn/lock
-     */
-    function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
-        uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitWithFee(lBalance.sub(liquidityCorrection).sub(lProposals), lAmount);
+        return curveModule().calculateExitWithFee(lBalance, lAmount);
     }
 
     /**
@@ -220,8 +196,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @return Amount of liquid tokens which will be removed from the pool: total, part for sender, part for pool
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
-        uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
+        return curveModule().calculateExitInverseWithFee(lBalance, pAmount);
     }
 
     function lTransferToFunds(address from, uint256 amount) internal {
@@ -233,12 +208,12 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function emitStatus() private {
-        uint256 lDebts = loanModule().totalLDebts();
-        uint256 lProposals = loanProposalsModule().totalLProposals();
+        uint256 lDebts = 0;
+        uint256 lProposals = 0;
         uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
         if (lBalance >= STATUS_PRICE_AMOUNT) {
-            pExitPrice = curveModule().calculateExit(lBalance.sub(lProposals), STATUS_PRICE_AMOUNT);
+            pExitPrice = curveModule().calculateExit(lBalance, STATUS_PRICE_AMOUNT);
         } else {
             pExitPrice = 0;
         }
@@ -249,14 +224,6 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         return ICurveModule(getModuleAddress(MODULE_CURVE));
     }
     
-    function loanModule() private view returns(ILoanModule) {
-        return ILoanModule(getModuleAddress(MODULE_LOAN));
-    }
-
-    function loanProposalsModule() private view returns(ILoanProposalsModule) {
-        return ILoanProposalsModule(getModuleAddress(MODULE_LOAN_PROPOSALS));
-    }
-
     function pToken() private view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }

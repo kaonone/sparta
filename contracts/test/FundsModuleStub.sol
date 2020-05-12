@@ -2,7 +2,7 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
-import "../interfaces/curve/IFundsModule.sol";
+import "../interfaces/curve/IFundsWithLoansModule.sol";
 import "../token/pTokens/PToken.sol";
 import "../common/Module.sol";
 
@@ -11,7 +11,7 @@ import "../common/Module.sol";
  * Stub of LoanModule to allow tests of FundsModule and LiquidityModule
  */
  //solhint-disable func-order
-contract FundsModuleStub is Module, IFundsModule {
+contract FundsModuleStub is Module, IFundsWithLoansModule {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);

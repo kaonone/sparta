@@ -1,6 +1,6 @@
 import {
     PoolContract, PoolInstance, 
-    BaseFundsModuleContract, BaseFundsModuleInstance, 
+    FundsWithLoansModuleContract, FundsWithLoansModuleInstance, 
     AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleContract, LoanModuleInstance,
@@ -24,7 +24,7 @@ const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
-const BaseFundsModule = artifacts.require("BaseFundsModule");
+const FundsWithLoansModule = artifacts.require("FundsWithLoansModule");
 const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModule = artifacts.require("LoanModule");
@@ -40,7 +40,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let snap: Snapshot;
 
     let pool: PoolInstance;
-    let funds: BaseFundsModuleInstance; 
+    let funds: FundsWithLoansModuleInstance; 
     let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanm: LoanModuleInstance; 
@@ -107,7 +107,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await (<any> loanm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("loan", loanm.address, true, {from: owner});  
 
-        funds = await BaseFundsModule.new();
+        funds = await FundsWithLoansModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
@@ -522,7 +522,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
 
         // Prepare borrower for repay
         await time.increase(90*24*60*60+1);
-        await prepareBorrower(await funds.calculatePoolEnter(w3random.interval(10, 20, 'ether')));
+        await prepareBorrower(await (<any>funds).methods['calculatePoolEnter(uint256)'](w3random.interval(10, 20, 'ether')));
         let pBorrowerBeforeDefault = await pToken.balanceOf(borrower);
         //console.log('pBorrowerBeforeDefault', pBorrowerBeforeDefault.toString());
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
