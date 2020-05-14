@@ -1,0 +1,10 @@
+subscription PoolMetricByDate($date: ID!) @pool {
+  pools(first: 1, orderBy: id, orderDirection: desc, where: {id_lt: $date}) {
+    lBalance
+    lDebt
+    usersLength
+    lProposals
+    depositSum
+    withdrawSum
+  }
+}

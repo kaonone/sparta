@@ -1,0 +1,9 @@
+query DistributionClaimsByEvent($first: Int!, $skip: Int!, $eventId: String) {
+  earnings(first: $first, skip: $skip, orderBy: date, orderDirection: desc, where: {distributionEvent: $eventId}) {
+    date
+    user {
+      id
+    }
+    pAmount
+  }
+}
