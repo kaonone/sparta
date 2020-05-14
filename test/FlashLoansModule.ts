@@ -1,6 +1,7 @@
 import { 
     FreeDAIContract, FreeDAIInstance,
     PoolContract, PoolInstance, 
+    AccessModuleContract, AccessModuleInstance,
     PTokenContract, PTokenInstance, 
     CurveModuleContract, CurveModuleInstance,
     BaseFundsModuleContract, BaseFundsModuleInstance,
@@ -20,6 +21,7 @@ const expectEqualBN = require("./utils/expectEqualBN");
 const FreeDAI = artifacts.require("FreeDAI");
 const CErc20Stub = artifacts.require("CErc20Stub");
 const Pool = artifacts.require("Pool");
+const AccessModule = artifacts.require("AccessModule");
 const PToken = artifacts.require("PToken");
 const CurveModule = artifacts.require("CurveModule");
 const BaseFundsModule = artifacts.require("BaseFundsModule");
@@ -30,6 +32,7 @@ const FlashLoanReceiverStub = artifacts.require("FlashLoanReceiverStub");
 contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
     let dai: FreeDAIInstance;
     let pool: PoolInstance;
+    let access: AccessModuleInstance;
     let pToken: PTokenInstance;
     let curve: CurveModuleInstance; 
     let funds: BaseFundsModuleInstance;
@@ -47,6 +50,10 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
 
+        access = await AccessModule.new();
+        await (<any> access).methods['initialize(address)'](pool.address, {from: owner});
+        access.disableWhitelist({from: owner});
+
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
 
@@ -63,6 +70,7 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         await (<any> flashm).methods['initialize(address)'](pool.address, {from: owner});
 
         await pool.set('ltoken', dai.address, false, {from: owner});
+        await pool.set("access", access.address, false, {from: owner});  
         await pool.set('ptoken', pToken.address, false, {from: owner});
         await pool.set('funds', funds.address, false, {from: owner});
         await pool.set("curve", curve.address, true, {from: owner});  
@@ -79,10 +87,8 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         //Add liquidity
         let amount = w3random.interval(100000, 1000000, 'ether');
         await (<any> dai).methods['mint(uint256)'](amount, {from: owner});
-        dai.approve(funds.address, amount, {from: user});
-        liqm.deposit(amount, 0, {from: owner});
-
-
+        await dai.approve(funds.address, amount, {from: owner});
+        await liqm.deposit(amount, 0, {from: owner});
     });
 
     it("should execute flashLoan", async () => {
@@ -97,9 +103,9 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
               "name": "mint",
               "inputs": [{"name": "amount","type": "uint256"}]
             },
-            [mintAmount]
+            ["0x"+mintAmount.toString('hex')]
         );
-        let data = web3.eth.abi.encodeParameters(['address','uint256','bytes'], dai.address, 0, call);
+        let data = web3.eth.abi.encodeParameters(['address','uint256','bytes'], [dai.address, 0, call]);
 
         let flashr = await FlashLoanReceiverStub.new({from: user});
 
