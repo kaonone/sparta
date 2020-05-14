@@ -1,0 +1,13 @@
+subscription Pledge($pledgeHash: ID!) { # $pledgeHash = keccak256(supporter + borrower + proposalId)
+  pledge(id: $pledgeHash) {
+    id
+    pledger {
+      id
+    }
+    lInitialLocked
+    pInitialLocked
+    pLocked
+    pInterest
+    unlockLiquidity
+  }
+}

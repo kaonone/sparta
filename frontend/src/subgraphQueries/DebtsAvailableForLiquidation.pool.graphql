@@ -1,0 +1,15 @@
+query DebtsAvailableForLiquidation($first: Int!, $skip: Int!, $liquidationDate: BigInt!) {
+  debts(first: $first, skip: $skip, where: {last_update_lt: $liquidationDate, status_not: CLOSED}) {
+    debt_id
+    proposal_id
+    apr
+    total
+    repayed
+    last_update
+    status
+    stakeProgress
+    borrower {
+      id
+    }
+  }
+}
