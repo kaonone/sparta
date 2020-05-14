@@ -10,6 +10,9 @@ declare global {
     interface Artifacts {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
+      require(
+        name: "BadFlashLoanReceiverStub"
+      ): TruffleContracts.BadFlashLoanReceiverStubContract;
       require(name: "Base"): TruffleContracts.BaseContract;
       require(
         name: "BaseFundsModule"

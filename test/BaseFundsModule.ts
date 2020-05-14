@@ -75,10 +75,10 @@ contract("BaseFundsModule", async ([_, owner, liquidityProvider, borrower, teste
         await funds.addFundsOperator(tester, {from: owner});
 
         //Do common tasks
-        lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+        await lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
 
-        pToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+        await pToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await pToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
         //Save snapshot
         snap = await Snapshot.create(web3.currentProvider);

@@ -6,8 +6,10 @@ import {
     CurveModuleContract, CurveModuleInstance,
     BaseFundsModuleContract, BaseFundsModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
+    DefiModuleStubContract, DefiModuleStubInstance,
     FlashLoansModuleContract, FlashLoansModuleInstance,
-    FlashLoanReceiverStubContract, FlashLoanReceiverStubInstance
+    FlashLoanReceiverStubContract, FlashLoanReceiverStubInstance,
+    BadFlashLoanReceiverStubContract, BadFlashLoanReceiverStubInstance
 } from "../types/truffle-contracts/index";
 
 // tslint:disable-next-line:no-var-requires
@@ -25,9 +27,11 @@ const AccessModule = artifacts.require("AccessModule");
 const PToken = artifacts.require("PToken");
 const CurveModule = artifacts.require("CurveModule");
 const BaseFundsModule = artifacts.require("BaseFundsModule");
+const DefiModuleStub = artifacts.require("DefiModuleStub");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const FlashLoansModule = artifacts.require("FlashLoansModule");
 const FlashLoanReceiverStub = artifacts.require("FlashLoanReceiverStub");
+const BadFlashLoanReceiverStub = artifacts.require("BadFlashLoanReceiverStub");
 
 contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
     let dai: FreeDAIInstance;
@@ -37,6 +41,7 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
     let curve: CurveModuleInstance; 
     let funds: BaseFundsModuleInstance;
     let liqm: LiquidityModuleInstance; 
+    let defi: DefiModuleStubInstance; 
     let flashm: FlashLoansModuleInstance;
  
     let loanFee:BN, loanFeeMultiplier:BN;
@@ -66,15 +71,20 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         liqm = await LiquidityModule.new();
         await (<any> liqm).methods['initialize(address)'](pool.address, {from: owner});
 
+        defi = await DefiModuleStub.new();
+        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+
+
         flashm = await FlashLoansModule.new();
         await (<any> flashm).methods['initialize(address)'](pool.address, {from: owner});
 
         await pool.set('ltoken', dai.address, false, {from: owner});
-        await pool.set("access", access.address, false, {from: owner});  
-        await pool.set('ptoken', pToken.address, false, {from: owner});
-        await pool.set('funds', funds.address, false, {from: owner});
+        await pool.set("access", access.address, true, {from: owner});  
+        await pool.set('ptoken', pToken.address, true, {from: owner});
+        await pool.set('funds', funds.address, true, {from: owner});
         await pool.set("curve", curve.address, true, {from: owner});  
         await pool.set("liquidity", liqm.address, true, {from: owner});  
+        await pool.set("defi", defi.address, true, {from: owner});  
         await pool.set("flashloans", flashm.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
@@ -108,6 +118,7 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         let data = web3.eth.abi.encodeParameters(['address','uint256','bytes'], [dai.address, 0, call]);
 
         let flashr = await FlashLoanReceiverStub.new({from: user});
+        await (<any> flashr).methods['initialize()']({from: user});
 
         let before = {
             userDai: await dai.balanceOf(user),
@@ -125,4 +136,17 @@ contract("FlashLoansModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(after.poolDai).to.be.bignumber.eq(before.poolDai.add(expectedFee));
     });
 
+    it("should fail if wrong amount is repaid", async () => {
+        let amount = w3random.interval(100, 1000, 'ether');
+        let expectedFee = amount.mul(loanFee).div(loanFeeMultiplier);
+
+        let flashr = await BadFlashLoanReceiverStub.new({from: user});
+        await (<any> flashr).methods['initialize()']({from: user});
+
+        await expectRevert(
+            (<any>flashm).executeLoan(flashr.address, amount, '0x0', {from: user}),
+            "FlashLoansModule: returned amount is not correct"
+        );
+
+    });
 });

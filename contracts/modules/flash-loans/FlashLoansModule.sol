@@ -7,7 +7,7 @@ import "../../interfaces/flashloans/IFlashLoanReceiver.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../common/Module.sol";
 
-
+//solhint-disable func-order
 contract FlashLoansModule is Module, IFlashLoansModule {
     using SafeMath for uint256;
 
@@ -47,7 +47,6 @@ contract FlashLoansModule is Module, IFlashLoansModule {
 
     }
 
-
     function setFee(uint256 _loanFee) public onlyOwner{
         loanFee = _loanFee;
     }
@@ -60,12 +59,11 @@ contract FlashLoansModule is Module, IFlashLoansModule {
         return amount.mul(loanFee).div(LOAN_FEE_MULTIPLIER);
     }
 
-
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
     }
+    
     function lToken() private view returns(IERC20){
         return IERC20(getModuleAddress(MODULE_LTOKEN));
     }
-
 }
