@@ -119,6 +119,18 @@ export interface ERC721MetadataContract
   "new"(meta?: Truffle.TransactionDetails): Promise<ERC721MetadataInstance>;
 }
 
+export interface FlashLoanReceiverStubContract
+  extends Truffle.Contract<FlashLoanReceiverStubInstance> {
+  "new"(
+    meta?: Truffle.TransactionDetails
+  ): Promise<FlashLoanReceiverStubInstance>;
+}
+
+export interface FlashLoansModuleContract
+  extends Truffle.Contract<FlashLoansModuleInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<FlashLoansModuleInstance>;
+}
+
 export interface FreeDAIContract extends Truffle.Contract<FreeDAIInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<FreeDAIInstance>;
 }
@@ -179,6 +191,16 @@ export interface IERC721MetadataContract
 export interface IERC721ReceiverContract
   extends Truffle.Contract<IERC721ReceiverInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<IERC721ReceiverInstance>;
+}
+
+export interface IFlashLoanReceiverContract
+  extends Truffle.Contract<IFlashLoanReceiverInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<IFlashLoanReceiverInstance>;
+}
+
+export interface IFlashLoansModuleContract
+  extends Truffle.Contract<IFlashLoansModuleInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<IFlashLoansModuleInstance>;
 }
 
 export interface IFundsModuleContract
@@ -4429,6 +4451,213 @@ export interface ERC721MetadataInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 }
 
+export interface FlashLoanReceiverStubInstance
+  extends Truffle.ContractInstance {
+  initialize: {
+    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      sender: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      sender: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      sender: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  renounceOwnership: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  transferOwnership: {
+    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  executeOperation: {
+    (
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+}
+
+export interface FlashLoansModuleInstance extends Truffle.ContractInstance {
+  LOAN_FEE_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  MODULE_LOAN_PROPOSALS(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
+  getModuleAddress(
+    module: string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
+  isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  renounceOwnership: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  setPool: {
+    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  transferOwnership: {
+    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  initialize: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  executeLoan: {
+    (
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  setFee: {
+    (
+      _loanFee: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _loanFee: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _loanFee: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _loanFee: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  getLoanFee(
+    amount: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
+}
+
 export interface FreeDAIInstance extends Truffle.ContractInstance {
   allowance(
     owner: string | BN,
@@ -6234,6 +6463,68 @@ export interface IERC721ReceiverInstance extends Truffle.ContractInstance {
       operator: string | BN,
       from: string | BN,
       tokenId: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+}
+
+export interface IFlashLoanReceiverInstance extends Truffle.ContractInstance {
+  executeOperation: {
+    (
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      token: string | BN,
+      amount: number | BN | string,
+      fee: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+}
+
+export interface IFlashLoansModuleInstance extends Truffle.ContractInstance {
+  executeLoan: {
+    (
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      receiver: string | BN,
+      amount: number | BN | string,
+      data: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      receiver: string | BN,
+      amount: number | BN | string,
       data: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;

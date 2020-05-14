@@ -42,6 +42,12 @@ declare global {
       require(name: "ERC721"): TruffleContracts.ERC721Contract;
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
+      require(
+        name: "FlashLoanReceiverStub"
+      ): TruffleContracts.FlashLoanReceiverStubContract;
+      require(
+        name: "FlashLoansModule"
+      ): TruffleContracts.FlashLoansModuleContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
       require(
         name: "FundsModuleStub"
@@ -65,6 +71,12 @@ declare global {
       require(
         name: "IERC721Receiver"
       ): TruffleContracts.IERC721ReceiverContract;
+      require(
+        name: "IFlashLoanReceiver"
+      ): TruffleContracts.IFlashLoanReceiverContract;
+      require(
+        name: "IFlashLoansModule"
+      ): TruffleContracts.IFlashLoansModuleContract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
       require(
         name: "IFundsWithLoansModule"

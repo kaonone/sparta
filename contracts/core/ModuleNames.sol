@@ -14,6 +14,7 @@ contract ModuleNames {
     string internal constant MODULE_LOAN              = "loan";
     string internal constant MODULE_LOAN_LIMTS        = "loan_limits";
     string public constant MODULE_LOAN_PROPOSALS    = "loan_proposals";
+    string internal constant MODULE_FLASHLOANS        = "flashloans";
 
     // External Modules (used to store addresses of external contracts)
     string internal constant MODULE_LTOKEN            = "ltoken";
