@@ -21,6 +21,13 @@ interface IFundsModule {
     function withdrawLTokens(address to, uint256 amount) external;
 
     /**
+     * @notice deposit liquid tokens received as interest and distribute PTK
+     * @param amount Amount of liquid tokens to deposit
+     * @return Amount of PTK distributed
+     */
+    function distributeLInterest(uint256 amount) external returns(uint256);
+
+    /**
      * @notice Withdraw liquid tokens from the pool
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit

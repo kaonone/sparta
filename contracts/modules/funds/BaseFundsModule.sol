@@ -63,6 +63,18 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     /**
+     * @notice Distribute liquid tokens received (and already deposited) as interest and distribute PTK
+     * @param amount Amount of liquid tokens to deposit
+     * @return Amount of PTK distributed
+     */
+    function distributeLInterest(uint256 amount) public onlyFundsOperator returns(uint256){
+        lBalance = lBalance.add(amount);
+        uint256 pAmount = calculatePoolEnter(amount);
+        pToken().distribute(pAmount);
+        return pAmount;
+    }
+
+    /**
      * @notice Deposit pool tokens to the pool
      * @param from Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit

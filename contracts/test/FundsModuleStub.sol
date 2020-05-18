@@ -28,6 +28,11 @@ contract FundsModuleStub is Module, IFundsWithLoansModule {
     function withdrawLTokens(address, uint256, uint256) external {
         this;
     }
+    
+    function distributeLInterest(uint256) external view returns(uint256) {
+        this;
+        return 0;
+    }
 
     function depositPTokens(address from, uint256 amount) external {
         pToken().transferFrom(from, address(this), amount);

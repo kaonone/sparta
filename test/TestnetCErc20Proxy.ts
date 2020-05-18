@@ -164,17 +164,17 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
 
         // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
 
-        let receipt = await defim.withdrawInterest({from: user});
-        expectEvent(receipt, 'WithdrawInterest', {'account':user});
+        // let receipt = await defim.withdrawInterest({from: user});
+        // expectEvent(receipt, 'WithdrawInterest', {'account':user});
 
-        await cDaiProxy.accrueInterest();
-        let afterWithdrawInterest = {
-            userDai: await fdai.balanceOf(user),
-            defimCDai: await cDaiProxy.balanceOf(defim.address),
-            cDaiUnderlying: await cDaiProxy.getBalanceOfUnderlying(defim.address),
-        };
-        let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
-        expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
+        // await cDaiProxy.accrueInterest();
+        // let afterWithdrawInterest = {
+        //     userDai: await fdai.balanceOf(user),
+        //     defimCDai: await cDaiProxy.balanceOf(defim.address),
+        //     cDaiUnderlying: await cDaiProxy.getBalanceOfUnderlying(defim.address),
+        // };
+        // let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
+        // expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
 
     });
 

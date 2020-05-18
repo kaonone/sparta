@@ -12,6 +12,15 @@ import "../common/Module.sol";
  * Stub of LoanModule to allow tests of FundsModule and LiquidityModule
  */
 contract DefiModuleStub is Module, IDefiModule {
+    function poolBalance() external returns(uint256) {
+        this;
+        return 0;
+    }
+
+    function createDistributionIfReady() external {
+        this;
+    }
+
     function handleDeposit(address, uint256) external {
         this;
     }
@@ -19,30 +28,4 @@ contract DefiModuleStub is Module, IDefiModule {
     function withdraw(address, uint256) external {
         this;
     }
-
-    function withdrawInterest() external {
-        this;
-    }
-
-    function claimDistributions(address) external {
-        this;
-    }
-
-    function claimDistributions(address, uint256) external {
-        this;
-    }
-
-    function updatePTKBalance(address, uint256) external  {
-        this;
-    }
-
-    function poolBalance() external returns(uint256) {
-        this;
-        return 0;
-    }
-
-    function availableInterest(address) external view returns (uint256) {
-        return 0;
-    }
-
 }

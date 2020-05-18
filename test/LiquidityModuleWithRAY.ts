@@ -93,6 +93,7 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
 
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
+        await funds.addFundsOperator(defi.address, {from: owner});
         await defi.addDefiOperator(funds.address, {from: owner});
 
         //Do common tasks

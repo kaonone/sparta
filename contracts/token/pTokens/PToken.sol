@@ -77,10 +77,6 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
         return fullSupply.sub(locked);
     }
 
-    function userBalanceChanged(address account) internal {
-        defiModule().updatePTKBalance(account, distributionBalanceOf(account));
-    }
-
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
     }

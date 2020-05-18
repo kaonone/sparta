@@ -179,7 +179,7 @@ describe("DeFi modules", function(){
                 expect(after.defimProtocolBalance).to.be.bignumber.lt(before.defimProtocolBalance);
                 expectEqualBN(after.defimUnderlyingBalance, before.defimUnderlyingBalance.sub(amount), 18, -5); //Accuracy may be bad because of rounding and time passed
             });
-
+/*
             it("should withdraw correct interest", async () => {
                 let beforeTimeShift = {
                     userDai: await dai.balanceOf(user),
@@ -197,7 +197,7 @@ describe("DeFi modules", function(){
 
                 let timeShift = w3random.interval(30*24*60*60, 89*24*60*60)
                 await time.increase(timeShift);
-                await defim.claimDistributions(user);
+//                await defim.claimDistributions(user);
 
                 let beforeWithdrawInterest = {
                     userDai: await dai.balanceOf(user),
@@ -213,7 +213,7 @@ describe("DeFi modules", function(){
 
                 // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
 
-                let receipt = await defim.withdrawInterest({from: user});
+//                let receipt = await defim.withdrawInterest({from: user});
                 expectEvent(receipt, 'WithdrawInterest', {'account':user});
 
                 let afterWithdrawInterest = {
@@ -228,7 +228,7 @@ describe("DeFi modules", function(){
 
 
             });
-
+*/
         });
 
     });

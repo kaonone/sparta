@@ -77,6 +77,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         await pool.set("loan", loanm.address, true, {from: owner});  
         await pool.set("loan_proposals", loanpm.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
+        await funds.addFundsOperator(defim.address, {from: owner});
         await defim.addDefiOperator(funds.address, {from: owner});
 
         interesRate = await cDai.INTEREST_RATE();
