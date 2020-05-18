@@ -239,7 +239,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(afterVerySmallDeposit.cDaiDai).to.be.bignumber.eq(new BN(0));
        
         let smallDeposit = minInstantAmount.sub(afterVerySmallDeposit.fundsDai).add( maxInstantAmount.sub(minInstantAmount).divn(2) );
-        await funds.depositLTokens(user, verySmallDeposit, {from: owner});
+        await funds.depositLTokens(user, smallDeposit, {from: owner});
 
         let afterSmallDeposit = {
             fundsDai: await dai.balanceOf(funds.address),
@@ -247,10 +247,6 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
             defimCDai: await cDai.balanceOf(defim.address),
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
         };
-console.log('minInstantAmount', minInstantAmount.toString());
-console.log('smallDeposit', smallDeposit.toString());
-console.log('afterSmallDeposit.fundsDai', afterSmallDeposit.fundsDai.toString());
-
         expect(afterSmallDeposit.fundsDai).to.be.bignumber.gte(minInstantAmount);
         expect(afterSmallDeposit.fundsDai).to.be.bignumber.lte(maxInstantAmount);
         expect(afterSmallDeposit.cDaiDai).to.be.bignumber.eq(new BN(0));
