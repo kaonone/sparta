@@ -179,15 +179,8 @@ describe("DeFi modules", function(){
                 expect(after.defimProtocolBalance).to.be.bignumber.lt(before.defimProtocolBalance);
                 expectEqualBN(after.defimUnderlyingBalance, before.defimUnderlyingBalance.sub(amount), 18, -5); //Accuracy may be bad because of rounding and time passed
             });
-/*
-            it("should withdraw correct interest", async () => {
-                let beforeTimeShift = {
-                    userDai: await dai.balanceOf(user),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
-                };
-                expect(beforeTimeShift.defimUnderlyingBalance).to.be.bignumber.gt(new BN(0)); // Ensure we have some DAI on pool balance
 
+            it("should withdraw correct interest", async () => {
                 //Mint PTK
                 let ptkForOwner = w3random.interval(50, 100, 'ether');
                 let ptkForUser = w3random.interval(10, 50, 'ether');
@@ -195,40 +188,36 @@ describe("DeFi modules", function(){
                 await funds.mintPTokens(user, ptkForUser, {from: owner});
                 //console.log(ptkForUser, ptkForOwner);
 
-                let timeShift = w3random.interval(30*24*60*60, 89*24*60*60)
-                await time.increase(timeShift);
-//                await defim.claimDistributions(user);
-
-                let beforeWithdrawInterest = {
-                    userDai: await dai.balanceOf(user),
+                let beforeTimeShift = {
+                    userPTK: await pToken.distributionBalanceOf(user),
+                    totalPTK: await pToken.distributionTotalSupply(),
                     defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
                     defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
-                    availableInterest: await defim.availableInterest(user)
                 };
+                expect(beforeTimeShift.defimUnderlyingBalance).to.be.bignumber.gt(new BN(0)); // Ensure we have some DAI on pool balance
+
+                let timeShift = w3random.interval(30*24*60*60, 89*24*60*60)
+
                 //console.log(beforeTimeShift.defimUnderlyingBalance, interesRate, timeShift, expScale, annualSeconds);
                 let expectedFullInterest = beforeTimeShift.defimUnderlyingBalance.mul(interesRate).mul(timeShift).div(expScale).div(annualSeconds);
-                expectEqualBN(beforeWithdrawInterest.defimUnderlyingBalance, beforeTimeShift.defimUnderlyingBalance.add(expectedFullInterest), 18, -5);
-                let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
-                expectEqualBN(beforeWithdrawInterest.availableInterest, expectedUserInterest, 18, -5);
+                let expectedPTKDistribution = await funds.calculatePoolEnter(expectedFullInterest);
 
-                // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
+                await time.increase(timeShift);
+                await defim.createDistributionIfReady();
+                await (<any>pToken).methods['claimDistributions(address)'](user);
 
-//                let receipt = await defim.withdrawInterest({from: user});
-                expectEvent(receipt, 'WithdrawInterest', {'account':user});
-
-                let afterWithdrawInterest = {
-                    userDai: await dai.balanceOf(user),
+                let beforeWithdrawInterest = {
+                    userPTK: await pToken.distributionBalanceOf(user),
+                    totalPTK: await pToken.distributionTotalSupply(),
                     defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
                     defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
-                    availableInterest: await defim.availableInterest(user)
                 };
-                expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
-
-                expectEqualBN(afterWithdrawInterest.availableInterest, new BN(0), 18, -5);
-
+                expectEqualBN(beforeWithdrawInterest.defimUnderlyingBalance, beforeTimeShift.defimUnderlyingBalance.add(expectedFullInterest), 18, -5);
+                let expectedUserInterest = expectedPTKDistribution.mul(beforeTimeShift.userPTK).div(beforeTimeShift.totalPTK);
+                expectEqualBN(beforeWithdrawInterest.userPTK, beforeTimeShift.userPTK.add(expectedUserInterest), 18, -5);
 
             });
-*/
+
         });
 
     });

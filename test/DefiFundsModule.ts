@@ -80,6 +80,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         await funds.addFundsOperator(defim.address, {from: owner});
         await defim.addDefiOperator(funds.address, {from: owner});
 
+        // Load info
         interesRate = await cDai.INTEREST_RATE();
         expScale = await cDai.EXP_SCALE();
         annualSeconds = await cDai.ANNUAL_SECONDS();
@@ -190,5 +191,106 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(after.fundsDai).to.be.bignumber.eq(new BN(0));
         expect(after.cDaiDai).to.be.bignumber.eq(before.cDaiDai.add(before.fundsDai));
         expect(after.defimCDai).to.be.bignumber.gt(before.defimCDai);
+    });
+
+    it("should respect minInstantAmount & maxInstantAmount", async () => {
+        let userMintAmount = web3.utils.toWei('10000', 'ether')
+        await (<any> dai).methods['mint(uint256)'](userMintAmount, {from: user});
+        dai.approve(funds.address, userMintAmount, {from: user});
+
+        let minInstantAmount = new BN(web3.utils.toWei('2000', 'ether'));
+        let maxInstantAmount = minInstantAmount.add(minInstantAmount.muln(5).divn(100));
+        let before = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+        };
+
+        // Check initial state
+        expect(before.fundsDai).to.be.bignumber.eq(new BN(0));
+        expect(before.cDaiDai).to.be.bignumber.lt(minInstantAmount); 
+
+        await funds.setDefiSettings(minInstantAmount, maxInstantAmount, {from:owner});
+
+        let afterRebalance = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+        };
+
+        //test after rebalance
+        expect(afterRebalance.fundsDai).to.be.bignumber.eq(before.cDaiDai);
+        expect(afterRebalance.cDaiDai).to.be.bignumber.eq(new BN(0));
+
+        let verySmallDeposit = new BN(web3.utils.toWei('1', 'ether'));
+        expect(afterRebalance.fundsDai.add(verySmallDeposit)).to.be.bignumber.lt(minInstantAmount); 
+        
+        await funds.depositLTokens(user, verySmallDeposit, {from: owner});
+
+        let afterVerySmallDeposit = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+        };
+        expect(afterVerySmallDeposit.fundsDai).to.be.bignumber.eq(afterRebalance.fundsDai.add(verySmallDeposit));
+        expect(afterVerySmallDeposit.cDaiDai).to.be.bignumber.eq(new BN(0));
+       
+        let smallDeposit = minInstantAmount.sub(afterVerySmallDeposit.fundsDai).add( maxInstantAmount.sub(minInstantAmount).divn(2) );
+        await funds.depositLTokens(user, verySmallDeposit, {from: owner});
+
+        let afterSmallDeposit = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+        };
+console.log('minInstantAmount', minInstantAmount.toString());
+console.log('smallDeposit', smallDeposit.toString());
+console.log('afterSmallDeposit.fundsDai', afterSmallDeposit.fundsDai.toString());
+
+        expect(afterSmallDeposit.fundsDai).to.be.bignumber.gte(minInstantAmount);
+        expect(afterSmallDeposit.fundsDai).to.be.bignumber.lte(maxInstantAmount);
+        expect(afterSmallDeposit.cDaiDai).to.be.bignumber.eq(new BN(0));
+
+        let bigDeposit = maxInstantAmount;
+        await funds.depositLTokens(user, bigDeposit, {from: owner});
+
+        let afterBigDeposit = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+            userDai: await dai.balanceOf(user),
+        };
+        expect(afterBigDeposit.fundsDai).to.be.bignumber.eq(minInstantAmount);
+        expect(afterBigDeposit.cDaiDai).to.be.bignumber.gt(new BN(0));
+
+        let smallWithdraw = minInstantAmount.divn(2);
+        await (<any>funds).methods['withdrawLTokens(address,uint256)'](user, smallWithdraw, {from: owner});
+
+        let afterSmallWithdraw = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+            userDai: await dai.balanceOf(user),
+        };
+        expect(afterSmallWithdraw.cDaiDai).to.be.bignumber.eq(afterBigDeposit.cDaiDai);
+        expect(afterSmallWithdraw.userDai).to.be.bignumber.eq(afterBigDeposit.userDai.add(smallWithdraw))
+
+        let bigWithdraw = maxInstantAmount;
+        await (<any>funds).methods['withdrawLTokens(address,uint256)'](user, bigWithdraw, {from: owner});
+
+        let afterBigWithdraw = {
+            fundsDai: await dai.balanceOf(funds.address),
+            cDaiDai: await dai.balanceOf(cDai.address),
+            defimCDai: await cDai.balanceOf(defim.address),
+            cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
+            userDai: await dai.balanceOf(user),
+        };
+        expect(afterBigWithdraw.userDai).to.be.bignumber.eq(afterSmallWithdraw.userDai.add(bigWithdraw));
     });
 });

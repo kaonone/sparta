@@ -38,7 +38,7 @@ contract DefiFundsModule is BaseFundsModule {
         require(maxInstantAmount >= minInstantAmount, "DefiFundsModule: max should be >= min");
         defiSettings.minInstantAmount = minInstantAmount;
         defiSettings.maxInstantAmount = maxInstantAmount;
-        redistributeFunds();
+        rebalanceFunds();
     }
 
     function lTransferToFunds(address from, uint256 amount) internal {
@@ -63,7 +63,7 @@ contract DefiFundsModule is BaseFundsModule {
         lToken.transfer(to, amount);
     }
 
-    function redistributeFunds() internal {
+    function rebalanceFunds() internal {
         IERC20 lToken = lToken();
         uint256 fundsBalance = lToken.balanceOf(address(this));
         if (fundsBalance > defiSettings.maxInstantAmount){
