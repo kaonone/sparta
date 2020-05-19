@@ -8,6 +8,7 @@ interface INetworkConfig {
   name: 'mainnet' | 'rinkeby';
   contracts: {
     dai: string;
+    usdc: string;
     ptk: string;
     pool: string;
     curveModule: string;
@@ -27,6 +28,7 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
     name: 'rinkeby',
     contracts: {
       dai: '0x3F5B698332572Fb6188492F5D53ba75f81797F9d',
+      usdc: zeroAddress,
       pool: '0x17d7aFC6604C3933913960110Cfa5c436eb0dB45',
       ptk: '0x2dC45475c35AB01eC7eEA16a843246e8c67D6C82',
       curveModule: '0xD5F67aa0af6be5c10389A8AC5d2392ee60e8D1Cb',
@@ -43,7 +45,8 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
     id: 1,
     name: 'mainnet',
     contracts: {
-      dai: zeroAddress,
+      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+      usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       ptk: zeroAddress,
       pool: zeroAddress,
       curveModule: zeroAddress,
@@ -138,7 +141,7 @@ const configsByMode: Record<Mode, Record<NetworkID, INetworkConfig>> = {
   sandbox: ethNetworkConfigsForStaging,
 };
 
-export const NETWORK_ID: NetworkID = 4;
+export const NETWORK_ID: NetworkID = 1;
 // eslint-disable-next-line no-nested-ternary
 export const ETH_NETWORK_CONFIG = configsByMode[getEnv().mode][NETWORK_ID];
 export const SWARM_GATEWAY_URL = 'https://swarm-gateways.net';

@@ -7,6 +7,7 @@ import { TransactionsApi } from './modules/TransactionsApi';
 import { SwarmApi } from './modules/SwarmApi';
 import { CurveModuleApi } from './modules/CurveModuleApi';
 import { DefiModuleApi } from './modules/DefiModuleApi';
+import { FlashLoanApi } from './modules/FlashLoanApi';
 
 export class Api {
   public web3Manager = new Web3Manager();
@@ -15,6 +16,7 @@ export class Api {
   public transactions = new TransactionsApi();
   public tokens = new TokensApi(this.web3Manager, this.transactions);
 
+  public flashLoanModule = new FlashLoanApi(this.web3Manager);
   public curveModule = new CurveModuleApi(this.web3Manager);
   public fundsModule = new FundsModuleApi(this.web3Manager, this.curveModule, this.tokens);
   public defiModule = new DefiModuleApi(this.web3Manager, this.transactions);
