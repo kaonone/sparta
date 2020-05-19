@@ -107,17 +107,19 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
         await liqm.deposit(amount, 0, {from: owner});
     });
 
-    it("should create executor if user has PTK", async () => {
+    it("should not create executor if user has no PTK", async () => {
         let beforeAll = {
             userPTK: await pToken.balanceOf(user),
         };
         expect(beforeAll.userPTK).to.be.bignumber.eq(new BN(0));
 
+        // Test it can not be created witout having PTK
         await expectRevert(
             arbm.createExecutor({from:user}),
             "ArbitrageModule: beneficiary required to own PTK"
         );
-
+    });
+    it("should create executor if user has PTK", async () => {
         let amount = w3random.interval(10, 20, 'ether');
         await (<any>dai).methods['mint(uint256)'](amount, {from:user});
         await dai.approve(funds.address, amount, {from:user});
@@ -137,7 +139,12 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
             executor: await arbm.executors(user),
         };
         expect(after.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
-
+    });
+    it("should not create executor if user already has one", async () => {
+        await expectRevert(
+            arbm.createExecutor({from:user}),
+            "ArbitrageModule: executor already created"
+        );
     });
 
 });
