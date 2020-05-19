@@ -204,21 +204,6 @@
   },
   {
     "constant": true,
-    "inputs": [],
-    "name": "MODULE_LOAN_PROPOSALS",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
     "inputs": [
       {
         "internalType": "address",

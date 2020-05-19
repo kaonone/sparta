@@ -29,7 +29,7 @@ contract ArbitrageModule is Module {
     }
 
     function hasExecutor(address beneficiary) public view returns(bool) {
-        return address(executors[beneficiary]) == ZERO_ADDRESS;
+        return address(executors[beneficiary]) != ZERO_ADDRESS;
     }
 
     function pToken() private view returns(IPToken){

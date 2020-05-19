@@ -1,11 +1,14 @@
 pragma solidity ^0.5.0;
 
+// Usage of contracts-ethereum-package here because this contract required
+// for ArbitrageModule which is upgradable
+import "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/flashloans/IFlashLoanReceiver.sol";
 
 //solhint-disable func-order
-contract ArbitrageExecutor is IFlashLoanReceiver {
+contract ArbitrageExecutor is Context, IFlashLoanReceiver {
     using SafeMath for uint256;
 
     uint256 private constant MAX_UINT256 = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
@@ -13,7 +16,7 @@ contract ArbitrageExecutor is IFlashLoanReceiver {
     address beneficiary;
 
     modifier onlyBeneficiary() {
-        require(msg.sender == beneficiary, "ArbitrageExecutor: only allowed from beneficiary");
+        require(_msgSender() == beneficiary, "ArbitrageExecutor: only allowed from beneficiary");
         _;
     }
 

@@ -11,6 +11,12 @@ declare global {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
       require(
+        name: "ArbitrageExecutor"
+      ): TruffleContracts.ArbitrageExecutorContract;
+      require(
+        name: "ArbitrageModule"
+      ): TruffleContracts.ArbitrageModuleContract;
+      require(
         name: "BadFlashLoanReceiverStub"
       ): TruffleContracts.BadFlashLoanReceiverStubContract;
       require(name: "Base"): TruffleContracts.BaseContract;
@@ -45,6 +51,7 @@ declare global {
       require(name: "ERC721"): TruffleContracts.ERC721Contract;
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
+      require(name: "ExchangeStub"): TruffleContracts.ExchangeStubContract;
       require(
         name: "FlashLoanReceiverStub"
       ): TruffleContracts.FlashLoanReceiverStubContract;
@@ -113,7 +120,6 @@ declare global {
       ): TruffleContracts.LoanProposalsModuleContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Module"): TruffleContracts.ModuleContract;
-      require(name: "ModuleNames"): TruffleContracts.ModuleNamesContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pausable"): TruffleContracts.PausableContract;
       require(name: "PauserRole"): TruffleContracts.PauserRoleContract;
