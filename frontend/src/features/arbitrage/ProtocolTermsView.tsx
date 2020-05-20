@@ -2,7 +2,7 @@ import * as React from 'react';
 import BN from 'bn.js';
 
 import { Hint, MetricsList, Metric, FormattedBalance } from 'components';
-import { ProtocolTerms } from 'services/api/modules/FlashLoanApi/types';
+import { ProtocolTerms } from 'model/types';
 import { formatBalance } from 'utils/format';
 
 export function ProtocolTermsView({

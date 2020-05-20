@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Box, Hint, MetricsList, Metric, FormattedBalance } from 'components';
-import { SwapTermsRequest, SummaryTerms } from 'services/api/modules/FlashLoanApi/types';
+import { SwapTermsRequest, SummaryTerms } from 'model/types';
 import { colors } from 'utils/styles';
 
 export function SummaryTermsView({

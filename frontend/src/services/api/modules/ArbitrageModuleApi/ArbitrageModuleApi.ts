@@ -7,11 +7,12 @@ import { memoize } from 'utils/decorators';
 import { zeroAddress } from 'utils/mock';
 import { createArbitrageModule } from 'generated/contracts';
 import { ETH_NETWORK_CONFIG } from 'env';
+import { SwapTerms, Protocol, SwapTermsRequest } from 'model/types';
 
 import { Web3ManagerModule, Contracts } from '../../types';
 import { getBalancerTerms } from './getBalancerTerms';
 import { getUniswapTerms } from './getUniswapTerms';
-import { SwapTerms, Protocol, GetTermsFunction, SwapTermsRequest } from './types';
+import { GetTermsFunction } from './types';
 import { TransactionsApi } from '../TransactionsApi';
 
 const termsGetterByProtocol: Record<Protocol, GetTermsFunction> = {
@@ -29,7 +30,7 @@ function getCurrentValueOrThrow<T>(subject: BehaviorSubject<T | null>): NonNulla
   return value as NonNullable<T>;
 }
 
-export class FlashLoanApi {
+export class ArbitrageModuleApi {
   private readonlyContract: Contracts['arbitrageModule'];
   private txContract = new BehaviorSubject<null | Contracts['arbitrageModule']>(null);
 

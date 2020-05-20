@@ -4,12 +4,9 @@ import Contract from 'web3/eth/contract';
 import Web3 from 'web3';
 
 import { ETH_NETWORK_CONFIG } from 'env';
+import { UniswapV2Terms, UniswapV2SwapExactTokensForTokensArgs } from 'model/types';
 
-import {
-  UniswapV2Terms,
-  UniswapV2SwapExactTokensForTokensArgs,
-  GetTermsFunctionArgs,
-} from './types';
+import { GetTermsFunctionArgs } from './types';
 
 const DAI = new Token(
   ETH_NETWORK_CONFIG.id,

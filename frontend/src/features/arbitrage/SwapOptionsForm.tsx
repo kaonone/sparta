@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, FormSpy } from 'react-final-form';
 import createCalculateDecorator from 'final-form-calculate';
 
-import { useApi, Protocol } from 'services/api';
+import { useApi } from 'services/api';
 import { Typography, Loading, Grid, MenuItem, Hint, Button } from 'components';
 import { TextInputField, DecimalsField } from 'components/form';
 import { useSubscribable } from 'utils/react';
@@ -10,6 +10,7 @@ import { decimalsToWei } from 'utils/bn';
 import { ETH_NETWORK_CONFIG } from 'env';
 import { isRequired, moreThen } from 'utils/validators';
 import { ITranslateKey } from 'services/i18n';
+import { Protocol } from 'model/types';
 
 export const SwapOptionsForm = React.memo(function SwapOptionsForm({
   onSubmit,

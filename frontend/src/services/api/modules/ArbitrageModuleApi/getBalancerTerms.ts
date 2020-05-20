@@ -3,7 +3,9 @@ import { BigNumber } from '@balancer-labs/sor/dist/utils/bignumber';
 import { Swap, Pool } from '@balancer-labs/sor/dist/types';
 import { calcSpotPrice, bdiv, bmul, bnum } from '@balancer-labs/sor/dist/bmath';
 
-import { BalancerTerms, BalancerBatchSwapExactInArgs, GetTermsFunctionArgs } from './types';
+import { BalancerTerms, BalancerBatchSwapExactInArgs } from 'model/types';
+
+import { GetTermsFunctionArgs } from './types';
 
 const MAX_UINT256 = bnum(2)
   .pow(256)

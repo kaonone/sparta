@@ -1,16 +1,5 @@
 import BN from 'bn.js';
 import { Swap } from '@balancer-labs/sor/dist/types';
-import Web3 from 'web3';
-
-export interface GetTermsFunctionArgs {
-  amountIn: string;
-  tokenFrom: Address;
-  tokenTo: Address;
-  additionalSlippage: number;
-  web3: Web3;
-}
-
-export type GetTermsFunction = (args: GetTermsFunctionArgs) => Promise<ProtocolTermsGeneric | null>;
 
 export type Address = string;
 export type Protocol = 'uniswap-v2' | 'balancer';

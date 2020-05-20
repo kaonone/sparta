@@ -18,7 +18,7 @@ export function ArbitrageBot() {
   const [terms, termsMeta] = useSubscribable(
     () =>
       swapOptions
-        ? api.flashLoanModule.getSwapTerms$({
+        ? api.arbitrageModule.getSwapTerms$({
             amountIn: swapOptions.amountIn,
             additionalSlippageFrom:
               parseInt(swapOptions.additionalSlippageFrom, 10) /

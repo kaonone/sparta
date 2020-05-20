@@ -14,7 +14,7 @@ export function Arbitrage({ account }: { account: string }) {
   const api = useApi();
 
   const [executorAddress, executorAddressMeta] = useSubscribable(
-    () => api.flashLoanModule.getExecutorAddress$(account),
+    () => api.arbitrageModule.getExecutorAddress$(account),
     [api, account],
   );
   const [ptkBalance, ptkBalanceMeta] = useSubscribable(

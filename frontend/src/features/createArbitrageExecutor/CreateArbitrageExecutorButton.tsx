@@ -23,7 +23,7 @@ function CreateArbitrageExecutorButton(props: IProps) {
   const close = React.useCallback(() => setIsOpen(false), []);
 
   const handleActivate = useCallback(async (): Promise<void> => {
-    await api.flashLoanModule.createExecutor(account);
+    await api.arbitrageModule.createExecutor(account);
     close();
   }, [account]);
 
