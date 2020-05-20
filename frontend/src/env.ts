@@ -19,6 +19,7 @@ interface INetworkConfig {
     loanLimitsModule: string;
     loanProposalsModule: string;
     arbitrageModule: string;
+    flashLoanModule: string;
     swapTokens: Record<string, string>;
   };
   etherskanDomain: string;
@@ -41,6 +42,7 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
       fundsModule: '0x3b1E2e62A4332BAb55A3e935EeaC95aF71002E7B',
       defiModule: zeroAddress,
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
@@ -61,6 +63,7 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {
         WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
         USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -88,6 +91,7 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       fundsModule: '0x2fC82FF38325e6A4D5eD587aAfb90827c1b0FCb4',
       defiModule: '0xBc3426D4Cf4DFe01cCc088F61b59EDb3BA099Af5',
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
@@ -108,6 +112,7 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {
         WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
         USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -135,6 +140,7 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
       fundsModule: '0xFDba597C53c2434aE7461c36812377c7bB238AF3',
       defiModule: '0x68CD145fF4620c4849EC2141F25766083B855c8a',
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
@@ -155,6 +161,7 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
       arbitrageModule: zeroAddress,
+      flashLoanModule: zeroAddress,
       swapTokens: {
         WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
         USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',

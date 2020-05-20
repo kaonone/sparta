@@ -14,6 +14,7 @@ import {
   createLoanLimitsModule,
   createLoanProposalsModule,
   createArbitrageModule,
+  createFlashLoanModule,
 } from 'generated/contracts';
 
 export type Contracts = {
@@ -27,6 +28,7 @@ export type Contracts = {
   curveModule: ReturnType<typeof createCurveModule>;
   defiModule: ReturnType<typeof createDeFiModule>;
   arbitrageModule: ReturnType<typeof createArbitrageModule>;
+  flashLoanModule: ReturnType<typeof createFlashLoanModule>;
 };
 
 export type SubmittedTransaction =

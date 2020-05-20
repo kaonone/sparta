@@ -14,6 +14,7 @@ import { getBalancerTerms } from './getBalancerTerms';
 import { getUniswapTerms } from './getUniswapTerms';
 import { GetTermsFunction } from './types';
 import { TransactionsApi } from '../TransactionsApi';
+import { FlashLoanModuleApi } from '../FlashLoanModuleApi';
 
 const termsGetterByProtocol: Record<Protocol, GetTermsFunction> = {
   'uniswap-v2': getUniswapTerms,
@@ -34,7 +35,11 @@ export class ArbitrageModuleApi {
   private readonlyContract: Contracts['arbitrageModule'];
   private txContract = new BehaviorSubject<null | Contracts['arbitrageModule']>(null);
 
-  constructor(private web3Manager: Web3ManagerModule, private transactionsApi: TransactionsApi) {
+  constructor(
+    private web3Manager: Web3ManagerModule,
+    private transactionsApi: TransactionsApi,
+    private flashLoanApi: FlashLoanModuleApi,
+  ) {
     this.readonlyContract = createArbitrageModule(
       web3Manager.web3,
       ETH_NETWORK_CONFIG.contracts.arbitrageModule,
@@ -57,9 +62,10 @@ export class ArbitrageModuleApi {
     return of(zeroAddress);
     // return of(null);
 
+    // TODO uncomment
     // return this.readonlyContract.methods.executors(
     //   { '': account },
-    //   this.readonlyContract.events.allEvents(), // TODO use ExecutorCreated event
+    //   this.readonlyContract.events.ExecutorCreated({ filter: { beneficiary: account } }),
     // );
   }
 
@@ -89,60 +95,64 @@ export class ArbitrageModuleApi {
       additionalSlippageTo,
     } = request;
 
-    return timer(0, 5 * 1000).pipe(
-      switchMap(async () => {
-        const fromTerms = await termsGetterByProtocol[protocolFrom]({
-          amountIn,
-          tokenFrom,
-          tokenTo,
-          additionalSlippage: additionalSlippageFrom,
-          web3: this.web3Manager.web3,
-        });
-        return { fromTerms };
-      }),
-      switchMap(async ({ fromTerms }) => {
-        if (!fromTerms) {
-          return {};
-        }
+    return this.flashLoanApi.getLoanFee$(amountIn).pipe(
+      switchMap(flashLoanFee =>
+        timer(0, 5 * 1000).pipe(
+          switchMap(async () => {
+            const fromTerms = await termsGetterByProtocol[protocolFrom]({
+              amountIn,
+              tokenFrom,
+              tokenTo,
+              additionalSlippage: additionalSlippageFrom,
+              web3: this.web3Manager.web3,
+            });
+            return { fromTerms };
+          }),
+          switchMap(async ({ fromTerms }) => {
+            if (!fromTerms) {
+              return {};
+            }
 
-        const toTerms = await termsGetterByProtocol[protocolTo]({
-          amountIn: fromTerms.minAmountOut, // TODO add balance from ArbitrageExecutor
-          tokenFrom: tokenTo,
-          tokenTo: tokenFrom,
-          additionalSlippage: additionalSlippageTo,
-          web3: this.web3Manager.web3,
-        });
+            const toTerms = await termsGetterByProtocol[protocolTo]({
+              amountIn: fromTerms.minAmountOut, // TODO add balance from ArbitrageExecutor
+              tokenFrom: tokenTo,
+              tokenTo: tokenFrom,
+              additionalSlippage: additionalSlippageTo,
+              web3: this.web3Manager.web3,
+            });
 
-        return {
-          fromTerms,
-          toTerms,
-        };
-      }),
-      map(
-        ({ fromTerms, toTerms }): SwapTerms => {
-          if (!fromTerms || !toTerms) {
             return {
-              request,
-              from: fromTerms || null,
-              to: null,
-              summary: null,
+              fromTerms,
+              toTerms,
             };
-          }
+          }),
+          map(
+            ({ fromTerms, toTerms }): SwapTerms => {
+              if (!fromTerms || !toTerms) {
+                return {
+                  request,
+                  from: fromTerms || null,
+                  to: null,
+                  summary: null,
+                };
+              }
 
-          const terms: SwapTerms = {
-            request,
-            from: fromTerms,
-            to: toTerms,
-            summary: {
-              earn: new BN(toTerms.minAmountOut).sub(new BN(amountIn)),
-              minAmountOut: new BN(toTerms.minAmountOut),
-              flashLoanFee: new BN(0), // TODO
-              gasPrice: new BN(0), // TODO
+              const terms: SwapTerms = {
+                request,
+                from: fromTerms,
+                to: toTerms,
+                summary: {
+                  earn: new BN(toTerms.minAmountOut).sub(new BN(amountIn)).sub(flashLoanFee),
+                  minAmountOut: new BN(toTerms.minAmountOut),
+                  flashLoanFee,
+                  gasPrice: new BN(0), // TODO
+                },
+              };
+
+              return terms;
             },
-          };
-
-          return terms;
-        },
+          ),
+        ),
       ),
     );
   }

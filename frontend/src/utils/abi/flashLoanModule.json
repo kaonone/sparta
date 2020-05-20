@@ -2,18 +2,18 @@
     "anonymous": false,
     "inputs": [{
         "indexed": false,
-        "internalType": "address",
-        "name": "beneficiary",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "oldFee",
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "executor",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "newFee",
+        "type": "uint256"
       }
     ],
-    "name": "ExecutorCreated",
+    "name": "FeeChanged",
     "type": "event"
   },
   {
@@ -47,16 +47,12 @@
   },
   {
     "constant": true,
-    "inputs": [{
-      "internalType": "address",
-      "name": "",
-      "type": "address"
-    }],
-    "name": "executors",
+    "inputs": [],
+    "name": "LOAN_FEE_MULTIPLIER",
     "outputs": [{
-      "internalType": "contract ArbitrageExecutor",
+      "internalType": "uint256",
       "name": "",
-      "type": "address"
+      "type": "uint256"
     }],
     "payable": false,
     "stateMutability": "view",
@@ -177,13 +173,13 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "createExecutor",
-    "outputs": [{
-      "internalType": "address",
-      "name": "",
-      "type": "address"
+    "inputs": [{
+      "internalType": "uint256",
+      "name": "_loanFee",
+      "type": "uint256"
     }],
+    "name": "setFee",
+    "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -191,15 +187,28 @@
   {
     "constant": true,
     "inputs": [{
-      "internalType": "address",
-      "name": "beneficiary",
-      "type": "address"
+      "internalType": "uint256",
+      "name": "amount",
+      "type": "uint256"
     }],
-    "name": "hasExecutor",
+    "name": "getLoanFee",
     "outputs": [{
-      "internalType": "bool",
+      "internalType": "uint256",
       "name": "",
-      "type": "bool"
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getLoanFee",
+    "outputs": [{
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
     }],
     "payable": false,
     "stateMutability": "view",
