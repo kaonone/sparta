@@ -99,6 +99,14 @@ const en = {
         success: 'Loan repaying. Successful',
         error: 'Loan repaying. Failed',
       },
+      'arbitrage.createExecutor': {
+        pending: 'Arbitrage executor creating. Pending',
+        success: 'Arbitrage executor creating. Successful',
+        error: 'Arbitrage executor creating. Failed',
+      },
+    },
+    createArbitrageExecutor: {
+      confirmMessage: 'Are you sure you want to create an arbitrage executor?',
     },
     cashExchange: {
       pTokenBuying: {

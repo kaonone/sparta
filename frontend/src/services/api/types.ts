@@ -13,6 +13,7 @@ import {
   createPToken,
   createLoanLimitsModule,
   createLoanProposalsModule,
+  createArbitrageModule,
 } from 'generated/contracts';
 
 export type Contracts = {
@@ -25,6 +26,7 @@ export type Contracts = {
   loanProposalsModule: ReturnType<typeof createLoanProposalsModule>;
   curveModule: ReturnType<typeof createCurveModule>;
   defiModule: ReturnType<typeof createDeFiModule>;
+  arbitrageModule: ReturnType<typeof createArbitrageModule>;
 };
 
 export type SubmittedTransaction =
@@ -49,7 +51,8 @@ export type SubmittedTransaction =
       'loan.liquidateDebt',
       { address: string; borrower: string; debtId: string }
     >
-  | IGenericSubmittedTransaction<'loan.repay', { address: string; debtId: string; amount: BN }>;
+  | IGenericSubmittedTransaction<'loan.repay', { address: string; debtId: string; amount: BN }>
+  | IGenericSubmittedTransaction<'arbitrage.createExecutor', { address: string }>;
 
 export interface IGenericSubmittedTransaction<T extends string, P = void> {
   type: T;

@@ -12,6 +12,7 @@ import { DemoPage } from './pages/Demo/DemoPage';
 import { DistributionsPage } from './pages/Distributions/DistributionsPage';
 import { PoolPage } from './pages/Pool/PoolPage';
 import { StatsPage } from './pages/Stats/Stats';
+import { ArbitragePage } from './pages/Arbitrage/ArbitragePage';
 
 const tKeys = tKeysAll.app;
 
@@ -28,6 +29,7 @@ export function App() {
         <Route exact path={routes.pool.getRoutePath()} component={PoolPage} />
         <Route exact path={routes.stats.getRoutePath()} component={StatsPage} />
         <Route exact path={routes.distributions.getRoutePath()} component={DistributionsPage} />
+        <Route exact path={routes.arbitrage.getRoutePath()} component={ArbitragePage} />
 
         <Route exact path={routes.proposals.getRoutePath()} component={ActivitiesPage} />
         <Route exact path={routes.balance.getRoutePath()} component={BalancesPage} />

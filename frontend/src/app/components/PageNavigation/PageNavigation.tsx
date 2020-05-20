@@ -73,6 +73,13 @@ function PageNavigation() {
         value={routes.distributions.getElementKey()}
         to={routes.distributions.getRedirectPath()}
       />
+      <Tab
+        className={classes.tab}
+        label="Arbitrage"
+        component={Link}
+        value={routes.arbitrage.getElementKey()}
+        to={routes.arbitrage.getRedirectPath()}
+      />
       {additionalRoute && (
         <Tab
           className={cn(classes.tab, classes.additionalTab)}
