@@ -7,25 +7,24 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
-# Testnet (Rinkeby) deployment 
+# Testnet (Kovan) deployment 
 
 ## External contracts
-* DAI: `0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa`
-* cDAI: `0x6D7F0754FFeb405d23C51CE938289d4835bE3b14`
-* RAY Storage: `0x21091e9DACac70A9E511a26CE538Ad27Ddb92AcD`
+* DAI: `0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa`
+* cDAI: `0xe7bc397dbd069fc7d0109c0636d06888bb50668c`
+* RAY Storage: _not used_
 
 ## Pool contracts
-* Pool: `0xaddF2d0C18a1989b800e9a4a8D496d856bBd0413`
-* AccessModule: `0xdE833D434856a6Ba58C4De2C235C9da777e4a8B3`
-* PToken: `0xB0E4aF12900380337D6D2b85063f2b791DCAc895`
-* CompoundModule: _not deployed_
-* RAYModule: `0xBc3426D4Cf4DFe01cCc088F61b59EDb3BA099Af5`
-* FundsModule: `0x2fC82FF38325e6A4D5eD587aAfb90827c1b0FCb4`
-* CurveModule: `0x4eB5f040CEE9425516fD1930cDCE3682D9379f26`
-* LiquidityModule: `0x88c6D8073a9f4f92c503397F33C4587537a6FA7B`
-* LoanLimitsModule: `0xB2EA6fE10925d521B44a652c39982837A58B9DfC`
-* LoanProposalsModule: `0x53668dA77ddaB3D90aC0c46AdE11Ebc1f9ADCf76`
-* LoanModule: `0xf72ecaD9F29CC99F59aE3862c8948E20E7Ee1062`
+* Pool: `0x5bd1242E5F7Ed06a5c883BE54d35d5Cf710a3108`
+* AccessModule: `0x63058A669DE8A40E7EB82a8C3dEF1b1d6D46334c`
+* PToken: `0xAF36F5B597a9c005E6292c9Cc03E8806Aa3C4dFd`
+* CurveModule: `0xEDa2fac3d3fdfeE5dc0dC51A6191a4C8C25dA4a2`
+* CompoundModule: `0x48a0598819399Fd1584F279cD55088300e8BA7dD`
+* RAYModule: _not deployed_
+* FundsModule: `0xf62722CB78C05CD4e435A6a39817aE48087BD311`
+* LiquidityModule: `0x028bB345352B38Ac2b2de190dE3f334B17e985E2`
+* FlashLoansModule: `0x1bf9c5183cAd17687336E8a7fC56699f0a7786E6`
+* ArbitrageModule: `0x99FF63aB210e2A6D743964d8ffFef545A9422376`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -43,43 +42,49 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 ### Required data:
 * Address of liquidity token (`LToken.address`)
 * Address of cDAI contract (`cDAI.address`)
+<!--* Address of RAY Storage contract (`RAYStorage.address`)-->
 
 ### Deployment sequence:
 1. Initialize OpenZeppelin project & add modules
     1. `npx oz init`
     1. `npx oz add Pool AccessModule PToken CompoundModule DefiFundsModule CurveModule LiquidityModule LoanLimitsModule LoanProposalsModule LoanModule`
 1. Deploy & initialize Pool
-    1. `npx oz create Pool --network rinkeby --init`
+    1. `npx oz create Pool --network kovan --init`
     1. Save address of the pool (`Pool.address`)
 1. Deploy modules
-    1. `npx oz create AccessModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create PToken --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create CompoundModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create CurveModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create DefiFundsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create LiquidityModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create LoanLimitsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create LoanProposalsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create LoanModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. Save address of each module: `AccessModule.address`, `PToken.address`, `CompoundModule.address`, `CurveModule.address`, `DefiFundsModule.address`, `LiquidityModule.address`, `LoanLimitsModule.address`, `LoanProposalsModule.address`, `LoanModule.address`
+    1. `npx oz create AccessModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create PToken --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create CurveModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create CompoundModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    <!--1. `npx oz create RAYModule --network kovan --init "initialize(address _pool)" --args Pool.address`-->
+    1. `npx oz create DefiFundsModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create LiquidityModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create FlashLoansModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create ArbitrageModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. Save address of each module: `AccessModule.address`, `PToken.address`, `CurveModule.address`, `CompoundModule.address`, `DefiFundsModule.address`, `LiquidityModule.address`, `FlashLoansModule.address`, `ArbitrageModule.address`
 1. Register external contracts in Pool
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ltoken, LToken.address, true"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "cdai, cDAI.address, true"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "ltoken, LToken.address, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "cdai, cDAI.address, false"`
+    <!--1. `npx oz send-tx --to Pool.address --network kovan --method set --args "ray, RAYStorage.address, false"`-->
 1. Register modules in pool
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "access, AccessModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ptoken, PToken.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "defi, CompoundModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "curve, CurveModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "funds, DefiFundsModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "liquidity, LiquidityModule.address`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_limits, LoanLimitsModule.address, false`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_proposals, LoanProposalsModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan, LoanModule.address, false, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "access, AccessModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "ptoken, PToken.address, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "defi, CompoundModule.address, false"`
+    <!--1. `npx oz send-tx --to Pool.address --network kovan --method set --args "defi, RAYModule.address, false"`-->
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "curve, CurveModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "funds, DefiFundsModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "liquidity, LiquidityModule.address`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "flashloans, FlashLoansModule.address, false`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "arbitrage, ArbitrageModule.address, false"`
 1. Configure modules
-    1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LiquidityModule.address`
-    1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LoanModule.address`
-    1. `npx oz send-tx --to PToken.address --network rinkeby --method addMinter --args DefiFundsModule.address`
-    1. `npx oz send-tx --to CompoundModule.address --network rinkeby --method addDefiOperator --args DefiFundsModule.address`
+    1. `npx oz send-tx --to DefiFundsModule.address --network kovan --method addFundsOperator --args LiquidityModule.address`
+    1. `npx oz send-tx --to DefiFundsModule.address --network kovan --method addFundsOperator --args FlashLoansModule.address`
+    1. `npx oz send-tx --to PToken.address --network kovan --method addMinter --args DefiFundsModule.address`
+    1. `npx oz send-tx --to CompoundModule.address --network kovan --method addDefiOperator --args DefiFundsModule.address`
+1. Configure fee (optional)
+    1. `npx oz send-tx --to CurveModule.address --network kovan --method setWithdrawFee --args 5`
+    1. `npx oz send-tx --to FlashLoansModule.address --network kovan --method setFee --args 1000000000000000000`
+
 
 ## Liquidity
 

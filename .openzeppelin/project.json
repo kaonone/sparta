@@ -1,16 +1,15 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "PToken": "PToken",
     "Pool": "Pool",
-    "RAYModule": "RAYModule",
+    "AccessModule": "AccessModule",
+    "PToken": "PToken",
+    "CompoundModule": "CompoundModule",
     "DefiFundsModule": "DefiFundsModule",
     "CurveModule": "CurveModule",
-    "AccessModule": "AccessModule",
     "LiquidityModule": "LiquidityModule",
-    "LoanLimitsModule": "LoanLimitsModule",
-    "LoanProposalsModule": "LoanProposalsModule",
-    "LoanModule": "LoanModule"
+    "FlashLoansModule": "FlashLoansModule",
+    "ArbitrageModule": "ArbitrageModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",

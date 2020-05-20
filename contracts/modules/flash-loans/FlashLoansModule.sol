@@ -16,7 +16,7 @@ contract FlashLoansModule is Module, IFlashLoansModule {
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        loanFee = LOAN_FEE_MULTIPLIER*1/1000;   // 0.1% fee
+        loanFee = LOAN_FEE_MULTIPLIER*5/10000;   // 0.05% fee
     }
 
     /**

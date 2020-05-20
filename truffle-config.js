@@ -85,6 +85,10 @@ module.exports = {
       provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://rinkeby.infura.io/v3/" + infuraProjectId),
       networkId: 4,       // Rinkeby's id
     },
+    kovan: {
+      provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://kovan.infura.io/v3/" + infuraProjectId),
+      networkId: 42,       // Rinkeby's id
+    },
     
     // Another network with more advanced options...
     // advanced: {
