@@ -8,13 +8,17 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
  * FreeDAI and CompoundDAIStub will work.
  */
 contract ExchangeStub {
+    IERC20 token1;
+    IERC20 token2;
     bytes4 public mintMethodSelector;
 
-    constructor(string memory mintMethod) public {
+    constructor(IERC20 _token1, IERC20 _token2, string memory mintMethod) public {
+        token1 = _token1;
+        token2 = _token2;
         mintMethodSelector = bytes4(keccak256(bytes(mintMethod)));
     }
 
-    function exchange(IERC20 token1, uint256 amount1, IERC20 token2, uint256 amount2) external {
+    function exchange(uint256 amount1, uint256 amount2) external {
         token1.transferFrom(msg.sender, address(this), amount1);
         uint256 balance = token2.balanceOf(address(this));
         if (balance < amount2){

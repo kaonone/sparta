@@ -13,6 +13,8 @@ contract ArbitrageExecutor is Context, IFlashLoanReceiver {
 
     uint256 private constant MAX_UINT256 = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
 
+    event OperationExecuted(uint256 amount, uint256 fee, uint256 profit);
+
     address beneficiary;
 
     modifier onlyBeneficiary() {
@@ -61,6 +63,7 @@ contract ArbitrageExecutor is Context, IFlashLoanReceiver {
         if (profit > 0) {
             IERC20(token).transfer(beneficiary, profit);
         }
+        emit OperationExecuted(amount, fee, profit);
     }
 
     function executeExchange(address contract1, bytes memory message1, address contract2, bytes memory message2) internal {

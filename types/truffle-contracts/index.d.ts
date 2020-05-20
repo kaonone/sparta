@@ -142,6 +142,8 @@ export interface ERC721MetadataContract
 export interface ExchangeStubContract
   extends Truffle.Contract<ExchangeStubInstance> {
   "new"(
+    _token1: string | BN,
+    _token2: string | BN,
     mintMethod: string,
     meta?: Truffle.TransactionDetails
   ): Promise<ExchangeStubInstance>;
@@ -4600,30 +4602,22 @@ export interface ExchangeStubInstance extends Truffle.ContractInstance {
 
   exchange: {
     (
-      token1: string | BN,
       amount1: number | BN | string,
-      token2: string | BN,
       amount2: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token1: string | BN,
       amount1: number | BN | string,
-      token2: string | BN,
       amount2: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token1: string | BN,
       amount1: number | BN | string,
-      token2: string | BN,
       amount2: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token1: string | BN,
       amount1: number | BN | string,
-      token2: string | BN,
       amount2: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;

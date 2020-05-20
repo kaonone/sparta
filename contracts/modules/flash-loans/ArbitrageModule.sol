@@ -8,6 +8,8 @@ import "./ArbitrageExecutor.sol";
 contract ArbitrageModule is Module {
     using SafeMath for uint256;
 
+    event ExecutorCreated(address beneficiary, address executor);
+
     mapping(address => ArbitrageExecutor) public executors;
 
     function initialize(address _pool) public initializer {
@@ -25,6 +27,7 @@ contract ArbitrageModule is Module {
         // Create executor
         ArbitrageExecutor executor = new ArbitrageExecutor(beneficiary);
         executors[beneficiary] = executor;
+        emit ExecutorCreated(beneficiary, address(executor));
         return address(executor);        
     }
 

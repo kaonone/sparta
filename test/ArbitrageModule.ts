@@ -10,7 +10,8 @@ import {
     FlashLoansModuleContract, FlashLoansModuleInstance,
     ArbitrageModuleContract, ArbitrageModuleInstance,
     ArbitrageExecutorContract, ArbitrageExecutorInstance,
-    ExchangeStubContract, ExchangeStubInstance
+    ExchangeStubContract, ExchangeStubInstance,
+    CompoundDAIStubContract, CompoundDAIStubInstance
 } from "../types/truffle-contracts/index";
 
 // tslint:disable-next-line:no-var-requires
@@ -34,6 +35,7 @@ const FlashLoansModule = artifacts.require("FlashLoansModule");
 const ArbitrageModule = artifacts.require("ArbitrageModule");
 const ArbitrageExecutor = artifacts.require("ArbitrageExecutor");
 const ExchangeStub = artifacts.require("ExchangeStub");
+const CompoundDAIStub = artifacts.require("CompoundDAIStub");
 
 contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
     let dai: FreeDAIInstance;
@@ -48,6 +50,9 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
     let arbm: ArbitrageModuleInstance;
  
     let loanFee:BN, loanFeeMultiplier:BN;
+
+    let cmpDai: CompoundDAIStubInstance;
+    let exFreeToCmpd:ExchangeStubInstance, exCmpdToFree:ExchangeStubInstance; 
 
     before(async () => {
         //Setup "external" contracts
@@ -105,6 +110,11 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
         await (<any> dai).methods['mint(uint256)'](amount, {from: owner});
         await dai.approve(funds.address, amount, {from: owner});
         await liqm.deposit(amount, 0, {from: owner});
+
+        //Create exchanges
+        cmpDai = await CompoundDAIStub.new();
+        exFreeToCmpd = await ExchangeStub.new(dai.address, cmpDai.address, 'allocateTo(address,uint256)');
+        exCmpdToFree = await ExchangeStub.new(cmpDai.address, dai.address, 'mint(address,uint256)');
     });
 
     it("should not create executor if user has no PTK", async () => {
@@ -141,10 +151,90 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(after.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
     });
     it("should not create executor if user already has one", async () => {
+        let before = {
+            executor: await arbm.executors(user),
+        };
+        expect(before.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
         await expectRevert(
             arbm.createExecutor({from:user}),
             "ArbitrageModule: executor already created"
         );
     });
 
+    it("should approve tokens to exchanges", async () => {
+        let executor = await ArbitrageExecutor.at(await arbm.executors(user));
+
+        let tokens = [dai.address, cmpDai.address];
+        let exchanges = [exFreeToCmpd.address, exCmpdToFree.address];
+        await executor.approve(tokens, exchanges, {from:user});
+
+        for(let i=0; i < tokens.length; i++) {
+            for(let j=0; j < tokens.length; j++) {
+                let allowance = await (await FreeDAI.at(tokens[i])).allowance(executor.address, exchanges[j]);
+                expect(allowance).to.be.bignumber.gt(new BN(0));
+            }
+        }
+    });
+    it("should execute arbitrage order", async () => {
+        let fdaiAmount = w3random.interval(100, 200, 'ether');
+        let cdaiAmountMin = fdaiAmount.add(fdaiAmount.muln(3).divn(100)); // +3%
+        let cdaiAmountActual = cdaiAmountMin.add(w3random.intervalBN(new BN(1), new BN(1000000))); //min = 1 to have leftover
+        let fdaiAmountFinal = cdaiAmountMin.sub(cdaiAmountMin.muln(2).divn(100)); // -2%
+
+        let exFreeToCmpdMessage = web3.eth.abi.encodeFunctionCall(
+            {name:"exchange", inputs:[{type:"uint256", name:"amount1"}, {type:"uint256", name:"amount2"}]},
+            [fdaiAmount.toString(), cdaiAmountActual.toString()]
+        );
+        let exCmpdToFreeMessage = web3.eth.abi.encodeFunctionCall(
+            {name:"exchange", inputs:[{type:"uint256", name:"amount1"}, {type:"uint256", name:"amount2"}]},
+            [cdaiAmountMin.toString(), fdaiAmountFinal.toString()]
+        );
+        let flashLoanMessage = web3.eth.abi.encodeParameters(
+            ["address", "bytes", "address", "bytes"],
+            [exFreeToCmpd.address, exFreeToCmpdMessage, exCmpdToFree.address, exCmpdToFreeMessage]
+        );
+
+        let executorAddress = await arbm.executors(user);
+        expect(executorAddress).to.be.not.eq("0x0000000000000000000000000000000000000000");
+
+        let before = {
+            userFDAI: await dai.balanceOf(user),
+            executorFDAI: await dai.balanceOf(executorAddress),
+            executorCDAI: await cmpDai.balanceOf(executorAddress),
+        };
+        expect(before.executorFDAI).to.be.bignumber.eq(new BN(0));
+        expect(before.executorCDAI).to.be.bignumber.eq(new BN(0));
+
+        await flashm.executeLoan(executorAddress, fdaiAmount, flashLoanMessage);
+
+        let after = {
+            userFDAI: await dai.balanceOf(user),
+            executorFDAI: await dai.balanceOf(executorAddress),
+            executorCDAI: await cmpDai.balanceOf(executorAddress),
+        };
+        let expectedFee = fdaiAmount.mul(loanFee).div(loanFeeMultiplier);
+        let expectedUserProfit = fdaiAmountFinal.sub(fdaiAmount).sub(expectedFee);
+
+        expectEqualBN(after.userFDAI, before.userFDAI.add(expectedUserProfit));
+        expect(after.executorFDAI).to.be.bignumber.eq(new BN(0));
+        expect(after.executorCDAI).to.be.bignumber.gt(new BN(0)); //leftover
+
+
+    });
+    it("should withdraw leftovers", async () => {
+        let executor = await ArbitrageExecutor.at(await arbm.executors(user));
+
+        let before = {
+            executorCDAI: await cmpDai.balanceOf(executor.address),
+        };
+        expect(before.executorCDAI).to.be.bignumber.gt(new BN(0));
+
+        let tokens = [dai.address, cmpDai.address];
+        await executor.withdrawLeftovers(tokens, {from:user});
+
+        let after = {
+            executorCDAI: await cmpDai.balanceOf(executor.address),
+        };
+        expect(after.executorCDAI).to.be.bignumber.eq(new BN(0));
+    });
 });
