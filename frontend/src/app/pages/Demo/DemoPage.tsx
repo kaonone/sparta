@@ -1,53 +1,48 @@
 import * as React from 'react';
+import * as R from 'ramda';
+import { of } from 'rxjs';
 
-import { Typography, Loading } from 'components';
+import { Typography, Loading, Box } from 'components';
 import { useApi } from 'services/api';
 import { useSubscribable } from 'utils/react';
+import { decimalsToWei } from 'utils/bn';
 
-const ENV = {
-  tokens: {
-    dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-    weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-  },
-};
+import { WithAccount } from '../../components/WithAccount/WithAccount';
+import { SwapFormData, SwapOptionsForm } from './SwapOptionsForm';
 
 export function DemoPage() {
+  const [swapOptions, setSwapOptions] = React.useState<SwapFormData>();
   const api = useApi();
+
   const [terms, termsMeta] = useSubscribable(
     () =>
-      api.flashLoanModule.getSwapTerms$({
-        amountIn: `10${'0'.repeat(18)}`,
-        additionalSlippageFrom: 1,
-        additionalSlippageTo: 1,
-        protocolFrom: 'balancer',
-        protocolTo: 'uniswap-v2',
-        tokenFrom: ENV.tokens.dai,
-        tokenTo: ENV.tokens.weth,
-      }),
-    [],
-  );
-
-  const [terms2, terms2Meta] = useSubscribable(
-    () =>
-      api.flashLoanModule.getSwapTerms$({
-        amountIn: `10${'0'.repeat(18)}`,
-        additionalSlippageFrom: 1,
-        additionalSlippageTo: 1,
-        protocolFrom: 'uniswap-v2',
-        protocolTo: 'balancer',
-        tokenFrom: ENV.tokens.dai,
-        tokenTo: ENV.tokens.weth,
-      }),
-    [],
+      swapOptions
+        ? api.flashLoanModule.getSwapTerms$({
+            amountIn: swapOptions.amountIn,
+            additionalSlippageFrom:
+              parseInt(swapOptions.additionalSlippageFrom, 10) /
+              decimalsToWei(swapOptions.slippageDecimals).toNumber(),
+            additionalSlippageTo:
+              parseInt(swapOptions.additionalSlippageTo, 10) /
+              decimalsToWei(swapOptions.slippageDecimals).toNumber(),
+            protocolFrom: swapOptions.protocolFrom,
+            protocolTo: swapOptions.protocolTo,
+            tokenFrom: swapOptions.tokenFrom,
+            tokenTo: swapOptions.tokenTo,
+          })
+        : of(null),
+    [api, R.toString(swapOptions)],
   );
 
   return (
-    <div>
+    <WithAccount>
       <Typography variant="h4" gutterBottom>
         Page for developers
       </Typography>
+      <Box maxWidth={750} ml="auto" mr="auto">
+        <SwapOptionsForm onSubmit={setSwapOptions} />
+      </Box>
       <Loading meta={termsMeta}>{terms && <pre>{JSON.stringify(terms, null, 2)}</pre>}</Loading>
-      <Loading meta={terms2Meta}>{terms2 && <pre>{JSON.stringify(terms2, null, 2)}</pre>}</Loading>
-    </div>
+    </WithAccount>
   );
 }

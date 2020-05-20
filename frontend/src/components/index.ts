@@ -19,6 +19,7 @@ export { default as CardContent } from '@material-ui/core/CardContent';
 export { default as FormControlLabel } from '@material-ui/core/FormControlLabel';
 export { default as Radio } from '@material-ui/core/Radio';
 export { default as Link } from '@material-ui/core/Link';
+export { default as MenuItem } from '@material-ui/core/MenuItem';
 
 export * from './ErrorBoundary';
 export * from './Hint/Hint';

@@ -18,6 +18,7 @@ interface INetworkConfig {
     loanModule: string;
     loanLimitsModule: string;
     loanProposalsModule: string;
+    swapTokens: Record<string, string>;
   };
   etherskanDomain: string;
 }
@@ -38,6 +39,7 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
       loanProposalsModule: zeroAddress,
       fundsModule: '0x3b1E2e62A4332BAb55A3e935EeaC95aF71002E7B',
       defiModule: zeroAddress,
+      swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
@@ -56,6 +58,11 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
       loanModule: zeroAddress,
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
+      swapTokens: {
+        WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+        USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+      },
     },
     etherskanDomain: 'https://etherscan.io/',
   },
@@ -67,6 +74,7 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
     name: 'rinkeby',
     contracts: {
       dai: '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa',
+      usdc: zeroAddress,
       pool: '0xaddF2d0C18a1989b800e9a4a8D496d856bBd0413',
       ptk: '0xB0E4aF12900380337D6D2b85063f2b791DCAc895',
       curveModule: '0x4eB5f040CEE9425516fD1930cDCE3682D9379f26',
@@ -76,6 +84,7 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       loanProposalsModule: '0x53668dA77ddaB3D90aC0c46AdE11Ebc1f9ADCf76',
       fundsModule: '0x2fC82FF38325e6A4D5eD587aAfb90827c1b0FCb4',
       defiModule: '0xBc3426D4Cf4DFe01cCc088F61b59EDb3BA099Af5',
+      swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
@@ -83,7 +92,8 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
     id: 1,
     name: 'mainnet',
     contracts: {
-      dai: zeroAddress,
+      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+      usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       ptk: zeroAddress,
       pool: zeroAddress,
       curveModule: zeroAddress,
@@ -93,6 +103,11 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       loanModule: zeroAddress,
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
+      swapTokens: {
+        WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+        USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+      },
     },
     etherskanDomain: 'https://etherscan.io/',
   },
@@ -104,6 +119,7 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
     name: 'rinkeby',
     contracts: {
       dai: '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa',
+      usdc: zeroAddress,
       pool: '0x8FA73B29f37C9c5290819BAfd4Aea177E832423e',
       ptk: '0xB879fD0e690171cea96aC7Df262BC751d0370E79',
       curveModule: '0x29e2Dc9BF33A20d10Df342b59b4aE0201924bd86',
@@ -113,6 +129,7 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
       loanProposalsModule: '0x06Da2A4EB6e39C28D37E011e1D4345352b96FC08',
       fundsModule: '0xFDba597C53c2434aE7461c36812377c7bB238AF3',
       defiModule: '0x68CD145fF4620c4849EC2141F25766083B855c8a',
+      swapTokens: {},
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
@@ -120,7 +137,8 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
     id: 1,
     name: 'mainnet',
     contracts: {
-      dai: zeroAddress,
+      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+      usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       ptk: zeroAddress,
       pool: zeroAddress,
       curveModule: zeroAddress,
@@ -130,6 +148,11 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
       loanModule: zeroAddress,
       loanLimitsModule: zeroAddress,
       loanProposalsModule: zeroAddress,
+      swapTokens: {
+        WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+        USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+      },
     },
     etherskanDomain: 'https://etherscan.io/',
   },

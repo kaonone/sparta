@@ -7,7 +7,9 @@ import { TransactionsApi } from './modules/TransactionsApi';
 import { SwarmApi } from './modules/SwarmApi';
 import { CurveModuleApi } from './modules/CurveModuleApi';
 import { DefiModuleApi } from './modules/DefiModuleApi';
-import { FlashLoanApi } from './modules/FlashLoanApi';
+import { FlashLoanApi, Protocol } from './modules/FlashLoanApi';
+
+export { Protocol };
 
 export class Api {
   public web3Manager = new Web3Manager();

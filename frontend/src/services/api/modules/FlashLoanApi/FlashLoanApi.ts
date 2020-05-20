@@ -62,7 +62,7 @@ export class FlashLoanApi {
         }
 
         const toTerms = await termsGetterByProtocol[protocolTo]({
-          amountIn: fromTerms.minAmountOut,
+          amountIn: fromTerms.minAmountOut, // TODO add balance from ArbitrageExecutor
           tokenFrom: tokenTo,
           tokenTo: tokenFrom,
           additionalSlippage: additionalSlippageTo,

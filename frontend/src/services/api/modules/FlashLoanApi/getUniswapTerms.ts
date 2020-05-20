@@ -3,12 +3,13 @@ import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.
 import Contract from 'web3/eth/contract';
 import Web3 from 'web3';
 
+import { ETH_NETWORK_CONFIG } from 'env';
+
 import {
   UniswapV2Terms,
   UniswapV2SwapExactTokensForTokensArgs,
   GetTermsFunctionArgs,
 } from './types';
-import { ETH_NETWORK_CONFIG } from 'env';
 
 const DAI = new Token(
   ETH_NETWORK_CONFIG.id,
@@ -18,13 +19,7 @@ const DAI = new Token(
   'Dai Stablecoin',
 );
 
-const USDC = new Token(
-  ChainId.MAINNET,
-  ETH_NETWORK_CONFIG.contracts.usdc,
-  6,
-  'USDC',
-  'USD//C',
-);
+const USDC = new Token(ChainId.MAINNET, ETH_NETWORK_CONFIG.contracts.usdc, 6, 'USDC', 'USD//C');
 
 export async function getUniswapTerms({
   amountIn,

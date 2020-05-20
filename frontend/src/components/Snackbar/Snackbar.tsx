@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { useStyles } from './Snackbar.style';
 
 interface IProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 function Snackbar(props: IProps) {

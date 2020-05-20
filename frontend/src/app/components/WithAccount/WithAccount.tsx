@@ -6,7 +6,7 @@ import { useSubscribable } from 'utils/react';
 import { Loading, Hint } from 'components';
 
 interface Props {
-  children(props: { account: string }): React.ReactNode;
+  children: ((props: { account: string }) => React.ReactNode) | React.ReactNode;
 }
 
 export function WithAccount({ children }: Props) {
@@ -17,7 +17,8 @@ export function WithAccount({ children }: Props) {
 
   return (
     <Loading meta={accountMeta}>
-      {account ? children({ account }) : <Hint>{t(tKeys.app.connectingWarning.getKey())}</Hint>}
+      {account && (typeof children === 'function' ? children({ account }) : children)}
+      {!account && <Hint>{t(tKeys.app.connectingWarning.getKey())}</Hint>}
     </Loading>
   );
 }
