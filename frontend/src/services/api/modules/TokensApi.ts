@@ -68,6 +68,16 @@ export class TokensApi {
 
   @memoize(R.identity)
   @autobind
+  public getErc20TokenInfo$(tokenAddress: string): Observable<ITokenInfo> {
+    const contract = createErc20(this.web3Manager.web3, tokenAddress);
+
+    return combineLatest([contract.methods.symbol(), contract.methods.decimals()]).pipe(
+      map(([tokenSymbol, decimals]) => ({ symbol: tokenSymbol, decimals: decimals.toNumber() })),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
   public getTokenInfo$(token: Token): Observable<ITokenInfo> {
     return combineLatest([
       this.readonlyContracts[token].methods.symbol(),

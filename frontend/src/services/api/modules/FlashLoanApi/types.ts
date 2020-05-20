@@ -31,16 +31,30 @@ export type UniswapV2Terms = ProtocolTermsGeneric<
 >;
 export type BalancerTerms = ProtocolTermsGeneric<'balancer', BalancerBatchSwapExactInArgs>;
 
-type ProtocolTerms = UniswapV2Terms | BalancerTerms;
+export type ProtocolTerms = UniswapV2Terms | BalancerTerms;
 
 export interface SwapTerms {
   from: ProtocolTerms | null;
   to: ProtocolTerms | null;
+  summary: SummaryTerms | null;
+  request: SwapTermsRequest;
+}
+
+export interface SummaryTerms {
+  minAmountOut: BN;
+  flashLoanFee: BN;
+  gasPrice: BN;
+  earn: BN;
+}
+
+export interface SwapTermsRequest {
   amountIn: string;
-  minAmountOut: BN | null;
-  flashLoanFee: BN | null;
-  gasPrice: BN | null;
-  earn: BN | null;
+  protocolFrom: Protocol;
+  protocolTo: Protocol;
+  tokenFrom: Address;
+  tokenTo: Address;
+  additionalSlippageFrom: number;
+  additionalSlippageTo: number;
 }
 
 type TokenInAddress = string;

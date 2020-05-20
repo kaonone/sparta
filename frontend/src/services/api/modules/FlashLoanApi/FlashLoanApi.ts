@@ -11,7 +11,7 @@ import { ETH_NETWORK_CONFIG } from 'env';
 import { Web3ManagerModule, Contracts } from '../../types';
 import { getBalancerTerms } from './getBalancerTerms';
 import { getUniswapTerms } from './getUniswapTerms';
-import { Address, SwapTerms, Protocol, GetTermsFunction } from './types';
+import { SwapTerms, Protocol, GetTermsFunction, SwapTermsRequest } from './types';
 import { TransactionsApi } from '../TransactionsApi';
 
 const termsGetterByProtocol: Record<Protocol, GetTermsFunction> = {
@@ -77,23 +77,17 @@ export class FlashLoanApi {
 
   @memoize((args: {}) => Object.values(args).join())
   @autobind
-  public getSwapTerms$({
-    amountIn,
-    protocolFrom,
-    protocolTo,
-    tokenFrom,
-    tokenTo,
-    additionalSlippageFrom,
-    additionalSlippageTo,
-  }: {
-    amountIn: string;
-    protocolFrom: Protocol;
-    protocolTo: Protocol;
-    tokenFrom: Address;
-    tokenTo: Address;
-    additionalSlippageFrom: number;
-    additionalSlippageTo: number;
-  }): Observable<SwapTerms> {
+  public getSwapTerms$(request: SwapTermsRequest): Observable<SwapTerms> {
+    const {
+      amountIn,
+      protocolFrom,
+      protocolTo,
+      tokenFrom,
+      tokenTo,
+      additionalSlippageFrom,
+      additionalSlippageTo,
+    } = request;
+
     return timer(0, 5 * 1000).pipe(
       switchMap(async () => {
         const fromTerms = await termsGetterByProtocol[protocolFrom]({
@@ -127,25 +121,26 @@ export class FlashLoanApi {
         ({ fromTerms, toTerms }): SwapTerms => {
           if (!fromTerms || !toTerms) {
             return {
-              amountIn,
-              earn: null,
-              flashLoanFee: null,
+              request,
               from: fromTerms || null,
-              gasPrice: null,
-              minAmountOut: null,
               to: null,
+              summary: null,
             };
           }
 
-          return {
-            amountIn,
-            earn: new BN(amountIn).sub(new BN(toTerms.minAmountOut)),
-            minAmountOut: new BN(toTerms.minAmountOut),
-            flashLoanFee: new BN(0), // TODO
+          const terms: SwapTerms = {
+            request,
             from: fromTerms,
             to: toTerms,
-            gasPrice: new BN(0), // TODO
+            summary: {
+              earn: new BN(toTerms.minAmountOut).sub(new BN(amountIn)),
+              minAmountOut: new BN(toTerms.minAmountOut),
+              flashLoanFee: new BN(0), // TODO
+              gasPrice: new BN(0), // TODO
+            },
           };
+
+          return terms;
         },
       ),
     );

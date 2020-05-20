@@ -4,21 +4,30 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 
 import { useFormattedBalance } from 'utils/react';
 import { Loading } from 'components/Loading';
-import { Token } from 'model/types';
+import { Token, ITokenInfo } from 'model/types';
 
 interface IProps {
   sum: BN | string;
-  token: Token;
+  token?: Token;
+  tokenAddress?: string;
   className?: string;
-  children?: FunctionComponent<{ formattedBalance: string }>;
+  children?: FunctionComponent<{
+    formattedBalance: string;
+    notRoundedBalance: string;
+    tokenInfo: ITokenInfo;
+  }>;
 }
 
 function FormattedBalance(props: IProps) {
-  const { sum, token, children, className } = props;
-  const [{ formattedBalance, notRoundedBalance }, formattedBalanceMeta] = useFormattedBalance(
+  const { sum, token, tokenAddress, children, className } = props;
+  const [
+    { formattedBalance, notRoundedBalance, tokenInfo },
+    formattedBalanceMeta,
+  ] = useFormattedBalance({
     token,
-    sum,
-  );
+    tokenAddress,
+    value: sum,
+  });
 
   return (
     <Loading
@@ -28,7 +37,9 @@ function FormattedBalance(props: IProps) {
     >
       <Tooltip title={notRoundedBalance}>
         <span className={className}>
-          {children ? children({ formattedBalance }) : formattedBalance}
+          {children
+            ? children({ formattedBalance, notRoundedBalance, tokenInfo })
+            : formattedBalance}
         </span>
       </Tooltip>
     </Loading>
