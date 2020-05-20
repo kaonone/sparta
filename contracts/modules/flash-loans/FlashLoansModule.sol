@@ -11,6 +11,8 @@ import "../../common/Module.sol";
 contract FlashLoansModule is Module, IFlashLoansModule {
     using SafeMath for uint256;
 
+    event FeeChanged(uint256 oldFee, uint256 newFee);
+
     uint256 public constant LOAN_FEE_MULTIPLIER = 1e18;
     uint256 loanFee;        // Loan fee will be calculated as loanAmount*loanFee/LOAN_FEE_MULTIPLIER
 
@@ -48,7 +50,9 @@ contract FlashLoansModule is Module, IFlashLoansModule {
     }
 
     function setFee(uint256 _loanFee) public onlyOwner{
+        uint256 oldFee = loanFee;
         loanFee = _loanFee;
+        emit FeeChanged(oldFee, loanFee);
     }
 
     function getLoanFee() public view returns(uint256){

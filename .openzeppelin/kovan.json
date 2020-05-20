@@ -1,11 +1,11 @@
 {
   "contracts": {
     "FlashLoansModule": {
-      "address": "0x3F2CED4322Ecfd1A77fC972bd6d690cF632bA09C",
-      "constructorCode": "6080604052611451806100136000396000f3fe",
-      "bodyBytecodeHash": "3c0ac9dd388c6d61eaa84c8f67ae6d53210414a863bbb08b93949cd301a3aa0b",
-      "localBytecodeHash": "947f89ced557411f20c85b8b0c4e52ca072402b9f0cb57f2c79abc9365a1a3c2",
-      "deployedBytecodeHash": "947f89ced557411f20c85b8b0c4e52ca072402b9f0cb57f2c79abc9365a1a3c2",
+      "address": "0xC8584d1D606826Ced02c44Dc17B48f34B9Ce5d05",
+      "constructorCode": "6080604052611493806100136000396000f3fe",
+      "bodyBytecodeHash": "43bb73ddf2530c19642f6c4a8f098495dbb9b9d93c57df0e1722b0dd30ecf258",
+      "localBytecodeHash": "491fa9c815a4a59a53669b8542a4525d07e00e61894d493169fcb812ee73cb88",
+      "deployedBytecodeHash": "491fa9c815a4a59a53669b8542a4525d07e00e61894d493169fcb812ee73cb88",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -35,7 +35,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 17289,
+          "astId": 17304,
           "type": "t_bool",
           "src": "757:24:84"
         },
@@ -43,7 +43,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 17291,
+          "astId": 17306,
           "type": "t_bool",
           "src": "876:25:84"
         },
@@ -51,7 +51,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 17353,
+          "astId": 17368,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:84"
         },
@@ -59,7 +59,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 15457,
+          "astId": 15472,
           "type": "t_address",
           "src": "526:22:71"
         },
@@ -67,7 +67,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 15570,
+          "astId": 15585,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:71"
         },
@@ -83,9 +83,9 @@
           "contract": "FlashLoansModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\flash-loans\\FlashLoansModule.sol",
           "label": "loanFee",
-          "astId": 4253,
+          "astId": 4259,
           "type": "t_uint256",
-          "src": "574:15:33"
+          "src": "629:15:33"
         }
       ],
       "warnings": {
@@ -93,7 +93,9 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [],
+        "storageDiff": []
       }
     },
     "CurveModule": {
@@ -1507,7 +1509,7 @@
       {
         "address": "0x1bf9c5183cAd17687336E8a7fC56699f0a7786E6",
         "version": "1.0.0",
-        "implementation": "0x3F2CED4322Ecfd1A77fC972bd6d690cF632bA09C",
+        "implementation": "0xC8584d1D606826Ced02c44Dc17B48f34B9Ce5d05",
         "admin": "0x634C52cf8a65e123a8eBe294A6C474D2795017Eb",
         "kind": "Upgradeable"
       }
