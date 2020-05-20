@@ -1,11 +1,11 @@
 import { getEnv, Mode } from 'core/getEnv';
 import { zeroAddress } from 'utils/mock';
 
-export type NetworkID = 1 | 4;
+export type NetworkID = 1 | 4 | 42;
 
 interface INetworkConfig {
   id: NetworkID;
-  name: 'mainnet' | 'rinkeby';
+  name: 'mainnet' | 'rinkeby' | 'kovan';
   contracts: {
     dai: string;
     usdc: string;
@@ -24,6 +24,28 @@ interface INetworkConfig {
   };
   etherskanDomain: string;
 }
+
+const emptyNetworkConfig: INetworkConfig = {
+  id: 4,
+  name: 'rinkeby',
+  contracts: {
+    dai: zeroAddress,
+    usdc: zeroAddress,
+    pool: zeroAddress,
+    ptk: zeroAddress,
+    curveModule: zeroAddress,
+    liquidityModule: zeroAddress,
+    loanModule: zeroAddress,
+    loanLimitsModule: zeroAddress,
+    loanProposalsModule: zeroAddress,
+    fundsModule: zeroAddress,
+    defiModule: zeroAddress,
+    arbitrageModule: zeroAddress,
+    flashLoanModule: zeroAddress,
+    swapTokens: {},
+  },
+  etherskanDomain: 'https://rinkeby.etherscan.io/',
+};
 
 const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
   '4': {
@@ -47,31 +69,8 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
-  '1': {
-    id: 1,
-    name: 'mainnet',
-    contracts: {
-      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-      usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      ptk: zeroAddress,
-      pool: zeroAddress,
-      curveModule: zeroAddress,
-      fundsModule: zeroAddress,
-      defiModule: zeroAddress,
-      liquidityModule: zeroAddress,
-      loanModule: zeroAddress,
-      loanLimitsModule: zeroAddress,
-      loanProposalsModule: zeroAddress,
-      arbitrageModule: zeroAddress,
-      flashLoanModule: zeroAddress,
-      swapTokens: {
-        WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-        USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-        WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-      },
-    },
-    etherskanDomain: 'https://etherscan.io/',
-  },
+  '1': emptyNetworkConfig,
+  '42': emptyNetworkConfig,
 };
 
 const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
@@ -121,6 +120,38 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
     },
     etherskanDomain: 'https://etherscan.io/',
   },
+  '42': {
+    id: 1,
+    name: 'kovan',
+    contracts: {
+      dai: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
+      usdc: zeroAddress,
+      ptk: '0xAF36F5B597a9c005E6292c9Cc03E8806Aa3C4dFd',
+      pool: '0x5bd1242E5F7Ed06a5c883BE54d35d5Cf710a3108',
+      curveModule: '0xEDa2fac3d3fdfeE5dc0dC51A6191a4C8C25dA4a2',
+      fundsModule: '0xf62722CB78C05CD4e435A6a39817aE48087BD311',
+      defiModule: '0x48a0598819399Fd1584F279cD55088300e8BA7dD',
+      liquidityModule: '0x028bB345352B38Ac2b2de190dE3f334B17e985E2',
+      loanModule: zeroAddress,
+      loanLimitsModule: zeroAddress,
+      loanProposalsModule: zeroAddress,
+      arbitrageModule: '0x99FF63aB210e2A6D743964d8ffFef545A9422376',
+      flashLoanModule: '0x1bf9c5183cAd17687336E8a7fC56699f0a7786E6',
+      swapTokens: {
+        WETH: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+        "DAI'B": '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
+        MKR: '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
+        USDC: '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
+        REP: '0x8c9e6c40d3402480ACE624730524fACC5482798c',
+        WBTC: '0xe0C9275E44Ea80eF17579d33c55136b7DA269aEb',
+        BAT: '0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE',
+        SNX: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
+        ANT: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
+        ZRX: '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
+      },
+    },
+    etherskanDomain: 'https://kovan.etherscan.io/',
+  },
 };
 
 const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
@@ -145,31 +176,8 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
-  '1': {
-    id: 1,
-    name: 'mainnet',
-    contracts: {
-      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-      usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      ptk: zeroAddress,
-      pool: zeroAddress,
-      curveModule: zeroAddress,
-      fundsModule: zeroAddress,
-      defiModule: zeroAddress,
-      liquidityModule: zeroAddress,
-      loanModule: zeroAddress,
-      loanLimitsModule: zeroAddress,
-      loanProposalsModule: zeroAddress,
-      arbitrageModule: zeroAddress,
-      flashLoanModule: zeroAddress,
-      swapTokens: {
-        WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-        USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-        WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-      },
-    },
-    etherskanDomain: 'https://etherscan.io/',
-  },
+  '1': emptyNetworkConfig,
+  '42': emptyNetworkConfig,
 };
 
 const configsByMode: Record<Mode, Record<NetworkID, INetworkConfig>> = {
@@ -178,7 +186,7 @@ const configsByMode: Record<Mode, Record<NetworkID, INetworkConfig>> = {
   sandbox: ethNetworkConfigsForStaging,
 };
 
-export const NETWORK_ID: NetworkID = 1;
+export const NETWORK_ID: NetworkID = 42;
 // eslint-disable-next-line no-nested-ternary
 export const ETH_NETWORK_CONFIG = configsByMode[getEnv().mode][NETWORK_ID];
 export const SWARM_GATEWAY_URL = 'https://swarm-gateways.net';
@@ -189,13 +197,13 @@ export const PLEDGE_MARGIN_DIVIDER = 1000000;
 const subgraphHttpUrlsByMode: Record<Mode, string> = {
   beta: 'https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-beta',
   'beta-defi': 'https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-beta-defi',
-  sandbox: 'https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-sandbox',
+  sandbox: 'https://api.thegraph.com/subgraphs/name/in19farkt/akropolis-os-pension-fund',
 };
 
 const subgraphWsUrlsByMode: Record<Mode, string> = {
   beta: 'wss://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-beta',
   'beta-defi': 'wss://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-beta-defi',
-  sandbox: 'wss://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-sandbox',
+  sandbox: 'wss://api.thegraph.com/subgraphs/name/in19farkt/akropolis-os-pension-fund',
 };
 
 export const SUBGRAPH_HTTP_URL = subgraphHttpUrlsByMode[getEnv().mode];

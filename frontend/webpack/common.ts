@@ -84,6 +84,7 @@ const config: webpack.Configuration = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.MODE': JSON.stringify(process.env.MODE),
+      'process.env.REACT_APP_SUBGRAPH_URL': JSON.stringify(process.env.REACT_APP_SUBGRAPH_URL),
     }),
     new FileManagerWebpackPlugin({
       onEnd: {

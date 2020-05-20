@@ -238,10 +238,12 @@ const en = {
       networkName: {
         1: 'Main Ethereum Network',
         4: 'Rinkeby Network',
+        42: 'Kovan Network',
       },
       networkType: {
         1: 'mainnet',
         4: 'testnet',
+        42: 'testnet',
       },
     },
     balance: {
