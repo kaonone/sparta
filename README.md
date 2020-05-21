@@ -83,7 +83,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
     1. `npx oz send-tx --to CompoundModule.address --network kovan --method addDefiOperator --args DefiFundsModule.address`
 1. Configure fee (optional)
     1. `npx oz send-tx --to CurveModule.address --network kovan --method setWithdrawFee --args 5`
-    1. `npx oz send-tx --to FlashLoansModule.address --network kovan --method setFee --args 1000000000000000000`
+    1. `npx oz send-tx --to FlashLoansModule.address --network kovan --method setFee --args 100000000000000`
 
 
 ## Liquidity
