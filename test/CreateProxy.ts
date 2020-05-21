@@ -36,7 +36,7 @@ contract("Create Proxy", async ([_, owner,  ...otherAccounts]) => {
             });
             const pool = await PoolContract.at(proxy.address);
 
-            await pool.setMetadata("creditPool", "Great Pool",  {from: creatorAddress });
+            await pool.setMetadata("creditPool", "Great Pool",  {from: owner });
             (await pool.owner()).should.equal(owner);
         });
 });
