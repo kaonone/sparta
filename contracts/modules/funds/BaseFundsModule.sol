@@ -68,8 +68,8 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function depositPTokens(address from, uint256 amount) public onlyFundsOperator {
+        require(pToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed"); //this also runs claimDistributions(from)
         pBalances[from] = pBalances[from].add(amount);
-        require(pToken().transferFrom(from, address(this), amount), "BaseFundsModule: deposit failed");
     }
 
     /**
@@ -78,8 +78,8 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
+        require(pToken().transfer(to, amount), "FundsModule: withdraw failed");  //this also runs claimDistributions(to)
         pBalances[to] = pBalances[to].sub(amount);
-        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed");
     }
 
     /**
@@ -93,7 +93,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function distributePTokens(uint256 amount) public onlyFundsOperator {
-        pToken().distribute(amount);
+        pToken().distribute(amount);    // This call will eventually mint new pTokens (with next distribution, which should be once a day)
     }
     
     /**
@@ -103,7 +103,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function burnPTokens(address from, uint256 amount) public onlyFundsOperator {
         assert(from != address(this)); //Use burnLockedPTokens
-        pToken().burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
+        pToken().burnFrom(from, amount); // This call will revert if sender has not enough pTokens. Allowance is always unlimited for FundsModule
     }
 
     /**
@@ -130,14 +130,13 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function unlockAndWithdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
-        //pToken().claimDistributions(address(this));
+        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed"); //this also runs claimDistributions(to)
         pBalances[address(this)] = pBalances[address(this)].sub(amount);
-        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed");
     }
 
     function burnLockedPTokens(uint256 amount) public onlyFundsOperator {
-        pBalances[address(this)] = pBalances[address(this)].sub(amount);
         pToken().burn(amount); //This call will revert if something goes wrong
+        pBalances[address(this)] = pBalances[address(this)].sub(amount);
     }
 
     /**

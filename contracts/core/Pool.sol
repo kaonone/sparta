@@ -31,7 +31,7 @@ contract Pool is Base, CoreInterface {
         founder = _msgSender();
     }
 
-    function setMetadata(string memory _name, string  memory _description) public {
+    function setMetadata(string memory _name, string  memory _description) public onlyOwner {
         name = _name;
         description = _description;
     }

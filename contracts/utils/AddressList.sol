@@ -163,7 +163,7 @@ library AddressList {
      * @param _b is a second element
      */
     function swap(Data storage _data, address _a, address _b) internal {
-        require(!_data.isContain[_a] || !_data.isContain[_b], "Can not swap element which is not contained");
+        require(_data.isContain[_a] && _data.isContain[_b], "Can not swap element which is not contained");
 
         address prevA = _data.prevOf[_a];
 
@@ -172,8 +172,10 @@ library AddressList {
 
         if (prevA == ZERO_ADDRESS) {
             prepend(_data, _b);
-        } else {
+        } else if(prevA != _b) {
             append(_data, _b, prevA);
+        } else {
+            append(_data, _b, _a);
         }
     }
 
