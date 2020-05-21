@@ -27,6 +27,10 @@ contract ExchangeStub {
         token2.transfer(msg.sender, amount2);
     }
 
+    function fail(string memory message) public pure {
+        revert(message);
+    }
+
     function mint(IERC20 token, uint256 amount) internal {
         bytes memory message = abi.encodeWithSelector(mintMethodSelector, address(this), amount);
         (bool success, ) = address(token).call(message);

@@ -68,9 +68,12 @@ contract ArbitrageExecutor is Context, IFlashLoanReceiver {
 
     function executeExchange(address contract1, bytes memory message1, address contract2, bytes memory message2) internal {
         bool callSuccess;
-        (callSuccess, ) = contract1.call(message1);
-        require(callSuccess, "ArbitrageFlashLoanReceiver: call to exchange 1 failed");
-        (callSuccess, ) = contract2.call(message2);
-        require(callSuccess, "ArbitrageFlashLoanReceiver: call to exchange 2 failed");
+        bytes memory result;
+
+        (callSuccess, result) = contract1.call(message1);
+        if (!callSuccess) assembly { revert(add(result, 32), result) }
+
+        (callSuccess, result) = contract2.call(message2);
+        if (!callSuccess) assembly { revert(add(result, 32), result) }
     }
 }

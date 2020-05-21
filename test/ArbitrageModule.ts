@@ -221,6 +221,42 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
 
 
     });
+
+    it("should forward error from exchange", async () => {
+        let executorAddress = await arbm.executors(user);
+        expect(executorAddress).to.be.not.eq("0x0000000000000000000000000000000000000000");
+
+        let fdaiAmount = w3random.interval(100, 200, 'ether');
+        let cdaiAmount = fdaiAmount.add(fdaiAmount.muln(3).divn(100)); // +3%
+
+        let exFreeToCmpdMessage = web3.eth.abi.encodeFunctionCall(
+            {name:"exchange", inputs:[{type:"uint256", name:"amount1"}, {type:"uint256", name:"amount2"}]},
+            [fdaiAmount.toString(), cdaiAmount.toString()]
+        );
+        let exFailMessage = web3.eth.abi.encodeFunctionCall(
+            {name:"fail", inputs:[{type:"string", name:"message"}]},
+            ["SHOULD_FAIL"]
+        );
+
+        let flashLoan1Message = web3.eth.abi.encodeParameters(
+            ["address", "bytes", "address", "bytes"],
+            [exFreeToCmpd.address, exFailMessage, exCmpdToFree.address, exFailMessage]
+        );
+        await expectRevert(
+            flashm.executeLoan(executorAddress, fdaiAmount, flashLoan1Message),
+            "SHOULD_FAIL"
+        );
+
+        let flashLoan2Message = web3.eth.abi.encodeParameters(
+            ["address", "bytes", "address", "bytes"],
+            [exFreeToCmpd.address, exFreeToCmpdMessage, exCmpdToFree.address, exFailMessage]
+        );
+        await expectRevert(
+            flashm.executeLoan(executorAddress, fdaiAmount, flashLoan1Message),
+            "SHOULD_FAIL"
+        );
+    });    
+
     it("should withdraw leftovers", async () => {
         let executor = await ArbitrageExecutor.at(await arbm.executors(user));
 
