@@ -43,7 +43,7 @@ const BITSKI_REDIR_URL = getEnv().isDevelopment
 
 const FORTMATIC_API_KEY = 'pk_test_508AC5D15FD0D930';
 
-const PORTIS_API_KEY = '4ab3cbfe-0ea7-4bce-aa27-04a19a8b78ea';
+const PORTIS_API_KEY = '1d2860eb-0871-4faa-bfbe-9f89787c8e32';
 
 const SQUARELINK_API_KEY = 'd023ebcfeb78fb3bb3bc';
 
