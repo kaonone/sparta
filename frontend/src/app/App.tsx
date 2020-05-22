@@ -10,7 +10,7 @@ import { ActivitiesPage } from './pages/Activities/ActivitiesPage';
 import { BalancesPage } from './pages/Balances/Balances';
 import { DemoPage } from './pages/Demo/DemoPage';
 import { DistributionsPage } from './pages/Distributions/DistributionsPage';
-import { PoolPage } from './pages/Pool/PoolPage';
+// import { PoolPage } from './pages/Pool/PoolPage';
 import { StatsPage } from './pages/Stats/Stats';
 import { ArbitragePage } from './pages/Arbitrage/ArbitragePage';
 
@@ -26,7 +26,7 @@ export function App() {
           <Route exact path={routes.demo.getRoutePath()} component={DemoPage} />
         )}
         <Route exact path={routes.account.getRoutePath()} component={AccountPage} />
-        <Route exact path={routes.pool.getRoutePath()} component={PoolPage} />
+        {/* <Route exact path={routes.pool.getRoutePath()} component={PoolPage} /> */}
         <Route exact path={routes.stats.getRoutePath()} component={StatsPage} />
         <Route exact path={routes.distributions.getRoutePath()} component={DistributionsPage} />
         <Route exact path={routes.arbitrage.getRoutePath()} component={ArbitragePage} />

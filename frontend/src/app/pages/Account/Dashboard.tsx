@@ -19,20 +19,20 @@ import { AccountMetricCard } from './AccountMetricCard';
 export function Dashboard() {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={4}>
+      <Grid item xs={6}>
         <Balance />
       </Grid>
-      <Grid item xs={4}>
+      {/* <Grid item xs={4}>
         <DefiYield />
-      </Grid>
-      <Grid item xs={4}>
+      </Grid> */}
+      <Grid item xs={6}>
         <Distribution />
       </Grid>
     </Grid>
   );
 }
 
-function DefiYield() {
+export function DefiYield() {
   const api = useApi();
   const [account] = useSubscribable(() => api.web3Manager.account, []);
 

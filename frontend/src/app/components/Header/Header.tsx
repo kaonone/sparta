@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 import { Back, InfoIcon } from 'components/icons';
-import { Grid, IconButton, Typography, Tooltip, Button } from 'components';
+import { Grid, IconButton, Typography, Tooltip } from 'components';
 import { AuthButton } from 'features/auth';
 
 import { useStyles } from './Header.style';
@@ -45,7 +45,7 @@ function HeaderComponent(props: IProps) {
 
         <Grid item>
           <Grid container spacing={2}>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 href="https://wiki.akropolis.io/poolfaq/"
                 target="_blank"
@@ -55,7 +55,7 @@ function HeaderComponent(props: IProps) {
               >
                 FAQ
               </Button>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <AuthButton color="secondary" />
             </Grid>

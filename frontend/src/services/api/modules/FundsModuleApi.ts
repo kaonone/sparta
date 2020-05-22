@@ -39,12 +39,16 @@ export class FundsModuleApi {
       .subscribe(this.txContract);
   }
 
-  public setTotalLProposalGetter(getter: () => Observable<BN>) {
-    this.getTotalLProposals$ = getter;
+  // Uncomment if loanModule appears
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public setTotalLProposalGetter(_getter: () => Observable<BN>) {
+    this.getTotalLProposals$ = () => of(new BN(0));
   }
 
-  public setUnpaidInterestGetter(getter: (address: string) => Observable<BN>) {
-    this.getUnpaidInterest$ = getter;
+  // Uncomment if loanModule appears
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public setUnpaidInterestGetter(_getter: (address: string) => Observable<BN>) {
+    this.getUnpaidInterest$ = () => of(new BN(0));
   }
 
   @memoize(R.identity)

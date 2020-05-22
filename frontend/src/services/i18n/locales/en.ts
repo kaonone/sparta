@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 const en = {
   app: {
-    mainTitle: 'Akropolis Pool',
+    mainTitle: 'Pension Fund',
     connectingWarning: 'You need connect to wallet',
     pages: {
       overview: {

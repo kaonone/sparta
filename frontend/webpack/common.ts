@@ -10,7 +10,7 @@ import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import { getEnv } from '../src/core/getEnv';
 
 const forGhPages = true;
-const pageTitle = 'Credit Pool';
+const pageTitle = 'Pension Fund';
 const { mode } = getEnv();
 
 function sortChunks(a: webpack.compilation.Chunk, b: webpack.compilation.Chunk): number {
