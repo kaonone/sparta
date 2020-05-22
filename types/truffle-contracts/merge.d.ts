@@ -123,6 +123,9 @@ declare global {
       require(name: "Ownable"): TruffleContracts.OwnableContract;
       require(name: "Pausable"): TruffleContracts.PausableContract;
       require(name: "PauserRole"): TruffleContracts.PauserRoleContract;
+      require(
+        name: "PensionFundModule"
+      ): TruffleContracts.PensionFundModuleContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "RAYModule"): TruffleContracts.RAYModuleContract;
