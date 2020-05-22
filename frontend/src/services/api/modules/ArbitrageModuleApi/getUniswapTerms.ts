@@ -22,13 +22,15 @@ export async function getUniswapTerms({
   amountIn,
   tokenFrom,
   tokenTo,
+  tokenFromDecimals,
+  tokenToDecimals,
   additionalSlippage,
   web3,
   executorAddress,
 }: GetTermsFunctionArgs): Promise<UniswapV2Terms | null> {
   const trade = await getTradeExactIn(
-    new TokenAmount(new Token(ChainId.MAINNET, tokenFrom, 18), amountIn),
-    new Token(ChainId.MAINNET, tokenTo, 18),
+    new TokenAmount(new Token(ETH_NETWORK_CONFIG.id, tokenFrom, tokenFromDecimals), amountIn),
+    new Token(ETH_NETWORK_CONFIG.id, tokenTo, tokenToDecimals),
     web3,
   );
 
@@ -78,7 +80,7 @@ async function getTradeExactIn(
 }
 
 async function getAllCommonPairs(tokenA: Token, tokenB: Token, web3: Web3): Promise<Pair[]> {
-  const chainId = ChainId.MAINNET;
+  const chainId = ETH_NETWORK_CONFIG.id;
 
   const [pairBetween, aToETH, bToETH, aToDAI, bToDAI, aToUSDC, bToUSDC] = await Promise.all([
     // check for direct pair between tokens

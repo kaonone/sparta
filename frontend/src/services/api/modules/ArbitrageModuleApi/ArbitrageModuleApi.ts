@@ -204,14 +204,20 @@ export class ArbitrageModuleApi {
       executorAddress,
     } = request;
 
-    return this.flashLoanApi.getLoanFee$(amountIn).pipe(
-      switchMap(flashLoanFee =>
+    return combineLatest([
+      this.flashLoanApi.getLoanFee$(amountIn),
+      this.tokensApi.getErc20TokenInfo$(tokenFrom),
+      this.tokensApi.getErc20TokenInfo$(tokenTo),
+    ]).pipe(
+      switchMap(([flashLoanFee, tokenFromInfo, tokenToInfo]) =>
         timer(0, 5 * 1000).pipe(
           switchMap(async () => {
             const fromTerms = await termsGetterByProtocol[protocolFrom]({
               amountIn,
               tokenFrom,
               tokenTo,
+              tokenFromDecimals: tokenFromInfo.decimals,
+              tokenToDecimals: tokenToInfo.decimals,
               additionalSlippage: additionalSlippageFrom,
               web3: this.web3Manager.web3,
               executorAddress,
@@ -227,6 +233,8 @@ export class ArbitrageModuleApi {
               amountIn: fromTerms.minAmountOut, // TODO add balance from ArbitrageExecutor
               tokenFrom: tokenTo,
               tokenTo: tokenFrom,
+              tokenFromDecimals: tokenFromInfo.decimals,
+              tokenToDecimals: tokenToInfo.decimals,
               additionalSlippage: additionalSlippageTo,
               web3: this.web3Manager.web3,
               executorAddress,

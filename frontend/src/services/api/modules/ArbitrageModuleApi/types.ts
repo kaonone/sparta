@@ -6,6 +6,8 @@ export interface GetTermsFunctionArgs {
   amountIn: string;
   tokenFrom: Address;
   tokenTo: Address;
+  tokenFromDecimals: number;
+  tokenToDecimals: number;
   additionalSlippage: number;
   executorAddress: string;
   web3: Web3;
