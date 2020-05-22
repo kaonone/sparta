@@ -3,7 +3,6 @@ pragma solidity ^0.5.12;
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
-import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../common/Module.sol";
 
@@ -50,7 +49,6 @@ contract LiquidityModule is Module, ILiquidityModule {
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
-        loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
         uint256 availableLiquidity = fundsModule().lBalance();
@@ -84,9 +82,5 @@ contract LiquidityModule is Module, ILiquidityModule {
 
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
-    }
-
-    function loanModule() internal view returns(ILoanModule) {
-        return ILoanModule(getModuleAddress(MODULE_LOAN));
     }
 }

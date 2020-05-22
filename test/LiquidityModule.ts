@@ -72,13 +72,6 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await (<any> liqm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("liquidity", liqm.address, true, {from: owner});  
 
-        loanms = await LoanModuleStub.new();
-        await (<any> loanms).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("loan", loanms.address, true, {from: owner});  
-        loanmps = await LoanModuleStub.new();
-        await (<any> loanmps).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("loan_proposals", loanmps.address, true, {from: owner});  
-
         funds = await BaseFundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
@@ -171,31 +164,4 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':expectedLTokens[0]});
     });
 
-    it('should allow deposit if there are debts', async () => {
-        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
-        await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-        // await expectRevert(
-        //     liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
-        //     'LiquidityModule: Deposits forbidden if address has active debts'
-        // );
-        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
-        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider});
-    });
-    it('should allow withdraw if there are debts', async () => {
-        await loanms.repay(0, 0, {from: liquidityProvider}); //Unset hasDebts for msg.sender, it may be set by previous tests
-        let lDepositWei = w3random.interval(2000, 100000, 'ether');
-        await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
-        let pBalance = await pToken.balanceOf(liquidityProvider);
-        await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-
-        let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
-        let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
-        await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
-        // await expectRevert(
-        //     liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
-        //     'LiquidityModule: Withdraws forbidden if address has active debts'
-        // );
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
-        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
-    });
 });
