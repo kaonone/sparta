@@ -150,16 +150,16 @@ contract("ArbitrageModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         expect(after.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
     });
-    it("should not create executor if user already has one", async () => {
-        let before = {
-            executor: await arbm.executors(user),
-        };
-        expect(before.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
-        await expectRevert(
-            arbm.createExecutor({from:user}),
-            "ArbitrageModule: executor already created"
-        );
-    });
+    // it("should not create executor if user already has one", async () => {
+    //     let before = {
+    //         executor: await arbm.executors(user),
+    //     };
+    //     expect(before.executor).to.be.not.eq("0x0000000000000000000000000000000000000000");
+    //     await expectRevert(
+    //         arbm.createExecutor({from:user}),
+    //         "ArbitrageModule: executor already created"
+    //     );
+    // });
 
     it("should approve tokens to exchanges", async () => {
         let executor = await ArbitrageExecutor.at(await arbm.executors(user));

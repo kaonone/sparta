@@ -55,5 +55,20 @@
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "fail",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
   }
 ]
