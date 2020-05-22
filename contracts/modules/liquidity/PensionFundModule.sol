@@ -169,7 +169,12 @@ contract PensionFundModule is LiquidityModule {
             pPenalty = pMinPenalty.add(pMaxPenalty.sub(pMinPenalty).mul(tillWithdrawStart).div(planSettings.depositPeriodDuration));
         } else {
             //During withdraw period
-            pPenalty = pBalance.mul(planSettings.minPenalty).div(MULTIPLIER);
+            uint256 allowance = _withdrawLimit(plan, pBalance);
+            if (allowance < pBalance) {
+                pPenalty = pBalance.sub(allowance).mul(planSettings.minPenalty).div(MULTIPLIER);
+            } else {
+                return 0;
+            }
         }
         return pPenalty;
     }
