@@ -556,54 +556,55 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(pBorrowerAfterDefault).to.be.bignumber.eq(new BN(0));
     });
 
-    it('should take interest during withdraw', async () => {
-        await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
+    // Commented out because in this version LiquidityModule is not connected with LoanModule
+    // it('should take interest during withdraw', async () => {
+    //     await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
 
-        // Create debt
-        let debtLAmount = w3random.interval(100, 200, 'ether');
-        let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
+    //     // Create debt
+    //     let debtLAmount = w3random.interval(100, 200, 'ether');
+    //     let debtIdx = await createDebt(debtLAmount, otherAccounts[0]);
 
-        // Deposit
-        let lDepositWei = w3random.interval(300, 1000, 'ether');
-        await lToken.transfer(borrower, lDepositWei, {from: liquidityProvider});
-        await lToken.approve(funds.address, lDepositWei, {from: borrower});
-        await liqm.deposit(lDepositWei, '0', {from: borrower});
-        let pBalanceBefore = await pToken.balanceOf(borrower);
+    //     // Deposit
+    //     let lDepositWei = w3random.interval(300, 1000, 'ether');
+    //     await lToken.transfer(borrower, lDepositWei, {from: liquidityProvider});
+    //     await lToken.approve(funds.address, lDepositWei, {from: borrower});
+    //     await liqm.deposit(lDepositWei, '0', {from: borrower});
+    //     let pBalanceBefore = await pToken.balanceOf(borrower);
 
-        // Withdraw
-        await time.increase(30*24*60*60);
-        let blockNum = await web3.eth.getBlockNumber();
-        let lInterestInfo = await loanm.getUnpaidInterest(borrower);
-        let lInterest = lInterestInfo[0];
-        let lInterestFee = await curve.calculateExitFee(lInterest);
-        //let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
-        //let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
-        let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
-        let lWithdrawWeiTotal = lWithdrawWeiUser.add(await curve.calculateExitFee(lWithdrawWeiUser));
-        let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
-        // let lWithdrawWeiCalculated = await funds.calculatePoolExitInverse(pWithdrawWeiTotal);
-        // console.log('lWithdrawWeiTotal', lWithdrawWeiTotal.toString(), lWithdrawWeiCalculated[0].toString());
-        // console.log('lWithdrawWeiUser', lWithdrawWeiUser.toString(), lWithdrawWeiCalculated[1].toString());
-        let pInterest = await (<any>funds).methods['calculatePoolExitWithFee(uint256)'](lInterest);
-        let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
-        let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
-        //lInterest = lInterest.add(lInterestInfo[1].mul(new BN(receipt.receipt.blockNumber - blockNum)));
-        expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest, 18, -6); //Inacurracy because time passes during calculations
-        //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
-        let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
-        expectEqualBN(withrawEvents[0].args.pAmount, pInterest, 18, -6);
-        expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest, 18, -6);
-        expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest.add(lInterestFee), 18, -6);
-        expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
-        expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser, 18, -6);
-        expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal, 18, -6);
+    //     // Withdraw
+    //     await time.increase(30*24*60*60);
+    //     let blockNum = await web3.eth.getBlockNumber();
+    //     let lInterestInfo = await loanm.getUnpaidInterest(borrower);
+    //     let lInterest = lInterestInfo[0];
+    //     let lInterestFee = await curve.calculateExitFee(lInterest);
+    //     //let lWithdrawWeiTotal = w3random.interval(100, 200, 'ether')
+    //     //let pWithdrawWeiTotal = await funds.calculatePoolExit(lWithdrawWeiTotal);
+    //     let lWithdrawWeiUser = w3random.interval(100, 200, 'ether')
+    //     let lWithdrawWeiTotal = lWithdrawWeiUser.add(await curve.calculateExitFee(lWithdrawWeiUser));
+    //     let pWithdrawWeiTotal = await (<any>funds).methods['calculatePoolExitWithFee(uint256,uint256)'](lWithdrawWeiUser, lInterestFee);
+    //     // let lWithdrawWeiCalculated = await funds.calculatePoolExitInverse(pWithdrawWeiTotal);
+    //     // console.log('lWithdrawWeiTotal', lWithdrawWeiTotal.toString(), lWithdrawWeiCalculated[0].toString());
+    //     // console.log('lWithdrawWeiUser', lWithdrawWeiUser.toString(), lWithdrawWeiCalculated[1].toString());
+    //     let pInterest = await (<any>funds).methods['calculatePoolExitWithFee(uint256)'](lInterest);
+    //     let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
+    //     let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
+    //     //lInterest = lInterest.add(lInterestInfo[1].mul(new BN(receipt.receipt.blockNumber - blockNum)));
+    //     expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest, 18, -6); //Inacurracy because time passes during calculations
+    //     //expectEvent(receipt, 'Withdraw', {'sender':borrower, 'lAmountTotal':lWithdrawWei}); //this only reads first of two events
+    //     let withrawEvents = receipt.logs.filter(evt => evt.event == 'Withdraw');
+    //     expectEqualBN(withrawEvents[0].args.pAmount, pInterest, 18, -6);
+    //     expectEqualBN(withrawEvents[0].args.lAmountUser, lInterest, 18, -6);
+    //     expectEqualBN(withrawEvents[0].args.lAmountTotal, lInterest.add(lInterestFee), 18, -6);
+    //     expectEqualBN(withrawEvents[1].args.pAmount, pWithdrawWeiTotal);
+    //     expectEqualBN(withrawEvents[1].args.lAmountUser, lWithdrawWeiUser, 18, -6);
+    //     expectEqualBN(withrawEvents[1].args.lAmountTotal, lWithdrawWeiTotal, 18, -6);
 
-        let claimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum});
+    //     let claimEvents = await (<any>pToken).getPastEvents('DistributionsClaimed', {fromBlock:blockNum});
 
-        let pBalanceAfter = await pToken.balanceOf(borrower);
-        //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
-        expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(withrawEvents[1].args.pAmount).add(claimEvents[0].args.amount));
-    });
+    //     let pBalanceAfter = await pToken.balanceOf(borrower);
+    //     //expect(pBalanceAfter)).to.be.bignumber.eq(pBalanceBefore.sub(pInterest).sub(pWithdrawWeiTotal));
+    //     expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(withrawEvents[1].args.pAmount).add(claimEvents[0].args.amount));
+    // });
 
     // it('should correctly calculate totalLDebts()', async () => {
     // });
