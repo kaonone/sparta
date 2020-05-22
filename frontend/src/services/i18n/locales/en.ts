@@ -99,10 +99,20 @@ const en = {
         success: 'Loan repaying. Successful',
         error: 'Loan repaying. Failed',
       },
+      'arbitrage.swap': {
+        pending: 'Swap executing. Pending',
+        success: 'Swap executing. Successful',
+        error: 'Swap executing. Failed',
+      },
       'arbitrage.createExecutor': {
         pending: 'Arbitrage executor creating. Pending',
         success: 'Arbitrage executor creating. Successful',
         error: 'Arbitrage executor creating. Failed',
+      },
+      'arbitrage.approveTokens': {
+        pending: 'Tokens approving for arbitrage protocols. Pending',
+        success: 'Tokens approving for arbitrage protocols. Successful',
+        error: 'Tokens approving for arbitrage protocols. Failed',
       },
     },
     createArbitrageExecutor: {

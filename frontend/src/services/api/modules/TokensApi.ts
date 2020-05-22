@@ -66,6 +66,14 @@ export class TokensApi {
     await promiEvent;
   }
 
+  @memoize((...args: string[]) => args.join())
+  @autobind
+  public getErc20Allowance$(tokenAddress: string, owner: string, spender: string): Observable<BN> {
+    const contract = createErc20(this.web3Manager.web3, tokenAddress);
+
+    return contract.methods.allowance({ owner, spender }, contract.events.Approval());
+  }
+
   @memoize(R.identity)
   @autobind
   public getErc20TokenInfo$(tokenAddress: string): Observable<ITokenInfo> {

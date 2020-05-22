@@ -21,6 +21,8 @@ interface INetworkConfig {
     arbitrageModule: string;
     flashLoanModule: string;
     swapTokens: Record<string, string>;
+    balancerExchangeProxy: string;
+    uniswapRouter: string;
   };
   etherskanDomain: string;
 }
@@ -43,6 +45,8 @@ const emptyNetworkConfig: INetworkConfig = {
     arbitrageModule: zeroAddress,
     flashLoanModule: zeroAddress,
     swapTokens: {},
+    balancerExchangeProxy: zeroAddress,
+    uniswapRouter: zeroAddress,
   },
   etherskanDomain: 'https://rinkeby.etherscan.io/',
 };
@@ -66,6 +70,8 @@ const ethNetworkConfigs: Record<NetworkID, INetworkConfig> = {
       arbitrageModule: zeroAddress,
       flashLoanModule: zeroAddress,
       swapTokens: {},
+      balancerExchangeProxy: zeroAddress,
+      uniswapRouter: zeroAddress,
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
@@ -92,6 +98,8 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       arbitrageModule: zeroAddress,
       flashLoanModule: zeroAddress,
       swapTokens: {},
+      balancerExchangeProxy: zeroAddress,
+      uniswapRouter: zeroAddress,
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },
@@ -117,6 +125,8 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
         USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         WBTC: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
       },
+      balancerExchangeProxy: '0x6317c5e82a06e1d8bf200d21f4510ac2c038ac81',
+      uniswapRouter: '0xf164fc0ec4e93095b804a4795bbe1e041497b92a',
     },
     etherskanDomain: 'https://etherscan.io/',
   },
@@ -138,17 +148,13 @@ const ethNetworkConfigsForStaging: Record<NetworkID, INetworkConfig> = {
       arbitrageModule: '0x99FF63aB210e2A6D743964d8ffFef545A9422376',
       flashLoanModule: '0x1bf9c5183cAd17687336E8a7fC56699f0a7786E6',
       swapTokens: {
-        WETH: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+        "USDC'B": '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
         "DAI'B": '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
-        MKR: '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
-        USDC: '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
-        REP: '0x8c9e6c40d3402480ACE624730524fACC5482798c',
-        WBTC: '0xe0C9275E44Ea80eF17579d33c55136b7DA269aEb',
-        BAT: '0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE',
-        SNX: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
-        ANT: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
-        ZRX: '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
+        "MKR'B": '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
+        WETH: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
       },
+      balancerExchangeProxy: '0xd9c8ae0ecf77d0f7c1c28b4f6991a041963545d6',
+      uniswapRouter: '0xf164fc0ec4e93095b804a4795bbe1e041497b92a',
     },
     etherskanDomain: 'https://kovan.etherscan.io/',
   },
@@ -173,6 +179,8 @@ const ethNetworkConfigsForBetaDefi: Record<NetworkID, INetworkConfig> = {
       arbitrageModule: zeroAddress,
       flashLoanModule: zeroAddress,
       swapTokens: {},
+      balancerExchangeProxy: zeroAddress,
+      uniswapRouter: zeroAddress,
     },
     etherskanDomain: 'https://rinkeby.etherscan.io/',
   },

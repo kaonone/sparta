@@ -24,6 +24,7 @@ export async function getUniswapTerms({
   tokenTo,
   additionalSlippage,
   web3,
+  executorAddress,
 }: GetTermsFunctionArgs): Promise<UniswapV2Terms | null> {
   const trade = await getTradeExactIn(
     new TokenAmount(new Token(ChainId.MAINNET, tokenFrom, 18), amountIn),
@@ -44,7 +45,7 @@ export async function getUniswapTerms({
     slippageAdjustedAmounts.input.raw.toString(),
     slippageAdjustedAmounts.output.raw.toString(),
     trade.route.path.map(t => t.address),
-    tokenFrom,
+    executorAddress,
     deadlineFromNow,
   ];
 

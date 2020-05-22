@@ -37,6 +37,7 @@ export interface SummaryTerms {
 }
 
 export interface SwapTermsRequest {
+  executorAddress: string;
   amountIn: string;
   protocolFrom: Protocol;
   protocolTo: Protocol;

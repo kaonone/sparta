@@ -16,6 +16,7 @@ import {
   createArbitrageModule,
   createFlashLoanModule,
 } from 'generated/contracts';
+import { ProtocolTerms } from 'model/types';
 
 export type Contracts = {
   dai: ReturnType<typeof createErc20>;
@@ -54,7 +55,15 @@ export type SubmittedTransaction =
       { address: string; borrower: string; debtId: string }
     >
   | IGenericSubmittedTransaction<'loan.repay', { address: string; debtId: string; amount: BN }>
-  | IGenericSubmittedTransaction<'arbitrage.createExecutor', { address: string }>;
+  | IGenericSubmittedTransaction<
+      'arbitrage.swap',
+      { executor: string; from: ProtocolTerms; to: ProtocolTerms }
+    >
+  | IGenericSubmittedTransaction<'arbitrage.createExecutor', { address: string }>
+  | IGenericSubmittedTransaction<
+      'arbitrage.approveTokens',
+      { address: string; executor: string; tokens: string[]; protocols: string[] }
+    >;
 
 export interface IGenericSubmittedTransaction<T extends string, P = void> {
   type: T;

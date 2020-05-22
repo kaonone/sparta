@@ -7,6 +7,7 @@ export interface GetTermsFunctionArgs {
   tokenFrom: Address;
   tokenTo: Address;
   additionalSlippage: number;
+  executorAddress: string;
   web3: Web3;
 }
 

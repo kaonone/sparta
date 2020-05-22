@@ -32,7 +32,13 @@ export function ProtocolTermsView({
       <Metric title="in" value={<FormattedBalance tokenAddress={tokenFrom} sum={amountIn} />} />
       <Metric
         title="min out"
-        value={<FormattedBalance tokenAddress={tokenTo} sum={minAmountOut} />}
+        value={
+          new BN(minAmountOut).isZero() ? (
+            'Insufficient funds'
+          ) : (
+            <FormattedBalance tokenAddress={tokenTo} sum={minAmountOut} />
+          )
+        }
       />
       <Metric title="slippage (uncludes additional)" value={`${formattedSlippage}%`} />
     </MetricsList>

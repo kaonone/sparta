@@ -46,6 +46,30 @@
     "type": "event"
   },
   {
+    "constant": false,
+    "inputs": [{
+        "internalType": "contract IFlashLoanReceiver",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "executeLoan",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "LOAN_FEE_MULTIPLIER",

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { of } from 'rxjs';
-import BN from 'bn.js';
 
 import { Loading, Box, Hint } from 'components';
 import { useApi } from 'services/api';
@@ -18,14 +16,13 @@ export function Arbitrage({ account }: { account: string }) {
     [api, account],
   );
   const [ptkBalance, ptkBalanceMeta] = useSubscribable(
-    () => of(new BN(100)),
-    // () => api.tokens.getBalance$('ptk', account), // TODO uncomment
+    () => api.tokens.getBalance$('ptk', account),
     [api, account],
   );
 
   return (
     <Loading component={Hint} meta={[executorAddressMeta, ptkBalanceMeta]}>
-      {executorAddress && <ArbitrageBot />}
+      {executorAddress && <ArbitrageBot account={account} executor={executorAddress} />}
       {!executorAddress && ptkBalance?.isZero() && (
         <Hint>
           You need to buy share in pool

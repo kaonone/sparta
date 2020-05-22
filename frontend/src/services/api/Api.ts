@@ -22,6 +22,7 @@ export class Api {
     this.web3Manager,
     this.transactions,
     this.flashLoanModule,
+    this.tokens,
   );
 
   public curveModule = new CurveModuleApi(this.web3Manager);
