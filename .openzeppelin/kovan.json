@@ -211,11 +211,11 @@
       }
     },
     "ArbitrageModule": {
-      "address": "0xA6d9D61c6637e8D1Ab1f535BaABB53e756559CDC",
-      "constructorCode": "6080604052611b7b806100136000396000f3fe",
-      "bodyBytecodeHash": "be6bd1ae6bf1218a5a7a92e8f0f61424c36e07df79ff63b19f7c747d93fe1eaf",
-      "localBytecodeHash": "96a7b8bf1434e085c9fa23673954dd3aae2b9e4b8c849f69b0975cae672c1782",
-      "deployedBytecodeHash": "96a7b8bf1434e085c9fa23673954dd3aae2b9e4b8c849f69b0975cae672c1782",
+      "address": "0x90A55Fc9177B350FaD3835E80F9Ec735F322aec5",
+      "constructorCode": "6080604052611a4d806100136000396000f3fe",
+      "bodyBytecodeHash": "160b303b5d00c26b8ab0c1fbcf56068bce7a1adb3a6ee41b26d8c32cf4c301f1",
+      "localBytecodeHash": "333aaaaf5803f0aa95022a644a98c422bb30069a9c5d3b7efdb950577fd65c97",
+      "deployedBytecodeHash": "333aaaaf5803f0aa95022a644a98c422bb30069a9c5d3b7efdb950577fd65c97",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -251,7 +251,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 17289,
+          "astId": 17309,
           "type": "t_bool",
           "src": "757:24:84"
         },
@@ -259,7 +259,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 17291,
+          "astId": 17311,
           "type": "t_bool",
           "src": "876:25:84"
         },
@@ -267,7 +267,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 17353,
+          "astId": 17373,
           "type": "t_array:50<t_uint256>",
           "src": "1982:29:84"
         },
@@ -275,7 +275,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 15457,
+          "astId": 15477,
           "type": "t_address",
           "src": "526:22:71"
         },
@@ -283,7 +283,7 @@
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 15570,
+          "astId": 15590,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:71"
         },
@@ -299,9 +299,9 @@
           "contract": "ArbitrageModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\flash-loans\\ArbitrageModule.sol",
           "label": "executors",
-          "astId": 4132,
+          "astId": 4135,
           "type": "t_mapping<t_address>",
-          "src": "371:54:32"
+          "src": "359:54:32"
         }
       ],
       "warnings": {
@@ -309,15 +309,17 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [],
+        "storageDiff": []
       }
     },
     "LiquidityModule": {
-      "address": "0x0885Ee62C964EA427A3EA6bc127C886b299576D2",
-      "constructorCode": "6080604052611a61806100136000396000f3fe",
-      "bodyBytecodeHash": "fa800e1cdee21a86a4dcbbde351f91df278ecb72e85fec1ca1e3ff7f5e5e66e5",
-      "localBytecodeHash": "cc2ae795546e590042f62dca9f98e9581d10d78a6e80e52e5f608583eb547659",
-      "deployedBytecodeHash": "cc2ae795546e590042f62dca9f98e9581d10d78a6e80e52e5f608583eb547659",
+      "address": "0x482ce232a0c92674d7F4d752F4eEc19571bB8A2f",
+      "constructorCode": "60806040526119bc806100136000396000f3fe",
+      "bodyBytecodeHash": "bcf18226758d537e8808d759fcb4bc428161649b985d565e118867e8205a90f1",
+      "localBytecodeHash": "9a25fdb42df548e8a3a9d0b2fdd55680de4481a06cc6f749d7442550d0015288",
+      "deployedBytecodeHash": "9a25fdb42df548e8a3a9d0b2fdd55680de4481a06cc6f749d7442550d0015288",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -348,15 +350,15 @@
           "members": [
             {
               "label": "lDepositMin",
-              "astId": 5895,
+              "astId": 5904,
               "type": "t_uint256",
-              "src": "442:19:38"
+              "src": "393:19:38"
             },
             {
               "label": "pWithdrawMin",
-              "astId": 5897,
+              "astId": 5906,
               "type": "t_uint256",
-              "src": "522:20:38"
+              "src": "473:20:38"
             }
           ]
         }
@@ -366,41 +368,41 @@
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initialized",
-          "astId": 17289,
+          "astId": 17385,
           "type": "t_bool",
-          "src": "757:24:84"
+          "src": "757:24:85"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "initializing",
-          "astId": 17291,
+          "astId": 17387,
           "type": "t_bool",
-          "src": "876:25:84"
+          "src": "876:25:85"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin\\upgrades\\contracts\\Initializable.sol",
           "label": "______gap",
-          "astId": 17353,
+          "astId": 17449,
           "type": "t_array:50<t_uint256>",
-          "src": "1982:29:84"
+          "src": "1982:29:85"
         },
         {
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "_owner",
-          "astId": 15457,
+          "astId": 15553,
           "type": "t_address",
-          "src": "526:22:71"
+          "src": "526:22:72"
         },
         {
           "contract": "Ownable",
           "path": "@openzeppelin\\contracts-ethereum-package\\contracts\\ownership\\Ownable.sol",
           "label": "______gap",
-          "astId": 15570,
+          "astId": 15666,
           "type": "t_array:50<t_uint256>",
-          "src": "2471:29:71"
+          "src": "2471:29:72"
         },
         {
           "contract": "Module",
@@ -414,9 +416,9 @@
           "contract": "LiquidityModule",
           "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\liquidity\\LiquidityModule.sol",
           "label": "limits",
-          "astId": 5900,
+          "astId": 5909,
           "type": "t_struct<LiquidityModule.LiquidityLimits>",
-          "src": "600:29:38"
+          "src": "551:29:38"
         }
       ],
       "warnings": {
@@ -424,7 +426,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "LiquidityModule",
+            "path": "..\\..\\..\\D\\projects\\akropolis\\akropolisOS\\contracts\\modules\\liquidity\\LiquidityModule.sol",
+            "label": "limits",
+            "astId": 5909,
+            "type": "t_struct<LiquidityModule.LiquidityLimits>",
+            "src": "551:29:38"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "AccessModule": {
@@ -1500,7 +1513,7 @@
       {
         "address": "0x028bB345352B38Ac2b2de190dE3f334B17e985E2",
         "version": "1.0.0",
-        "implementation": "0x0885Ee62C964EA427A3EA6bc127C886b299576D2",
+        "implementation": "0x482ce232a0c92674d7F4d752F4eEc19571bB8A2f",
         "admin": "0x634C52cf8a65e123a8eBe294A6C474D2795017Eb",
         "kind": "Upgradeable"
       }
@@ -1518,7 +1531,7 @@
       {
         "address": "0x99FF63aB210e2A6D743964d8ffFef545A9422376",
         "version": "1.0.0",
-        "implementation": "0xA6d9D61c6637e8D1Ab1f535BaABB53e756559CDC",
+        "implementation": "0x90A55Fc9177B350FaD3835E80F9Ec735F322aec5",
         "admin": "0x634C52cf8a65e123a8eBe294A6C474D2795017Eb",
         "kind": "Upgradeable"
       }
