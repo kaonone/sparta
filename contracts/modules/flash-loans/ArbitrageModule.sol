@@ -18,7 +18,7 @@ contract ArbitrageModule is Module {
 
     function createExecutor() public returns(address) {
         address beneficiary = _msgSender();
-        require(!hasExecutor(beneficiary), "ArbitrageModule: executor already created");
+        //require(!hasExecutor(beneficiary), "ArbitrageModule: executor already created"); // Allow to re-create executor after ArbitrageModule upgrade
 
         // Check beneficiary is allowed to have executor
         uint256 pBalance = pToken().distributionBalanceOf(beneficiary);
