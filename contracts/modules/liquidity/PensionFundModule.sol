@@ -178,8 +178,8 @@ contract PensionFundModule is LiquidityModule {
 
     function _withdrawLimit(PensionPlan storage plan, uint256 pBalance) internal view returns(uint256) {
         uint256 withdrawStart = plan.created.add(planSettings.depositPeriodDuration);
-        if (withdrawStart < now) return 0;
-        uint256 sinceWithdrawStart = now - withdrawStart;
+        if (withdrawStart >= now) return 0;
+        uint256 sinceWithdrawStart = now.sub(withdrawStart);
         if (sinceWithdrawStart >= planSettings.withdrawPeriodDuration) {
             return pBalance;
         }
@@ -200,7 +200,7 @@ contract PensionFundModule is LiquidityModule {
         uint256 pPenalty;
         if (now < withdrawStart){
             //During deposit period
-            uint256 tillWithdrawStart = withdrawStart - now;
+            uint256 tillWithdrawStart = withdrawStart.sub(now);
             uint256 pMinPenalty = pBalance.mul(planSettings.minPenalty).div(MULTIPLIER);
             uint256 pMaxPenalty = pBalance.mul(planSettings.maxPenalty).div(MULTIPLIER);
             pPenalty = pMinPenalty.add(pMaxPenalty.sub(pMinPenalty).mul(tillWithdrawStart).div(planSettings.depositPeriodDuration));

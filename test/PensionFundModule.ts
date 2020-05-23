@@ -52,6 +52,7 @@ contract("PensionFundModule", async ([_, owner, user, ...otherAccounts]) => {
     let liqm: PensionFundModuleInstance; 
     let defi: DefiModuleStubInstance; 
  
+    let MULTIPLIER:BN;
     let planSettings:PensionPlanSettings;
 
     before(async () => {
@@ -93,9 +94,13 @@ contract("PensionFundModule", async ([_, owner, user, ...otherAccounts]) => {
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
 
-        //Load info
-        let planSettings = <PensionPlanSettings>await (<any>liqm).planSettings();
+        // Settings
+        MULTIPLIER = await liqm.MULTIPLIER();
+        await liqm.setPlanSettings('7200', MULTIPLIER.muln(10).divn(100), MULTIPLIER.muln(90).divn(100), '3600', '0', {from:owner});
+
+        planSettings = <PensionPlanSettings>await (<any>liqm).planSettings();
         //console.log(planSettings);
+
 
         //Prepare user
         await prepareDAI(user, w3random.interval(2000, 5000, 'ether'), funds.address);
@@ -145,23 +150,68 @@ contract("PensionFundModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(before.plan.created).to.be.bignumber.eq(before.plan.created);
     });
 
-    // it("should correctly close plan during deposit period", async () => {
-    //     let snap = await Snapshot.create(web3.currentProvider);
+    it("should correctly close plan during deposit period", async () => {
+        let snap = await Snapshot.create(web3.currentProvider);
+        let expectedRefund: BN, timeSinceCreation:BN, expectedPenalty:BN;
 
-    //     let before = {
-    //         userDAI: await dai.balanceOf(user),
-    //         userPTK: await pToken.balanceOf(user),
-    //         plan: <PensionPlan>await <any>liqm.plans(user),
-    //     };
+        let before = {
+            userDAI: await dai.balanceOf(user),
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+            pRefund: await liqm.pRefund(user),
+        };
+        timeSinceCreation = (await time.latest()).sub(before.plan.created);
+        expect(before.withdrawLimit).to.be.bignumber.eq(BN0); 
+        expectedPenalty = planSettings.minPenalty.add(
+            planSettings.maxPenalty.sub(planSettings.minPenalty)
+            .mul(planSettings.depositPeriodDuration.sub(timeSinceCreation))
+            .div(planSettings.depositPeriodDuration)
+        );
+        expectedRefund = MULTIPLIER.sub(expectedPenalty).mul(before.userPTK).div(MULTIPLIER);
+        expectEqualBN(before.pRefund, expectedRefund);
 
-    //     let time = w3random.interval(
-    //         planSettings.depositPeriodDuration.divn(4),
-    //         planSettings.depositPeriodDuration.divn(3).muln(4),
-    //     );
+        let timeShift = w3random.intervalBN(
+            planSettings.depositPeriodDuration.muln(1).divn(4),
+            planSettings.depositPeriodDuration.muln(3).divn(4),
+        );
+        await time.increase(timeShift.toString());
 
+        let afterTimeShift = {
+            userDAI: await dai.balanceOf(user),
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+            pRefund: await liqm.pRefund(user),
+        };
+        timeSinceCreation = (await time.latest()).sub(before.plan.created);
+        expect(afterTimeShift.withdrawLimit).to.be.bignumber.eq(BN0); 
+        expect(timeSinceCreation).to.be.bignumber.gte(timeShift);
+        expectedPenalty = planSettings.minPenalty.add(
+            planSettings.maxPenalty.sub(planSettings.minPenalty)
+            .mul(planSettings.depositPeriodDuration.sub(timeSinceCreation))
+            .div(planSettings.depositPeriodDuration)
+        );
+        expectedRefund = MULTIPLIER.sub(expectedPenalty).mul(afterTimeShift.userPTK).div(MULTIPLIER);
+        expectEqualBN(afterTimeShift.pRefund, expectedRefund);
 
-    //     snap.revert();
-    // });
+        await liqm.closePlan(BN0, {from:user});
+        let afterClose = {
+            userDAI: await dai.balanceOf(user),
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+            pRefund: await liqm.pRefund(user),
+        };
+        expect(afterClose.plan.created).to.be.bignumber.eq(BN0); 
+        expect(afterClose.plan.pWithdrawn).to.be.bignumber.eq(BN0); 
+        expect(afterClose.withdrawLimit).to.be.bignumber.eq(BN0); 
+        expect(afterClose.pRefund).to.be.bignumber.eq(BN0); 
+        expect(afterClose.userPTK).to.be.bignumber.eq(BN0); 
+        expect(afterClose.userDAI).to.be.bignumber.gt(before.userDAI); 
+
+        snap.revert();
+    });
 
 
     async function prepareDAI(beneficiary:string, amount:BN, approveTo?:string){
