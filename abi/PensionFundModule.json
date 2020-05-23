@@ -90,7 +90,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "ANNUAL_SECONDS",
+    "name": "MULTIPLIER",
     "outputs": [
       {
         "internalType": "uint256",

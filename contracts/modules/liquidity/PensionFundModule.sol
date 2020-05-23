@@ -17,8 +17,8 @@ import "./LiquidityModule.sol";
 contract PensionFundModule is LiquidityModule {
     using SafeMath for uint256;
 
-    uint256 public constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
-    uint256 private constant MULTIPLIER = 1e18;
+    uint256 public constant MULTIPLIER = 1e18;
+    uint256 private constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
     struct PensionPlanSettings {
         uint256 depositPeriodDuration;      // Duration of deposit period
