@@ -7,9 +7,10 @@
     "CompoundModule": "CompoundModule",
     "DefiFundsModule": "DefiFundsModule",
     "CurveModule": "CurveModule",
-    "LiquidityModule": "LiquidityModule",
+    "LiquidityModule": "PensionFundModule",
     "FlashLoansModule": "FlashLoansModule",
-    "ArbitrageModule": "ArbitrageModule"
+    "ArbitrageModule": "ArbitrageModule",
+    "PensionFundModule": "PensionFundModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",

@@ -15,16 +15,16 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * RAY Storage: _not used_
 
 ## Pool contracts
-* Pool: `0x5bd1242E5F7Ed06a5c883BE54d35d5Cf710a3108`
-* AccessModule: `0x63058A669DE8A40E7EB82a8C3dEF1b1d6D46334c`
-* PToken: `0xAF36F5B597a9c005E6292c9Cc03E8806Aa3C4dFd`
-* CurveModule: `0xEDa2fac3d3fdfeE5dc0dC51A6191a4C8C25dA4a2`
-* CompoundModule: `0x48a0598819399Fd1584F279cD55088300e8BA7dD`
+* Pool: `0xBc4C64C8F5838C4A7e10Ac9bB0b606D3AD4c8809`
+* AccessModule: `0x790C6cAB44C0ff8311E5F501d36b57B2aD18e9C9`
+* PToken: `0xcC64F821A6C32884C0648C12E62585FdBC7bA082`
+* CurveModule: `0xBA9d498AA8d650b9ce38D6cE5B0d6539d254A3e8`
+* CompoundModule: `0xDc6b5507647137B663fe81C4aBA6912a88eF9F73`
 * RAYModule: _not deployed_
-* FundsModule: `0xf62722CB78C05CD4e435A6a39817aE48087BD311`
-* LiquidityModule: `0x028bB345352B38Ac2b2de190dE3f334B17e985E2`
-* FlashLoansModule: `0x1bf9c5183cAd17687336E8a7fC56699f0a7786E6`
-* ArbitrageModule: `0x99FF63aB210e2A6D743964d8ffFef545A9422376`
+* FundsModule: `0x29518F102cC748d30178e1fB6215f2BEF4a85b86`
+* PensionFundModule: `0x03843c8a5b7A6c4F563CF5514E53286A7f934ea0`
+* FlashLoansModule: `0x310879fEf4e301425336eBC2f58C29bd5127d174`
+* ArbitrageModule: `0x220F8d93889fD51528b7b119FF7C9a10149EbCf2`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -58,7 +58,7 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
     1. `npx oz create CompoundModule --network kovan --init "initialize(address _pool)" --args Pool.address`
     <!--1. `npx oz create RAYModule --network kovan --init "initialize(address _pool)" --args Pool.address`-->
     1. `npx oz create DefiFundsModule --network kovan --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create LiquidityModule --network kovan --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create PensionFundModule --network kovan --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create FlashLoansModule --network kovan --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create ArbitrageModule --network kovan --init "initialize(address _pool)" --args Pool.address`
     1. Save address of each module: `AccessModule.address`, `PToken.address`, `CurveModule.address`, `CompoundModule.address`, `DefiFundsModule.address`, `LiquidityModule.address`, `FlashLoansModule.address`, `ArbitrageModule.address`
@@ -73,11 +73,11 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
     <!--1. `npx oz send-tx --to Pool.address --network kovan --method set --args "defi, RAYModule.address, false"`-->
     1. `npx oz send-tx --to Pool.address --network kovan --method set --args "curve, CurveModule.address, false"`
     1. `npx oz send-tx --to Pool.address --network kovan --method set --args "funds, DefiFundsModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "liquidity, LiquidityModule.address`
+    1. `npx oz send-tx --to Pool.address --network kovan --method set --args "liquidity, PensionFundModule.address`
     1. `npx oz send-tx --to Pool.address --network kovan --method set --args "flashloans, FlashLoansModule.address, false`
     1. `npx oz send-tx --to Pool.address --network kovan --method set --args "arbitrage, ArbitrageModule.address, false"`
 1. Configure modules
-    1. `npx oz send-tx --to DefiFundsModule.address --network kovan --method addFundsOperator --args LiquidityModule.address`
+    1. `npx oz send-tx --to DefiFundsModule.address --network kovan --method addFundsOperator --args PensionFundModule.address`
     1. `npx oz send-tx --to DefiFundsModule.address --network kovan --method addFundsOperator --args FlashLoansModule.address`
     1. `npx oz send-tx --to PToken.address --network kovan --method addMinter --args DefiFundsModule.address`
     1. `npx oz send-tx --to CompoundModule.address --network kovan --method addDefiOperator --args DefiFundsModule.address`

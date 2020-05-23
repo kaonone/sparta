@@ -88,6 +88,7 @@ module.exports = {
     kovan: {
       provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://kovan.infura.io/v3/" + infuraProjectId),
       networkId: 42,       // Rinkeby's id
+      gasPrice: 10000000000 // 10 gwei      
     },
     
     // Another network with more advanced options...
