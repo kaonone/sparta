@@ -17,6 +17,10 @@ import "./LiquidityModule.sol";
 contract PensionFundModule is LiquidityModule {
     using SafeMath for uint256;
 
+    event PlanCreated(address indexed beneficiary, uint256 depostiPeriodEnd, uint256 withdrawPeriodEnd);
+    event PlanClosed(address indexed beneficiary, uint256 pRefund, uint256 pPenalty);
+    event PlanSettingsChanged(uint256 depositPeriodDuration, uint256 minPenalty, uint256 maxPenalty, uint256 withdrawPeriodDuration, uint256 initalWithdrawAllowance);
+
     uint256 public constant MULTIPLIER = 1e18;
     uint256 private constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
@@ -62,6 +66,7 @@ contract PensionFundModule is LiquidityModule {
             withdrawPeriodDuration: withdrawPeriodDuration,
             initalWithdrawAllowance: initalWithdrawAllowance
         });
+        emit PlanSettingsChanged(depositPeriodDuration, minPenalty, maxPenalty, withdrawPeriodDuration, initalWithdrawAllowance);
     }
 
     /**
@@ -70,14 +75,21 @@ contract PensionFundModule is LiquidityModule {
      * @param pAmountMin Minimal amout of pTokens suitable for sender
      */ 
     function deposit(uint256 lAmount, uint256 pAmountMin) public /*operationAllowed(IAccessModule.Operation.Deposit)*/ {
-        PensionPlan storage plan  = plans[_msgSender()];
+        address user = _msgSender();
+        PensionPlan storage plan  = plans[user];
+        bool creation;
         if (plan.created == 0){
             //create new plan
             plan.created = now;
+            creation = true;
         }
-        uint256 planEnd = plan.created.add(planSettings.depositPeriodDuration).add(planSettings.withdrawPeriodDuration);
+        uint256 depositPeriodEnd = plan.created.add(planSettings.depositPeriodDuration);
+        uint256 planEnd = depositPeriodEnd.add(planSettings.withdrawPeriodDuration);
         require(planEnd > now, "PensionFundLiquidityModule: plan ended");
         super.deposit(lAmount, pAmountMin);
+        if (creation){
+            emit PlanCreated(user, depositPeriodEnd, planEnd);
+        }
     }
 
     /**
@@ -99,6 +111,7 @@ contract PensionFundModule is LiquidityModule {
         uint256 pLeft = pToken().distributionBalanceOf(user); 
         if (pLeft == 0) {
             delete plans[user];   //Close plan, so that user can create a new one
+            emit PlanClosed(user, 0, 0);
         }
     }
 
@@ -133,6 +146,7 @@ contract PensionFundModule is LiquidityModule {
         pBalance = pToken.distributionBalanceOf(user);
         require(pBalance == 0, "PensionFundLiquidityModule: not zero balance after full withdraw");
         delete plans[user]; 
+        emit PlanClosed(user, pRefund, pPenalty);
     }
 
     function withdrawForRepay(address, uint256) public {
@@ -145,7 +159,7 @@ contract PensionFundModule is LiquidityModule {
      */
     function withdrawLimit(address user) public view returns(uint256) {
         PensionPlan storage plan  = plans[user];
-        require(plan.created != 0, "PensionFundLiquidityModule: plan not found");
+        if(plan.created == 0) return 0;
         uint256 pBalance = pToken().distributionBalanceOf(user);
         return _withdrawLimit(plan, pBalance);
     }
@@ -156,7 +170,7 @@ contract PensionFundModule is LiquidityModule {
      */
     function pRefund(address user) public view returns(uint256) {
         PensionPlan storage plan  = plans[user];
-        require(plan.created != 0, "PensionFundLiquidityModule: plan not found");
+        if(plan.created == 0) return 0;
         uint256 pBalance = pToken().distributionBalanceOf(user);
         uint256 pPenalty = _pPenalty(plan, pBalance);
         return pBalance.sub(pPenalty);
