@@ -39,6 +39,29 @@ contract PensionFundModule is LiquidityModule {
 
     function initialize(address _pool) public initializer {
         LiquidityModule.initialize(_pool);
+        setPlanSettings(
+            30*ANNUAL_SECONDS,
+            10*MULTIPLIER/100,
+            90*MULTIPLIER/100,
+            20*ANNUAL_SECONDS,
+            0*MULTIPLIER/100
+        );
+    }
+
+    function setPlanSettings(
+        uint256 depositPeriodDuration, 
+        uint256 minPenalty, 
+        uint256 maxPenalty, 
+        uint256 withdrawPeriodDuration,
+        uint256 initalWithdrawAllowance
+    ) public onlyOwner {
+        planSettings = PensionPlanSettings({
+            depositPeriodDuration: depositPeriodDuration, 
+            minPenalty: minPenalty, 
+            maxPenalty: maxPenalty, 
+            withdrawPeriodDuration: withdrawPeriodDuration,
+            initalWithdrawAllowance: initalWithdrawAllowance
+        });
     }
 
     /**

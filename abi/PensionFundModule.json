@@ -337,6 +337,41 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "depositPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "withdrawPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initalWithdrawAllowance",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPlanSettings",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "lAmount",
         "type": "uint256"
       },
