@@ -5,5 +5,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     minWidth: theme.breakpoints.values.md,
     maxWidth: theme.breakpoints.values.lg,
     margin: '0 auto',
+    padding: theme.spacing(0, 1, 1),
   },
 }));

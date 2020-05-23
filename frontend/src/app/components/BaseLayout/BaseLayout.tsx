@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GetProps } from '_helpers';
 
-import { RowsLayout } from 'components';
+import { RowsLayout, Hint, Link, Typography } from 'components';
 
 import { Header } from '../Header/Header';
 import { PageNavigation } from '../PageNavigation/PageNavigation';
@@ -37,6 +37,27 @@ function BaseLayout(props: IProps) {
           <PageNavigation />
         </RowsLayout.ContentBlock>
       )}
+      <RowsLayout.ContentBlock>
+        <Hint>
+          <div>
+            <Typography>
+              This is Alpha version, please use it at it your own risk. Use small amounts of funds
+              to start (we recommend no more than 10 DAI).
+            </Typography>
+            <Typography>
+              Please reach out in our{' '}
+              <Link
+                href="https://discord.com/invite/Y58CGUW"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Discord
+              </Link>{' '}
+              for any questions or issues!
+            </Typography>
+          </div>
+        </Hint>
+      </RowsLayout.ContentBlock>
       <RowsLayout.ContentBlock fillIn>{children}</RowsLayout.ContentBlock>
     </RowsLayout>
   );

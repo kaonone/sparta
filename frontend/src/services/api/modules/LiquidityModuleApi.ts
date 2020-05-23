@@ -1,13 +1,15 @@
-import { Observable, BehaviorSubject } from 'rxjs';
-import { first as firstOperator, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, timer, combineLatest } from 'rxjs';
+import { first as firstOperator, switchMap, map } from 'rxjs/operators';
 import BN from 'bn.js';
 import { autobind } from 'core-decorators';
+import * as R from 'ramda';
 
 import { min } from 'utils/bn';
 import { ETH_NETWORK_CONFIG } from 'env';
 import { createLiquidityModule } from 'generated/contracts';
 import { memoize } from 'utils/decorators';
 import { calcTotalWithdrawAmountByUserWithdrawAmount } from 'model';
+import { zeroAddress } from 'utils/mock';
 
 import { Contracts, Web3ManagerModule } from '../types';
 import { TokensApi } from './TokensApi';
@@ -66,6 +68,126 @@ export class LiquidityModuleApi {
     );
   }
 
+  @memoize(R.identity)
+  @autobind
+  public getWithdrawLimitInDai$(account: string) {
+    return this.getWithdrawLimit$(account).pipe(
+      switchMap(value => this.fundsModuleApi.getPtkToDaiExitInfo$(value.toString())),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public getWithdrawLimit$(account: string): Observable<BN> {
+    const updatingIntervalInMs = 60 * 60 * 1000;
+    return timer(0, updatingIntervalInMs).pipe(
+      switchMap(() =>
+        this.readonlyContract.methods.withdrawLimit({ user: account }, [
+          this.readonlyContract.events.Withdraw(),
+          this.readonlyContract.events.Deposit(),
+        ]),
+      ),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public getPreliminaryExitInfo$(account: string): Observable<{ exitBalance: BN; exitLose: BN }> {
+    return combineLatest([
+      this.getExitBalance$(account || zeroAddress).pipe(
+        switchMap(exitBalance => this.fundsModuleApi.getPtkToDaiExitInfo$(exitBalance.toString())),
+      ),
+      this.fundsModuleApi.getMaxWithdrawAmountInDai$(account || zeroAddress),
+    ]).pipe(
+      map(([exitBalance, maxWithdraw]) => ({
+        exitBalance: exitBalance.user,
+        exitLose: maxWithdraw.sub(exitBalance.user),
+      })),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public getExitBalance$(account: string): Observable<BN> {
+    const updatingIntervalInMs = 60 * 60 * 1000;
+    return timer(0, updatingIntervalInMs).pipe(
+      switchMap(() =>
+        this.readonlyContract.methods.pRefund({ user: account }, [
+          this.readonlyContract.events.Withdraw(),
+          this.readonlyContract.events.Deposit(),
+          this.readonlyContract.events.PlanClosed(),
+        ]),
+      ),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public isWithdrawPeriod$(account: string): Observable<boolean> {
+    const updatingIntervalInMs = 60 * 60 * 1000;
+    return timer(0, updatingIntervalInMs).pipe(
+      switchMap(() => this.getWithdrawPeriodDate$(account)),
+      map(withdrawPeriodDate => {
+        if (!withdrawPeriodDate) {
+          return false;
+        }
+
+        return new BN(Date.now()).gt(withdrawPeriodDate);
+      }),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public getWithdrawPeriodDate$(account: string): Observable<BN | null> {
+    return combineLatest([this.getPlan$(account), this.getPlanSettings$()]).pipe(
+      map(([plan, planSettings]) => {
+        if (!plan) {
+          return null;
+        }
+
+        const withdrawPeriodDate = plan.created.add(planSettings.depositPeriodDuration).muln(1000);
+
+        return withdrawPeriodDate;
+      }),
+    );
+  }
+
+  @memoize(R.identity)
+  @autobind
+  public getPlan$(account: string): Observable<{ created: BN; pWithdrawn: BN } | null> {
+    return this.readonlyContract.methods
+      .plans({ '': account }, [
+        this.readonlyContract.events.PlanCreated(),
+        this.readonlyContract.events.PlanClosed(),
+      ])
+      .pipe(map(([created, pWithdrawn]) => (created.isZero() ? null : { created, pWithdrawn })));
+  }
+
+  @memoize()
+  @autobind
+  public getPlanSettings$() {
+    return this.readonlyContract.methods
+      .planSettings(undefined, this.readonlyContract.events.PlanSettingsChanged())
+      .pipe(
+        map(
+          ([
+            depositPeriodDuration,
+            minPenalty,
+            maxPenalty,
+            withdrawPeriodDuration,
+            initialWithdrawAllowance,
+          ]) => ({
+            depositPeriodDuration,
+            minPenalty,
+            maxPenalty,
+            withdrawPeriodDuration,
+            initialWithdrawAllowance,
+          }),
+        ),
+      );
+  }
+
   @autobind
   public async sellPtk(fromAddress: string, values: { sourceAmount: BN }): Promise<void> {
     const { sourceAmount: lAmountWithoutFee } = values;
@@ -115,6 +237,22 @@ export class LiquidityModuleApi {
     this.transactionsApi.pushToSubmittedTransactions$('liquidity.buyPtk', promiEvent, {
       address: fromAddress,
       ...values,
+    });
+
+    await promiEvent;
+  }
+
+  @autobind
+  public async closePlan(fromAddress: string): Promise<void> {
+    const txLiquidityModule = getCurrentValueOrThrow(this.txContract);
+
+    const promiEvent = txLiquidityModule.methods.closePlan(
+      { lAmountMin: new BN(0) },
+      { from: fromAddress },
+    );
+
+    this.transactionsApi.pushToSubmittedTransactions$('liquidity.closePlan', promiEvent, {
+      address: fromAddress,
     });
 
     await promiEvent;

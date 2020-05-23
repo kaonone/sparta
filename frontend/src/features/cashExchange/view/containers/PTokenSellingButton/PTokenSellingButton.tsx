@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 
 import { useTranslate, tKeys as tKeysAll } from 'services/i18n';
 import { useApi } from 'services/api';
@@ -18,7 +18,8 @@ function PTokenSellingButton(props: IProps) {
   const api = useApi();
 
   const getMaxSourceValue = useCallback(
-    (account: string) => api.fundsModule.getMaxWithdrawAmountInDai$(account),
+    (account: string) =>
+      api.liquidityModule.getWithdrawLimitInDai$(account).pipe(map(({ user }) => user)),
     [],
   );
   const getMinSourceValue = useCallback(

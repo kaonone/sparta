@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 const en = {
   app: {
-    mainTitle: 'Pension Fund',
+    mainTitle: 'Pensify',
     connectingWarning: 'You need connect to wallet',
     pages: {
       overview: {
@@ -53,6 +53,11 @@ const en = {
         pending: 'Transferring %{amount} to the pool. Pending',
         success: 'Transferring %{amount} to the pool. Successful',
         error: 'Transferring %{amount} to the pool. Failed',
+      },
+      'liquidity.closePlan': {
+        pending: 'Exit from the pool. Pending',
+        success: 'Exit from the pool. Successful',
+        error: 'Exit from the pool. Failed',
       },
       'defi.withdrawInterest': {
         pending: 'Withdrawing yield. Pending',
@@ -120,14 +125,14 @@ const en = {
     },
     cashExchange: {
       pTokenBuying: {
-        buttonTitle: 'Buy',
-        formTitle: 'Buy share',
+        buttonTitle: 'Deposit',
+        formTitle: 'Deposit',
         placeholder: 'Enter sum',
         confirmMessage: 'Are you sure you want deposit %{sourceAmount}?',
       },
       pTokenSellingButton: {
-        buttonTitle: 'Sell',
-        formTitle: 'Sell share',
+        buttonTitle: 'Withdraw',
+        formTitle: 'Withdraw',
         placeholder: 'Enter sum',
         fields: {
           withdrawMethod: {
@@ -182,6 +187,11 @@ const en = {
       activateLoanButton: {
         confirmMessage:
           'Are you sure you want to activate a loan? Please note that your loan will be transferred directly to your wallet.',
+      },
+      preliminaryExitButton: {
+        button: 'Exit',
+        confirmMessage:
+          'Are you sure you want to preliminary exit from pension fund? You get %{exitBalance} and lose %{exitLose}',
       },
       withdrawDefiYieldButton: {
         buttonTitle: 'Withdraw',

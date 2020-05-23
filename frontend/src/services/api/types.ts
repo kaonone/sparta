@@ -37,6 +37,7 @@ export type SubmittedTransaction =
   | IGenericSubmittedTransaction<'dai.approve', { spender: string; fromAddress: string; value: BN }>
   | IGenericSubmittedTransaction<'liquidity.sellPtk', { address: string; sourceAmount: BN }>
   | IGenericSubmittedTransaction<'liquidity.buyPtk', { address: string; sourceAmount: BN }>
+  | IGenericSubmittedTransaction<'liquidity.closePlan', { address: string }>
   | IGenericSubmittedTransaction<'defi.withdrawInterest', { address: string }>
   | IGenericSubmittedTransaction<'loan.addPledge', { address: string; sourceAmount: BN }>
   | IGenericSubmittedTransaction<'loan.unstakePledge', { address: string; sourceAmount: BN }>

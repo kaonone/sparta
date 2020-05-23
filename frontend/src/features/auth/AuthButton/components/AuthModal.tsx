@@ -16,6 +16,7 @@ import {
 import { WalletType, wallets, Web3ConnectionStatus } from 'services/api';
 import { useTranslate, tKeys as tKeysAll } from 'services/i18n';
 import { ETH_NETWORK_CONFIG } from 'env';
+import { isMobileDevice } from 'utils/isMobileDevice';
 
 interface AuthModalProps {
   isOpened: boolean;
@@ -43,6 +44,10 @@ export function AuthModal(props: AuthModalProps) {
   } = props;
   const { t } = useTranslate();
   const isLogged: boolean = !!account && !!connectedWallet;
+
+  const availableWallets: readonly WalletType[] = isMobileDevice()
+    ? (['portis'] as const)
+    : wallets;
 
   return (
     // tabIndex needed for Fortmatic form. Without tabIndex, form input cannot be taken into focus
@@ -88,7 +93,7 @@ export function AuthModal(props: AuthModalProps) {
               </Button>
             </Grid>
           )}
-          {wallets.map((type, index) => (
+          {availableWallets.map((type, index) => (
             <Grid item xs key={index}>
               <ConnectButton
                 connect={connect}
