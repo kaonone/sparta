@@ -76,7 +76,7 @@ contract PensionFundModule is LiquidityModule {
             plan.created = now;
         }
         uint256 planEnd = plan.created.add(planSettings.depositPeriodDuration).add(planSettings.withdrawPeriodDuration);
-        require(planEnd < now, "PensionFundLiquidityModule: plan ended");
+        require(planEnd > now, "PensionFundLiquidityModule: plan ended");
         super.deposit(lAmount, pAmountMin);
     }
 
@@ -98,7 +98,7 @@ contract PensionFundModule is LiquidityModule {
         //Additional balance request required because of possible distributions which could be claimed during withdraw
         uint256 pLeft = pToken().distributionBalanceOf(user); 
         if (pLeft == 0) {
-            plan.created = 0;   //Close plan, so that user can create a new one
+            delete plans[user];   //Close plan, so that user can create a new one
         }
     }
 
@@ -132,7 +132,7 @@ contract PensionFundModule is LiquidityModule {
         // Check balance again to prevent possible actions during lToken transfer
         pBalance = pToken.distributionBalanceOf(user);
         require(pBalance == 0, "PensionFundLiquidityModule: not zero balance after full withdraw");
-        plan.created = 0; 
+        delete plans[user]; 
     }
 
     function withdrawForRepay(address, uint256) public {

@@ -9606,7 +9606,7 @@ export interface PauserRoleInstance extends Truffle.ContractInstance {
 }
 
 export interface PensionFundModuleInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   getModuleAddress(
     module: string,
@@ -9705,6 +9705,41 @@ export interface PensionFundModuleInstance extends Truffle.ContractInstance {
     call(txDetails?: Truffle.TransactionDetails): Promise<void>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  setPlanSettings: {
+    (
+      depositPeriodDuration: number | BN | string,
+      minPenalty: number | BN | string,
+      maxPenalty: number | BN | string,
+      withdrawPeriodDuration: number | BN | string,
+      initalWithdrawAllowance: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      depositPeriodDuration: number | BN | string,
+      minPenalty: number | BN | string,
+      maxPenalty: number | BN | string,
+      withdrawPeriodDuration: number | BN | string,
+      initalWithdrawAllowance: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      depositPeriodDuration: number | BN | string,
+      minPenalty: number | BN | string,
+      maxPenalty: number | BN | string,
+      withdrawPeriodDuration: number | BN | string,
+      initalWithdrawAllowance: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      depositPeriodDuration: number | BN | string,
+      minPenalty: number | BN | string,
+      maxPenalty: number | BN | string,
+      withdrawPeriodDuration: number | BN | string,
+      initalWithdrawAllowance: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
   };
 
   deposit: {
