@@ -233,8 +233,8 @@ export class ArbitrageModuleApi {
               amountIn: fromTerms.minAmountOut, // TODO add balance from ArbitrageExecutor
               tokenFrom: tokenTo,
               tokenTo: tokenFrom,
-              tokenFromDecimals: tokenFromInfo.decimals,
-              tokenToDecimals: tokenToInfo.decimals,
+              tokenFromDecimals: tokenToInfo.decimals,
+              tokenToDecimals: tokenFromInfo.decimals,
               additionalSlippage: additionalSlippageTo,
               web3: this.web3Manager.web3,
               executorAddress,
