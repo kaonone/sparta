@@ -21,10 +21,10 @@ function PTokenExchangingConfirmation<ExtraFormData extends Record<string, any> 
   const { t } = useTranslate();
   const tKeys = tKeysAll.features.cashExchange.exchangingConfirmation;
 
-  const [{ formattedBalance: formattedSourceAmount }] = useFormattedBalance(
-    'dai',
-    values?.sourceAmount || '0',
-  );
+  const [{ formattedBalance: formattedSourceAmount }] = useFormattedBalance({
+    token: 'dai',
+    value: values?.sourceAmount || '0',
+  });
 
   const message =
     typeof messageTKey === 'string'

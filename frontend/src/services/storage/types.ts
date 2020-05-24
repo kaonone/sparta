@@ -8,8 +8,8 @@ export interface StorageAdapter {
   getAllKeys(): string[];
 }
 
-type _TailAndStatesToMigrations<T, S extends any> = {
-  [key in keyof T]: (state: S[key]) => T[key];
+type _TailAndStatesToMigrations<T, S> = {
+  [key in keyof T]: (state: S[Extract<key, keyof S>]) => T[key];
 };
 
 export type StatesToMigrations<S extends any[]> = _TailAndStatesToMigrations<Tuple.Tail<S>, S>;

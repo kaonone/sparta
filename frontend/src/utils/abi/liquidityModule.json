@@ -43,6 +43,90 @@
   {
     "anonymous": false,
     "inputs": [{
+        "indexed": true,
+        "internalType": "address",
+        "name": "beneficiary",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pRefund",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pPenalty",
+        "type": "uint256"
+      }
+    ],
+    "name": "PlanClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": true,
+        "internalType": "address",
+        "name": "beneficiary",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "depostiPeriodEnd",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "withdrawPeriodEnd",
+        "type": "uint256"
+      }
+    ],
+    "name": "PlanCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "depositPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minPenalty",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxPenalty",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "withdrawPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "initalWithdrawAllowance",
+        "type": "uint256"
+      }
+    ],
+    "name": "PlanSettingsChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
       "indexed": false,
       "internalType": "address",
       "name": "newPool",
@@ -84,141 +168,11 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "MODULE_ACCESS",
+    "name": "MULTIPLIER",
     "outputs": [{
-      "internalType": "string",
+      "internalType": "uint256",
       "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_CDAI",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_CURVE",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_DEFI",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_FUNDS",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LIQUIDITY",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LOAN",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LOAN_LIMTS",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LOAN_PROPOSALS",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_LTOKEN",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "MODULE_PTOKEN",
-    "outputs": [{
-      "internalType": "string",
-      "name": "",
-      "type": "string"
+      "type": "uint256"
     }],
     "payable": false,
     "stateMutability": "view",
@@ -289,6 +243,63 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "planSettings",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "depositPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "withdrawPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initalWithdrawAllowance",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }],
+    "name": "plans",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "created",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "pool",
     "outputs": [{
       "internalType": "address",
@@ -303,6 +314,25 @@
     "constant": false,
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+        "internalType": "uint256",
+        "name": "lDepositMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pWithdrawMin",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLimits",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -360,6 +390,40 @@
     "constant": false,
     "inputs": [{
         "internalType": "uint256",
+        "name": "depositPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPenalty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "withdrawPeriodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initalWithdrawAllowance",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPlanSettings",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
+        "internalType": "uint256",
         "name": "lAmount",
         "type": "uint256"
       },
@@ -397,13 +461,26 @@
   {
     "constant": false,
     "inputs": [{
+      "internalType": "uint256",
+      "name": "lAmountMin",
+      "type": "uint256"
+    }],
+    "name": "closePlan",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
         "internalType": "address",
-        "name": "borrower",
+        "name": "",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "pAmount",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -414,22 +491,37 @@
     "type": "function"
   },
   {
-    "constant": false,
+    "constant": true,
     "inputs": [{
-        "internalType": "uint256",
-        "name": "lDepositMin",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pWithdrawMin",
-        "type": "uint256"
-      }
-    ],
-    "name": "setLimits",
-    "outputs": [],
+      "internalType": "address",
+      "name": "user",
+      "type": "address"
+    }],
+    "name": "withdrawLimit",
+    "outputs": [{
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "internalType": "address",
+      "name": "user",
+      "type": "address"
+    }],
+    "name": "pRefund",
+    "outputs": [{
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   }
 ]

@@ -1,6 +1,6 @@
 import * as packageJson from '../../package.json';
 
-export type Mode = 'sandbox' | 'beta-defi' | 'beta';
+export type Mode = 'sandbox' | 'beta-defi' | 'beta' | 'prod';
 
 export function getEnv() {
   const isProduction = process.env.NODE_ENV === 'production';

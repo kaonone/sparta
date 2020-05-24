@@ -10,7 +10,7 @@ import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import { getEnv } from '../src/core/getEnv';
 
 const forGhPages = true;
-const pageTitle = 'Credit Pool';
+const pageTitle = 'Pensify';
 const { mode } = getEnv();
 
 function sortChunks(a: webpack.compilation.Chunk, b: webpack.compilation.Chunk): number {
@@ -84,6 +84,7 @@ const config: webpack.Configuration = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.MODE': JSON.stringify(process.env.MODE),
+      'process.env.REACT_APP_SUBGRAPH_URL': JSON.stringify(process.env.REACT_APP_SUBGRAPH_URL),
     }),
     new FileManagerWebpackPlugin({
       onEnd: {
@@ -113,7 +114,8 @@ const config: webpack.Configuration = {
                     {
                       sandbox: 'ghPageRootSandbox',
                       'beta-defi': 'ghPageRootBetaDefi',
-                      beta: 'ghPageRoot',
+                      beta: 'ghPageRootBeta',
+                      prod: 'ghPageRootProd',
                     }[mode]
                   }/**`,
                   destination: `build`,

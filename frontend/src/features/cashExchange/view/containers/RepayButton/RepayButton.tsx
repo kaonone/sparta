@@ -119,18 +119,18 @@ function RepayButton(props: IProps) {
     new BN(0),
   );
 
-  const [{ formattedBalance: formattedAvailablePoolBalance }] = useFormattedBalance(
-    'dai',
-    availablePoolBalance,
-    daiTokenInfo?.decimals,
-    'short',
-  );
-  const [{ formattedBalance: formattedAvailableDaiBalance }] = useFormattedBalance(
-    'dai',
-    availableDaiBalance,
-    daiTokenInfo?.decimals,
-    'short',
-  );
+  const [{ formattedBalance: formattedAvailablePoolBalance }] = useFormattedBalance({
+    token: 'dai',
+    value: availablePoolBalance,
+    precision: daiTokenInfo?.decimals,
+    variant: 'short',
+  });
+  const [{ formattedBalance: formattedAvailableDaiBalance }] = useFormattedBalance({
+    token: 'dai',
+    value: availableDaiBalance,
+    precision: daiTokenInfo?.decimals,
+    variant: 'short',
+  });
 
   const validateForm = useCallback(
     ({ repaymentMethod, sourceAmount }: IExtraFormData & { sourceAmount: string }) => {

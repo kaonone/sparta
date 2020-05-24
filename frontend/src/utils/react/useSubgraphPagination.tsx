@@ -32,7 +32,7 @@ export function useSubgraphPagination<
   }, []);
 
   const result = useQuery({
-    variables: { first: defaultPerPage, skip: 0, ...(variables as V) },
+    variables: { first: defaultPerPage, skip: 0, ...variables } as V,
   });
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function useSubgraphPagination<
       variables: {
         first: perPage,
         skip: currentPage * perPage,
-        ...(variables as V),
+        ...variables,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         return fetchMoreResult || prev;
@@ -51,7 +51,7 @@ export function useSubgraphPagination<
   const from = currentPage * perPage;
 
   const checkNextPage = useQuery({
-    variables: { first: perPage, skip: from + perPage, ...(variables as V) },
+    variables: { first: perPage, skip: from + perPage, ...variables } as V,
     fetchPolicy: 'no-cache',
   });
 

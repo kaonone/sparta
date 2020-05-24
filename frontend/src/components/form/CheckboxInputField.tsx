@@ -10,7 +10,7 @@ import { CheckboxInput } from '../inputs';
 type IProps = GetProps<typeof CheckboxInput> & FieldRenderProps<any, HTMLElement>;
 
 function CheckboxFieldComponent(props: IProps) {
-  const { input, meta, type, ...rest } = props;
+  const { input, meta, ...rest } = props;
   const { type: inputType, ...restInput } = input;
   const { t } = useTranslate();
   const error =

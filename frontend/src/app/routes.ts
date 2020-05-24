@@ -8,6 +8,7 @@ const rawTree = {
   stats: null,
   proposals: null,
   distributions: null,
+  arbitrage: null,
 };
 
 export const routes = build(rawTree);

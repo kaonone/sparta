@@ -52,13 +52,13 @@ function PageNavigation() {
           to={routes.account.getRedirectPath()}
         />
       )}
-      <Tab
+      {/* <Tab
         className={classes.tab}
         label="Pool"
         component={Link}
         value={routes.pool.getElementKey()}
         to={routes.pool.getRedirectPath()}
-      />
+      /> */}
       <Tab
         className={classes.tab}
         label="Stats"
@@ -72,6 +72,13 @@ function PageNavigation() {
         component={Link}
         value={routes.distributions.getElementKey()}
         to={routes.distributions.getRedirectPath()}
+      />
+      <Tab
+        className={classes.tab}
+        label="Arbitrage"
+        component={Link}
+        value={routes.arbitrage.getElementKey()}
+        to={routes.arbitrage.getRedirectPath()}
       />
       {additionalRoute && (
         <Tab

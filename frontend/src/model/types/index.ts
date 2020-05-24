@@ -12,3 +12,5 @@ export type RepaymentMethod = typeof repaymentMethods[number];
 export const withdrawMethods = ['availableBalance', 'defiYield'] as const;
 
 export type WithdrawMethod = typeof withdrawMethods[number];
+
+export * from './arbitrage';
