@@ -4,7 +4,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/ICurveModule.sol";
-import "../../interfaces/curve/IFundsModule.sol";
+import "../../interfaces/curve/IFundsWithLoansModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/curve/ILoanProposalsModule.sol";
@@ -360,8 +360,8 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         return ICurveModule(getModuleAddress(MODULE_CURVE)).calculateExitFee(lAmount);
     }
 
-    function fundsModule() internal view returns(IFundsModule) {
-        return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    function fundsModule() internal view returns(IFundsWithLoansModule) {
+        return IFundsWithLoansModule(getModuleAddress(MODULE_FUNDS));
     }
 
     function liquidityModule() internal view returns(ILiquidityModule) {

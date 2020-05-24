@@ -21,6 +21,13 @@ interface IFundsModule {
     function withdrawLTokens(address to, uint256 amount) external;
 
     /**
+     * @notice deposit liquid tokens received as interest and distribute PTK
+     * @param amount Amount of liquid tokens to deposit
+     * @return Amount of PTK distributed
+     */
+    function distributeLInterest(uint256 amount) external returns(uint256);
+
+    /**
      * @notice Withdraw liquid tokens from the pool
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
@@ -70,6 +77,8 @@ interface IFundsModule {
 
     function burnLockedPTokens(uint256 amount) external;
 
+    function emitStatusEvent() external;
+
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
      * @param lAmount Amount of liquid tokens which will be put into the pool
@@ -77,14 +86,6 @@ interface IFundsModule {
      */
     function calculatePoolEnter(uint256 lAmount) external view returns(uint256);
 
-    /**
-     * @notice Calculates how many pTokens should be given to user for increasing liquidity
-     * @param lAmount Amount of liquid tokens which will be put into the pool
-     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
-     * @return Amount of pToken which should be sent to sender
-     */
-    function calculatePoolEnter(uint256 lAmount, uint256 liquidityCorrection) external view returns(uint256);
-    
     /**
      * @notice Calculates how many pTokens should be taken from user for decreasing liquidity
      * @param lAmount Amount of liquid tokens which will be removed from the pool
@@ -105,14 +106,6 @@ interface IFundsModule {
      * @return Amount of pToken which should be taken from sender
      */
     function calculatePoolExitWithFee(uint256 lAmount) external view returns(uint256);
-
-    /**
-     * @notice Calculates amount of pTokens which should be burned/locked when liquidity removed from pool
-     * @param lAmount Amount of liquid tokens beeing withdrawn. Does NOT include part for pool
-     * @param liquidityCorrection Amount of liquid tokens to remove from liquidity because it was "virtually" withdrawn
-     * @return Amount of pTokens to burn/lock
-     */
-    function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) external view returns(uint256);
 
     /**
      * @notice Current pool liquidity

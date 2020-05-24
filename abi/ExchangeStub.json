@@ -1,0 +1,74 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "_token1",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "_token2",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "mintMethod",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "mintMethodSelector",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount1",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount2",
+        "type": "uint256"
+      }
+    ],
+    "name": "exchange",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "fail",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

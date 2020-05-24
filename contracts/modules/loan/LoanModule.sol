@@ -4,7 +4,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.so
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/access/IAccessModule.sol";
 import "../../interfaces/curve/ICurveModule.sol";
-import "../../interfaces/curve/IFundsModule.sol";
+import "../../interfaces/curve/IFundsWithLoansModule.sol";
 import "../../interfaces/curve/ILiquidityModule.sol";
 import "../../interfaces/curve/ILoanModule.sol";
 import "../../interfaces/curve/ILoanProposalsModule.sol";
@@ -296,18 +296,6 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
-     * @notice This function is only used for testing purpuses (test liquidations)
-     * @dev SHOULD BE DELETED BEFORE MAINNET RELEASE
-     * @param borrower Address of borrower
-     * @param debt Index of borrowers's debt
-     * @param newDate New timestamp of the last payment for this debt
-     */
-    function __changeDebtLastPaymentDate(address borrower, uint256 debt, uint256 newDate) public onlyOwner {
-        Debt storage dbt = debts[borrower][debt];
-        dbt.lastPayment = newDate;
-    }
-
-    /**
      * @notice Calculates if default time for the debt is reached
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
@@ -508,8 +496,8 @@ contract LoanModule is Module, ILoanModule {
         return ICurveModule(getModuleAddress(MODULE_CURVE)).calculateExitFee(lAmount);
     }
 
-    function fundsModule() internal view returns(IFundsModule) {
-        return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    function fundsModule() internal view returns(IFundsWithLoansModule) {
+        return IFundsWithLoansModule(getModuleAddress(MODULE_FUNDS));
     }
 
     function liquidityModule() internal view returns(ILiquidityModule) {
