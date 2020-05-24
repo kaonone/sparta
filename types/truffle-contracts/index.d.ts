@@ -8629,33 +8629,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  __changeDebtLastPaymentDate: {
-    (
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
-  };
-
   isDebtDefaultTimeReached(
     borrower: string | BN,
     debt: number | BN | string,

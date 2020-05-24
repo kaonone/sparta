@@ -296,18 +296,6 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
-     * @notice This function is only used for testing purpuses (test liquidations)
-     * @dev SHOULD BE DELETED BEFORE MAINNET RELEASE
-     * @param borrower Address of borrower
-     * @param debt Index of borrowers's debt
-     * @param newDate New timestamp of the last payment for this debt
-     */
-    function __changeDebtLastPaymentDate(address borrower, uint256 debt, uint256 newDate) public onlyOwner {
-        Debt storage dbt = debts[borrower][debt];
-        dbt.lastPayment = newDate;
-    }
-
-    /**
      * @notice Calculates if default time for the debt is reached
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
