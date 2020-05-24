@@ -13,7 +13,7 @@ The fund is built using AkropolisOS framework, which allows automated liquidity 
 * We use Uniswap (https://uniswap.exchange) and Balancer (https://balancer.finance) protocols as a part of arbitrage strategies for fund members. They can earn additional income by utilizing Flash Loans and performing arbitrage between Uniswap and Balancer.
 * We use Compound and Aave (https://compound.finance) and Aave  (https://aave.com) as an interest source through rebalancer - Robo Yield Advisor (https://staked.us/v/robo-advisor-yield/) from Staked.Us. It allows us to accumulate interest on all Pensify funds.
 
-# Mainnet deployment 
+# Mainnet deployment (https://pensionfund.fi)
 ## External contracts
 * DAI: `0x6b175474e89094c44da98b954eedeac495271d0f`
 * cDAI: _not used_
@@ -31,7 +31,7 @@ The fund is built using AkropolisOS framework, which allows automated liquidity 
 * FlashLoansModule: `0x7cD7833930E7fb43Fc4F221eBfFE3eFAE39D1442`
 * ArbitrageModule: `0x6E2CFb462D04b2385fE5d1D16A6e0A8154fd201e`
 
-# Testnet (Kovan) deployment 
+# Testnet (Kovan) deployment (https://kovan.pensionfund.fi)
 
 ## External contracts
 * DAI: `0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa`
