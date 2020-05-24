@@ -83,7 +83,7 @@ describe("DeFi modules", function(){
                 let protocol = await RAYStub.at(protocolAddress);
                 let rayModule = await RAYModule.at(defiModuleAddress);
                 let rayTokenId = await rayModule.rayTokenId();
-                let balances = await protocol.getTokenValue(portfolioID, rayTokenId);
+                let balances = await protocol.getTokenValueStub(rayTokenId);
                 return balances[0];
             }
         }   

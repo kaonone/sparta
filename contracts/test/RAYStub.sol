@@ -68,6 +68,10 @@ contract RAYStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
         return valueToWithdraw;
     }
 
+    function getTokenValue(bytes32, bytes32 tokenId) public returns(uint256, uint256) {
+        return (_getTokenValue(tokenId), 0);
+    }
+
     function onERC721Received(address, address from, uint256 tokenId, bytes memory) public returns (bytes4) {
         _burn(from, tokenId);
         return ERC721_RECEIVER;
@@ -101,7 +105,7 @@ contract RAYStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burn
         return 0; // not used in tests
     }
 
-    function getTokenValue(bytes32, bytes32 tokenId) public view returns(uint256, uint256) {
+    function getTokenValueStub(bytes32 tokenId) public view returns(uint256, uint256) {
         return (_getTokenValue(tokenId), 0);
     }
 
