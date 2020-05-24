@@ -7935,11 +7935,28 @@ export interface IRAYInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
-  getTokenValue(
-    portfolioId: string | BN,
-    tokenId: string | BN,
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  getTokenValue: {
+    (
+      portfolioId: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      portfolioId: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<[BN, BN]>;
+    sendTransaction(
+      portfolioId: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      portfolioId: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
 }
 
 export interface IRAYStorageInstance extends Truffle.ContractInstance {
@@ -10902,6 +10919,29 @@ export interface RAYStubInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  getTokenValue: {
+    (
+      arg0: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      arg0: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<[BN, BN]>;
+    sendTransaction(
+      arg0: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      arg0: string | BN,
+      tokenId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   onERC721Received: {
     (
       arg0: string | BN,
@@ -10971,8 +11011,7 @@ export interface RAYStubInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
-  getTokenValue(
-    arg0: string | BN,
+  getTokenValueStub(
     tokenId: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[BN, BN]>;
