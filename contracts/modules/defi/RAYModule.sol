@@ -8,7 +8,8 @@ import "../../interfaces/defi/IRAYStorage.sol";
 import "./DefiModuleBase.sol";
 
 contract RAYModule is DefiModuleBase, IERC721Receiver {
-    bytes32 public constant PORTFOLIO_ID = keccak256("DaiCompound"); //keccak256("DaiBzxCompoundDydx")
+    //bytes32 public constant PORTFOLIO_ID = keccak256("DaiCompound"); //For rinkeby testnet
+    bytes32 public constant PORTFOLIO_ID = keccak256("McdAaveBzxCompoundDsrDydx"); //For mainnet
     bytes32 internal constant PORTFOLIO_MANAGER_CONTRACT = keccak256("PortfolioManagerContract");
     bytes32 internal constant NAV_CALCULATOR_CONTRACT = keccak256("NAVCalculatorContract");
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");

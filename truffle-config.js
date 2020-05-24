@@ -87,7 +87,12 @@ module.exports = {
     },
     kovan: {
       provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://kovan.infura.io/v3/" + infuraProjectId),
-      networkId: 42,       // Rinkeby's id
+      networkId: 42,       // Kovan id
+      gasPrice: 10000000000 // 10 gwei      
+    },
+    mainnet: {
+      provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://mainnet.infura.io/v3/" + infuraProjectId),
+      networkId: 1,       // Mainnet id
       gasPrice: 10000000000 // 10 gwei      
     },
     
