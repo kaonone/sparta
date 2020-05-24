@@ -7,7 +7,7 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
-# Mainnetdeployment 
+# Mainnet deployment 
 ## External contracts
 * DAI: `0x6b175474e89094c44da98b954eedeac495271d0f`
 * cDAI: _not used_
