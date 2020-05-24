@@ -2,7 +2,7 @@ overwrite: true
 generates:
   src/generated/gql/pool.tsx:
     documents: "./src/**/*.pool.graphql"
-    schema: "https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-pension-fund"
+    schema: "https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-pension-fund-prod"
     plugins:
       - "typescript"
       - "typescript-operations"
