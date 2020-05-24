@@ -2,10 +2,16 @@
 
 [![Build Status](https://travis-ci.org/akropolisio/akropolisOS.svg?branch=develop)](https://travis-ci.org/akropolisio/akropolisOS) [![Coverage Status](https://coveralls.io/repos/github/akropolisio/akropolisOS/badge.svg?branch=develop)](https://coveralls.io/github/akropolisio/akropolisOS?branch=develop)
 
-AkropolisOS - Ethereum implementation (active development)
-AkropolisOS is a DAO framework where members of which can earn high-interest rates by providing undercollateralized loans to other members and by pooling and investing capital through various liquid DeFi instruments.
+Pensify is a secure, non-custodial, no-loss and no-risk Pension Fund built on Ethereum blockchain. 
+By using Robo-Advisor for Yield (RAY) from Staked.US, Fund constantly generates interest from different DeFi protocols - Compound, Aave, dYdX, Fulcrum (latest is turned off atm), MCD, DSR.
+Members can also use Flash Loans to earn additional income via a browser bot for automatic arbitrage between Uniswap and Balancer pools.
+The fund is built using AkropolisOS framework, which allows automated liquidity provision enabled by the bonding curve, treasury management & automated yield rebalancing.
 
-Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
+
+* We used AkropolisOS framework (https://akropolis.io) to build a basic architecture for Pensify. It is based on OpenZeppelin (http://openzeppelin.io) and allows automated liquidity provision enabled by the bonding curve, treasury management & automated yield rebalancing.
+* To enable mobile support, we used Portis Wallet (https://www.portis.io). It provides secure storage and access to Pensify from any device.
+* We use Uniswap (https://uniswap.exchange) and Balancer (https://balancer.finance) protocols as a part of arbitrage strategies for fund members. They can earn additional income by utilizing Flash Loans and performing arbitrage between Uniswap and Balancer.
+* We use Compound and Aave (https://compound.finance) and Aave  (https://aave.com) as an interest source through rebalancer - Robo Yield Advisor (https://staked.us/v/robo-advisor-yield/) from Staked.Us. It allows us to accumulate interest on all Pensify funds.
 
 # Mainnet deployment 
 ## External contracts
@@ -48,12 +54,6 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
 * [Openzepplin Contracts](https://openzeppelin.com/contracts/)
 * [Truffle](https://www.trufflesuite.com/)
-
-## Diagrams
-### Modules
-![Modules](/docs/diagram_modules.jpg)
-### User Interactions
-![User Interactions](/docs/diagram_user_interactions.jpg)
 
 ## Deployment
 
