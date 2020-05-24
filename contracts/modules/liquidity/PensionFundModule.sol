@@ -159,7 +159,7 @@ contract PensionFundModule is LiquidityModule {
      */
     function withdrawLimit(address user) public view returns(uint256) {
         PensionPlan storage plan  = plans[user];
-        if(plan.created == 0) return 0;
+        if (plan.created == 0) return 0;
         uint256 pBalance = pToken().distributionBalanceOf(user);
         return _withdrawLimit(plan, pBalance);
     }
@@ -170,7 +170,7 @@ contract PensionFundModule is LiquidityModule {
      */
     function pRefund(address user) public view returns(uint256) {
         PensionPlan storage plan  = plans[user];
-        if(plan.created == 0) return 0;
+        if (plan.created == 0) return 0;
         uint256 pBalance = pToken().distributionBalanceOf(user);
         uint256 pPenalty = _pPenalty(plan, pBalance);
         return pBalance.sub(pPenalty);

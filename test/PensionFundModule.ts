@@ -210,7 +210,73 @@ contract("PensionFundModule", async ([_, owner, user, ...otherAccounts]) => {
         expect(afterClose.userPTK).to.be.bignumber.eq(BN0); 
         expect(afterClose.userDAI).to.be.bignumber.gt(before.userDAI); 
 
-        snap.revert();
+        await snap.revert();
+    });
+    it("should deny withdraw during deposit period", async () => {
+        let before = {
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+        };
+        expect(before.userPTK).to.be.bignumber.gt(BN0); 
+        expect(before.withdrawLimit).to.be.bignumber.eq(BN0); 
+
+        let timeShift = w3random.intervalBN(
+            planSettings.depositPeriodDuration.muln(1).divn(4),
+            planSettings.depositPeriodDuration.muln(2).divn(4),
+        );
+        await time.increase(timeShift.toString());
+
+        let afterTimeShift = {
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+        };
+        expect(afterTimeShift.userPTK).to.be.bignumber.gt(BN0); 
+        expect(afterTimeShift.withdrawLimit).to.be.bignumber.eq(BN0); 
+
+        let pAmount = afterTimeShift.userPTK.muln(1).divn(10);
+        await expectRevert(
+            liqm.withdraw(pAmount, BN0, {from:user}),
+            "PensionFundLiquidityModule: not enough withdraw allowance"
+        );
+    });
+    it("should allow withdraw during withdraw period", async () => {
+        let before = {
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+        };
+        expect(before.userPTK).to.be.bignumber.gt(BN0); 
+        expect(before.withdrawLimit).to.be.bignumber.eq(BN0); 
+        expect(before.plan.pWithdrawn).to.be.bignumber.eq(BN0); 
+        let timeSinceCreation = (await time.latest()).sub(before.plan.created);
+
+        let timeShift = w3random.intervalBN(
+            planSettings.withdrawPeriodDuration.muln(1).divn(4),
+            planSettings.withdrawPeriodDuration.muln(2).divn(4),
+        ).add(planSettings.depositPeriodDuration).sub(timeSinceCreation);
+        await time.increase(timeShift.toString());
+
+        let afterTimeShift = {
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+        };
+        expect(afterTimeShift.withdrawLimit).to.be.bignumber.gt(BN0); 
+
+        let pAmount = afterTimeShift.userPTK.muln(1).divn(10);
+        expect(pAmount).to.be.bignumber.lt(afterTimeShift.withdrawLimit); 
+        await liqm.withdraw(pAmount, BN0, {from:user});
+
+        let afterWithdraw = {
+            userPTK: await pToken.balanceOf(user),
+            plan: <PensionPlan>await <any>liqm.plans(user),
+            withdrawLimit: await liqm.withdrawLimit(user),
+        };
+        expectEqualBN(afterWithdraw.withdrawLimit, BN0);
+        expect(afterWithdraw.plan.pWithdrawn).to.be.bignumber.eq(pAmount); 
+        expect(afterWithdraw.userPTK).to.be.bignumber.eq(afterWithdraw.userPTK.sub(pAmount)); 
     });
 
 
