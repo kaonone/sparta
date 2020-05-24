@@ -7,6 +7,24 @@ AkropolisOS is a DAO framework where members of which can earn high-interest rat
 
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
+# Mainnetdeployment 
+## External contracts
+* DAI: `0x6b175474e89094c44da98b954eedeac495271d0f`
+* cDAI: _not used_
+* RAY Storage: `0x446711e5ed3013743e40342a0462fbdc437cd43f`
+
+## Pool contracts
+* Pool: `0x3501d2c95F8dB9A94E0f0BCD15E2a440C71ceaE4`
+* AccessModule: `0x3f2ced4322ecfd1a77fc972bd6d690cf632ba09c`
+* PToken: `0x764112eCFFDdB111f78e9475d70010fD1120257f`
+* CurveModule: `0xa6d9d61c6637e8d1ab1f535baabb53e756559cdc`
+* CompoundModule: _not deployed_
+* RAYModule: `0xEEbaf85E5452F11e33e059ADb3F2F10E748a3562`
+* FundsModule: `0x1dEA32aAd5Ef531538CdC7eab515072aBc65d855`
+* PensionFundModule: `0x23b1Fb463a87815F6f8714bc4af9Ce8214C4c748`
+* FlashLoansModule: `0x7cD7833930E7fb43Fc4F221eBfFE3eFAE39D1442`
+* ArbitrageModule: `0x6E2CFb462D04b2385fE5d1D16A6e0A8154fd201e`
+
 # Testnet (Kovan) deployment 
 
 ## External contracts

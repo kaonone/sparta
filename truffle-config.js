@@ -93,7 +93,7 @@ module.exports = {
     mainnet: {
       provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://mainnet.infura.io/v3/" + infuraProjectId),
       networkId: 1,       // Mainnet id
-      gasPrice: 23000000000 // 23 gwei      
+      gasPrice: 25000000000 // 25 gwei      
     },
     
     // Another network with more advanced options...

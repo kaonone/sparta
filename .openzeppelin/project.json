@@ -4,13 +4,13 @@
     "Pool": "Pool",
     "AccessModule": "AccessModule",
     "PToken": "PToken",
-    "CompoundModule": "CompoundModule",
+    "CompoundModule": "RAYModule",
     "DefiFundsModule": "DefiFundsModule",
     "CurveModule": "CurveModule",
-    "LiquidityModule": "PensionFundModule",
     "FlashLoansModule": "FlashLoansModule",
     "ArbitrageModule": "ArbitrageModule",
-    "PensionFundModule": "PensionFundModule"
+    "PensionFundModule": "PensionFundModule",
+    "RAYModule": "RAYModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
