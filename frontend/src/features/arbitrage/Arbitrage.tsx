@@ -25,7 +25,7 @@ export function Arbitrage({ account }: { account: string }) {
       {executorAddress && <ArbitrageBot account={account} executor={executorAddress} />}
       {!executorAddress && ptkBalance?.isZero() && (
         <Hint>
-          You need to buy share in pool
+          You need to buy share in fund
           <Box ml={2}>
             <PTokenBuyingButton variant="contained" color="primary" fullWidth={false} />
           </Box>

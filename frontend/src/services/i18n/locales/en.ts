@@ -8,7 +8,7 @@ const en = {
         poolBalanceTitle: 'Input/Output costs',
         distributions: 'Distributions',
         myBalanceTitle: 'My balance',
-        poolInfoTitle: 'Pool information',
+        poolInfoTitle: 'Fund information',
       },
       balances: {
         balanceChangesTitle: 'Deposit/Withdraw history',
@@ -17,7 +17,7 @@ const en = {
     },
     components: {
       header: {
-        apr: 'Pool APR',
+        apr: 'Fund APR',
         availableBalance: 'Supply',
         depositPlusWithdraw24Volume: '24 volume',
         distributed: 'Total distributed (Coming soon)',
@@ -45,19 +45,19 @@ const en = {
         error: 'Withdrawing distributions. Failed',
       },
       'liquidity.sellPtk': {
-        pending: 'Withdrawing %{amount} from the pool. Pending',
-        success: 'Withdrawing %{amount} from the pool. Successful',
-        error: 'Withdrawing %{amount} from the pool. Failed',
+        pending: 'Withdrawing %{amount} from the fund. Pending',
+        success: 'Withdrawing %{amount} from the fund. Successful',
+        error: 'Withdrawing %{amount} from the fund. Failed',
       },
       'liquidity.buyPtk': {
-        pending: 'Transferring %{amount} to the pool. Pending',
-        success: 'Transferring %{amount} to the pool. Successful',
-        error: 'Transferring %{amount} to the pool. Failed',
+        pending: 'Transferring %{amount} to the fund. Pending',
+        success: 'Transferring %{amount} to the fund. Successful',
+        error: 'Transferring %{amount} to the fund. Failed',
       },
       'liquidity.closePlan': {
-        pending: 'Exit from the pool. Pending',
-        success: 'Exit from the pool. Successful',
-        error: 'Exit from the pool. Failed',
+        pending: 'Exit from the fund. Pending',
+        success: 'Exit from the fund. Successful',
+        error: 'Exit from the fund. Failed',
       },
       'defi.withdrawInterest': {
         pending: 'Withdrawing yield. Pending',
@@ -136,7 +136,7 @@ const en = {
         placeholder: 'Enter sum',
         fields: {
           withdrawMethod: {
-            availableBalance: 'from available pool balance',
+            availableBalance: 'from available fund balance',
             defiYield: 'from investment yield',
           },
         },
@@ -167,7 +167,7 @@ const en = {
         fields: {
           repaymentMethod: {
             fromOwnBalance: 'from own balance',
-            fromAvailablePoolBalance: 'from available pool balance',
+            fromAvailablePoolBalance: 'from available fund balance',
           },
         },
         insufficientBalanceError: 'Insufficient balance. You have only %{value}.',
@@ -284,7 +284,7 @@ const en = {
         amount: 'Amount',
         types: {
           DEBT_INTEREST: 'Loan interest',
-          POOL_DISTRIBUTIONS: 'Pool distribution',
+          POOL_DISTRIBUTIONS: 'Fund distribution',
         },
       },
     },
