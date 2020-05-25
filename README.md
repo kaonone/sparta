@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/akropolisio/akropolisOS.svg?branch=develop)](https://travis-ci.org/akropolisio/akropolisOS) [![Coverage Status](https://coveralls.io/repos/github/akropolisio/akropolisOS/badge.svg?branch=develop)](https://coveralls.io/github/akropolisio/akropolisOS?branch=develop)
 
 AkropolisOS - Ethereum implementation (active development)
-AkropolisOS is a DAO framework where members of which can earn high-interest rates by providing undercollateralized loans to other members and by pooling and investing capital through various liquid DeFi instruments.
+AkropolisOS is A Solidity framework for building complex dApps and protocols (savings, pensions, loans, investments.
+
+Akropolis Pool is undercollaterized credit pool based on AkropolisOS,  where members of which can earn high-interest rates by providing undercollateralized loans to other members and by pooling and investing capital through various liquid DeFi instruments.
 
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
