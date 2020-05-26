@@ -192,6 +192,11 @@ export interface PTokenContract extends Truffle.Contract<PTokenInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<PTokenInstance>;
 }
 
+export interface TestAddressListContract
+  extends Truffle.Contract<TestAddressListInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<TestAddressListInstance>;
+}
+
 export interface TestSQRTContract extends Truffle.Contract<TestSQRTInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<TestSQRTInstance>;
 }
@@ -4306,20 +4311,6 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
 export interface LoanModuleInstance extends Truffle.ContractInstance {
   ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
-  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
   DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   DEBT_REPAY_DEADLINE_PERIOD(
@@ -4347,10 +4338,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   MODULE_LTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
-
-  PLEDGE_PERCENT_MULTIPLIER(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
 
   activeDebts(
     arg0: string | BN,
@@ -4565,33 +4552,6 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
     estimateGas(
       borrower: string | BN,
       debt: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<number>;
-  };
-
-  __changeDebtLastPaymentDate: {
-    (
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<Truffle.TransactionResponse>;
-    call(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<void>;
-    sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
-      txDetails?: Truffle.TransactionDetails
-    ): Promise<string>;
-    estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
-      newDate: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5030,8 +4990,6 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
 }
 
 export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
   BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
@@ -5045,14 +5003,6 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
   COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
-
-  DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
-
-  DEBT_REPAY_DEADLINE_PERIOD(
-    txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
-
-  INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -6233,6 +6183,137 @@ export interface PTokenInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   distributionTotalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+}
+
+export interface TestAddressListInstance extends Truffle.ContractInstance {
+  append: {
+    (
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  prepend: {
+    (
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _item: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  remove: {
+    (_item: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      _item: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _item: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _item: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  replace: {
+    (
+      _from: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _from: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _from: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _from: string | BN,
+      _to: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  swap: {
+    (
+      _a: string | BN,
+      _b: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _a: string | BN,
+      _b: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _a: string | BN,
+      _b: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _a: string | BN,
+      _b: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  first(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  last(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  contains(
+    _item: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
+  next(
+    _item: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
+  prev(
+    _item: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
 }
 
 export interface TestSQRTInstance extends Truffle.ContractInstance {

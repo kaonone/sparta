@@ -93,7 +93,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function distributePTokens(uint256 amount) public onlyFundsOperator {
-        pToken().distribute(amount);
+        pToken().distribute(amount);    // This call will eventually mint new pTokens (with next distribution, which should be once a day)
     }
     
     /**
@@ -103,7 +103,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function burnPTokens(address from, uint256 amount) public onlyFundsOperator {
         assert(from != address(this)); //Use burnLockedPTokens
-        pToken().burnFrom(from, amount); //This call will revert if we have not enough allowance or sender has not enough pTokens
+        pToken().burnFrom(from, amount); // This call will revert if sender has not enough pTokens. Allowance is always unlimited for FundsModule
     }
 
     /**

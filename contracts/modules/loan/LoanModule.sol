@@ -296,18 +296,6 @@ contract LoanModule is Module, ILoanModule {
     }
 
     /**
-     * @notice This function is only used for testing purpuses (test liquidations)
-     * @dev SHOULD BE DELETED BEFORE MAINNET RELEASE
-     * @param borrower Address of borrower
-     * @param debt Index of borrowers's debt
-     * @param newDate New timestamp of the last payment for this debt
-     */
-    function __changeDebtLastPaymentDate(address borrower, uint256 debt, uint256 newDate) public onlyOwner {
-        Debt storage dbt = debts[borrower][debt];
-        dbt.lastPayment = newDate;
-    }
-
-    /**
      * @notice Calculates if default time for the debt is reached
      * @param borrower Address of borrower
      * @param debt Index of borrowers's debt
@@ -577,12 +565,12 @@ contract LoanModule is Module, ILoanModule {
 
     function withdrawDebtDefaultPayment_calculatePInterest(address borrower, Debt storage d, uint256 lAmount, uint256 lInterest) private view 
     returns(uint256 pInterest, uint256 poolInterest) {
+        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
+        pInterest = calculatePoolEnter(lInterest, lAmount); 
+
         (, uint256 lCovered, , , uint256 lPledge, )
         = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
         poolInterest = pInterest.mul(lPledge).div(lCovered);
-
-        //current liquidity already includes lAmount, which was never actually withdrawn, so we need to remove it here
-        pInterest = calculatePoolEnter(lInterest, lAmount); 
     }
 
     function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
