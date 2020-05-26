@@ -65,6 +65,9 @@ declare global {
       require(name: "PauserRole"): TruffleContracts.PauserRoleContract;
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
+      require(
+        name: "TestAddressList"
+      ): TruffleContracts.TestAddressListContract;
       require(name: "TestSQRT"): TruffleContracts.TestSQRTContract;
       require(name: "TokenModule"): TruffleContracts.TokenModuleContract;
       require(name: "VotesModule"): TruffleContracts.VotesModuleContract;
