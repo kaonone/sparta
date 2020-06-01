@@ -172,7 +172,7 @@ library AddressList {
 
         if (prevA == ZERO_ADDRESS) {
             prepend(_data, _b);
-        } else if(prevA != _b) {
+        } else if (prevA != _b) {
             append(_data, _b, prevA);
         } else {
             append(_data, _b, _a);
