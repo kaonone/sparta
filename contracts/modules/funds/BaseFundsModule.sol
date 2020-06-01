@@ -78,7 +78,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
-        require(pToken().transfer(to, amount), "FundsModule: withdraw failed");  //this also runs claimDistributions(to)
+        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed");  //this also runs claimDistributions(to)
         pBalances[to] = pBalances[to].sub(amount);
     }
 
