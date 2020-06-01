@@ -10,15 +10,6 @@ declare global {
     interface Artifacts {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
-      require(
-        name: "ArbitrageExecutor"
-      ): TruffleContracts.ArbitrageExecutorContract;
-      require(
-        name: "ArbitrageModule"
-      ): TruffleContracts.ArbitrageModuleContract;
-      require(
-        name: "BadFlashLoanReceiverStub"
-      ): TruffleContracts.BadFlashLoanReceiverStubContract;
       require(name: "Base"): TruffleContracts.BaseContract;
       require(
         name: "BaseFundsModule"
@@ -51,13 +42,6 @@ declare global {
       require(name: "ERC721"): TruffleContracts.ERC721Contract;
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
-      require(name: "ExchangeStub"): TruffleContracts.ExchangeStubContract;
-      require(
-        name: "FlashLoanReceiverStub"
-      ): TruffleContracts.FlashLoanReceiverStubContract;
-      require(
-        name: "FlashLoansModule"
-      ): TruffleContracts.FlashLoansModuleContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
       require(
         name: "FundsModuleStub"
@@ -65,9 +49,6 @@ declare global {
       require(
         name: "FundsOperatorRole"
       ): TruffleContracts.FundsOperatorRoleContract;
-      require(
-        name: "FundsWithLoansModule"
-      ): TruffleContracts.FundsWithLoansModuleContract;
       require(name: "IAccessModule"): TruffleContracts.IAccessModuleContract;
       require(name: "ICErc20"): TruffleContracts.ICErc20Contract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
@@ -81,16 +62,7 @@ declare global {
       require(
         name: "IERC721Receiver"
       ): TruffleContracts.IERC721ReceiverContract;
-      require(
-        name: "IFlashLoanReceiver"
-      ): TruffleContracts.IFlashLoanReceiverContract;
-      require(
-        name: "IFlashLoansModule"
-      ): TruffleContracts.IFlashLoansModuleContract;
       require(name: "IFundsModule"): TruffleContracts.IFundsModuleContract;
-      require(
-        name: "IFundsWithLoansModule"
-      ): TruffleContracts.IFundsWithLoansModuleContract;
       require(
         name: "ILiquidityModule"
       ): TruffleContracts.ILiquidityModuleContract;
@@ -128,6 +100,9 @@ declare global {
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "RAYModule"): TruffleContracts.RAYModuleContract;
       require(name: "RAYStub"): TruffleContracts.RAYStubContract;
+      require(
+        name: "TestAddressList"
+      ): TruffleContracts.TestAddressListContract;
       require(
         name: "TestnetCErc20Proxy"
       ): TruffleContracts.TestnetCErc20ProxyContract;
