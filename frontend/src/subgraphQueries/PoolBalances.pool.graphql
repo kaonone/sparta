@@ -1,0 +1,9 @@
+subscription PoolBalances($date: ID!) {
+  pools(first: 1000, orderBy: id, where: {id_gt: $date}) {
+    id
+    usersLength
+    lBalance
+    pEnterPrice
+    pExitPrice
+  }
+}

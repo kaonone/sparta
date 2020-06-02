@@ -32,5 +32,6 @@ interface IPToken {
     function fullBalanceOf(address account) external view returns(uint256);
     function calculateDistributedAmount(uint256 startDistribution, uint256 nextDistribution, uint256 initialBalance) external view returns(uint256);
     function nextDistribution() external view returns(uint256);
-
+    function distributionTotalSupply() external view returns(uint256);
+    function distributionBalanceOf(address account) external view returns(uint256);
 }

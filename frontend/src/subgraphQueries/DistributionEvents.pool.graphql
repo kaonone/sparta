@@ -1,0 +1,12 @@
+query DistributionEvents($first: Int!, $skip: Int!) {
+  distributionEvents(first: $first, skip: $skip, orderBy: id, orderDirection: desc) {
+    id
+    date
+    amount
+    claimed
+    totalSupply
+    poolState {
+      usersLength
+    }
+  }
+}

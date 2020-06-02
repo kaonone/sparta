@@ -255,6 +255,7 @@
   {
     "constant": true,
     "inputs": [],
+<<<<<<< HEAD
     "name": "MODULE_ACCESS",
     "outputs": [
       {
@@ -390,6 +391,8 @@
   {
     "constant": true,
     "inputs": [],
+=======
+>>>>>>> b208d6518a025c5c77f7eb49e22b5e944221258f
     "name": "PLEDGE_PERCENT_MULTIPLIER",
     "outputs": [
       {

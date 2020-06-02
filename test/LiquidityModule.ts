@@ -1,10 +1,11 @@
 import {
     PoolContract, PoolInstance, 
-    FundsModuleContract, FundsModuleInstance, 
+    BaseFundsModuleContract, BaseFundsModuleInstance, 
     AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleStubContract, LoanModuleStubInstance,
     CurveModuleContract, CurveModuleInstance,
+    DefiModuleStubContract, DefiModuleStubInstance,
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
@@ -19,18 +20,19 @@ const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
-const FundsModule = artifacts.require("FundsModule");
+const BaseFundsModule = artifacts.require("BaseFundsModule");
 const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
+const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
 
 contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let pool: PoolInstance;
-    let funds: FundsModuleInstance; 
+    let funds: BaseFundsModuleInstance; 
     let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanms: LoanModuleStubInstance; 
@@ -38,6 +40,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
+    let defi: DefiModuleStubInstance; 
 
     before(async () => {
         //Setup system contracts
@@ -52,6 +55,10 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
 
+        defi = await DefiModuleStub.new();
+        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("defi", defi.address, true, {from: owner});  
+
         access = await AccessModule.new();
         await (<any> access).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("access", access.address, true, {from: owner});  
@@ -65,21 +72,14 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await (<any> liqm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("liquidity", liqm.address, true, {from: owner});  
 
-        loanms = await LoanModuleStub.new();
-        await (<any> loanms).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("loan", loanms.address, true, {from: owner});  
-        loanmps = await LoanModuleStub.new();
-        await (<any> loanmps).methods['initialize(address)'](pool.address, {from: owner});
-        await pool.set("loan_proposals", loanmps.address, true, {from: owner});  
-
-        funds = await FundsModule.new();
+        funds = await BaseFundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
 
         //Do common tasks
-        lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+        await lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
         await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
 
     })
@@ -164,31 +164,4 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':expectedLTokens[0]});
     });
 
-    it('should allow deposit if there are debts', async () => {
-        let amountWeiLToken = w3random.interval(10, 100000, 'ether');
-        await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-        // await expectRevert(
-        //     liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
-        //     'LiquidityModule: Deposits forbidden if address has active debts'
-        // );
-        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
-        expectEvent(receipt, 'Deposit', {'sender':liquidityProvider});
-    });
-    it('should allow withdraw if there are debts', async () => {
-        await loanms.repay(0, 0, {from: liquidityProvider}); //Unset hasDebts for msg.sender, it may be set by previous tests
-        let lDepositWei = w3random.interval(2000, 100000, 'ether');
-        await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
-        let pBalance = await pToken.balanceOf(liquidityProvider);
-        await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
-
-        let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
-        let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
-        await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
-        // await expectRevert(
-        //     liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
-        //     'LiquidityModule: Withdraws forbidden if address has active debts'
-        // );
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
-        expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
-    });
 });

@@ -1,0 +1,7 @@
+subscription MyUserBalances($first: Int!, $address: String!, $fromDate: BigInt) {
+  exitBalances(first: $first, orderBy: date, where: {user: $address, date_gt: $fromDate}) {
+    date
+    lBalance
+    pBalance
+  }
+}

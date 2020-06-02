@@ -1,0 +1,13 @@
+subscription PoolMetrics @pool {
+  pools(orderBy: id, orderDirection: desc) {
+    lBalance
+    lDebt
+    usersLength
+    lProposals
+    depositSum
+    withdrawSum
+    proposalsCount
+    debtsCount
+    maxProposalInterest
+  }
+}
