@@ -5,15 +5,20 @@ pragma solidity ^0.5.12;
  */
 contract ModuleNames {
     // Pool Modules
-    string public constant MODULE_ACCESS            = "access";
-    string public constant MODULE_PTOKEN            = "ptoken";
-    string public constant MODULE_CURVE             = "curve";
-    string public constant MODULE_FUNDS             = "funds";
-    string public constant MODULE_LIQUIDITY         = "liquidity";
-    string public constant MODULE_LOAN              = "loan";
-    string public constant MODULE_LOAN_LIMTS        = "loan_limits";
-    string public constant MODULE_LOAN_PROPOSALS    = "loan_proposals";
+    string internal constant MODULE_ACCESS            = "access";
+    string internal constant MODULE_PTOKEN            = "ptoken";
+    string internal constant MODULE_DEFI              = "defi";
+    string internal constant MODULE_CURVE             = "curve";
+    string internal constant MODULE_FUNDS             = "funds";
+    string internal constant MODULE_LIQUIDITY         = "liquidity";
+    string internal constant MODULE_LOAN              = "loan";
+    string internal constant MODULE_LOAN_LIMTS        = "loan_limits";
+    string internal constant MODULE_LOAN_PROPOSALS    = "loan_proposals";
+    string internal constant MODULE_FLASHLOANS        = "flashloans";
+    string internal constant MODULE_ARBITRAGE         = "arbitrage";
 
     // External Modules (used to store addresses of external contracts)
-    string public constant MODULE_LTOKEN            = "ltoken";
+    string internal constant MODULE_LTOKEN            = "ltoken";
+    string internal constant MODULE_CDAI              = "cdai";
+    string internal constant MODULE_RAY               = "ray";
 }

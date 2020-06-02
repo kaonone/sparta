@@ -1,0 +1,12 @@
+subscription DefiAprsFromDate($fromDate: BigInt!) {
+  defiAPRs(first: 100, where: {dateTo_gt: $fromDate}) {
+    id
+    dateFrom
+    dateTo
+    amountFrom
+    amountTo
+    duration
+    apr
+    aprDecimals
+  }
+}

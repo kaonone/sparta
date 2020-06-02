@@ -1,0 +1,18 @@
+overwrite: true
+generates:
+  src/generated/gql/pool.tsx:
+    documents: "./src/**/*.pool.graphql"
+    schema: "https://api.thegraph.com/subgraphs/name/alekspickle/akropolis-os-pension-fund-prod"
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      withComponent: false
+      withHOC: false
+      withHooks: true
+      reactApolloVersion: 3
+      scalars:
+        BigInt: string
+        BigDecimal: string
+        Bytes: string

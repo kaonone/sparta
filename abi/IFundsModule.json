@@ -60,18 +60,19 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "withdrawLTokens",
-    "outputs": [],
+    "name": "distributeLInterest",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -92,6 +93,26 @@
       {
         "internalType": "uint256",
         "name": "poolFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawLTokens",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
         "type": "uint256"
       }
     ],
@@ -267,24 +288,12 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "lAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "calculatePoolEnter",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "constant": false,
+    "inputs": [],
+    "name": "emitStatusEvent",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -293,11 +302,6 @@
       {
         "internalType": "uint256",
         "name": "lAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityCorrection",
         "type": "uint256"
       }
     ],
@@ -371,32 +375,6 @@
       {
         "internalType": "uint256",
         "name": "lAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "calculatePoolExitWithFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "lAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liquidityCorrection",
         "type": "uint256"
       }
     ],

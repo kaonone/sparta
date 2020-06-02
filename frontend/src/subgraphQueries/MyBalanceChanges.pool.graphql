@@ -1,0 +1,7 @@
+query MyBalanceChanges($first: Int!, $skip: Int!, $address: String!) {
+  balanceChanges(first: $first, skip: $skip, orderBy: date, orderDirection: desc, where: {user: $address}) {
+    date
+    amount
+    type
+  }
+}

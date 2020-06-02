@@ -1,0 +1,15 @@
+query MyGuarantees($first: Int!, $skip: Int!, $supporters: [String!]!) {
+  debts(first: $first, skip: $skip, where: {supporters_contains: $supporters}) {
+    debt_id
+    proposal_id
+    apr
+    total
+    repayed
+    last_update
+    status
+    stakeProgress
+    borrower {
+      id
+    }
+  }
+}

@@ -1,0 +1,49 @@
+branches:
+  only:
+    - beta
+    - sandbox
+    - beta-defi
+
+language: node_js
+node_js:
+  - "10"
+
+install: skip
+script: skip
+
+before_deploy:
+  - yarn
+  - if [ "$TRAVIS_BRANCH" = "beta" ]; then yarn codegen:beta; fi
+  - if [ "$TRAVIS_BRANCH" = "beta-defi" ]; then yarn codegen:beta-defi; fi
+  - if [ "$TRAVIS_BRANCH" = "sandbox" ]; then yarn codegen:sandbox; fi
+  - yarn test
+  - if [ "$TRAVIS_BRANCH" = "beta" ]; then yarn build:beta; fi
+  - if [ "$TRAVIS_BRANCH" = "beta-defi" ]; then yarn build:beta-defi; fi
+  - if [ "$TRAVIS_BRANCH" = "sandbox" ]; then yarn build:sandbox; fi
+
+deploy:
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN
+    local-dir: "./build"
+    on:
+      branch: beta
+
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN
+    local-dir: "./build"
+    repo: akropolisio/credit-pool-frontend-sandbox
+    on:
+      branch: sandbox
+
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN
+    local-dir: "./build"
+    repo: akropolisio/credit-pool-frontend-beta-defi
+    on:
+      branch: beta-defi
+
+notifications:
+  slack: akropolisio:xUhLQpSGEoBylmWK3DW8Kblm

@@ -1,0 +1,11 @@
+subscription MyUser($address: ID!) {
+  user(id: $address) {
+    id
+    lBalance
+    pBalance
+    pLockedSum
+    pInterestSum
+    unlockLiquiditySum
+    credit
+  }
+}

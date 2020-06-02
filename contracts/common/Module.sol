@@ -32,7 +32,10 @@ contract Module is Base, ModuleNames {
         }
 
         address moduleAddress = abi.decode(result, (address));
-        require(moduleAddress != ZERO_ADDRESS, "Module: requested module not found");
+        if (moduleAddress == ZERO_ADDRESS) {
+            string memory error = string(abi.encodePacked("Module: requested module not found: ", module));
+            revert(error);
+        }
         return moduleAddress;
     }
 

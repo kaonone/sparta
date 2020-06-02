@@ -1,12 +1,13 @@
 import {
     PoolContract, PoolInstance, 
-    FundsModuleContract, FundsModuleInstance, 
+    BaseFundsModuleContract, BaseFundsModuleInstance, 
     AccessModuleContract, AccessModuleInstance,
     LiquidityModuleContract, LiquidityModuleInstance,
     LoanModuleContract, LoanModuleInstance,
     LoanProposalsModuleContract, LoanProposalsModuleInstance,
     LoanLimitsModuleContract, LoanLimitsModuleInstance,
     CurveModuleContract, CurveModuleInstance,
+    DefiModuleStubContract, DefiModuleStubInstance,    
     PTokenContract, PTokenInstance, 
     FreeDAIContract, FreeDAIInstance
 } from "../types/truffle-contracts/index";
@@ -23,13 +24,14 @@ const findEventArgs = require("./utils/findEventArgs");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const Pool = artifacts.require("Pool");
-const FundsModule = artifacts.require("FundsModule");
+const BaseFundsModule = artifacts.require("BaseFundsModule");
 const AccessModule = artifacts.require("AccessModule");
 const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModule = artifacts.require("LoanModule");
 const LoanProposalsModule = artifacts.require("LoanProposalsModule");
 const LoanLimitsModule = artifacts.require("LoanLimitsModule");
 const CurveModule = artifacts.require("CurveModule");
+const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
@@ -38,7 +40,7 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
     let snap: Snapshot;
 
     let pool: PoolInstance;
-    let funds: FundsModuleInstance; 
+    let funds: BaseFundsModuleInstance; 
     let access: AccessModuleInstance;
     let liqm: LiquidityModuleInstance; 
     let loanm: LoanModuleInstance; 
@@ -47,6 +49,7 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let lToken: FreeDAIInstance;
+    let defi: DefiModuleStubInstance; 
 
     let withdrawFeePercent:BN, percentDivider:BN;
     let collateralToDebtRatio:BN, collateralToDebtMultiplier:BN;
@@ -75,6 +78,10 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
 
+        defi = await DefiModuleStub.new();
+        await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        await pool.set("defi", defi.address, true, {from: owner});  
+
         curve = await CurveModule.new();
         await (<any> curve).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("curve", curve.address, true, {from: owner});  
@@ -100,7 +107,7 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await (<any> loanm).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("loan", loanm.address, true, {from: owner});  
 
-        funds = await FundsModule.new();
+        funds = await BaseFundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
         await pool.set("funds", funds.address, true, {from: owner});  
         await pToken.addMinter(funds.address, {from: owner});

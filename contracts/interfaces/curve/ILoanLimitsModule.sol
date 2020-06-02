@@ -16,6 +16,8 @@ interface ILoanLimitsModule {
         MIN_CANCEL_PROPOSAL_TIMEOUT
     }
 
+    event LimitChanged(LoanLimitType limitType, uint256 oldValue, uint256 newValue);
+
     function set(LoanLimitType limit, uint256 value) external;
     function get(LoanLimitType limit) external view returns(uint256);
 
