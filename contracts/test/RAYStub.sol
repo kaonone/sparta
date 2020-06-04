@@ -4,12 +4,13 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.s
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Burnable.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Metadata.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/IERC721Receiver.sol";
-import "../interfaces/defi/IRAY.sol";
 import "../interfaces/defi/IRAYStorage.sol";
+import "../interfaces/defi/IRAYNAVCalculator.sol";
+import "../interfaces/defi/IRAYPortfolioManager.sol";
 import "../token/FreeDAI.sol";
 import "../common/Base.sol";
 
-contract RAYStub is Base, IRAY, IRAYStorage, IERC721Receiver, ERC721, ERC721Burnable, ERC721Metadata {
+contract RAYStub is Base, IRAYStorage, IRAYNAVCalculator, IRAYPortfolioManager, IERC721Receiver, ERC721, ERC721Burnable, ERC721Metadata {
     using SafeMath for uint256;
 
     uint256 public constant EXP_SCALE = 1e18;  //Exponential scale (see Compound Exponential)

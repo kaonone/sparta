@@ -6,19 +6,23 @@ pragma solidity ^0.5.12;
  */
 interface IFundsModule {
     event Status(uint256 lBalance, uint256 lDebts, uint256 lProposals, uint256 pEnterPrice, uint256 pExitPrice);
+    event LTokenRegistered(address indexed token, uint256 rate);
+    event LTokenUnregistered(address indexed token);
+    event LTokenRateChanged(address indexed token, uint256 oldRate, uint256 newRate);
+
 
     /**
      * @notice Deposit liquid tokens to the pool
      * @param from Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      */
-    function depositLTokens(address from, uint256 amount) external;
+    function depositLTokens(address token, address from, uint256 amount) external;
     /**
      * @notice Withdraw liquid tokens from the pool
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      */
-    function withdrawLTokens(address to, uint256 amount) external;
+    function withdrawLTokens(address token, address to, uint256 amount) external;
 
     /**
      * @notice Withdraw liquid tokens from the pool
@@ -26,7 +30,7 @@ interface IFundsModule {
      * @param amount Amount of tokens to deposit
      * @param poolFee Pool fee will be sent to pool owner
      */
-    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) external;
+    function withdrawLTokens(address token, address to, uint256 amount, uint256 poolFee) external;
 
     /**
      * @notice Deposit pool tokens to the pool
@@ -72,6 +76,16 @@ interface IFundsModule {
 
     function emitStatusEvent() external;
 
+    function lBalance(address token) external view returns(uint256);
+
+    function allRegisteredLTokens() external view returns(address[] memory);
+    
+    function isLTokenRegistered(address token) external view returns(bool);
+
+    function normalizeLTokenValue(address token, uint256 value) external view returns(uint256);
+
+    function denormalizeLTokenValue(address token, uint256 value) external view returns(uint256);
+
     /**
      * @notice Calculates how many pTokens should be given to user for increasing liquidity
      * @param lAmount Amount of liquid tokens which will be put into the pool
@@ -116,12 +130,16 @@ interface IFundsModule {
      */
     function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) external view returns(uint256);
 
-    /**
+
+   /**
      * @notice Current pool liquidity
      * @return available liquidity
      */
     function lBalance() external view returns(uint256);
 
+
+    function getPrefferableTokenForWithdraw(uint256 lAmount) external view returns(address);
+    
     /**
      * @return Amount of pTokens locked in FundsModule by account
      */

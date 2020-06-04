@@ -1,3 +1,5 @@
+pragma solidity ^0.5.12;
+
 /**
 
         The software and documentation available in this repository (the "Software") is
@@ -19,15 +21,12 @@
 
 */
 
-pragma solidity ^0.5.12;
-
-
 /// @notice  Basic interface for integration with RAY - The Robo-Advisor for Yield.
 ///
 /// Author:   Devan Purhar
 /// Version:  1.0.0
 
-interface IRAY {
+interface IRAYPortfolioManager {
 
 
     /// @notice  Mints a RAY token of the associated basket of opportunities to the portfolioId
@@ -63,17 +62,5 @@ interface IRAY {
     ///
     /// @return  the amount transferred to the owner of the RAY token after fees
     function redeem(bytes32 tokenId, uint valueToWithdraw, address originalCaller) external returns(uint);
-
-
-    /// @notice  Get the underlying value of a RAY token (principal + yield earnt)
-    ///
-    /// @dev     The implementation of this function exists in NAVCalculator
-    ///
-    /// @param   portfolioId - the id of the portfolio associated with the RAY token
-    /// @param   tokenId - the id of the RAY token to get the value of
-    ///
-    /// @return  an array of two, the first value is the current token value, the
-    ///          second value is the current price per share of the portfolio
-    function getTokenValue(bytes32 portfolioId, bytes32 tokenId) external view returns(uint, uint);
 
 }

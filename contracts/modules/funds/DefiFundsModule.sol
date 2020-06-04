@@ -16,24 +16,24 @@ contract DefiFundsModule is BaseFundsModule {
         BaseFundsModule.initialize(_pool);
     }
 
-    function withdrawAllFromDefi() public onlyFundsOperator {
+    function withdrawAllFromDefi(address token) public onlyFundsOperator {
         uint256 amount = defiModule().poolBalance();
-        defiModule().withdraw(address(this), amount);
+        defiModule().withdraw(token, address(this), amount);
     }
 
-    function depositAllToDefi() public onlyFundsOperator {
-        uint256 amount = lToken().balanceOf(address(this));
-        lToken().transfer(address(defiModule()), amount);
-        defiModule().handleDeposit(address(this), amount);
+    function depositAllToDefi(address token) public onlyFundsOperator {
+        uint256 amount = IERC20(token).balanceOf(address(this));
+        IERC20(token).transfer(address(defiModule()), amount);
+        defiModule().handleDeposit(token, address(this), amount);
     }
 
-    function lTransferToFunds(address from, uint256 amount) internal {
-        require(lToken().transferFrom(from, address(defiModule()), amount), "DefiFundsModule: incoming transfer failed");
-        defiModule().handleDeposit(from, amount);
+    function lTransferToFunds(address token, address from, uint256 amount) internal {
+        require(IERC20(token).transferFrom(from, address(defiModule()), amount), "DefiFundsModule: incoming transfer failed");
+        defiModule().handleDeposit(token, from, amount);
     }
 
-    function lTransferFromFunds(address to, uint256 amount) internal {
-        defiModule().withdraw(to, amount);
+    function lTransferFromFunds(address token, address to, uint256 amount) internal {
+        defiModule().withdraw(token, to, amount);
     }
 
     function defiModule() private view returns(IDefiModule) {

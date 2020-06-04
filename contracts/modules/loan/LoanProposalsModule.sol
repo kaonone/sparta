@@ -216,7 +216,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      * @param proposal Index of DebtProposal
      * @return Index of created Debt
      */
-    function executeDebtProposal(uint256 proposal) public operationAllowed(IAccessModule.Operation.ExecuteDebtProposal) returns(uint256) {
+    function executeDebtProposal(uint256 proposal, address token) public operationAllowed(IAccessModule.Operation.ExecuteDebtProposal) returns(uint256) {
         address borrower = _msgSender();
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "LoanProposalsModule: DebtProposal not found");
@@ -236,7 +236,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
 
         fundsModule().lockPTokens(p.supporters, amounts);
 
-        uint256 debtIdx = loanModule().createDebt(borrower, proposal, p.lAmount);
+        uint256 debtIdx = loanModule().createDebt(borrower, proposal, token, p.lAmount);
         decreaseOpenProposals(borrower);
         emit DebtProposalExecuted(borrower, proposal, debtIdx, p.lAmount);
         return debtIdx;
@@ -357,6 +357,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
     }
 
     function calculateExitFee(uint256 lAmount) internal view returns(uint256){
+        //This operation does not require lAmount normalization/denormalization because it's just percent of lAmount
         return ICurveModule(getModuleAddress(MODULE_CURVE)).calculateExitFee(lAmount);
     }
 

@@ -17,15 +17,15 @@ contract FundsModuleStub is Module, IFundsModule {
         Module.initialize(_pool);
     }
 
-    function depositLTokens(address, uint256) external {
+    function depositLTokens(address, address, uint256) external {
         this;
     }
 
-    function withdrawLTokens(address, uint256) external {
+    function withdrawLTokens(address, address, uint256) external {
         this;
     }
 
-    function withdrawLTokens(address, uint256, uint256) external {
+    function withdrawLTokens(address, address, uint256, uint256) external {
         this;
     }
 
@@ -67,6 +67,14 @@ contract FundsModuleStub is Module, IFundsModule {
 
     function emitStatusEvent() external {
         this;
+    }
+
+    function normalizeLTokenValue(address, uint256 value) public view returns(uint256) {
+        return value;
+    }
+
+    function denormalizeLTokenValue(address, uint256 value) public view returns(uint256) {
+        return value;
     }
 
     function calculatePoolEnter(uint256) external view returns(uint256) {

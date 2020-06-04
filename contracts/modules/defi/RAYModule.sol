@@ -3,18 +3,27 @@ pragma solidity ^0.5.12;
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/IERC721Receiver.sol";
 import "../../interfaces/token/IPToken.sol";
-import "../../interfaces/defi/IRAY.sol";
 import "../../interfaces/defi/IRAYStorage.sol";
+import "../../interfaces/defi/IRAYPortfolioManager.sol";
+import "../../interfaces/defi/IRAYNAVCalculator.sol";
 import "./DefiModuleBase.sol";
 
 contract RAYModule is DefiModuleBase, IERC721Receiver {
-    bytes32 public constant PORTFOLIO_ID = keccak256("DaiCompound"); //keccak256("DaiBzxCompoundDydx")
     bytes32 internal constant PORTFOLIO_MANAGER_CONTRACT = keccak256("PortfolioManagerContract");
     bytes32 internal constant NAV_CALCULATOR_CONTRACT = keccak256("NAVCalculatorContract");
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");
     bytes4 internal constant ERC721_RECEIVER = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
-    bytes32 public rayTokenId;
+    event TokenRegistered(address indexed token, bytes32 portfolioId);
+    event TokenUnregistered(address indexed token);
+
+    struct TokenData {
+        bytes32 portfolioId;
+        bytes32 rayTokenId;
+    }
+
+    address[] _registeredTokens;
+    mapping(address => TokenData) public tokens;
 
     function initialize(address _pool) public initializer {
         DefiModuleBase.initialize(_pool);
@@ -26,61 +35,101 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         return ERC721_RECEIVER;
     }
 
-    function handleDepositInternal(address, uint256 amount) internal {
-        IRAY pm = rayPortfolioManager();
-        lToken().approve(address(pm), amount);
-        if (rayTokenId == 0x0) {
-            rayTokenId = pm.mint(PORTFOLIO_ID, address(this), amount);
+    function registerToken(address token, bytes32 portfolioId) public onlyDefiOperator {
+        require(token != address(0), "DefiModuleBase: incorrect token address");
+        require(portfolioId != bytes32(0), "DefiModuleBase: incorrect portfolio id");
+        tokens[token] = TokenData({
+            portfolioId: portfolioId,
+            rayTokenId: 0x0
+        });
+        _registeredTokens.push(token);
+        uint256 cuurentBalance = IERC20(token).balanceOf(address(this));
+        if (cuurentBalance > 0) {
+            handleDeposit(token, address(0), cuurentBalance); //This updates depositsSinceLastDistribution
+        }
+        emit TokenRegistered(token, portfolioId);
+    }
+
+    function unregisterToken(address token) public onlyDefiOperator {
+        uint256 balance = poolBalanceOf(token);
+
+        //TODO: ensure there is no interest on this token which is wating to be withdrawn
+
+        //Find position of token we are removing
+        uint256 pos;
+        for (pos = 0; pos < _registeredTokens.length; pos++) {
+            if (_registeredTokens[pos] == token) break;
+        }
+        assert(_registeredTokens[pos] == token); // This should never fail because we know token is registered
+        if (pos == _registeredTokens.length - 1) {
+            // Removing last token
+            _registeredTokens.pop();
         } else {
-            pm.deposit(rayTokenId, amount);
+            // Replace token we are going to delete with the last one and remove it
+            address last = _registeredTokens[_registeredTokens.length-1];
+            _registeredTokens.pop();
+            _registeredTokens[pos] = last;
+        }
+
+        if (balance > 0){
+            withdraw(token, getModuleAddress(MODULE_FUNDS), balance);   //This updates withdrawalsSinceLastDistribution
+        }
+        delete tokens[token];
+
+        emit TokenUnregistered(token);
+    }
+
+    function registeredTokens() public view returns(address[] memory){
+        return _registeredTokens;
+    }
+
+    function handleDepositInternal(address token, address, uint256 amount) internal {
+        require(tokens[token].portfolioId != 0x0, "DefiModuleBase: token not registered");
+        IRAYPortfolioManager pm = rayPortfolioManager();
+        IERC20(token).approve(address(pm), amount);
+        if (tokens[token].rayTokenId == 0x0) {
+            tokens[token].rayTokenId = pm.mint(tokens[token].portfolioId, address(this), amount);
+        } else {
+            pm.deposit(tokens[token].rayTokenId, amount);
         }
     }
 
-    function withdrawInternal(address beneficiary, uint256 amount) internal {
-        rayPortfolioManager().redeem(rayTokenId, amount, address(0));
+    function withdrawInternal(address token, address beneficiary, uint256 amount) internal {
+        rayPortfolioManager().redeem(tokens[token].rayTokenId, amount, address(0));
         lToken().transfer(beneficiary, amount);
     }
 
-    /**
-     * @dev This function allows move funds to RayModule (by loading current balances)
-     * and at the same time does not require Pool to be fully-initialized on deployment
-     */
-    function initialBalances() internal returns(uint256 poolDAI, uint256 totalPTK) {
-        bool success;
-        bytes memory result;
-
-        poolDAI = poolBalanceOfDAI(); // This returns 0 immidiately if rayTokenId == 0x0, and it can not be zero only if all addresses available
-
-        (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_PTOKEN));
-        require(success, "RAYModule: Pool error on get(ptoken)");
-        address ptk = abi.decode(result, (address));
-        if (ptk != ZERO_ADDRESS) totalPTK = IPToken(ptk).distributionTotalSupply(); // else totalPTK == 0;
-    }
-
-    function poolBalanceOfDAI() internal returns(uint256) {
-        if (rayTokenId == 0x0) return 0;
-        (uint256 poolDAI,) = rayNAVCalculator().getTokenValue(PORTFOLIO_ID, rayTokenId);
-        return poolDAI;
+    function poolBalanceOf(address token) internal returns(uint256) {
+        if (tokens[token].rayTokenId == 0x0) return 0;
+        (uint256 amount,) = rayNAVCalculator().getTokenValue(tokens[token].portfolioId, tokens[token].rayTokenId);
+        return amount;
     }
     
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
+        // this way was used during initialization, when pToken address may be not available, but now initialization makes it always zero
+        // (success, result) = pool.staticcall(abi.encodeWithSignature("get(string)", MODULE_PTOKEN));
+        // require(success, "RAYModule: Pool error on get(ptoken)");
+        // address ptk = abi.decode(result, (address));
+        // uint256 totalPTK;
+        // if (ptk != ZERO_ADDRESS) totalPTK = IPToken(ptk).distributionTotalSupply(); // else totalPTK == 0;
+        // return totalPTK;
     }
     
-    function rayPortfolioManager() private view returns(IRAY){
+    function rayPortfolioManager() private view returns(IRAYPortfolioManager){
         return rayPortfolioManager(rayStorage());
     }
 
-    function rayPortfolioManager(IRAYStorage rayStorage) private view returns(IRAY){
-        return IRAY(rayStorage.getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
+    function rayPortfolioManager(IRAYStorage rayStorage) private view returns(IRAYPortfolioManager){
+        return IRAYPortfolioManager(rayStorage.getContractAddress(PORTFOLIO_MANAGER_CONTRACT));
     }
 
-    function rayNAVCalculator() private view returns(IRAY){
+    function rayNAVCalculator() private view returns(IRAYNAVCalculator){
         return rayNAVCalculator(rayStorage());
     }
 
-    function rayNAVCalculator(IRAYStorage rayStorage) private view returns(IRAY){
-        return IRAY(rayStorage.getContractAddress(NAV_CALCULATOR_CONTRACT));
+    function rayNAVCalculator(IRAYStorage rayStorage) private view returns(IRAYNAVCalculator){
+        return IRAYNAVCalculator(rayStorage.getContractAddress(NAV_CALCULATOR_CONTRACT));
     }
 
     function rayStorage() private view returns(IRAYStorage){

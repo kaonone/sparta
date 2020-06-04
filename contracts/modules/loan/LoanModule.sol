@@ -37,6 +37,7 @@ contract LoanModule is Module, ILoanModule {
     uint256 private lDebts;
 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
+    mapping(address=>address[]) public debtToken;           // Stores which token was used for a debt
 
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
@@ -54,8 +55,14 @@ contract LoanModule is Module, ILoanModule {
      * @param proposal Index of DebtProposal
      * @return Index of created Debt
      */
-    function createDebt(address borrower, uint256 proposal, uint256 lAmount) public returns(uint256) {
+    function createDebt(address borrower, uint256 proposal, address token, uint256 dnlAmount) public returns(uint256) {
         require(_msgSender() == getModuleAddress(MODULE_LOAN_PROPOSALS), "LoanModule: requests only accepted from LoanProposalsModule");
+        require(fundsModule().isLTokenRegistered(token), "LoanProposalsModule: token not registered");
+
+        uint256 availableLiquidity = fundsModule().lBalance(token);
+        require(dnlAmount <= availableLiquidity, "LoanModule: not enough liquidity");
+        uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
+
         //TODO: check there is no debt for this proposal
         debts[borrower].push(Debt({
             proposal: proposal,
@@ -71,23 +78,28 @@ contract LoanModule is Module, ILoanModule {
         lDebts = lDebts.add(lAmount);
         require(lDebts <= maxDebts, "LoanModule: Debt can not be created now because of debt loan limit");
 
+        debtToken[borrower].push(token);    //Store token used for this debt
+
         //Move locked pTokens to Funds - done in LoanProposals
 
         increaseActiveDebts(borrower);
-        fundsModule().withdrawLTokens(borrower, lAmount);
+        fundsModule().withdrawLTokens(token, borrower, dnlAmount);
         return debtIdx;
     }
 
     /**
      * @notice Repay amount of lToken and unlock pTokens
      * @param debt Index of Debt
-     * @param lAmount Amount of liquid tokens to repay (it will not take more than needed for full debt repayment)
+     * @param dnlAmount Amount of liquid tokens to repay (it will not take more than needed for full debt repayment)
      */
-    function repay(uint256 debt, uint256 lAmount) public operationAllowed(IAccessModule.Operation.Repay) {
+    function repay(uint256 debt, address token, uint256 dnlAmount) public operationAllowed(IAccessModule.Operation.Repay) {
         address borrower = _msgSender();
         Debt storage d = debts[borrower][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
+
+        require(token == debtToken[borrower][debt], "LoanModule: should repay in same token as debt taken");
+        uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 
         (, uint256 lCovered, , uint256 interest, uint256 pledgeLAmount, )
         = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
@@ -102,7 +114,10 @@ contract LoanModule is Module, ILoanModule {
             actualInterest = lAmount;
         } else {
             uint256 fullRepayLAmount = d.lAmount.add(lInterest);
-            if (lAmount > fullRepayLAmount) lAmount = fullRepayLAmount;
+            if (lAmount > fullRepayLAmount) {
+                lAmount = fullRepayLAmount;
+                dnlAmount = fundsModule().denormalizeLTokenValue(token, dnlAmount);
+            }
 
             d.lastPayment = now;
             uint256 debtReturned = lAmount.sub(lInterest);
@@ -115,7 +130,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
         uint256 poolInterest = pInterest.mul(pledgeLAmount).div(lCovered);
 
-        fundsModule().depositLTokens(borrower, lAmount); 
+        fundsModule().depositLTokens(token, borrower, dnlAmount); 
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
