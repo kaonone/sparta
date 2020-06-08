@@ -1,14 +1,15 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "FreeDAI": "FreeDAI",
-    "PToken": "PToken",
     "Pool": "Pool",
+    "AccessModule": "AccessModule",
+    "PToken": "PToken",
     "CurveModule": "CurveModule",
-    "LiquidityModule": "LiquidityModule",
-    "LoanModule": "LoanModule",
     "FundsModule": "FundsModule",
-    "AccessModule": "AccessModule"
+    "LiquidityModule": "LiquidityModule",
+    "LoanLimitsModule": "LoanLimitsModule",
+    "LoanProposalsModule": "LoanProposalsModule",
+    "LoanModule": "LoanModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
@@ -17,8 +18,8 @@
     "manager": "truffle",
     "compilerSettings": {
       "optimizer": {
-        "enabled": false,
-        "runs": "200"
+        "enabled": true,
+        "runs": "10000"
       }
     },
     "artifactsDir": "build\\contracts",
