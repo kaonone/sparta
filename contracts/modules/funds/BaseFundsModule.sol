@@ -11,7 +11,7 @@ import "../../common/Module.sol";
 import "./FundsOperatorRole.sol";
 
 //solhint-disable func-order
-contract FundsModule is Module, IFundsModule, FundsOperatorRole {
+contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     using SafeMath for uint256;
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
@@ -31,7 +31,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function depositLTokens(address from, uint256 amount) public onlyFundsOperator {
         lBalance = lBalance.add(amount);
-        require(lToken().transferFrom(from, address(this), amount), "FundsModule: deposit failed");
+        lTransferToFunds(from, amount);
         emitStatus();
     }
 
@@ -53,11 +53,11 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         lBalance = lBalance.sub(amount);
         if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
-            require(lToken().transfer(to, amount), "FundsModule: withdraw failed");
+            lTransferFromFunds(to, amount);
         }
         if (poolFee > 0) {
             lBalance = lBalance.sub(poolFee);
-            require(lToken().transfer(owner(), poolFee), "FundsModule: fee transfer failed");
+            lTransferFromFunds(owner(), poolFee);
         }
         emitStatus();
     }
@@ -78,7 +78,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
-        require(pToken().transfer(to, amount), "FundsModule: withdraw failed");  //this also runs claimDistributions(to)
+        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed");  //this also runs claimDistributions(to)
         pBalances[to] = pBalances[to].sub(amount);
     }
 
@@ -89,7 +89,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function mintPTokens(address to, uint256 amount) public onlyFundsOperator {
         assert(to != address(this)); //Use mintAndLockPTokens
-        require(pToken().mint(to, amount), "FundsModule: mint failed");
+        require(pToken().mint(to, amount), "BaseFundsModule: mint failed");
     }
 
     function distributePTokens(uint256 amount) public onlyFundsOperator {
@@ -112,7 +112,7 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount list of amounts addresses to lock tokens from
      */
     function lockPTokens(address[] calldata from, uint256[] calldata amount) external onlyFundsOperator {
-        require(from.length == amount.length, "FundsModule: from and amount length should match");
+        require(from.length == amount.length, "BaseFundsModule: from and amount length should match");
         //pToken().claimDistributions(address(this));
         pToken().claimDistributions(from);
         uint256 lockAmount;
@@ -125,12 +125,12 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function mintAndLockPTokens(uint256 amount) public onlyFundsOperator {
-        require(pToken().mint(address(this), amount), "FundsModule: mint failed"); 
+        require(pToken().mint(address(this), amount), "BaseFundsModule: mint failed");
         pBalances[address(this)] = pBalances[address(this)].add(amount);
     }
 
     function unlockAndWithdrawPTokens(address to, uint256 amount) public onlyFundsOperator {
-        require(pToken().transfer(to, amount), "FundsModule: withdraw failed"); //this also runs claimDistributions(to)
+        require(pToken().transfer(to, amount), "BaseFundsModule: withdraw failed"); //this also runs claimDistributions(to)
         pBalances[address(this)] = pBalances[address(this)].sub(amount);
     }
 
@@ -146,8 +146,12 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function refundLTokens(address to, uint256 amount) public onlyFundsOperator {
         uint256 realLBalance = lToken().balanceOf(address(this));
-        require(realLBalance.sub(amount) >= lBalance, "FundsModule: not enough tokens to refund");
-        require(lToken().transfer(to, amount), "FundsModule: refund failed");
+        require(realLBalance.sub(amount) >= lBalance, "BaseFundsModule: not enough tokens to refund");
+        require(lToken().transfer(to, amount), "BaseFundsModule: refund failed");
+    }
+
+    function emitStatusEvent() public onlyFundsOperator {
+        emitStatus();
     }
 
     /**
@@ -217,6 +221,14 @@ contract FundsModule is Module, IFundsModule, FundsOperatorRole {
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         uint256 lProposals = loanProposalsModule().totalLProposals();
         return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
+    }
+
+    function lTransferToFunds(address from, uint256 amount) internal {
+        require(lToken().transferFrom(from, address(this), amount), "BaseFundsModule: incoming transfer failed");
+    }
+
+    function lTransferFromFunds(address to, uint256 amount) internal {
+        require(lToken().transfer(to, amount), "BaseFundsModule: outgoing transfer failed");
     }
 
     function emitStatus() private {

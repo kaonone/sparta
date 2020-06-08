@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Mint
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Burnable.sol";
 import "../../common/Module.sol";
 import "../../interfaces/token/IPToken.sol";
+import "../../interfaces/defi/IDefiModule.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "./DistributionToken.sol";
 
@@ -76,8 +77,16 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
         return fullSupply.sub(locked);
     }
 
+    function userBalanceChanged(address account) internal {
+        defiModule().updatePTKBalance(account, distributionBalanceOf(account));
+    }
+
     function fundsModule() internal view returns(IFundsModule) {
         return IFundsModule(getModuleAddress(MODULE_FUNDS));
+    }
+
+    function defiModule() internal view returns(IDefiModule) {
+        return IDefiModule(getModuleAddress(MODULE_DEFI));
     }
 
     /**
