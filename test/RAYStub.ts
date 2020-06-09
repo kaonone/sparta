@@ -45,7 +45,7 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
         let before = {
             userDaiBalance: await dai.balanceOf(user),
             rayDaiBalance: await dai.balanceOf(ray.address),
-            userRayBalance: (await ray.getTokenValue(RAY_PORTFOLIO_ID, rayTokenId))[0]
+            userRayBalance: (await ray.getTokenValueStub(rayTokenId))[0]
         };
         expect(before.userDaiBalance).to.be.bignumber.gte(amount);
 
@@ -54,7 +54,7 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
         let after = {
             userDaiBalance: await dai.balanceOf(user),
             rayDaiBalance: await dai.balanceOf(ray.address),
-            userRayBalance: (await ray.getTokenValue(RAY_PORTFOLIO_ID, rayTokenId))[0]
+            userRayBalance: (await ray.getTokenValueStub(rayTokenId))[0]
         };
 
         expect(before.userDaiBalance.sub(after.userDaiBalance)).to.be.bignumber.eq(amount);
@@ -66,7 +66,7 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
     it("should redeem DAI from RAY token", async () => {
         let before = {
             userDaiBalance: await dai.balanceOf(user),
-            userRayBalance: (await ray.getTokenValue(RAY_PORTFOLIO_ID, rayTokenId))[0]
+            userRayBalance: (await ray.getTokenValueStub(rayTokenId))[0]
         };
         expect(before.userRayBalance).to.be.bignumber.gt(new BN(0));
 
@@ -76,7 +76,7 @@ contract("RAYStub", async ([_, owner, user, ...otherAccounts]) => {
 
         let after = {
             userDaiBalance: await dai.balanceOf(user),
-            userRayBalance: (await ray.getTokenValue(RAY_PORTFOLIO_ID, rayTokenId))[0]
+            userRayBalance: (await ray.getTokenValueStub(rayTokenId))[0]
         };
         expect(before.userDaiBalance.add(after.userDaiBalance)).to.be.bignumber.eq(amount);
         expectEqualBN(before.userRayBalance.sub(after.userRayBalance), amount, 18, -5); //Inaccuracy may be caused by time passed between requests

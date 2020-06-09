@@ -43,6 +43,7 @@ declare global {
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
+      require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
         name: "FundsModuleStub"
       ): TruffleContracts.FundsModuleStubContract;

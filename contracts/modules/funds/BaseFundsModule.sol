@@ -260,7 +260,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }
     
-    function lToken() private view returns(IERC20){
+    function lToken() internal view returns(IERC20){
         return IERC20(getModuleAddress(MODULE_LTOKEN));
     }
 

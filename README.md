@@ -12,21 +12,19 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 
 ## External contracts
 * DAI: `0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa`
-* cDAI: `0x6D7F0754FFeb405d23C51CE938289d4835bE3b14`
 * RAY Storage: `0x21091e9DACac70A9E511a26CE538Ad27Ddb92AcD`
 
 ## Pool contracts
-* Pool: `0xaddF2d0C18a1989b800e9a4a8D496d856bBd0413`
-* AccessModule: `0xdE833D434856a6Ba58C4De2C235C9da777e4a8B3`
-* PToken: `0xB0E4aF12900380337D6D2b85063f2b791DCAc895`
-* CompoundModule: _not deployed_
-* RAYModule: `0xBc3426D4Cf4DFe01cCc088F61b59EDb3BA099Af5`
-* FundsModule: `0x2fC82FF38325e6A4D5eD587aAfb90827c1b0FCb4`
-* CurveModule: `0x4eB5f040CEE9425516fD1930cDCE3682D9379f26`
-* LiquidityModule: `0x88c6D8073a9f4f92c503397F33C4587537a6FA7B`
-* LoanLimitsModule: `0xB2EA6fE10925d521B44a652c39982837A58B9DfC`
-* LoanProposalsModule: `0x53668dA77ddaB3D90aC0c46AdE11Ebc1f9ADCf76`
-* LoanModule: `0xf72ecaD9F29CC99F59aE3862c8948E20E7Ee1062`
+* Pool: `0x113462A2c643dFEb47E9Cc3938FCBab04a058dF9`
+* AccessModule: `0x10522512CEb1fd8B1bf077ECb590Eee85856484f`
+* PToken: `0x6553789Cb23a656f2CcbC312AeBFC8C3d697dB1b`
+* CurveModule: `0xB49c4b7996E36654436F5a8F3C5d97018379971B`
+* RAYModule: `0x8413433fb3A7EC491c51d415AC437A32C5C81a40`
+* FundsModule: `0xa157b6A439ae79dC6e6bf2E170bf0DcfcAEB5AdE`
+* LiquidityModule: `0xE45dD10Bb723b13Dd6A226718D1A40cad9518C24`
+* LoanLimitsModule: `0xFAc465D511a68059C9C659926Ee881e8331234E6`
+* LoanProposalsModule: `0xC98560141039adb69d6B5F7949b5403FB8CC5B78`
+* LoanModule: `0x49Cc5A2d862567D3b6d8566eDB3FDc174aee8c37`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
@@ -55,23 +53,23 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 1. Deploy modules
     1. `npx oz create AccessModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create PToken --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create CompoundModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create RAYModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create CurveModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. `npx oz create DefiFundsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
+    1. `npx oz create FundsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create LiquidityModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create LoanLimitsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create LoanProposalsModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
     1. `npx oz create LoanModule --network rinkeby --init "initialize(address _pool)" --args Pool.address`
-    1. Save address of each module: `AccessModule.address`, `PToken.address`, `CompoundModule.address`, `CurveModule.address`, `DefiFundsModule.address`, `LiquidityModule.address`, `LoanLimitsModule.address`, `LoanProposalsModule.address`, `LoanModule.address`
+    1. Save address of each module: `AccessModule.address`, `PToken.address`, `RAYModule.address`, `CurveModule.address`, `FundsModule.address`, `LiquidityModule.address`, `LoanLimitsModule.address`, `LoanProposalsModule.address`, `LoanModule.address`
 1. Register external contracts in Pool
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ltoken, LToken.address, true"`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "cdai, cDAI.address, true"`
 1. Register modules in pool
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "access, AccessModule.address, false"`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "ptoken, PToken.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "defi, CompoundModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "defi, RAYModule.address, false"`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "curve, CurveModule.address, false"`
-    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "funds, DefiFundsModule.address, false"`
+    1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "funds, FundsModule.address, false"`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "liquidity, LiquidityModule.address`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_limits, LoanLimitsModule.address, false`
     1. `npx oz send-tx --to Pool.address --network rinkeby --method set --args "loan_proposals, LoanProposalsModule.address, false"`
@@ -79,8 +77,8 @@ Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.
 1. Configure modules
     1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LiquidityModule.address`
     1. `npx oz send-tx --to DefiFundsModule.address --network rinkeby --method addFundsOperator --args LoanModule.address`
-    1. `npx oz send-tx --to PToken.address --network rinkeby --method addMinter --args DefiFundsModule.address`
-    1. `npx oz send-tx --to CompoundModule.address --network rinkeby --method addDefiOperator --args DefiFundsModule.address`
+    1. `npx oz send-tx --to PToken.address --network rinkeby --method addMinter --args FundsModule.address`
+    1. `npx oz send-tx --to RAYModule.address --network rinkeby --method addDefiOperator --args FundsModule.address`
 
 ## Liquidity
 

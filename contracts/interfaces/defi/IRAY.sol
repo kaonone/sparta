@@ -74,6 +74,6 @@ interface IRAY {
     ///
     /// @return  an array of two, the first value is the current token value, the
     ///          second value is the current price per share of the portfolio
-    function getTokenValue(bytes32 portfolioId, bytes32 tokenId) external view returns(uint, uint);
+    function getTokenValue(bytes32 portfolioId, bytes32 tokenId) external returns(uint, uint);
 
 }

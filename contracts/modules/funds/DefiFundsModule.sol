@@ -40,8 +40,4 @@ contract DefiFundsModule is BaseFundsModule {
         return IDefiModule(getModuleAddress(MODULE_DEFI));
     }
     
-    function lToken() private view returns(IERC20){
-        return IERC20(getModuleAddress(MODULE_LTOKEN));
-    }
-
 }
