@@ -43,6 +43,7 @@ declare global {
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
+      require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
         name: "FundsModuleStub"
       ): TruffleContracts.FundsModuleStubContract;
@@ -75,6 +76,12 @@ declare global {
       ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(name: "IRAY"): TruffleContracts.IRAYContract;
+      require(
+        name: "IRAYNAVCalculator"
+      ): TruffleContracts.IRAYNAVCalculatorContract;
+      require(
+        name: "IRAYPortfolioManager"
+      ): TruffleContracts.IRAYPortfolioManagerContract;
       require(name: "IRAYStorage"): TruffleContracts.IRAYStorageContract;
       require(
         name: "ITestnetCompoundDAI"
