@@ -76,6 +76,12 @@ declare global {
       ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
       require(name: "IRAY"): TruffleContracts.IRAYContract;
+      require(
+        name: "IRAYNAVCalculator"
+      ): TruffleContracts.IRAYNAVCalculatorContract;
+      require(
+        name: "IRAYPortfolioManager"
+      ): TruffleContracts.IRAYPortfolioManagerContract;
       require(name: "IRAYStorage"): TruffleContracts.IRAYStorageContract;
       require(
         name: "ITestnetCompoundDAI"
