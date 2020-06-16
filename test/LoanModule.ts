@@ -605,6 +605,30 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(withrawEvents[1].args.pAmount).add(claimEvents[0].args.amount));
     });
 
+    it.only('should default debt after credit term passed', async () => {
+        await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
+
+        // Create debt
+        let debtTerm = new BN(30*24*60*60);
+        let debtLAmount = w3random.interval(100, 200, 'ether');
+        let debtIdx = await createDebt(debtLAmount, otherAccounts[0], debtTerm);
+        let proposalIdx = (<any>(await loanm.debts(borrower, debtIdx))).proposal;
+
+        let creditTerm = await loanpm.getProposalCreditTerm(borrower, proposalIdx);
+        expect(creditTerm).to.be.bignumber.eq(debtTerm);
+        //console.log(creditTerm);
+        //console.log((await time.latest()).toString());
+
+        // Default
+        await time.increase(creditTerm.addn(1));
+        //console.log((await time.latest()).toString());
+        let defautTimeReached = await loanm.isDebtDefaultTimeReached(borrower, debtIdx);
+        expect(defautTimeReached).to.be.true;
+
+        let receipt = await loanm.executeDebtDefault(borrower, debtIdx, {from: owner});
+        expectEvent(receipt, 'DebtDefaultExecuted', {'borrower':borrower, 'debt':debtIdx});
+    });
+
     // it('should correctly calculate totalLDebts()', async () => {
     // });
 
@@ -621,7 +645,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //await pToken.approve(funds.address, pAmount, {from: supporter});
     }
 
-    async function createDebt(debtLAmount:BN, supporter:string|Array<string>){
+    async function createDebt(debtLAmount:BN, supporter:string|Array<string>, creditTerm=new BN(0)){
         //Prepare Borrower account
         let lfullCollateral = debtLAmount.mul(collateralToDebtRatio).div(collateralToDebtMultiplier);
         let lBorrowerCollateral = lfullCollateral.mul(borrowerCollateralToFullCollateralRatio).div(borrowerCollateralToFullCollateralMultiplier);
@@ -629,7 +653,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await prepareBorrower(pAmountMaxWei);
 
         //Create Debt Proposal
-        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMaxWei, new BN(0), web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
+        let receipt = await loanpm.createDebtProposal(debtLAmount, '100', pAmountMaxWei, creditTerm, web3.utils.sha3('test'), {from: borrower}); //50 means 5 percent
         let proposalIdx = findEventArgs(receipt, 'DebtProposalCreated')['proposal'].toString();
 
         //Add supporters
