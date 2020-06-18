@@ -46,6 +46,8 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
 
     mapping(address=>uint256) public openProposals;         // Counts how many open proposals the address has 
 
+    mapping(address=>uint256[]) public creditTerms;         // This should be part of DebtProposal, here because of Upgrade requirements
+
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
         require(am.isOperationAllowed(operation, _msgSender()), "LoanProposalsModule: operation not allowed");
@@ -61,10 +63,11 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
      * @param debtLAmount Amount of debt in liquid tokens
      * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
      * @param pAmountMax Max amount of pTokens to use as collateral
+     * @param creditTerm Credit term in seconds. After this amount of seconds credit may be defaulted even if interest is paid. 0 means no term
      * @param descriptionHash Hash of loan description
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) 
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, uint256 creditTerm, bytes32 descriptionHash) 
     public operationAllowed(IAccessModule.Operation.CreateDebtProposal) returns(uint256) {
         require(debtLAmount >= limits().lDebtAmountMin(), "LoanProposalsModule: debtLAmount should be >= lDebtAmountMin");
         require(interest >= limits().debtInterestMin(), "LoanProposalsModule: interest should be >= debtInterestMin");
@@ -84,6 +87,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
             created: now,
             executed: false
         }));
+        creditTerms[_msgSender()].push(creditTerm);
         uint256 proposalIndex = debtProposals[_msgSender()].length-1;
         increaseOpenProposals(_msgSender());
         emit DebtProposalCreated(_msgSender(), proposalIndex, debtLAmount, interest, descriptionHash);
@@ -264,6 +268,10 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         DebtProposal storage p = debtProposals[borrower][proposal];
         require(p.lAmount > 0, "LoanProposalModule: DebtProposal not found");
         return p.interest;
+    }
+
+    function getProposalCreditTerm(address borrower, uint256 proposal) public view returns(uint256){
+        return creditTerms[borrower][proposal];
     }
 
     /**

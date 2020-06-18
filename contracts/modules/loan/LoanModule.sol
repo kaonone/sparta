@@ -38,6 +38,8 @@ contract LoanModule is Module, ILoanModule {
 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
 
+    mapping(address=>uint256[]) public createTimes;         // This should be part of Debt, here because of Upgrade requirements
+
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
         require(am.isOperationAllowed(operation, _msgSender()), "LoanModule: operation not allowed");
@@ -64,6 +66,7 @@ contract LoanModule is Module, ILoanModule {
             pInterest: 0,
             defaultExecuted: false
         }));
+        createTimes[borrower].push(now);
         uint256 debtIdx = debts[borrower].length-1; //It's important to save index before calling external contract
 
         uint256 maxDebts = limits().debtLoadMax().mul(fundsModule().lBalance().add(lDebts)).div(DEBT_LOAD_MULTIPLIER);
@@ -87,7 +90,7 @@ contract LoanModule is Module, ILoanModule {
         address borrower = _msgSender();
         Debt storage d = debts[borrower][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
-        require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
+        require(!_isDebtDefaultTimeReached(borrower, debt, d), "LoanModule: debt is already defaulted");
 
         (, uint256 lCovered, , uint256 interest, uint256 pledgeLAmount, )
         = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
@@ -132,7 +135,7 @@ contract LoanModule is Module, ILoanModule {
         address borrower = _msgSender();
         Debt storage d = debts[borrower][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
-        require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
+        require(!_isDebtDefaultTimeReached(borrower, debt, d), "LoanModule: debt is already defaulted");
 
         (, uint256 lAmount,) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmount >= lAmountMin, "LoanModule: Minimal amount is too high");
@@ -199,7 +202,7 @@ contract LoanModule is Module, ILoanModule {
             // bool isUnpaid = (d.lAmount != 0);
             // bool isDefaulted = _isDebtDefaultTimeReached(d);
             // if (isUnpaid && !isDefaulted){                      
-            if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
+            if ((d.lAmount != 0) && !_isDebtDefaultTimeReached(borrower, uint256(i), d)){ //removed isUnpaid and isDefaulted variables to preent "Stack too deep" error
                 (uint256 pWithdrawn, uint256 lFee, uint256 poolInterest, uint256 pInterestToMint) 
                     = repayInterestForDebt(borrower, uint256(i), d, totalLFee);
                 totalPWithdraw = totalPWithdraw.add(pWithdrawn);
@@ -252,7 +255,7 @@ contract LoanModule is Module, ILoanModule {
         Debt storage dbt = debts[borrower][debt];
         require(dbt.lAmount > 0, "LoanModule: debt is fully repaid");
         require(!dbt.defaultExecuted, "LoanModule: default is already executed");
-        require(_isDebtDefaultTimeReached(dbt), "LoanModule: not enough time passed");
+        require(_isDebtDefaultTimeReached(borrower, debt, dbt), "LoanModule: not enough time passed");
 
         (uint256 proposalLAmount, , uint256 pCollected, , , uint256 pPledge)
         = loanProposals().getProposalAndPledgeInfo(borrower, dbt.proposal, borrower);
@@ -303,7 +306,7 @@ contract LoanModule is Module, ILoanModule {
      */
     function isDebtDefaultTimeReached(address borrower, uint256 debt) public view returns(bool) {
         Debt storage dbt = debts[borrower][debt];
-        return _isDebtDefaultTimeReached(dbt);
+        return _isDebtDefaultTimeReached(borrower, debt, dbt);
     }
 
     /**
@@ -335,7 +338,7 @@ contract LoanModule is Module, ILoanModule {
             } else {
                 pLocked = pPledge;
                 pUnlocked = 0;
-                if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
+                if (dbt.defaultExecuted || _isDebtDefaultTimeReached(borrower, debt, dbt)) {
                     pLocked = 0; 
                 }
             }
@@ -346,7 +349,7 @@ contract LoanModule is Module, ILoanModule {
             pUnlocked = pPledge.sub(pLocked);
             pInterest = dbt.pInterest.mul(lPledge).div(lCovered);
             assert(pInterest <= dbt.pInterest);
-            if (dbt.defaultExecuted || _isDebtDefaultTimeReached(dbt)) {
+            if (dbt.defaultExecuted || _isDebtDefaultTimeReached(borrower, debt, dbt)) {
                 (pLocked, pUnlocked) = calculatePledgeInfoForDefault(borrower, dbt, proposalLAmount, lCovered, lPledge, pLocked, pUnlocked);
             }
         }
@@ -411,7 +414,7 @@ contract LoanModule is Module, ILoanModule {
         for (int256 i=int256(userDebts.length)-1; i >= 0; i--){
             Debt storage d = userDebts[uint256(i)];
             bool isUnpaid = (d.lAmount != 0);
-            bool isDefaulted = _isDebtDefaultTimeReached(d);
+            bool isDefaulted = _isDebtDefaultTimeReached(borrower, uint256(i), d);
             if (isUnpaid && !isDefaulted){
                 uint256 interestRate = loanProposals().getProposalInterestRate(borrower, d.proposal);
                 uint256 lInterest = calculateInterestPayment(d.lAmount, interestRate, d.lastPayment, now);
@@ -573,7 +576,12 @@ contract LoanModule is Module, ILoanModule {
         poolInterest = pInterest.mul(lPledge).div(lCovered);
     }
 
-    function _isDebtDefaultTimeReached(Debt storage dbt) private view returns(bool) {
+    function _isDebtDefaultTimeReached(address borrower, uint256 debt, Debt storage dbt) private view returns(bool) {
+        uint256 creditTerm = loanProposals().getProposalCreditTerm(borrower, dbt.proposal);
+        if (creditTerm > 0) {
+            uint256 created = createTimes[borrower][debt];
+            if (created.add(creditTerm) < now) return true;
+        }
         uint256 timeSinceLastPayment = now.sub(dbt.lastPayment);
         return timeSinceLastPayment > DEBT_REPAY_DEADLINE_PERIOD;
     }
