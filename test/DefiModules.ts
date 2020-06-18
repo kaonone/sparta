@@ -70,7 +70,7 @@ describe("DeFi modules", function(){
                 defi = await RAYModule.new();
                 await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
 
-                defi.registerToken(dai.address, web3.utils.keccak256("DaiCompound"));
+                await defi.registerToken(dai.address, web3.utils.keccak256("DaiCompound"), {from: owner});
 
                 let interesRate = await ray.INTEREST_RATE();
 
@@ -86,7 +86,7 @@ describe("DeFi modules", function(){
                 const portfolioID = '0xcd93cf275bcc8c600887dc587ea0a16e8f0a87fa7f99560f72186069c8d3b3df'; //web3.utils.keccak256("DaiCompound");
                 let protocol = await RAYStub.at(protocolAddress);
                 let rayModule = await RAYModule.at(defiModuleAddress);
-                let rayTokenId = await rayModule.rayTokenId();
+                let rayTokenId = await (<any>rayModule.tokens(dai)).rayTokenId;
                 let balances = await protocol.getTokenValueStub(rayTokenId);
                 return balances[0];
             }
