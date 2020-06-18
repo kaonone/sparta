@@ -605,7 +605,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expectEqualBN(pBalanceAfter, pBalanceBefore.sub(withrawEvents[0].args.pAmount).sub(withrawEvents[1].args.pAmount).add(claimEvents[0].args.amount));
     });
 
-    it.only('should default debt after credit term passed', async () => {
+    it('should default debt after credit term passed', async () => {
         await prepareLiquidity(w3random.interval(1000, 90000, 'ether'));
 
         // Create debt

@@ -580,7 +580,7 @@ contract LoanModule is Module, ILoanModule {
         uint256 creditTerm = loanProposals().getProposalCreditTerm(borrower, dbt.proposal);
         if (creditTerm > 0) {
             uint256 created = createTimes[borrower][debt];
-            if (created.add(creditTerm) > now) return true;
+            if (created.add(creditTerm) < now) return true;
         }
         uint256 timeSinceLastPayment = now.sub(dbt.lastPayment);
         return timeSinceLastPayment > DEBT_REPAY_DEADLINE_PERIOD;
