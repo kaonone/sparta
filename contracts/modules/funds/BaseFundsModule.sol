@@ -59,12 +59,12 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param poolFee Pool fee will be sent to pool owner
      */
     function withdrawLTokens(address token, address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
-        lTokens[token].balance = lTokens[token].balance.sub(amount);
         if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
+            lTokens[token].balance = lTokens[token].balance.sub(amount);
             lTransferFromFunds(token, to, amount);
         }
         if (poolFee > 0) {
-            lTokens[token].balance = lTokens[token].balance.sub(amount);
+            lTokens[token].balance = lTokens[token].balance.sub(poolFee);
             lTransferFromFunds(token, owner(), poolFee);
         }
         emitStatus();

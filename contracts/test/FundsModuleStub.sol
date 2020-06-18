@@ -130,7 +130,7 @@ contract FundsModuleStub is Module, IFundsModule {
         return 0;
     }
 
-    function getPrefferableTokenForWithdraw(uint256 lAmount) external view returns(address) {
+    function getPrefferableTokenForWithdraw(uint256) external view returns(address) {
         return address(0);
     }
 
