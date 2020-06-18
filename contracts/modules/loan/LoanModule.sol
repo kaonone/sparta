@@ -52,7 +52,9 @@ contract LoanModule is Module, ILoanModule {
     /**
      * @notice Execute DebtProposal
      * @dev Creates Debt using data of DebtProposal
+     * @param borrower Address of borrower
      * @param proposal Index of DebtProposal
+     * @param dnlAmount Amount of the loan
      * @return Index of created Debt
      */
     function createDebt(address borrower, uint256 proposal, address token, uint256 dnlAmount) public returns(uint256) {
@@ -93,16 +95,15 @@ contract LoanModule is Module, ILoanModule {
      * @param dnlAmount Amount of liquid tokens to repay (it will not take more than needed for full debt repayment)
      */
     function repay(uint256 debt, address token, uint256 dnlAmount) public operationAllowed(IAccessModule.Operation.Repay) {
-        address borrower = _msgSender();
-        Debt storage d = debts[borrower][debt];
+        Debt storage d = debts[_msgSender()][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
 
-        require(token == debtToken[borrower][debt], "LoanModule: should repay in same token as debt taken");
+        require(token == debtToken[_msgSender()][debt], "LoanModule: should repay in same token as debt taken");
         uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 
         (, uint256 lCovered, , uint256 interest, uint256 pledgeLAmount, )
-        = loanProposals().getProposalAndPledgeInfo(borrower, d.proposal, borrower);
+        = loanProposals().getProposalAndPledgeInfo(_msgSender(), d.proposal, _msgSender());
 
         uint256 lInterest = calculateInterestPayment(d.lAmount, interest, d.lastPayment, now);
 
@@ -130,7 +131,7 @@ contract LoanModule is Module, ILoanModule {
         d.pInterest = d.pInterest.add(pInterest);
         uint256 poolInterest = pInterest.mul(pledgeLAmount).div(lCovered);
 
-        fundsModule().depositLTokens(token, borrower, dnlAmount); 
+        fundsModule().depositLTokens(token, _msgSender(), dnlAmount); 
         fundsModule().distributePTokens(poolInterest);
         fundsModule().mintAndLockPTokens(pInterest.sub(poolInterest));
 
@@ -138,8 +139,8 @@ contract LoanModule is Module, ILoanModule {
 
         if (d.lAmount == 0) {
             //Debt is fully repaid
-            decreaseActiveDebts(borrower);
-            withdrawUnlockedPledge(borrower, debt);
+            decreaseActiveDebts(_msgSender());
+            withdrawUnlockedPledge(_msgSender(), debt);
         }
     }
 

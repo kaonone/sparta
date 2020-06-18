@@ -17,7 +17,7 @@ contract DefiFundsModule is BaseFundsModule {
     }
 
     function withdrawAllFromDefi(address token) public onlyFundsOperator {
-        uint256 amount = defiModule().poolBalance();
+        uint256 amount = defiModule().poolBalance(token);
         defiModule().withdraw(token, address(this), amount);
     }
 
@@ -40,8 +40,4 @@ contract DefiFundsModule is BaseFundsModule {
         return IDefiModule(getModuleAddress(MODULE_DEFI));
     }
     
-    function lToken() private view returns(IERC20){
-        return IERC20(getModuleAddress(MODULE_LTOKEN));
-    }
-
 }

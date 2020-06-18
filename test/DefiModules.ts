@@ -4,7 +4,7 @@ import {
     PTokenContract, PTokenInstance, 
     FundsModuleStubContract, FundsModuleStubInstance,
     CErc20StubContract, CErc20StubInstance,
-    CompoundModuleContract, CompoundModuleInstance,
+//    CompoundModuleContract, CompoundModuleInstance,
     RAYStubContract, RAYStubInstance,
     RAYModuleContract, RAYModuleInstance,
     IDefiModuleInstance
@@ -23,39 +23,41 @@ const Pool = artifacts.require("Pool");
 const PToken = artifacts.require("PToken");
 const FundsModuleStub = artifacts.require("FundsModuleStub");
 const CErc20Stub = artifacts.require("CErc20Stub");
-const CompoundModule = artifacts.require("CompoundModule");
+// const CompoundModule = artifacts.require("CompoundModule");
 const RAYStub = artifacts.require("RAYStub");
 const RAYModule = artifacts.require("RAYModule");
+const BN1E18 = (new BN('10')).pow(new BN(18));
+
 
 describe("DeFi modules", function(){
     let modulesToTest = [
-        {module: "CompoundModule", 
-            before: async function(dai:FreeDAIInstance, pool:PoolInstance, owner:string):Promise<[IDefiModuleInstance, string, BN]>{
-                let cDai: CErc20StubInstance;
-                let defi: CompoundModuleInstance;
+        // {module: "CompoundModule", 
+        //     before: async function(dai:FreeDAIInstance, pool:PoolInstance, owner:string):Promise<[IDefiModuleInstance, string, BN]>{
+        //         let cDai: CErc20StubInstance;
+        //         let defi: CompoundModuleInstance;
 
-                cDai = await CErc20Stub.new();
-                await (<any> cDai).methods['initialize(address)'](dai.address, {from: owner});
-                await pool.set('cdai', cDai.address, false, {from: owner});
+        //         cDai = await CErc20Stub.new();
+        //         await (<any> cDai).methods['initialize(address)'](dai.address, {from: owner});
+        //         await pool.set('cdai', cDai.address, false, {from: owner});
 
-                defi = await CompoundModule.new();
-                await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+        //         defi = await CompoundModule.new();
+        //         await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
 
-                let interesRate = await cDai.INTEREST_RATE();
+        //         let interesRate = await cDai.INTEREST_RATE();
 
-                return [defi, cDai.address, interesRate];
-            },
-            protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
-                let protocol = await CErc20Stub.at(protocolAddress);
-                let balance = await protocol.balanceOf(defiModuleAddress);
-                return balance;
-            },
-            underlyingBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
-                let protocol = await CErc20Stub.at(protocolAddress);
-                let balance = await protocol.getBalanceOfUnderlying(defiModuleAddress);
-                return balance;
-            }
-        },
+        //         return [defi, cDai.address, interesRate];
+        //     },
+        //     protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
+        //         let protocol = await CErc20Stub.at(protocolAddress);
+        //         let balance = await protocol.balanceOf(defiModuleAddress);
+        //         return balance;
+        //     },
+        //     underlyingBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
+        //         let protocol = await CErc20Stub.at(protocolAddress);
+        //         let balance = await protocol.getBalanceOfUnderlying(defiModuleAddress);
+        //         return balance;
+        //     }
+        // },
         {module: "RAYModule", 
             before: async function(dai:FreeDAIInstance, pool:PoolInstance, owner:string):Promise<[IDefiModuleInstance, string, BN]>{
                 let ray: RAYStubInstance;
@@ -67,6 +69,8 @@ describe("DeFi modules", function(){
 
                 defi = await RAYModule.new();
                 await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+
+                defi.registerToken(dai.address, web3.utils.keccak256("DaiCompound"));
 
                 let interesRate = await ray.INTEREST_RATE();
 
@@ -118,12 +122,12 @@ describe("DeFi modules", function(){
 
                 [defim, defiProtocolAddress, interesRate] = await moduleDef.before(dai, pool, owner);
 
-                await pool.set('ltoken', dai.address, false, {from: owner});
                 await pool.set('ptoken', pToken.address, false, {from: owner});
                 await pool.set('funds', funds.address, false, {from: owner});
                 await pool.set('defi', defim.address, false, {from: owner});
                 await pToken.addMinter(funds.address, {from: owner});
                 await (<any> defim).addDefiOperator(funds.address, {from: owner});
+                await funds.registerLToken(dai.address, BN1E18, {from: owner});
             });
 
             it("should deposit DAI", async () => {
@@ -138,7 +142,7 @@ describe("DeFi modules", function(){
                 };
 
                 await dai.transfer(defim.address, amount, {from: user});
-                let receipt = await defim.handleDeposit(user, amount, {from: owner});
+                let receipt = await defim.handleDeposit(dai.address, user, amount, {from: owner});
                 expectEvent(receipt, 'Deposit', {'amount':amount});
 
                 let after = {
@@ -164,7 +168,7 @@ describe("DeFi modules", function(){
                 };
                 let amount = w3random.intervalBN(before.protocolDai.divn(3), before.protocolDai.divn(2));
 
-                let receipt = await defim.withdraw(user, amount, {from: owner});
+                let receipt = await defim.withdraw(dai.address, user, amount, {from: owner});
                 expectEvent(receipt, 'Withdraw', {'amount':amount});
 
                 let after = {

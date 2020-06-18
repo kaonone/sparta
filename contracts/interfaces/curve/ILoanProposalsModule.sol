@@ -44,7 +44,7 @@ interface ILoanProposalsModule {
      * @param proposal Index of DebtProposal
      * @return Index of created Debt
      */
-    function executeDebtProposal(uint256 proposal) external returns(uint256);
+    function executeDebtProposal(uint256 proposal, address token) external returns(uint256);
 
 
     /**

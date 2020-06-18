@@ -29,6 +29,7 @@ const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let pool: PoolInstance;
@@ -39,17 +40,15 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     let loanmps: LoanModuleStubInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
+    let defi: DefiModuleStubInstance;
+    let lTokens: Array<FreeDAIInstance>;
     let lToken: FreeDAIInstance;
-    let defi: DefiModuleStubInstance; 
+
 
     before(async () => {
         //Setup system contracts
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
-
-        lToken = await FreeDAI.new();
-        await (<any> lToken).methods['initialize()']({from: owner});
-        await pool.set("ltoken", lToken.address, true, {from: owner});  
 
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
@@ -85,16 +84,28 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
 
+        // Register lTokens
+        lTokens = new Array<FreeDAIInstance>();
+        for(let i=0; i < 2; i++){
+            let lToken = await FreeDAI.new();
+            await (<any> lToken).methods['initialize()']({from: owner});
+            lTokens.push(lToken);
+            await funds.registerLToken(lToken.address, BN1E18, {from: owner});
+        }
+        lToken = lTokens[0];
+
         //Do common tasks
-        await lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
-        await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
+        for(let i=0; i < lTokens.length; i++){
+            await lTokens[i].mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+            await lTokens[i].approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider});
+        }
 
     })
 
     it('should allow deposit if no debts', async () => {
         let fundsLWei = await lToken.balanceOf(funds.address);
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
-        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+        let receipt = await liqm.deposit(lToken.address, amountWeiLToken, '0', {from: liquidityProvider});
         let expectedfundsLWei = fundsLWei.add(amountWeiLToken);
         expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':amountWeiLToken});
         fundsLWei = await lToken.balanceOf(funds.address);
@@ -104,7 +115,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     });
     it('should allow withdraw if no debts', async () => {
         let lDepositWei = w3random.interval(2000, 100000, 'ether');
-        await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: liquidityProvider});
         let lBalance = await lToken.balanceOf(liquidityProvider);
         let pBalance = await pToken.balanceOf(liquidityProvider);
         let lBalanceO = await lToken.balanceOf(owner);
@@ -115,7 +126,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         // console.log('lToken balance', lBalance.toString());
         // console.log('pToken balance', pBalance.toString());
         // console.log('lWithdrawWei', withdrawWei.toString());
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
+        let receipt = await liqm.withdraw(pWithdrawWei, lToken.address, '0', {from: liquidityProvider});
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
         let lBalance2 = await lToken.balanceOf(liquidityProvider);
         let pBalance2 = await pToken.balanceOf(liquidityProvider);
@@ -130,12 +141,12 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
     it('should correctly work with rounding', async() => {
         let lAmountWei = web3.utils.toWei('1000');
         //console.log('lAmountWei', lAmountWei.toString());
-        let receipt = await liqm.deposit(lAmountWei, '0', {from: liquidityProvider});
+        let receipt = await liqm.deposit(lToken.address, lAmountWei, '0', {from: liquidityProvider});
         //console.log(receipt);
         lAmountWei = web3.utils.toWei('105.263157894736842106');
         let pAmountWei = await funds.calculatePoolExit(lAmountWei);
         //console.log('pAmountWei', pAmountWei.toString(), pAmountWei);
-        receipt = await liqm.withdraw(pAmountWei, '0', {from: liquidityProvider});
+        receipt = await liqm.withdraw(pAmountWei, lToken.address, '0', {from: liquidityProvider});
         //console.log(receipt);
         let lBalanceWei = await funds.lBalance();
         //console.log('lBalanceWei', lBalanceWei.toString());
@@ -147,7 +158,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
 
     it('should allow withdraw all minted PTK', async () => {
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
-        await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, amountWeiLToken, '0', {from: liquidityProvider});
 
         let allPTokens = await pToken.totalSupply();
         let allLPPtokens = await pToken.balanceOf(liquidityProvider);
@@ -166,8 +177,7 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         //console.log('expectedLTokens_Pool', expectedLTokens[2].toString(), web3.utils.fromWei(expectedLTokens[2]));
         expect(expectedLTokens[1].add(expectedLTokens[2])).to.be.bignumber.eq(expectedLTokens[0]);
     
-        await pToken.approve(funds.address, allPTokens, {from: liquidityProvider});
-        let receipt = await liqm.withdraw(allPTokens, expectedLTokens[1], {from: liquidityProvider});
+        let receipt = await liqm.withdraw(allPTokens, lToken.address, expectedLTokens[1], {from: liquidityProvider});
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider, 'lAmountTotal':expectedLTokens[0]});
     });
 
@@ -178,24 +188,44 @@ contract("LiquidityModule", async ([_, owner, liquidityProvider, borrower, ...ot
         //     liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider}),
         //     'LiquidityModule: Deposits forbidden if address has active debts'
         // );
-        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+        let receipt = await liqm.deposit(lToken.address, amountWeiLToken, '0', {from: liquidityProvider});
         expectEvent(receipt, 'Deposit', {'sender':liquidityProvider});
     });
+
     it('should allow withdraw if there are debts', async () => {
         await loanms.repay(0, 0, {from: liquidityProvider}); //Unset hasDebts for msg.sender, it may be set by previous tests
         let lDepositWei = w3random.interval(2000, 100000, 'ether');
-        await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: liquidityProvider});
         let pBalance = await pToken.balanceOf(liquidityProvider);
         await loanms.executeDebtProposal(0, {from: liquidityProvider}); //Set hasDebts for msg.sender
 
         let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('999', 'ether'));
         let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
-        await pToken.approve(funds.address, pWithdrawWei, {from: liquidityProvider});
         // await expectRevert(
         //     liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider}),
         //     'LiquidityModule: Withdraws forbidden if address has active debts'
         // );
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
+        let receipt = await liqm.withdraw(pWithdrawWei, lToken.address, '0', {from: liquidityProvider});
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
     });
+
+    it('should allow withdraw in different token', async () => {
+        let lToken = lTokens[0];
+        let lDepositWei = w3random.interval(2000, 100000, 'ether');
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: liquidityProvider});
+
+        lToken = lTokens[1];
+        lDepositWei = w3random.interval(500, 1000, 'ether');
+        await lToken.transfer(otherAccounts[0], lDepositWei, {from: liquidityProvider});
+        await lToken.approve(funds.address, lDepositWei, {from: otherAccounts[0]});
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: otherAccounts[0]});
+
+        lToken = lTokens[0];
+        let lWithdrawWei = w3random.intervalBN(web3.utils.toWei('1', 'ether'), web3.utils.toWei('499', 'ether'));
+        let pWithdrawWei = await funds.calculatePoolExit(lWithdrawWei);
+        let receipt = await liqm.withdraw(pWithdrawWei, lToken.address, '0', {from: otherAccounts[0]});
+        expectEvent(receipt, 'Withdraw', {'sender':otherAccounts[0]});
+    });
+
+
 });

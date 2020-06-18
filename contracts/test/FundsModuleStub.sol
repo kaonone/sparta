@@ -17,6 +17,14 @@ contract FundsModuleStub is Module, IFundsModule {
         Module.initialize(_pool);
     }
 
+    function registerLToken(address, uint256) external {
+        this;
+    }
+    
+    function unregisterLToken(address) external {
+        this;
+    }
+
     function depositLTokens(address, address, uint256) external {
         this;
     }
@@ -69,6 +77,19 @@ contract FundsModuleStub is Module, IFundsModule {
         this;
     }
 
+    function lBalance(address) external view returns(uint256) {
+        return 0;
+    }
+
+    function allRegisteredLTokens() external view returns(address[] memory) {
+        address[] memory r = new address[](0);
+        return r;
+    }
+    
+    function isLTokenRegistered(address) external view returns(bool) {
+        return false;
+    }
+
     function normalizeLTokenValue(address, uint256 value) public view returns(uint256) {
         return value;
     }
@@ -89,16 +110,16 @@ contract FundsModuleStub is Module, IFundsModule {
         return 0;
     }
     
+    function calculatePoolExitInverse(uint256) external view returns(uint256, uint256, uint256) {
+        return (0, 0, 0);
+    }
+
     function calculatePoolExitWithFee(uint256) external view returns(uint256){
         return 0;
     }
     
     function calculatePoolExitWithFee(uint256, uint256) external view returns(uint256){
         return 0;
-    }
-
-    function calculatePoolExitInverse(uint256) external view returns(uint256, uint256, uint256) {
-        return (0, 0, 0);
     }
 
     function lBalance() external view returns(uint256) {
@@ -108,6 +129,11 @@ contract FundsModuleStub is Module, IFundsModule {
     function pBalanceOf(address) external view returns(uint256){
         return 0;
     }
+
+    function getPrefferableTokenForWithdraw(uint256 lAmount) external view returns(address) {
+        return address(0);
+    }
+
 
     function pToken() private view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));

@@ -12,6 +12,16 @@ import "../common/Module.sol";
  * Stub of LoanModule to allow tests of FundsModule and LiquidityModule
  */
 contract DefiModuleStub is Module, IDefiModule {
+    address[] _registeredTokens;
+
+    function registerToken(address token) external {
+        _registeredTokens.push(token);
+    }
+
+    function registeredTokens() external view returns(address[] memory) {
+        return _registeredTokens;
+    }
+
     function handleDeposit(address, address, uint256) external {
         this;
     }
@@ -36,7 +46,7 @@ contract DefiModuleStub is Module, IDefiModule {
         this;
     }
 
-    function poolBalance() external returns(uint256) {
+    function poolBalance(address) external returns(uint256) {
         this;
         return 0;
     }

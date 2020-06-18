@@ -11,6 +11,10 @@ interface IFundsModule {
     event LTokenRateChanged(address indexed token, uint256 oldRate, uint256 newRate);
 
 
+    function registerLToken(address lToken, uint256 rate) external;
+
+    function unregisterLToken(address lToken) external;
+
     /**
      * @notice Deposit liquid tokens to the pool
      * @param from Address of the user, who sends tokens. Should have enough allowance.
@@ -39,7 +43,7 @@ interface IFundsModule {
      */
     function depositPTokens(address from, uint256 amount) external;
 
-    /**
+    /*
      * @notice Withdraw pool tokens from the pool
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
@@ -138,7 +142,7 @@ interface IFundsModule {
     function lBalance() external view returns(uint256);
 
 
-    function getPrefferableTokenForWithdraw(uint256 lAmount) external view returns(address);
+    function getPrefferableTokenForWithdraw(uint256) external view returns(address);
     
     /**
      * @return Amount of pTokens locked in FundsModule by account

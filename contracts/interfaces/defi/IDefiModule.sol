@@ -11,7 +11,7 @@ interface IDefiModule {
 
     //Info
     function registeredTokens() external view returns(address[] memory);
-    function poolBalance() external returns(uint256);
+    function poolBalance(address token) external returns(uint256);
     function availableInterest(address account) external view returns(address[] memory tokens, uint256[] memory amounts);
 
     // Actions for user

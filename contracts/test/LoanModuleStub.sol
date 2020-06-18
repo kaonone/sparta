@@ -32,11 +32,11 @@ contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
         this; // silence state mutability warning
     }
 
-    function executeDebtProposal(uint256) public returns(uint256){
+    function executeDebtProposal(uint256, address) public returns(uint256){
         hasDebts[_msgSender()] = true;
     }
 
-    function createDebt(address, uint256, uint256) public returns(uint256){
+    function createDebt(address, uint256, address, uint256) public returns(uint256){
         hasDebts[_msgSender()] = true;
     }
 

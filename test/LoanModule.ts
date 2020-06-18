@@ -35,6 +35,7 @@ const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let snap: Snapshot;
@@ -48,8 +49,9 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     let loanLimits: LoanLimitsModuleInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
-    let lToken: FreeDAIInstance;
     let defi: DefiModuleStubInstance; 
+    let lTokens: Array<FreeDAIInstance>;
+    let lToken: FreeDAIInstance;
 
     let withdrawFeePercent:BN, percentDivider:BN;
     let collateralToDebtRatio:BN, collateralToDebtMultiplier:BN;
@@ -69,10 +71,6 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         //Setup system contracts
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
-
-        lToken = await FreeDAI.new();
-        await (<any> lToken).methods['initialize()']({from: owner});
-        await pool.set("ltoken", lToken.address, true, {from: owner});  
 
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
@@ -115,9 +113,21 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await funds.addFundsOperator(loanm.address, {from: owner});
         await funds.addFundsOperator(loanpm.address, {from: owner});
 
+        // Register lTokens
+        lTokens = new Array<FreeDAIInstance>();
+        for(let i=0; i < 2; i++){
+            let lToken = await FreeDAI.new();
+            await (<any> lToken).methods['initialize()']({from: owner});
+            lTokens.push(lToken);
+            await funds.registerLToken(lToken.address, BN1E18, {from: owner});
+        }
+        lToken = lTokens[0];
+
         //Do common tasks
-        lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
-        await lToken.approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
+        for(let i=0; i < lTokens.length; i++){
+            lTokens[i].mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
+            await lTokens[i].approve(funds.address, web3.utils.toWei('1000000'), {from: liquidityProvider})
+        }
 
         curve.setWithdrawFee(new BN(5), {from: owner});
         withdrawFeePercent = await curve.withdrawFeePercent();
@@ -147,7 +157,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let repayLAmount = debtLAmount.div(new BN(3));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        let receipt = await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
         expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
         let debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         expect(debtLRequiredPayments[0]).to.be.bignumber.gt(new BN(0));
@@ -162,7 +172,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let fullRepayLAmount = debtLRequiredPayments[0].add(debtLRequiredPayments[1]).add(debtLRequiredPayments[0].div(new BN(1000))); //add 0.1% of full left amount to handle possible additiona interest required
         await lToken.transfer(borrower, fullRepayLAmount, {from: liquidityProvider});
         await lToken.approve(funds.address, fullRepayLAmount, {from: borrower});
-        receipt = await loanm.repay(debtIdx, fullRepayLAmount, {from: borrower});
+        receipt = await loanm.repay(debtIdx, lToken.address, fullRepayLAmount, {from: borrower});
         expectEvent(receipt, 'Repay', {'sender':borrower, 'debt':debtIdx});
 
         debtLRequiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
@@ -247,7 +257,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
         //console.log('Repay lAmount', web3.utils.fromWei(repayLAmount));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
 
         //Redeem unlocked pledge
         pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
@@ -280,7 +290,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         expect(requiredPayments[1]).to.be.bignumber.gt('0');         // Some interest payment required
         let repayLAmount = requiredPayments[0].add(requiredPayments[1]).add(requiredPayments[0].div(new BN(1000)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
 
         //Withdraw pledge
         let pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
@@ -301,7 +311,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
 
 
         //Withdraw pledge
@@ -315,7 +325,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let requiredPayments = await loanm.getDebtRequiredPayments(borrower, debtIdx);
         repayLAmount = requiredPayments[0].add(requiredPayments[1]).add(requiredPayments[0].div(new BN(1000)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
 
         //Withdraw pledge
         pledgeInfo = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
@@ -335,7 +345,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(90*24*60*60+1);
 
         await expectRevert(
-            loanm.repay(debtIdx, debtLAmount, {from:borrower}),
+            loanm.repay(debtIdx, lToken.address, debtLAmount, {from:borrower}),
             'LoanModule: debt is already defaulted'
         );
     });
@@ -352,7 +362,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         await time.increase(w3random.interval(30*24*60*60, 89*24*60*60));
         let repayLAmount = w3random.intervalBN(debtLAmount.div(new BN(10)), debtLAmount.div(new BN(2)));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
-        await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
         let pledgeInfoBeforeDefault = await loanm.calculatePledgeInfo(borrower, debtIdx, otherAccounts[0]);
         //console.log('before default', pledgeInfoBeforeDefault);
         let dbtBeforeDefault = await loanm.debts(borrower, debtIdx);
@@ -417,7 +427,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let repayLAmount = w3random.intervalBN(debtLAmount.muln(70).divn(100), debtLAmount.muln(90).divn(100));
         await lToken.approve(funds.address, repayLAmount, {from: borrower});
         let blockNum1 = await web3.eth.getBlockNumber();
-        let receipt = await loanm.repay(debtIdx, repayLAmount, {from: borrower});
+        let receipt = await loanm.repay(debtIdx, lToken.address, repayLAmount, {from: borrower});
         let repayEventArgs = findEventArgs(receipt, 'Repay');
         let repayPInterest = repayEventArgs.pInterestPaid;
         // console.log('repay pInterest', repayEventArgs.pInterestPaid.toString());
@@ -567,7 +577,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         let lDepositWei = w3random.interval(300, 1000, 'ether');
         await lToken.transfer(borrower, lDepositWei, {from: liquidityProvider});
         await lToken.approve(funds.address, lDepositWei, {from: borrower});
-        await liqm.deposit(lDepositWei, '0', {from: borrower});
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: borrower});
         let pBalanceBefore = await pToken.balanceOf(borrower);
 
         // Withdraw
@@ -585,7 +595,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
         // console.log('lWithdrawWeiTotal', lWithdrawWeiTotal.toString(), lWithdrawWeiCalculated[0].toString());
         // console.log('lWithdrawWeiUser', lWithdrawWeiUser.toString(), lWithdrawWeiCalculated[1].toString());
         let pInterest = await (<any>funds).methods['calculatePoolExitWithFee(uint256)'](lInterest);
-        let receipt = await liqm.withdraw(pWithdrawWeiTotal, '0', {from: borrower});
+        let receipt = await liqm.withdraw(pWithdrawWeiTotal, lToken.address, '0', {from: borrower});
         let repayEvent = await (<any>loanm).getPastEvents('Repay', {fromBlock:blockNum});
         //lInterest = lInterest.add(lInterestInfo[1].mul(new BN(receipt.receipt.blockNumber - blockNum)));
         expectEqualBN(repayEvent[0].args.lInterestPaid, lInterest, 18, -6); //Inacurracy because time passes during calculations
@@ -609,7 +619,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
     // });
 
     async function prepareLiquidity(amountWei:BN){
-        await liqm.deposit(amountWei, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, amountWei, '0', {from: liquidityProvider});
     }
     async function prepareBorrower(pAmount:BN){
         await pToken.mint(borrower, pAmount, {from: owner});
@@ -649,7 +659,7 @@ contract("LoanModule", async ([_, owner, liquidityProvider, borrower, ...otherAc
             await loanpm.addPledge(borrower, proposalIdx, pPledge, '0',{from: supporter});
         }
 
-        receipt = await loanpm.executeDebtProposal(proposalIdx, {from: borrower});
+        receipt = await loanpm.executeDebtProposal(proposalIdx, lToken.address, {from: borrower});
         let debtIdx = findEventArgs(receipt, 'DebtProposalExecuted')['debt'];
         return debtIdx;
     }

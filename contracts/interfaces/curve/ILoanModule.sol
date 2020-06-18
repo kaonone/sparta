@@ -24,7 +24,7 @@ interface ILoanModule {
      * @param debt Index of Debt
      * @param lAmount Amount of liquid tokens to repay
      */
-    function repay(uint256 debt, uint256 lAmount) external;
+    function repay(uint256 debt, address token, uint256 lAmount) external;
 
     function repayPTK(uint256 debt, uint256 pAmount, uint256 lAmountMin) external;
 

@@ -96,7 +96,7 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
 
     function withdrawInternal(address token, address beneficiary, uint256 amount) internal {
         rayPortfolioManager().redeem(tokens[token].rayTokenId, amount, address(0));
-        lToken().transfer(beneficiary, amount);
+        IERC20(token).transfer(beneficiary, amount);
     }
 
     function poolBalanceOf(address token) internal returns(uint256) {
@@ -136,10 +136,6 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
         return IRAYStorage(getModuleAddress(MODULE_RAY));
     }
 
-    function lToken() private view returns(IERC20){
-        return IERC20(getModuleAddress(MODULE_LTOKEN));
-    }
-    
     function pToken() private view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }
