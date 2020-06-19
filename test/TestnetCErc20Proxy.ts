@@ -25,6 +25,7 @@ const Pool = artifacts.require("Pool");
 const PToken = artifacts.require("PToken");
 const CompoundModule = artifacts.require("CompoundModule");
 const FundsModuleStub = artifacts.require("FundsModuleStub");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
     let dai: CompoundDAIStubInstance;
@@ -65,13 +66,14 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
         defim = await CompoundModule.new();
         await (<any> defim).methods['initialize(address)'](pool.address, {from: owner});
 
-        await pool.set('ltoken', fdai.address, false, {from: owner});
-        await pool.set('cdai', cDaiProxy.address, false, {from: owner});
         await pool.set('ptoken', pToken.address, false, {from: owner});
         await pool.set('funds', funds.address, false, {from: owner});
         await pool.set('defi', defim.address, false, {from: owner});
         await pToken.addMinter(funds.address, {from: owner});
         await defim.addDefiOperator(funds.address, {from: owner});
+
+        await funds.registerLToken(fdai.address, BN1E18, {from: owner});
+        await defim.registerToken(fdai.address, cDaiProxy.address, {from: owner});
 
         interesRate = await cDai.INTEREST_RATE();
         expScale = await cDai.EXP_SCALE();
