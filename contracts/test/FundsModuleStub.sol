@@ -134,7 +134,6 @@ contract FundsModuleStub is Module, IFundsModule {
         return address(0);
     }
 
-
     function pToken() private view returns(IPToken){
         return IPToken(getModuleAddress(MODULE_PTOKEN));
     }

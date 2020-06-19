@@ -35,6 +35,7 @@ const DefiModuleStub = artifacts.require("DefiModuleStub");
 
 const PToken = artifacts.require("PToken");
 const FreeDAI = artifacts.require("FreeDAI");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
     let snap: Snapshot;
@@ -48,8 +49,9 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
     let loanLimits: LoanLimitsModuleInstance; 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
-    let lToken: FreeDAIInstance;
     let defi: DefiModuleStubInstance; 
+    let lTokens: Array<FreeDAIInstance>;
+    let lToken: FreeDAIInstance;
 
     let withdrawFeePercent:BN, percentDivider:BN;
     let collateralToDebtRatio:BN, collateralToDebtMultiplier:BN;
@@ -69,10 +71,6 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         //Setup system contracts
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
-
-        lToken = await FreeDAI.new();
-        await (<any> lToken).methods['initialize()']({from: owner});
-        await pool.set("ltoken", lToken.address, true, {from: owner});  
 
         pToken = await PToken.new();
         await (<any> pToken).methods['initialize(address)'](pool.address, {from: owner});
@@ -114,6 +112,16 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await funds.addFundsOperator(liqm.address, {from: owner});
         await funds.addFundsOperator(loanm.address, {from: owner});
         await funds.addFundsOperator(loanpm.address, {from: owner});
+
+        // Register lTokens
+        lTokens = new Array<FreeDAIInstance>();
+        for(let i=0; i < 2; i++){
+            let lToken = await FreeDAI.new();
+            await (<any> lToken).methods['initialize()']({from: owner});
+            lTokens.push(lToken);
+            await funds.registerLToken(lToken.address, BN1E18, {from: owner});
+        }
+        lToken = lTokens[0];
 
         //Do common tasks
         lToken.mint(liquidityProvider, web3.utils.toWei('1000000'), {from: owner});
@@ -391,7 +399,7 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await prepareSupporter(pPledge, otherAccounts[0]);
         await loanpm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
 
-        receipt = await loanpm.executeDebtProposal(proposalIdx, {from: borrower});
+        receipt = await loanpm.executeDebtProposal(proposalIdx, lToken.address, {from: borrower});
         expectEvent(receipt, 'DebtProposalExecuted', {'sender':borrower, 'proposal':String(proposalIdx), 'lAmount':lDebtWei});
     });
     it('should not execute unsuccessful debt proposal', async () => {
@@ -420,7 +428,7 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         await loanpm.addPledge(borrower, proposalIdx, pPledge, '0',{from: otherAccounts[0]});
 
         await expectRevert(
-            loanpm.executeDebtProposal(proposalIdx, {from: borrower}),
+            loanpm.executeDebtProposal(proposalIdx, lToken.address, {from: borrower}),
             'LoanProposalsModule: DebtProposal is not fully funded'
         );
     });
@@ -449,14 +457,14 @@ contract("LoanProposalsModule", async ([_, owner, liquidityProvider, borrower, .
         // console.log('lDebts', (await loanpm.totalLDebts()).toString());
 
         await expectRevert(
-            loanpm.executeDebtProposal(proposalIdx, {from: borrower}),
+            loanpm.executeDebtProposal(proposalIdx, lToken.address, {from: borrower}),
             "LoanModule: Debt can not be created now because of debt loan limit"
         );
     });
 
 
     async function prepareLiquidity(amountWei:BN){
-        await liqm.deposit(amountWei, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, amountWei, '0', {from: liquidityProvider});
     }
     async function prepareBorrower(pAmount:BN){
         await pToken.mint(borrower, pAmount, {from: owner});

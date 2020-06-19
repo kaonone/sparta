@@ -76,17 +76,21 @@ describe("DeFi modules", function(){
 
                 return [defi, ray.address, interesRate];
             },
-            protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
+            protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string, tokenAddress:string):Promise<BN> {
                 // let protocol = RAYStub.at(protocolAddress);
                 // let balance = await protocol.balanceOf(defiModuleAddress),
                 // return balance;
-                return this.underlyingBalanceOf(defiModuleAddress, protocolAddress);
+                return this.underlyingBalanceOf(defiModuleAddress, protocolAddress, tokenAddress);
             },
-            underlyingBalanceOf: async function(defiModuleAddress:string, protocolAddress:string):Promise<BN> {
+            underlyingBalanceOf: async function(defiModuleAddress:string, protocolAddress:string, tokenAddress:string):Promise<BN> {
                 const portfolioID = '0xcd93cf275bcc8c600887dc587ea0a16e8f0a87fa7f99560f72186069c8d3b3df'; //web3.utils.keccak256("DaiCompound");
                 let protocol = await RAYStub.at(protocolAddress);
                 let rayModule = await RAYModule.at(defiModuleAddress);
-                let rayTokenId = await (<any>rayModule.tokens(dai)).rayTokenId;
+                let tokenData = await <any>rayModule.tokens(tokenAddress);
+                //console.log('tokenData', tokenData);
+                let rayTokenId:string = tokenData.rayTokenId;
+                //console.log('rayTokenId', rayTokenId);
+                if(rayTokenId == '0x0000000000000000000000000000000000000000000000000000000000000000') return new BN(0);
                 let balances = await protocol.getTokenValueStub(rayTokenId);
                 return balances[0];
             }
@@ -137,8 +141,8 @@ describe("DeFi modules", function(){
                 let before = {
                     userDai: await dai.balanceOf(user),
                     protocolDai: await dai.balanceOf(defiProtocolAddress),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
                 };
 
                 await dai.transfer(defim.address, amount, {from: user});
@@ -148,8 +152,8 @@ describe("DeFi modules", function(){
                 let after = {
                     userDai: await dai.balanceOf(user),
                     protocolDai: await dai.balanceOf(defiProtocolAddress),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
                 };
 
                 expect(after.userDai).to.be.bignumber.eq(before.userDai.sub(amount));
@@ -163,8 +167,8 @@ describe("DeFi modules", function(){
                 let before = {
                     userDai: await dai.balanceOf(user),
                     protocolDai: await dai.balanceOf(defiProtocolAddress),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
                 };
                 let amount = w3random.intervalBN(before.protocolDai.divn(3), before.protocolDai.divn(2));
 
@@ -174,8 +178,8 @@ describe("DeFi modules", function(){
                 let after = {
                     userDai: await dai.balanceOf(user),
                     protocolDai: await dai.balanceOf(defiProtocolAddress),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
                 };
 
                 expect(after.userDai).to.be.bignumber.eq(before.userDai.add(amount));
@@ -187,8 +191,8 @@ describe("DeFi modules", function(){
             it("should withdraw correct interest", async () => {
                 let beforeTimeShift = {
                     userDai: await dai.balanceOf(user),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
                 };
                 expect(beforeTimeShift.defimUnderlyingBalance).to.be.bignumber.gt(new BN(0)); // Ensure we have some DAI on pool balance
 
@@ -205,14 +209,15 @@ describe("DeFi modules", function(){
 
                 let beforeWithdrawInterest = {
                     userDai: await dai.balanceOf(user),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
-                    availableInterest: await defim.availableInterest(user)
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    availableInterest: (<any>(await defim.availableInterest(user))).amounts[0]
                 };
                 //console.log(beforeTimeShift.defimUnderlyingBalance, interesRate, timeShift, expScale, annualSeconds);
                 let expectedFullInterest = beforeTimeShift.defimUnderlyingBalance.mul(interesRate).mul(timeShift).div(expScale).div(annualSeconds);
                 expectEqualBN(beforeWithdrawInterest.defimUnderlyingBalance, beforeTimeShift.defimUnderlyingBalance.add(expectedFullInterest), 18, -5);
                 let expectedUserInterest = expectedFullInterest.mul(ptkForUser).div(ptkForOwner.add(ptkForUser));
+
                 expectEqualBN(beforeWithdrawInterest.availableInterest, expectedUserInterest, 18, -5);
 
                 // await defim.claimDistributions(user, {from:user}); //This is not required, but useful to test errors
@@ -222,9 +227,9 @@ describe("DeFi modules", function(){
 
                 let afterWithdrawInterest = {
                     userDai: await dai.balanceOf(user),
-                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress),
-                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress),
-                    availableInterest: await defim.availableInterest(user)
+                    defimProtocolBalance: await moduleDef.protocolBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    defimUnderlyingBalance: await moduleDef.underlyingBalanceOf(defim.address, defiProtocolAddress, dai.address),
+                    availableInterest: (<any>(await defim.availableInterest(user))).amounts[0]
                 };
                 expectEqualBN(afterWithdrawInterest.userDai, beforeWithdrawInterest.userDai.add(expectedUserInterest), 18, -5);
 

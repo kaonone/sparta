@@ -32,6 +32,7 @@ contract RAYStub is Base, IRAYStorage, IRAYNAVCalculator, IRAYPortfolioManager, 
         Base.initialize();
         ERC721.initialize();
         ERC721Metadata.initialize("Robo Advisor for Yield", "RAY");
+        require(_dai != address(0), "RAYStub: dai address should not be zero");
         dai = FreeDAI(_dai);
         nextId = 1;
     }

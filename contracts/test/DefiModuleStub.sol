@@ -18,10 +18,6 @@ contract DefiModuleStub is Module, IDefiModule {
         _registeredTokens.push(token);
     }
 
-    function registeredTokens() external view returns(address[] memory) {
-        return _registeredTokens;
-    }
-
     function handleDeposit(address, address, uint256) external {
         this;
     }
@@ -49,6 +45,10 @@ contract DefiModuleStub is Module, IDefiModule {
     function poolBalance(address) external returns(uint256) {
         this;
         return 0;
+    }
+
+    function registeredTokens() external view returns(address[] memory) {
+        return _registeredTokens;
     }
 
     function availableInterest(address) external view returns(address[] memory tokens, uint256[] memory amounts) {

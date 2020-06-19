@@ -19,6 +19,7 @@ declare global {
       require(
         name: "CompoundDAIStub"
       ): TruffleContracts.CompoundDAIStubContract;
+      require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
@@ -42,6 +43,7 @@ declare global {
       require(name: "ERC721Burnable"): TruffleContracts.ERC721BurnableContract;
       require(name: "ERC721Metadata"): TruffleContracts.ERC721MetadataContract;
       require(name: "FreeDAI"): TruffleContracts.FreeDAIContract;
+      require(name: "FundsModule"): TruffleContracts.FundsModuleContract;
       require(
         name: "FundsModuleStub"
       ): TruffleContracts.FundsModuleStubContract;
@@ -73,6 +75,7 @@ declare global {
         name: "ILoanProposalsModule"
       ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
+      require(name: "IRAY"): TruffleContracts.IRAYContract;
       require(
         name: "IRAYNAVCalculator"
       ): TruffleContracts.IRAYNAVCalculatorContract;

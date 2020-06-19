@@ -40,7 +40,7 @@ contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
         hasDebts[_msgSender()] = true;
     }
 
-    function repay(uint256, uint256) public {
+    function repay(uint256, address, uint256) public {
         hasDebts[_msgSender()] = false;
     }
 

@@ -31,9 +31,9 @@ const LiquidityModule = artifacts.require("LiquidityModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
 const CurveModule = artifacts.require("CurveModule");
 const RAYModule = artifacts.require("RAYModule");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, borrower, ...otherAccounts]) => {
-    let lToken: FreeDAIInstance;
     let ray: RAYStubInstance;
     let pool: PoolInstance;
     let funds: DefiFundsModuleInstance; 
@@ -44,6 +44,8 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
     let curve: CurveModuleInstance; 
     let pToken: PTokenInstance;
     let defi: RAYModuleInstance; 
+    let lTokens: Array<FreeDAIInstance>;
+    let lToken: FreeDAIInstance;
 
     before(async () => {
         //Setup "external" contracts
@@ -51,7 +53,6 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
         await (<any> lToken).methods['initialize()']({from: owner});
 
         ray = await RAYStub.new();
-        await (<any> ray).methods['initialize(address)'](lToken.address, {from: owner});
 
         //Setup system contracts
         pool = await Pool.new();
@@ -80,7 +81,6 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
         funds = await DefiFundsModule.new();
         await (<any> funds).methods['initialize(address)'](pool.address, {from: owner});
 
-        await pool.set("ltoken", lToken.address, true, {from: owner});  
         await pool.set('ray', ray.address, false, {from: owner});
         await pool.set("ptoken", pToken.address, true, {from: owner});  
         await pool.set("defi", defi.address, true, {from: owner});  
@@ -94,6 +94,18 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
         await pToken.addMinter(funds.address, {from: owner});
         await funds.addFundsOperator(liqm.address, {from: owner});
         await defi.addDefiOperator(funds.address, {from: owner});
+
+        // Register lTokens
+        lTokens = new Array<FreeDAIInstance>();
+        for(let i=0; i < 2; i++){
+            let lToken = await FreeDAI.new();
+            await (<any> lToken).methods['initialize()']({from: owner});
+            lTokens.push(lToken);
+            await funds.registerLToken(lToken.address, BN1E18, {from: owner});
+            await defi.registerToken(lToken.address, web3.utils.keccak256("DaiCompound"), {from: owner});
+        }
+        lToken = lTokens[0];
+        await (<any> ray).methods['initialize(address)'](lToken.address, {from: owner});
 
         //Do common tasks
         // access.disableWhitelist({from: owner});
@@ -110,7 +122,7 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
     it('should allow deposit if no debts', async () => {
         let fundsLWei = await lToken.balanceOf(ray.address);
         let amountWeiLToken = w3random.interval(10, 100000, 'ether');
-        let receipt = await liqm.deposit(amountWeiLToken, '0', {from: liquidityProvider});
+        let receipt = await liqm.deposit(lToken.address, amountWeiLToken, '0', {from: liquidityProvider});
         let expectedfundsLWei = fundsLWei.add(amountWeiLToken);
         expectEvent(receipt, 'Deposit', {'sender':liquidityProvider, 'lAmount':amountWeiLToken});
         fundsLWei = await lToken.balanceOf(ray.address);
@@ -120,7 +132,7 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
     });
     it('should allow withdraw if no debts', async () => {
         let lDepositWei = w3random.interval(2000, 100000, 'ether');
-        await liqm.deposit(lDepositWei, '0', {from: liquidityProvider});
+        await liqm.deposit(lToken.address, lDepositWei, '0', {from: liquidityProvider});
         let lBalance = await lToken.balanceOf(liquidityProvider);
         let pBalance = await pToken.balanceOf(liquidityProvider);
         let lBalanceO = await lToken.balanceOf(owner);
@@ -131,7 +143,7 @@ contract("LiquidityModule with RAYModule", async ([_, owner, liquidityProvider, 
         // console.log('lToken balance', lBalance.toString());
         // console.log('pToken balance', pBalance.toString());
         // console.log('lWithdrawWei', withdrawWei.toString());
-        let receipt = await liqm.withdraw(pWithdrawWei, '0', {from: liquidityProvider});
+        let receipt = await liqm.withdraw(pWithdrawWei, lToken.address, '0', {from: liquidityProvider});
         expectEvent(receipt, 'Withdraw', {'sender':liquidityProvider});
         let lBalance2 = await lToken.balanceOf(liquidityProvider);
         let pBalance2 = await pToken.balanceOf(liquidityProvider);

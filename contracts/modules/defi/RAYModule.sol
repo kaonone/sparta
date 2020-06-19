@@ -84,7 +84,9 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function handleDepositInternal(address token, address, uint256 amount) internal {
-        require(tokens[token].portfolioId != 0x0, "DefiModuleBase: token not registered");
+        require(tokens[token].portfolioId != 0x0, "RAYModule: token not registered");
+        // uint256 balance = IERC20(token).balanceOf(address(this));
+        // require(balance >= amount, "RAYModule: not enough balance");
         IRAYPortfolioManager pm = rayPortfolioManager();
         IERC20(token).approve(address(pm), amount);
         if (tokens[token].rayTokenId == 0x0) {
