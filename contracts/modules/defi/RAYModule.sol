@@ -36,8 +36,8 @@ contract RAYModule is DefiModuleBase, IERC721Receiver {
     }
 
     function registerToken(address token, bytes32 portfolioId) public onlyDefiOperator {
-        require(token != address(0), "DefiModuleBase: incorrect token address");
-        require(portfolioId != bytes32(0), "DefiModuleBase: incorrect portfolio id");
+        require(token != address(0), "RAYModule: incorrect token address");
+        require(portfolioId != bytes32(0), "RAYModule: incorrect portfolio id");
         tokens[token] = TokenData({
             portfolioId: portfolioId,
             rayTokenId: 0x0
