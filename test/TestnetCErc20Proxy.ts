@@ -90,7 +90,7 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
         };
 
         await fdai.transfer(defim.address, amount, {from: user});
-        let receipt = await defim.handleDeposit(user, amount, {from: owner});
+        let receipt = await defim.handleDeposit(fdai.address, user, amount, {from: owner});
         expectEvent(receipt, 'Deposit', {'amount':amount});
 
         await cDaiProxy.accrueInterest();
@@ -117,7 +117,7 @@ contract("TestnetCErc20Proxy", async ([_, owner, user, ...otherAccounts]) => {
         };
         let amount = w3random.intervalBN(before.cDaiDai.divn(3), before.cDaiDai.divn(2));
 
-        let receipt = await defim.withdraw(user, amount, {from: owner});
+        let receipt = await defim.withdraw(fdai.address, user, amount, {from: owner});
         expectEvent(receipt, 'Withdraw', {'amount':amount});
 
         await cDaiProxy.accrueInterest();

@@ -25,10 +25,9 @@ const CurveModule = artifacts.require("CurveModule");
 const CompoundModule = artifacts.require("CompoundModule");
 const DefiFundsModule = artifacts.require("DefiFundsModule");
 const LoanModuleStub = artifacts.require("LoanModuleStub");
+const BN1E18 = (new BN('10')).pow(new BN(18));
 
 contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
-    let dai: FreeDAIInstance;
-    let cDai: CErc20StubInstance;
     let pool: PoolInstance;
     let pToken: PTokenInstance;
     let defim: CompoundModuleInstance;
@@ -36,17 +35,14 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
     let funds: DefiFundsModuleInstance;
     let loanm: LoanModuleStubInstance; 
     let loanpm: LoanModuleStubInstance; 
+    let lTokens: Array<FreeDAIInstance>;
+    let cTokens: Array<CErc20StubInstance>;
+    let dai: FreeDAIInstance;
+    let cDai: CErc20StubInstance;
   
     let interesRate:BN, expScale:BN, annualSeconds:BN;
 
     before(async () => {
-        //Setup "external" contracts
-        dai = await FreeDAI.new();
-        await (<any> dai).methods['initialize()']({from: owner});
-
-        cDai = await CErc20Stub.new();
-        await (<any> cDai).methods['initialize(address)'](dai.address, {from: owner});
-
         //Setup system contracts
         pool = await Pool.new();
         await (<any> pool).methods['initialize()']({from: owner});
@@ -68,8 +64,6 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         loanpm = await LoanModuleStub.new();
         await (<any> loanpm).methods['initialize(address)'](pool.address, {from: owner});
 
-        await pool.set('ltoken', dai.address, false, {from: owner});
-        await pool.set('cdai', cDai.address, false, {from: owner});
         await pool.set('ptoken', pToken.address, false, {from: owner});
         await pool.set('defi', defim.address, false, {from: owner});
         await pool.set('funds', funds.address, false, {from: owner});
@@ -79,9 +73,28 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         await pToken.addMinter(funds.address, {from: owner});
         await defim.addDefiOperator(funds.address, {from: owner});
 
+        // Register lTokens
+        lTokens = new Array<FreeDAIInstance>();
+        cTokens = new Array<CErc20StubInstance>();
+        for(let i=0; i < 1; i++){
+            let lToken = await FreeDAI.new();
+            await (<any> lToken).methods['initialize()']({from: owner});
+            lTokens.push(lToken);
+            await funds.registerLToken(lToken.address, BN1E18, {from: owner});
+
+            let cToken = await CErc20Stub.new();
+            await (<any> cToken).methods['initialize(address)'](lToken.address, {from: owner});
+            cTokens.push(cToken);
+            await defim.registerToken(lToken.address, cToken.address, {from: owner});
+        }
+        dai = lTokens[0];
+        cDai = cTokens[0];
+
+        // Load info
         interesRate = await cDai.INTEREST_RATE();
         expScale = await cDai.EXP_SCALE();
         annualSeconds = await cDai.ANNUAL_SECONDS();
+
     });
 
     it("should deposit DAI to Compound", async () => {
@@ -96,7 +109,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
             cDaiUnderlying: await cDai.getBalanceOfUnderlying(defim.address),
         };
 
-        let receipt = await funds.depositLTokens(user, amount, {from: owner});
+        let receipt = await funds.depositLTokens(dai.address, user, amount, {from: owner});
 
         let after = {
             userDai: await dai.balanceOf(user),
@@ -120,7 +133,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         let amount = w3random.intervalBN(before.cDaiDai.divn(3), before.cDaiDai.divn(2));
 
-        let receipt = await funds.withdrawLTokens(user, amount, new BN(0), {from: owner});
+        let receipt = await funds.withdrawLTokens(dai.address, user, amount, new BN(0), {from: owner});
 
         let after = {
             userDai: await dai.balanceOf(user),
@@ -155,7 +168,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         expect(afterTimeShift.cDaiUnderlying).to.be.bignumber.gt(beforeTimeShift.cDaiUnderlying);
 
-        let receipt = await funds.withdrawAllFromDefi({from: owner});
+        let receipt = await funds.withdrawAllFromDefi(dai.address, {from: owner});
 
         let afterWithdraw = {
             fundsDai: await dai.balanceOf(funds.address),
@@ -177,7 +190,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         expect(before.fundsDai).to.be.bignumber.gt(new BN(0));
 
-        let receipt = await funds.depositAllToDefi({from: owner});
+        let receipt = await funds.depositAllToDefi(dai.address, {from: owner});
 
         let after = {
             fundsDai: await dai.balanceOf(funds.address),

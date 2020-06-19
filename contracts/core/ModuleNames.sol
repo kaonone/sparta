@@ -16,6 +16,5 @@ contract ModuleNames {
     string internal constant MODULE_LOAN_PROPOSALS    = "loan_proposals";
 
     // External Modules (used to store addresses of external contracts)
-    string internal constant MODULE_CDAI              = "cdai";
     string internal constant MODULE_RAY               = "ray";
 }
