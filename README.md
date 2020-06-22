@@ -202,3 +202,6 @@ During distributions Defi module calculates this additional ammount, so that PTK
 Defi module is configured to create distributions once a day. It stores time of next distribution and when time comes, any change of PTK balance or withdraw request will trigger a new distribution.
 With this distribution event Defi module stores how many additional DAI it can distribute, current balances of DAI and PTK.
 When one decides to withdraw (claim) his share of this additional DAI, Defi module iterates through all unclaimed distributions and calculates user's share of that distribution accroding to user's PTK balance and total amount of PTK at that time.
+
+## Multi-token support
+![Multi-token support](/docs/diagram_multitoken_support.jpg)
