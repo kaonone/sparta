@@ -96,6 +96,17 @@ contract CurveFiYModule is DefiModuleBase {
 
         return tokenBalance;
     }
+
+    function withdrawAll() public onlyOwner {
+        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
+        uint256 curveFiTokenBalance = curveFiToken.balanceOf(address(this));
+        curveFiDeposit.remove_liquidity(curveFiTokenBalance, [uint256(0), uint256(0), uint256(0)]);
+        for(uint256 i=0; i < _registeredTokens.length; i++){
+            IERC20 ltoken = IERC20(_registeredTokens[i]);
+            uint256 amount = ltoken.balanceOf(address(this));
+            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
+        }            
+    }
     
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
