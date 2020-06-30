@@ -2,7 +2,6 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Detailed.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Mintabale.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../interfaces/defi/IYErc20.sol";
 import "../interfaces/defi/ICurveFiSwap.sol";
@@ -29,7 +28,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
             IERC20(coins[i]).transferFrom(msgSender(), address(this), amounts[i]);
             fullAmount = fullAmount.add(normalizeAmount(coins[i], amounts[i]));
         }
-
+        require(token.mint(_msgSender(), fullAmount), "CurveFiSwapStub:Mint failed");
     }
 
 

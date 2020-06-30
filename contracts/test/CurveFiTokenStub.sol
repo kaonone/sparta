@@ -9,7 +9,7 @@ import "../common/Base.sol";
 
 
 contract CurveFiTokenStub is Base, ERC20, ERC20Detailed, ERC20Mintable, ERC20Burnable {
-    function initialize() public initializer {
+    function initialize() public ERC20Detailed("curve.fi token", "yDAI/yUSDC/yUSDT", 18) initializer {
         Base.initialize();
     }
 }
