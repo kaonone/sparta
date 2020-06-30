@@ -8,17 +8,17 @@ Akropolis Pool is undercollaterized credit pool based on AkropolisOS,  where mem
 
 Description of Akropolis Pool can be found in our [wiki](https://wiki.akropolis.io/pool/).
 
-# Testnet (Rinkeby) deployment 
-* FreeDAI: `0x3F5B698332572Fb6188492F5D53ba75f81797F9d`
-* Pool: `0x89d6B368Db35B75373aA7ECd5cA7311EF5dBb615`
-* PToken: `0x9b1b9E0355d9fa5446F88ce2CD48017307465EDD`
-* CurveModule: `0xC1BfE7636a244497BFc7D9D6C4419eD98f2fcd70`
-* AccessModule: `0xD13e1930E46C5412B9adbE3B0c091E9e9b41af91`
-* LiquidityModule: `0xCBA406Cd5cEc74E7F23bF7C87b60322Cc0Fb451e`
-* LoanLimitsModule: 
-* LoanProposalsModule: 
-* LoanModule: `0xB7C9389735513B4313198d93e9fc835066b5F1fC`
-* FundsModule: `0x3946fC3545Cef33d379466D3DC945Ca7e0181F1c`
+# Mainnet deployment 
+* DAI: `0x6b175474e89094c44da98b954eedeac495271d0f`
+* Pool: `0x73067fdd366Cb678E9b539788F4C0f34C5700246`
+* AccessModule: `0xfE7B0aeb84D134c5be6b217e51B2b040F5B7cB7B`
+* PToken: `0xAA2edc0E5CDE4Da80628972c501e79326741dB17`
+* CurveModule: `0xFb6b0103063CDf701b733db3Fa3F1c0686F19668`
+* FundsModule: `0xc88F54A79CaE4C125D7A8c2Cf811daaE78b07D64`
+* LiquidityModule: `0x543cBc6693f8cBCf0AE5f2cfd9922203cc13b10A` 
+* LoanLimitsModule: `0x42b41f636C9eBB150F859f65e3c0f938b0347f59`
+* LoanProposalsModule: `0xd3bdEdA5e165E67985a4Dc7927E4651Bedd1950c`
+* LoanModule: `0x42E24De51db5baf6E18F91619195375FBAe63b13`
 
 ## Developer tools
 * [Openzeppelin SDK](https://openzeppelin.com/sdk/)
