@@ -55,7 +55,7 @@ rem call npx oz send-tx --to 0xFb6b0103063CDf701b733db3Fa3F1c0686F19668 --networ
 goto :done
 
 :setupCurve
-call npx oz send-tx --to 0xFb6b0103063CDf701b733db3Fa3F1c0686F19668 --network mainnet --method setCurveParams --args "4000, 10"
+call npx oz send-tx --to 0xFb6b0103063CDf701b733db3Fa3F1c0686F19668 --network mainnet --method setCurveParams --args "5000000000000000000000, 1000000000000000000"
 goto :done
 
 :setupWhitelist
