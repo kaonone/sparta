@@ -17,7 +17,7 @@ contract PToken is Module, IPToken, ERC20, ERC20Detailed, ERC20Mintable, ERC20Bu
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
-        ERC20Detailed.initialize("Akropolis Pool Token", "PTK", 18);
+        ERC20Detailed.initialize("Akropolis Sparta Pool Token", "ASPT", 18);
         ERC20Mintable.initialize(_msgSender());
     }
 

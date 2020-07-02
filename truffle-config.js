@@ -85,6 +85,11 @@ module.exports = {
       provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://rinkeby.infura.io/v3/" + infuraProjectId),
       networkId: 4,       // Rinkeby's id
     },
+    mainnet: {
+      provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://mainnet.infura.io/v3/" + infuraProjectId),
+      networkId: 1,       // Mainnet id
+      gasPrice: 70000000000 // 70 gwei      
+    },
     
     // Another network with more advanced options...
     // advanced: {
@@ -119,7 +124,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.5.12",
+      version: "0.5.17",
       settings: {
         optimizer: {
           enabled: true,

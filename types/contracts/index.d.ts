@@ -2,7 +2,7 @@
 /* tslint:disable */
 
 /// <reference types="truffle-typings" />
-import BN from "bn.js";
+import { BigNumber } from "bignumber.js";
 
 export interface AccessModuleContract
   extends Truffle.Contract<AccessModuleInstance> {
@@ -383,55 +383,58 @@ export interface AccessModuleInstance extends Truffle.ContractInstance {
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addPauser: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addWhitelistAdmin: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addWhitelisted: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -444,17 +447,17 @@ export interface AccessModuleInstance extends Truffle.ContractInstance {
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   isPauser(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isWhitelistAdmin(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isWhitelisted(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -474,19 +477,20 @@ export interface AccessModuleInstance extends Truffle.ContractInstance {
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   removeWhitelisted: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -528,37 +532,39 @@ export interface AccessModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -602,8 +608,8 @@ export interface AccessModuleInstance extends Truffle.ContractInstance {
   };
 
   isOperationAllowed(
-    operation: number | BN | string,
-    sender: string | BN,
+    operation: number | BigNumber | string,
+    sender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
@@ -623,19 +629,20 @@ export interface AccountsModuleInstance extends Truffle.ContractInstance {
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -665,19 +672,20 @@ export interface BaseInstance extends Truffle.ContractInstance {
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -694,19 +702,20 @@ export interface BaseInstance extends Truffle.ContractInstance {
 
 export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
   addFundsOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -717,23 +726,23 @@ export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 
   isFundsOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   lTokens(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   registeredLTokens(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -756,368 +765,372 @@ export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   initialize: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositLTokens: {
     (
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawLTokens: {
     (
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributePTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   lockPTokens: {
     (
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintAndLockPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unlockAndWithdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnLockedPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   registerLToken: {
     (
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unregisterLToken: {
-    (lToken: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      lToken: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setLTokenRate: {
     (
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1128,27 +1141,27 @@ export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
 
   refundLTokens: {
     (
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1162,201 +1175,201 @@ export interface BaseFundsModuleInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   getPrefferableTokenForWithdraw(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   pBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   isLTokenRegistered(
-    token: string | BN,
+    token: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   normalizeLTokenValue(
-    token: string | BN,
-    value: number | BN | string,
+    token: string | BigNumber,
+    value: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   denormalizeLTokenValue(
-    token: string | BN,
-    value: number | BN | string,
+    token: string | BigNumber,
+    value: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolEnter(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExit(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitInverse(
-    pAmount: number | BN | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 }
 
 export interface BondingCurveInstance extends Truffle.ContractInstance {
-  curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  curveA(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  curveB(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  curveB(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   initialize: {
     (
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculateEnter(
-    liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    debtCommitments: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExit(
-    liquidAssets: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExitInverse(
-    liquidAssets: number | BN | string,
-    pAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   curveFunction(
-    s: number | BN | string,
+    s: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   inverseCurveFunction(
-    x: number | BN | string,
+    x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface CErc20StubInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  INITIAL_RATE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  INITIAL_RATE(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  INTEREST_RATE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  INTEREST_RATE(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1378,72 +1391,73 @@ export interface CErc20StubInstance extends Truffle.ContractInstance {
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1452,25 +1466,25 @@ export interface CErc20StubInstance extends Truffle.ContractInstance {
     (
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1479,82 +1493,83 @@ export interface CErc20StubInstance extends Truffle.ContractInstance {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   balanceOfUnderlying: {
-    (owner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      owner: string | BN,
+    (
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      owner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mint: {
     (
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeemUnderlying: {
     (
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1563,98 +1578,100 @@ export interface CErc20StubInstance extends Truffle.ContractInstance {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   getBalanceOfUnderlying(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  exchangeRateStored(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  exchangeRateStored(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface CompoundDAIStubInstance extends Truffle.ContractInstance {
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1676,72 +1693,73 @@ export interface CompoundDAIStubInstance extends Truffle.ContractInstance {
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1750,48 +1768,48 @@ export interface CompoundDAIStubInstance extends Truffle.ContractInstance {
     (
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allocateTo: {
     (
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1839,37 +1857,39 @@ export interface CompoundModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -1890,25 +1910,25 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
   set: {
     (
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -1953,11 +1973,11 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
   };
 
   contains(
-    _module: string | BN,
+    _module: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
-  size(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  size(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   isConstant(
     _name: string,
@@ -1967,14 +1987,14 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
   get(_name: string, txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getName(
-    _module: string | BN,
+    _module: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   first(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   next(
-    _current: string | BN,
+    _current: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 }
@@ -1982,52 +2002,54 @@ export interface CoreInterfaceInstance extends Truffle.ContractInstance {
 export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
   DISTRIBUTION_AGGREGATION_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   DONATE_DUST(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   addDefiOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   availableInterest(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[string[], BN[]]>;
+  ): Promise<[string[], BigNumber[]]>;
 
   balances(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2037,11 +2059,13 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
   curveFiSwap(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   distributions(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionsLength(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -2050,33 +2074,33 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
 
   handleDeposit: {
     (
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isDefiOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -2084,26 +2108,27 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
 
   nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   poolBalance: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      token: string | BN,
+    (
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2127,87 +2152,89 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   updatePTKBalance: {
     (
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2231,19 +2258,20 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
   };
 
   setCurveFi: {
-    (deposit: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      deposit: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      deposit: string | BN,
+      deposit: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      deposit: string | BN,
+      deposit: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      deposit: string | BN,
+      deposit: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2251,9 +2279,9 @@ export interface CurveFiYModuleInstance extends Truffle.ContractInstance {
   registeredTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   getTokenIndex(
-    token: string | BN,
+    token: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface CurveModuleInstance extends Truffle.ContractInstance {
@@ -2277,35 +2305,35 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  PERCENT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  PERCENT_DIVIDER(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   calculateEnter(
-    liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    debtCommitments: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExit(
-    liquidAssets: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExitInverse(
-    liquidAssets: number | BN | string,
-    pAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  curveA(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  curveA(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  curveB(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  curveB(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   curveFunction(
-    s: number | BN | string,
+    s: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -2313,9 +2341,9 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 
   inverseCurveFunction(
-    x: number | BN | string,
+    x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
@@ -2333,42 +2361,46 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  withdrawFeePercent(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  withdrawFeePercent(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   initialize: {
     (txDetails?: Truffle.TransactionDetails): Promise<
@@ -2381,79 +2413,80 @@ export interface CurveModuleInstance extends Truffle.ContractInstance {
 
   setWithdrawFee: {
     (
-      _withdrawFeePercent: number | BN | string,
+      _withdrawFeePercent: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _withdrawFeePercent: number | BN | string,
+      _withdrawFeePercent: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _withdrawFeePercent: number | BN | string,
+      _withdrawFeePercent: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _withdrawFeePercent: number | BN | string,
+      _withdrawFeePercent: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setCurveParams: {
     (
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _curveA: number | BN | string,
-      _curveB: number | BN | string,
+      _curveA: number | BigNumber | string,
+      _curveB: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculateExitInverseWithFee(
-    liquidAssets: number | BN | string,
-    pAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
   calculateExitWithFee(
-    liquidAssets: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExitFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
   addFundsOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2464,138 +2497,138 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
 
   burnLockedPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculatePoolEnter(
-    lAmount: number | BN | string,
-    liquidityCorrection: number | BN | string,
+    lAmount: number | BigNumber | string,
+    liquidityCorrection: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExit(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitInverse(
-    pAmount: number | BN | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   denormalizeLTokenValue(
-    token: string | BN,
-    value: number | BN | string,
+    token: string | BigNumber,
+    value: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   depositLTokens: {
     (
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      from: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributePTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2615,161 +2648,161 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 
   getPrefferableTokenForWithdraw(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   isFundsOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isLTokenRegistered(
-    token: string | BN,
+    token: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
-  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   lTokens(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   lockPTokens: {
     (
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintAndLockPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   normalizeLTokenValue(
-    token: string | BN,
-    value: number | BN | string,
+    token: string | BigNumber,
+    value: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   pBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   refundLTokens: {
     (
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
+      lToken: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   registerLToken: {
     (
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   registeredLTokens(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -2793,154 +2826,157 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
 
   setLTokenRate: {
     (
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
-      rate: number | BN | string,
+      lToken: string | BigNumber,
+      rate: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unlockAndWithdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unregisterLToken: {
-    (lToken: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      lToken: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lToken: string | BN,
+      lToken: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawLTokens: {
     (
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
+      poolFee: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
+      poolFee: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
+      poolFee: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      token: string | BigNumber,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
+      poolFee: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2955,37 +2991,39 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
   };
 
   withdrawAllFromDefi: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositAllToDefi: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -2994,35 +3032,36 @@ export interface DefiFundsModuleInstance extends Truffle.ContractInstance {
 export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
   DISTRIBUTION_AGGREGATION_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   addDefiOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balances(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   distributions(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -3030,7 +3069,7 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 
   isDefiOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -3038,7 +3077,7 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
 
   nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -3063,37 +3102,39 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3101,73 +3142,74 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
   registeredTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   initialize: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   handleDeposit: {
     (
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3183,69 +3225,73 @@ export interface DefiModuleBaseInstance extends Truffle.ContractInstance {
 
   updatePTKBalance: {
     (
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   poolBalance: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      token: string | BN,
+    (
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   availableInterest(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[string[], BN[]]>;
+  ): Promise<[string[], BigNumber[]]>;
 
-  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionsLength(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface DefiModuleStubInstance extends Truffle.ContractInstance {
@@ -3279,109 +3325,112 @@ export interface DefiModuleStubInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   registerToken: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   handleDeposit: {
     (
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3396,60 +3445,60 @@ export interface DefiModuleStubInstance extends Truffle.ContractInstance {
   };
 
   claimDistributions: {
-    (arg0: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+    (arg0: string | BigNumber, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
     call(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   updatePTKBalance: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   poolBalance: {
-    (arg0: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+    (arg0: string | BigNumber, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
     call(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3457,44 +3506,46 @@ export interface DefiModuleStubInstance extends Truffle.ContractInstance {
   registeredTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   availableInterest(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[string[], BN[]]>;
+  ): Promise<[string[], BigNumber[]]>;
 }
 
 export interface DefiOperatorRoleInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addDefiOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3509,7 +3560,7 @@ export interface DefiOperatorRoleInstance extends Truffle.ContractInstance {
   };
 
   isDefiOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
@@ -3517,167 +3568,171 @@ export interface DefiOperatorRoleInstance extends Truffle.ContractInstance {
 export interface DistributionTokenInstance extends Truffle.ContractInstance {
   DISTRIBUTION_AGGREGATION_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   addMinter: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  distributionAccumulator(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionAccumulator(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   distributions(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isMinter(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   mint: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   nextDistributions(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   renounceMinter: {
     (txDetails?: Truffle.TransactionDetails): Promise<
@@ -3688,73 +3743,73 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distribute: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3769,48 +3824,51 @@ export interface DistributionTokenInstance extends Truffle.ContractInstance {
   };
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      account: string | BN,
+    (
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   fullBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateUnclaimedDistributions(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateDistributedAmount(
-    fromDistribution: number | BN | string,
-    toDistribution: number | BN | string,
-    initialBalance: number | BN | string,
+    fromDistribution: number | BigNumber | string,
+    toDistribution: number | BigNumber | string,
+    initialBalance: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   distributionBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  distributionTotalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionTotalSupply(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface ERC165Instance extends Truffle.ContractInstance {
@@ -3824,140 +3882,140 @@ export interface ERC165Instance extends Truffle.ContractInstance {
   };
 
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
 
 export interface ERC20Instance extends Truffle.ContractInstance {
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3965,175 +4023,175 @@ export interface ERC20Instance extends Truffle.ContractInstance {
 
 export interface ERC20BurnableInstance extends Truffle.ContractInstance {
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burn: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnFrom: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4141,87 +4199,87 @@ export interface ERC20BurnableInstance extends Truffle.ContractInstance {
 
 export interface ERC20DetailedInstance extends Truffle.ContractInstance {
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4230,25 +4288,25 @@ export interface ERC20DetailedInstance extends Truffle.ContractInstance {
     (
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4257,110 +4315,111 @@ export interface ERC20DetailedInstance extends Truffle.ContractInstance {
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 }
 
 export interface ERC20MintableInstance extends Truffle.ContractInstance {
   addMinter: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isMinter(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -4373,95 +4432,96 @@ export interface ERC20MintableInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mint: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4469,7 +4529,7 @@ export interface ERC20MintableInstance extends Truffle.ContractInstance {
 
 export interface ERC721Instance extends Truffle.ContractInstance {
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -4483,122 +4543,122 @@ export interface ERC721Instance extends Truffle.ContractInstance {
   };
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   setApprovalForAll: {
     (
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4607,34 +4667,34 @@ export interface ERC721Instance extends Truffle.ContractInstance {
 export interface ERC721BurnableInstance extends Truffle.ContractInstance {
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -4648,113 +4708,113 @@ export interface ERC721BurnableInstance extends Truffle.ContractInstance {
   };
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setApprovalForAll: {
     (
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burn: {
     (
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4763,126 +4823,126 @@ export interface ERC721BurnableInstance extends Truffle.ContractInstance {
 export interface ERC721MetadataInstance extends Truffle.ContractInstance {
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setApprovalForAll: {
     (
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -4915,132 +4975,132 @@ export interface ERC721MetadataInstance extends Truffle.ContractInstance {
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   tokenURI(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 }
 
 export interface FreeDAIInstance extends Truffle.ContractInstance {
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   burn: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnFrom: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5062,72 +5122,73 @@ export interface FreeDAIInstance extends Truffle.ContractInstance {
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5136,48 +5197,48 @@ export interface FreeDAIInstance extends Truffle.ContractInstance {
     (
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mint: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5205,19 +5266,20 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addFundsOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5228,13 +5290,13 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   ): Promise<string>;
 
   isFundsOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
-  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -5259,37 +5321,39 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5305,292 +5369,292 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   depositLTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawLTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributePTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   lockPTokens: {
     (
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintAndLockPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unlockAndWithdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnLockedPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   refundLTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   pBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolEnter(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExit(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitInverse(
-    pAmount: number | BN | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 }
 
 export interface FundsModuleStubInstance extends Truffle.ContractInstance {
@@ -5635,37 +5699,39 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5681,306 +5747,308 @@ export interface FundsModuleStubInstance extends Truffle.ContractInstance {
 
   depositLTokens: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawLTokens: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributePTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnPTokens: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   lockPTokens: {
     (
-      arg0: (string | BN)[],
-      arg1: (number | BN | string)[],
+      arg0: (string | BigNumber)[],
+      arg1: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: (string | BN)[],
-      arg1: (number | BN | string)[],
+      arg0: (string | BigNumber)[],
+      arg1: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: (string | BN)[],
-      arg1: (number | BN | string)[],
+      arg0: (string | BigNumber)[],
+      arg1: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: (string | BN)[],
-      arg1: (number | BN | string)[],
+      arg0: (string | BigNumber)[],
+      arg1: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintAndLockPTokens: {
     (
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unlockAndWithdrawPTokens: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnLockedPTokens: {
     (
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculatePoolEnter(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExit(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitWithFee(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitInverse(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
-  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   pBalanceOf(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface FundsOperatorRoleInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addFundsOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -5995,15 +6063,15 @@ export interface FundsOperatorRoleInstance extends Truffle.ContractInstance {
   };
 
   isFundsOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
 
 export interface IAccessModuleInstance extends Truffle.ContractInstance {
   isOperationAllowed(
-    operation: number | BN | string,
-    sender: string | BN,
+    operation: number | BigNumber | string,
+    sender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
@@ -6011,102 +6079,103 @@ export interface IAccessModuleInstance extends Truffle.ContractInstance {
 export interface ICErc20Instance extends Truffle.ContractInstance {
   transfer: {
     (
-      dst: string | BN,
-      amount: number | BN | string,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      dst: string | BN,
-      amount: number | BN | string,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      dst: string | BN,
-      amount: number | BN | string,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      dst: string | BN,
-      amount: number | BN | string,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      src: string | BN,
-      dst: string | BN,
-      amount: number | BN | string,
+      src: string | BigNumber,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      src: string | BN,
-      dst: string | BN,
-      amount: number | BN | string,
+      src: string | BigNumber,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      src: string | BN,
-      dst: string | BN,
-      amount: number | BN | string,
+      src: string | BigNumber,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      src: string | BN,
-      dst: string | BN,
-      amount: number | BN | string,
+      src: string | BigNumber,
+      dst: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   balanceOfUnderlying: {
-    (owner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      owner: string | BN,
+    (
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      owner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6115,75 +6184,77 @@ export interface ICErc20Instance extends Truffle.ContractInstance {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  exchangeRateStored(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  exchangeRateStored(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   accrueInterest: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
   mint: {
     (
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeemUnderlying: {
     (
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6192,96 +6263,96 @@ export interface ICErc20Instance extends Truffle.ContractInstance {
 export interface ICurveFiDepositInstance extends Truffle.ContractInstance {
   add_liquidity: {
     (
-      uamounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      uamounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      uamounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      uamounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove_liquidity: {
     (
-      _amount: number | BN | string,
-      min_uamounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_uamounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _amount: number | BN | string,
-      min_uamounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_uamounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _amount: number | BN | string,
-      min_uamounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_uamounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _amount: number | BN | string,
-      min_uamounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_uamounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove_liquidity_imbalance: {
     (
-      uamounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      uamounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      uamounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      uamounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      uamounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove_liquidity_one_coin: {
     (
-      _token_amount: number | BN | string,
-      i: number | BN | string,
-      min_uamount: number | BN | string,
+      _token_amount: number | BigNumber | string,
+      i: number | BigNumber | string,
+      min_uamount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _token_amount: number | BN | string,
-      i: number | BN | string,
-      min_uamount: number | BN | string,
+      _token_amount: number | BigNumber | string,
+      i: number | BigNumber | string,
+      min_uamount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _token_amount: number | BN | string,
-      i: number | BN | string,
-      min_uamount: number | BN | string,
+      _token_amount: number | BigNumber | string,
+      i: number | BigNumber | string,
+      min_uamount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _token_amount: number | BN | string,
-      i: number | BN | string,
-      min_uamount: number | BN | string,
+      _token_amount: number | BigNumber | string,
+      i: number | BigNumber | string,
+      min_uamount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6296,12 +6367,12 @@ export interface ICurveFiDepositInstance extends Truffle.ContractInstance {
   };
 
   coins(
-    i: number | BN | string,
+    i: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   underlying_coins(
-    i: number | BN | string,
+    i: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -6310,151 +6381,152 @@ export interface ICurveFiDepositInstance extends Truffle.ContractInstance {
   token(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   calc_withdraw_one_coin(
-    _token_amount: number | BN | string,
-    i: number | BN | string,
+    _token_amount: number | BigNumber | string,
+    i: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface ICurveFiSwapInstance extends Truffle.ContractInstance {
   add_liquidity: {
     (
-      amounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amounts: (number | BN | string)[],
-      min_mint_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      min_mint_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove_liquidity: {
     (
-      _amount: number | BN | string,
-      min_amounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_amounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _amount: number | BN | string,
-      min_amounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_amounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _amount: number | BN | string,
-      min_amounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_amounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _amount: number | BN | string,
-      min_amounts: (number | BN | string)[],
+      _amount: number | BigNumber | string,
+      min_amounts: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove_liquidity_imbalance: {
     (
-      amounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amounts: (number | BN | string)[],
-      max_burn_amount: number | BN | string,
+      amounts: (number | BigNumber | string)[],
+      max_burn_amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balances(
-    i: number | BN | string,
+    i: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  A(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  A(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  fee(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  fee(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 }
 
 export interface ICurveModuleInstance extends Truffle.ContractInstance {
   calculateEnter(
-    liquidAssets: number | BN | string,
-    debtCommitments: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    debtCommitments: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExit(
-    liquidAssets: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExitWithFee(
-    liquidAssets: number | BN | string,
-    lAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateExitInverseWithFee(
-    liquidAssets: number | BN | string,
-    pAmount: number | BN | string,
+    liquidAssets: number | BigNumber | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
   calculateExitFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface IDefiModuleInstance extends Truffle.ContractInstance {
   registeredTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   poolBalance: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      token: string | BN,
+    (
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   availableInterest(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[string[], BN[]]>;
+  ): Promise<[string[], BigNumber[]]>;
 
   withdrawInterest: {
     (txDetails?: Truffle.TransactionDetails): Promise<
@@ -6466,96 +6538,97 @@ export interface IDefiModuleInstance extends Truffle.ContractInstance {
   };
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   handleDeposit: {
     (
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   updatePTKBalance: {
     (
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6563,94 +6636,94 @@ export interface IDefiModuleInstance extends Truffle.ContractInstance {
 
 export interface IERC165Instance extends Truffle.ContractInstance {
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 }
 
 export interface IERC20Instance extends Truffle.ContractInstance {
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6658,127 +6731,127 @@ export interface IERC20Instance extends Truffle.ContractInstance {
 
 export interface IERC721Instance extends Truffle.ContractInstance {
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   setApprovalForAll: {
     (
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6787,126 +6860,126 @@ export interface IERC721Instance extends Truffle.ContractInstance {
 export interface IERC721MetadataInstance extends Truffle.ContractInstance {
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setApprovalForAll: {
     (
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      operator: string | BN,
+      operator: string | BigNumber,
       _approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -6916,7 +6989,7 @@ export interface IERC721MetadataInstance extends Truffle.ContractInstance {
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   tokenURI(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 }
@@ -6924,30 +6997,30 @@ export interface IERC721MetadataInstance extends Truffle.ContractInstance {
 export interface IERC721ReceiverInstance extends Truffle.ContractInstance {
   onERC721Received: {
     (
-      operator: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      operator: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       data: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      operator: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      operator: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       data: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      operator: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      operator: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       data: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      operator: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      operator: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       data: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -6957,339 +7030,339 @@ export interface IERC721ReceiverInstance extends Truffle.ContractInstance {
 export interface IFundsModuleInstance extends Truffle.ContractInstance {
   depositLTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawLTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   depositPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributePTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnPTokens: {
     (
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      amount: number | BN | string,
+      from: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   lockPTokens: {
     (
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: (string | BN)[],
-      amount: (number | BN | string)[],
+      from: (string | BigNumber)[],
+      amount: (number | BigNumber | string)[],
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mintAndLockPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unlockAndWithdrawPTokens: {
     (
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      amount: number | BN | string,
+      to: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnLockedPTokens: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculatePoolEnter(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExit(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculatePoolExitInverse(
-    pAmount: number | BN | string,
+    pAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
 
   calculatePoolExitWithFee(
-    lAmount: number | BN | string,
+    lAmount: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lBalance(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   pBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
   deposit: {
     (
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawForRepay: {
     (
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -7298,629 +7371,637 @@ export interface ILiquidityModuleInstance extends Truffle.ContractInstance {
 export interface ILoanLimitsModuleInstance extends Truffle.ContractInstance {
   set: {
     (
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   get(
-    limit: number | BN | string,
+    limit: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  debtInterestMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  debtInterestMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  pledgePercentMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  pledgePercentMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  lMinPledgeMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lMinPledgeMax(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  debtLoadMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  debtLoadMax(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  maxOpenProposalsPerUser(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  maxOpenProposalsPerUser(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
-  minCancelProposalTimeout(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  minCancelProposalTimeout(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface ILoanModuleInstance extends Truffle.ContractInstance {
   createDebt: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repay: {
     (
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayPTK: {
     (
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayAllInterest: {
-    (borrower: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      borrower: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtDefault: {
     (
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawUnlockedPledge: {
     (
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isDebtDefaultTimeReached(
-    borrower: string | BN,
-    debt: number | BN | string,
+    borrower: string | BigNumber,
+    debt: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   hasActiveDebts(
-    borrower: string | BN,
+    borrower: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
-  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 }
 
 export interface ILoanProposalsModuleInstance extends Truffle.ContractInstance {
   createDebtProposal: {
     (
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addPledge: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPledge: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtProposal: {
     (
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   getProposalAndPledgeInfo(
-    borrower: string | BN,
-    proposal: number | BN | string,
-    supporter: string | BN,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
+    supporter: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN, BN, BN]>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+  >;
 
   getProposalInterestRate(
-    borrower: string | BN,
-    proposal: number | BN | string,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface IPTokenInstance extends Truffle.ContractInstance {
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mint: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burn: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnFrom: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distribute: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      account: string | BN,
+    (
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   fullBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateDistributedAmount(
-    startDistribution: number | BN | string,
-    nextDistribution: number | BN | string,
-    initialBalance: number | BN | string,
+    startDistribution: number | BigNumber | string,
+    nextDistribution: number | BigNumber | string,
+    initialBalance: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 }
 
 export interface IRAYInstance extends Truffle.ContractInstance {
   mint: {
     (
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   deposit: {
     (
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getTokenValue: {
     (
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<[BN, BN]>;
+    ): Promise<[BigNumber, BigNumber]>;
     sendTransaction(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -7929,23 +8010,23 @@ export interface IRAYInstance extends Truffle.ContractInstance {
 export interface IRAYNAVCalculatorInstance extends Truffle.ContractInstance {
   getTokenValue: {
     (
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<[BN, BN]>;
+    ): Promise<[BigNumber, BigNumber]>;
     sendTransaction(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      portfolioId: string | BN,
-      tokenId: string | BN,
+      portfolioId: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -7954,77 +8035,77 @@ export interface IRAYNAVCalculatorInstance extends Truffle.ContractInstance {
 export interface IRAYPortfolioManagerInstance extends Truffle.ContractInstance {
   mint: {
     (
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   deposit: {
     (
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      originalCaller: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      originalCaller: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8032,238 +8113,238 @@ export interface IRAYPortfolioManagerInstance extends Truffle.ContractInstance {
 
 export interface IRAYStorageInstance extends Truffle.ContractInstance {
   getTokenKey(
-    rayTokenId: string | BN,
+    rayTokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getPrincipalAddress(
-    portfolioId: string | BN,
+    portfolioId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getIsERC20(
-    principalAddress: string | BN,
+    principalAddress: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   getContractAddress(
-    contractId: string | BN,
+    contractId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getTokenShares(
-    portfolioId: string | BN,
-    rayTokenId: string | BN,
+    portfolioId: string | BigNumber,
+    rayTokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getTokenCapital(
-    portfolioId: string | BN,
-    rayTokenId: string | BN,
+    portfolioId: string | BigNumber,
+    rayTokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getTokenAllowance(
-    portfolioId: string | BN,
-    rayTokenId: string | BN,
+    portfolioId: string | BigNumber,
+    rayTokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface ITestnetCompoundDAIInstance extends Truffle.ContractInstance {
   allocateTo: {
     (
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      value: number | BN | string,
+      recipient: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 }
 
 export interface IYErc20Instance extends Truffle.ContractInstance {
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8272,47 +8353,49 @@ export interface IYErc20Instance extends Truffle.ContractInstance {
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   deposit: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      shares: number | BN | string,
+      shares: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      shares: number | BN | string,
+      shares: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      shares: number | BN | string,
+      shares: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      shares: number | BN | string,
+      shares: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  getPricePerFullShare(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  getPricePerFullShare(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface LiquidityModuleInstance extends Truffle.ContractInstance {
@@ -8343,7 +8426,9 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
-  limits(txDetails?: Truffle.TransactionDetails): Promise<[BN, BN]>;
+  limits(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<[BigNumber, BigNumber]>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -8359,37 +8444,39 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8405,101 +8492,105 @@ export interface LiquidityModuleInstance extends Truffle.ContractInstance {
 
   deposit: {
     (
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lAmount: number | BN | string,
-      pAmountMin: number | BN | string,
+      lAmount: number | BigNumber | string,
+      pAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawForRepay: {
     (
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setLimits: {
     (
-      lDepositMin: number | BN | string,
-      pWithdrawMin: number | BN | string,
+      lDepositMin: number | BigNumber | string,
+      pWithdrawMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      lDepositMin: number | BN | string,
-      pWithdrawMin: number | BN | string,
+      lDepositMin: number | BigNumber | string,
+      pWithdrawMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      lDepositMin: number | BN | string,
-      pWithdrawMin: number | BN | string,
+      lDepositMin: number | BigNumber | string,
+      pWithdrawMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      lDepositMin: number | BN | string,
-      pWithdrawMin: number | BN | string,
+      lDepositMin: number | BigNumber | string,
+      pWithdrawMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 }
 
 export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
-  DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  DEBT_LOAD_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
-  INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  INTEREST_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -8523,7 +8614,7 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
 
   PLEDGE_PERCENT_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -8546,37 +8637,39 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8592,57 +8685,65 @@ export interface LoanLimitsModuleInstance extends Truffle.ContractInstance {
 
   set: {
     (
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      limit: number | BN | string,
-      value: number | BN | string,
+      limit: number | BigNumber | string,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   get(
-    limit: number | BN | string,
+    limit: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lDebtAmountMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  debtInterestMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  debtInterestMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  pledgePercentMin(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  pledgePercentMin(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  lMinPledgeMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  lMinPledgeMax(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  debtLoadMax(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  debtLoadMax(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  maxOpenProposalsPerUser(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  maxOpenProposalsPerUser(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
-  minCancelProposalTimeout(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  minCancelProposalTimeout(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface LoanModuleInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  DEBT_LOAD_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  DEBT_LOAD_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   DEBT_REPAY_DEADLINE_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  INTEREST_MULTIPLIER(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  INTEREST_MULTIPLIER(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -8665,15 +8766,15 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   activeDebts(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   debts(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN, boolean]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber, boolean]>;
 
   getModuleAddress(
     module: string,
@@ -8696,37 +8797,39 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8742,183 +8845,184 @@ export interface LoanModuleInstance extends Truffle.ContractInstance {
 
   createDebt: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      lAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repay: {
     (
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debt: number | BN | string,
-      lAmount: number | BN | string,
+      debt: number | BigNumber | string,
+      lAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayPTK: {
     (
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debt: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      debt: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayAllInterest: {
-    (borrower: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      borrower: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
+      borrower: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtDefault: {
     (
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawUnlockedPledge: {
     (
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      debt: number | BN | string,
+      borrower: string | BigNumber,
+      debt: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isDebtDefaultTimeReached(
-    borrower: string | BN,
-    debt: number | BN | string,
+    borrower: string | BigNumber,
+    debt: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   calculatePledgeInfo(
-    borrower: string | BN,
-    debt: number | BN | string,
-    supporter: string | BN,
+    borrower: string | BigNumber,
+    debt: number | BigNumber | string,
+    supporter: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>;
 
   getDebtRequiredPayments(
-    borrower: string | BN,
-    debt: number | BN | string,
+    borrower: string | BigNumber,
+    debt: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   hasActiveDebts(
-    borrower: string | BN,
+    borrower: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   getUnpaidInterest(
-    borrower: string | BN,
+    borrower: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
-  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   calculateInterestPayment(
-    debtLAmount: number | BN | string,
-    interest: number | BN | string,
-    prevPayment: number | BN | string,
-    currentPayment: number | BN | string,
+    debtLAmount: number | BigNumber | string,
+    interest: number | BigNumber | string,
+    prevPayment: number | BigNumber | string,
+    currentPayment: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface LoanModuleStubInstance extends Truffle.ContractInstance {
@@ -8963,37 +9067,39 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9009,325 +9115,331 @@ export interface LoanModuleStubInstance extends Truffle.ContractInstance {
 
   createDebtProposal: {
     (
-      debtLAmount: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: string | BN,
+      debtLAmount: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debtLAmount: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: string | BN,
+      debtLAmount: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      debtLAmount: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: string | BN,
+      debtLAmount: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debtLAmount: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: string | BN,
+      debtLAmount: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addPledge: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
-      arg3: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
+      arg3: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPledge: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtProposal: {
     (
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: number | BN | string,
+      arg0: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   createDebt: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repay: {
     (
-      arg0: number | BN | string,
-      arg1: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayPTK: {
     (
-      arg0: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: number | BN | string,
-      arg1: number | BN | string,
-      arg2: number | BN | string,
+      arg0: number | BigNumber | string,
+      arg1: number | BigNumber | string,
+      arg2: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   repayAllInterest: {
-    (arg0: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+    (arg0: string | BigNumber, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
     call(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
+      arg0: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtDefault: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawUnlockedPledge: {
     (
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculatePledgeInfo(
-    arg0: string | BN,
-    arg1: number | BN | string,
-    arg2: string | BN,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
+    arg2: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN]>;
+  ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>;
 
   getRequiredPledge(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getProposalAndPledgeInfo(
-    arg0: string | BN,
-    arg1: number | BN | string,
-    arg2: string | BN,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
+    arg2: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN, BN, BN]>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+  >;
 
   getProposalInterestRate(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getDebtRequiredPayments(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   isDebtDefaultTimeReached(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   hasActiveDebts(
-    sender: string | BN,
+    sender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
-  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLDebts(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  totalLDebtsAndProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLDebtsAndProposals(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   calculateInterestPayment(
-    arg0: number | BN | string,
-    arg1: number | BN | string,
-    arg2: number | BN | string,
-    arg3: number | BN | string,
+    arg0: number | BigNumber | string,
+    arg1: number | BigNumber | string,
+    arg2: number | BigNumber | string,
+    arg3: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
   BORROWER_COLLATERAL_TO_FULL_COLLATERAL_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   BORROWER_COLLATERAL_TO_FULL_COLLATERAL_RATIO(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  COLLATERAL_TO_DEBT_RATIO(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  COLLATERAL_TO_DEBT_RATIO(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   COLLATERAL_TO_DEBT_RATIO_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -9351,13 +9463,15 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
 
   PLEDGE_PERCENT_MULTIPLIER(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   debtProposals(
-    arg0: string | BN,
-    arg1: number | BN | string,
+    arg0: string | BigNumber,
+    arg1: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, string, BN, BN, BN, boolean]>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber, BigNumber, boolean]
+  >;
 
   getModuleAddress(
     module: string,
@@ -9367,9 +9481,9 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   openProposals(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -9385,252 +9499,259 @@ export interface LoanProposalsModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   initialize: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   createDebtProposal: {
     (
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      debtLAmount: number | BN | string,
-      interest: number | BN | string,
-      pAmountMax: number | BN | string,
-      descriptionHash: string | BN,
+      debtLAmount: number | BigNumber | string,
+      interest: number | BigNumber | string,
+      pAmountMax: number | BigNumber | string,
+      descriptionHash: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   addPledge: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
-      lAmountMin: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
+      lAmountMin: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdrawPledge: {
     (
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      borrower: string | BN,
-      proposal: number | BN | string,
-      pAmount: number | BN | string,
+      borrower: string | BigNumber,
+      proposal: number | BigNumber | string,
+      pAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   cancelDebtProposal: {
     (
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   executeDebtProposal: {
     (
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      proposal: number | BN | string,
+      proposal: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getProposalAndPledgeInfo(
-    borrower: string | BN,
-    proposal: number | BN | string,
-    supporter: string | BN,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
+    supporter: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN, BN, BN, BN, BN]>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+  >;
 
   getProposalInterestRate(
-    borrower: string | BN,
-    proposal: number | BN | string,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getRequiredPledge(
-    borrower: string | BN,
-    proposal: number | BN | string,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getPledgeRequirements(
-    borrower: string | BN,
-    proposal: number | BN | string,
+    borrower: string | BigNumber,
+    proposal: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
-  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalLProposals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 }
 
 export interface MinterRoleInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isMinter(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   addMinter: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9682,19 +9803,20 @@ export interface ModuleInstance extends Truffle.ContractInstance {
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9709,19 +9831,20 @@ export interface ModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9756,19 +9879,20 @@ export interface ModuleNamesInstance extends Truffle.ContractInstance {
 
 export interface OwnableInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9787,19 +9911,20 @@ export interface OwnableInstance extends Truffle.ContractInstance {
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9807,25 +9932,26 @@ export interface OwnableInstance extends Truffle.ContractInstance {
 
 export interface PausableInstance extends Truffle.ContractInstance {
   addPauser: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isPauser(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -9839,19 +9965,20 @@ export interface PausableInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9879,42 +10006,44 @@ export interface PausableInstance extends Truffle.ContractInstance {
 
 export interface PauserRoleInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isPauser(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   addPauser: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -9931,7 +10060,7 @@ export interface PauserRoleInstance extends Truffle.ContractInstance {
 
 export interface PoolInstance extends Truffle.ContractInstance {
   abiOf(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -9942,7 +10071,7 @@ export interface PoolInstance extends Truffle.ContractInstance {
   isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
 
   is_constant(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -9960,19 +10089,20 @@ export interface PoolInstance extends Truffle.ContractInstance {
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10012,25 +10142,25 @@ export interface PoolInstance extends Truffle.ContractInstance {
   set: {
     (
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       _name: string,
-      _module: string | BN,
+      _module: string | BigNumber,
       _constant: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -10052,11 +10182,11 @@ export interface PoolInstance extends Truffle.ContractInstance {
   };
 
   contains(
-    _module: string | BN,
+    _module: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
-  size(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  size(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   isConstant(
     _name: string,
@@ -10066,14 +10196,14 @@ export interface PoolInstance extends Truffle.ContractInstance {
   get(_name: string, txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   getName(
-    _module: string | BN,
+    _module: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   first(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   next(
-    _current: string | BN,
+    _current: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 }
@@ -10081,7 +10211,7 @@ export interface PoolInstance extends Truffle.ContractInstance {
 export interface PTokenInstance extends Truffle.ContractInstance {
   DISTRIBUTION_AGGREGATION_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   MODULE_ACCESS(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -10104,102 +10234,104 @@ export interface PTokenInstance extends Truffle.ContractInstance {
   MODULE_PTOKEN(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   addMinter: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   burn: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   calculateDistributedAmount(
-    fromDistribution: number | BN | string,
-    toDistribution: number | BN | string,
-    initialBalance: number | BN | string,
+    fromDistribution: number | BigNumber | string,
+    toDistribution: number | BigNumber | string,
+    initialBalance: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   calculateUnclaimedDistributions(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      account: string | BN,
+    (
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10213,61 +10345,63 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distribute: {
     (
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      amount: number | BN | string,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
-  distributionAccumulator(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionAccumulator(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   distributions(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   fullBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -10276,29 +10410,29 @@ export interface PTokenInstance extends Truffle.ContractInstance {
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isMinter(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -10306,39 +10440,39 @@ export interface PTokenInstance extends Truffle.ContractInstance {
 
   mint: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   name(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  nextDistribution(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   nextDistributions(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -10363,41 +10497,43 @@ export interface PTokenInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10406,167 +10542,173 @@ export interface PTokenInstance extends Truffle.ContractInstance {
     (
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       name: string,
       symbol: string,
-      decimals: number | BN | string,
+      decimals: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transfer: {
     (
-      to: string | BN,
-      value: number | BN | string,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      value: number | BN | string,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      to: string | BN,
-      value: number | BN | string,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      value: number | BN | string,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      value: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      value: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      value: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      value: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   burnFrom: {
     (
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      amount: number | BN | string,
+      account: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributionBalanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  distributionTotalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionTotalSupply(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 }
 
 export interface RAYModuleInstance extends Truffle.ContractInstance {
   DISTRIBUTION_AGGREGATION_PERIOD(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   addDefiOperator: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   availableInterest(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[string[], BN[]]>;
+  ): Promise<[string[], BigNumber[]]>;
 
   balances(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   claimDistributions: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   distributions(
-    arg0: number | BN | string,
+    arg0: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
-  distributionsLength(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  distributionsLength(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   getModuleAddress(
     module: string,
@@ -10575,33 +10717,33 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
 
   handleDeposit: {
     (
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      sender: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      sender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isDefiOperator(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -10609,26 +10751,27 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
 
   nextDistributionTimestamp(
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   poolBalance: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      token: string | BN,
+    (
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10652,92 +10795,94 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   tokens(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<[string, string]>;
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   updatePTKBalance: {
     (
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
-      ptkBalance: number | BN | string,
+      account: string | BigNumber,
+      ptkBalance: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   withdraw: {
     (
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      beneficiary: string | BN,
-      amount: number | BN | string,
+      token: string | BigNumber,
+      beneficiary: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10762,30 +10907,30 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
 
   onERC721Received: {
     (
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      arg1: string | BN,
-      arg2: number | BN | string,
+      arg0: string | BigNumber,
+      arg1: string | BigNumber,
+      arg2: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
@@ -10793,41 +10938,42 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
 
   registerToken: {
     (
-      token: string | BN,
-      portfolioId: string | BN,
+      token: string | BigNumber,
+      portfolioId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
-      portfolioId: string | BN,
+      token: string | BigNumber,
+      portfolioId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
-      portfolioId: string | BN,
+      token: string | BigNumber,
+      portfolioId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
-      portfolioId: string | BN,
+      token: string | BigNumber,
+      portfolioId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   unregisterToken: {
-    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      token: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      token: string | BN,
+      token: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -10836,67 +10982,67 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
 }
 
 export interface RAYStubInstance extends Truffle.ContractInstance {
-  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  ANNUAL_SECONDS(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  EXP_SCALE(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
-  INTEREST_RATE(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  INTEREST_RATE(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   approve: {
     (
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
-      tokenId: number | BN | string,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   burn: {
     (
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: number | BN | string,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getApproved(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   isApprovedForAll(
-    owner: string | BN,
-    operator: string | BN,
+    owner: string | BigNumber,
+    operator: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -10907,7 +11053,7 @@ export interface RAYStubInstance extends Truffle.ContractInstance {
   owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   ownerOf(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
@@ -10922,411 +11068,413 @@ export interface RAYStubInstance extends Truffle.ContractInstance {
 
   safeTransferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setApprovalForAll: {
     (
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      to: string | BN,
+      to: string | BigNumber,
       approved: boolean,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   supportsInterface(
-    interfaceId: string | BN,
+    interfaceId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   symbol(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   tokenURI(
-    tokenId: number | BN | string,
+    tokenId: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   transferFrom: {
     (
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      from: string | BN,
-      to: string | BN,
-      tokenId: number | BN | string,
+      from: string | BigNumber,
+      to: string | BigNumber,
+      tokenId: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   initialize: {
-    (_dai: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+    (_dai: string | BigNumber, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
     call(
-      _dai: string | BN,
+      _dai: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _dai: string | BN,
+      _dai: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _dai: string | BN,
+      _dai: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   mint: {
     (
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      portfolioId: string | BN,
-      beneficiary: string | BN,
-      value: number | BN | string,
+      portfolioId: string | BigNumber,
+      beneficiary: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   deposit: {
     (
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      value: number | BN | string,
+      tokenId: string | BigNumber,
+      value: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      arg2: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      arg2: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      arg2: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      arg2: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      arg2: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      arg2: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      tokenId: string | BN,
-      valueToWithdraw: number | BN | string,
-      arg2: string | BN,
+      tokenId: string | BigNumber,
+      valueToWithdraw: number | BigNumber | string,
+      arg2: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getTokenValue: {
     (
-      arg0: string | BN,
-      tokenId: string | BN,
+      arg0: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      tokenId: string | BN,
+      arg0: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<[BN, BN]>;
+    ): Promise<[BigNumber, BigNumber]>;
     sendTransaction(
-      arg0: string | BN,
-      tokenId: string | BN,
+      arg0: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      tokenId: string | BN,
+      arg0: string | BigNumber,
+      tokenId: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   onERC721Received: {
     (
-      arg0: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      arg0: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      arg0: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      arg0: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     sendTransaction(
-      arg0: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      arg0: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      arg0: string | BN,
-      from: string | BN,
-      tokenId: number | BN | string,
+      arg0: string | BigNumber,
+      from: string | BigNumber,
+      tokenId: number | BigNumber | string,
       arg3: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getTokenKey(
-    rayTokenId: string | BN,
+    rayTokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getPrincipalAddress(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getIsERC20(
-    principalAddress: string | BN,
+    principalAddress: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   getContractAddress(
-    arg0: string | BN,
+    arg0: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   getTokenShares(
-    arg0: string | BN,
-    arg1: string | BN,
+    arg0: string | BigNumber,
+    arg1: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getTokenCapital(
-    arg0: string | BN,
-    arg1: string | BN,
+    arg0: string | BigNumber,
+    arg1: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getTokenAllowance(
-    arg0: string | BN,
-    arg1: string | BN,
+    arg0: string | BigNumber,
+    arg1: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   getTokenValueStub(
-    tokenId: string | BN,
+    tokenId: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<[BN, BN]>;
+  ): Promise<[BigNumber, BigNumber]>;
 }
 
 export interface TestAddressListInstance extends Truffle.ContractInstance {
   append: {
     (
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   prepend: {
     (
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _item: string | BN,
-      _to: string | BN,
+      _item: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   remove: {
-    (_item: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _item: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _item: string | BN,
+      _item: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _item: string | BN,
+      _item: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _item: string | BN,
+      _item: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   replace: {
     (
-      _from: string | BN,
-      _to: string | BN,
+      _from: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _from: string | BN,
-      _to: string | BN,
+      _from: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _from: string | BN,
-      _to: string | BN,
+      _from: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _from: string | BN,
-      _to: string | BN,
+      _from: string | BigNumber,
+      _to: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   swap: {
     (
-      _a: string | BN,
-      _b: string | BN,
+      _a: string | BigNumber,
+      _b: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      _a: string | BN,
-      _b: string | BN,
+      _a: string | BigNumber,
+      _b: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _a: string | BN,
-      _b: string | BN,
+      _a: string | BigNumber,
+      _b: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _a: string | BN,
-      _b: string | BN,
+      _a: string | BigNumber,
+      _b: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11336,17 +11484,17 @@ export interface TestAddressListInstance extends Truffle.ContractInstance {
   last(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   contains(
-    _item: string | BN,
+    _item: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   next(
-    _item: string | BN,
+    _item: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
   prev(
-    _item: string | BN,
+    _item: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 }
@@ -11355,85 +11503,85 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
   akropolisDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   allowance(
-    owner: string | BN,
-    spender: string | BN,
+    owner: string | BigNumber,
+    spender: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   approve: {
     (
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      amount: number | BN | string,
+      spender: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOf(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   cDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  decimals(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  decimals(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   decreaseAllowance: {
     (
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      subtractedValue: number | BN | string,
+      spender: string | BigNumber,
+      subtractedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   increaseAllowance: {
     (
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      spender: string | BN,
-      addedValue: number | BN | string,
+      spender: string | BigNumber,
+      addedValue: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11457,72 +11605,73 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
 
   testnetDAI(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
-  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  totalSupply(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   transfer: {
     (
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      recipient: string | BN,
-      amount: number | BN | string,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferFrom: {
     (
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<boolean>;
     sendTransaction(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
-      recipient: string | BN,
-      amount: number | BN | string,
+      sender: string | BigNumber,
+      recipient: string | BigNumber,
+      amount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11538,153 +11687,158 @@ export interface TestnetCErc20ProxyInstance extends Truffle.ContractInstance {
 
   mint: {
     (
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      mintAmount: number | BN | string,
+      mintAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeem: {
     (
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemTokens: number | BN | string,
+      redeemTokens: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   redeemUnderlying: {
     (
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<BigNumber>;
     sendTransaction(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      redeemAmount: number | BN | string,
+      redeemAmount: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   balanceOfUnderlying: {
-    (owner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
-    call(
-      owner: string | BN,
+    (
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
-    ): Promise<BN>;
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      owner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BigNumber>;
     sendTransaction(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      owner: string | BN,
+      owner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   getBalanceOfUnderlying(
-    owner: string | BN,
+    owner: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   exchangeRateCurrent: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
-  exchangeRateStored(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  exchangeRateStored(
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BigNumber>;
 
   accrueInterest: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
     >;
-    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
     sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 }
 
 export interface TestSQRTInstance extends Truffle.ContractInstance {
-  sqrt(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+  sqrt(txDetails?: Truffle.TransactionDetails): Promise<BigNumber>;
 
   setSqrtBitByBit: {
-    (x: number | BN | string, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      x: number | BigNumber | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   setSqrtBabylonian: {
-    (x: number | BN | string, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      x: number | BigNumber | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      x: number | BN | string,
+      x: number | BigNumber | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   sqrtBitByBit(
-    x: number | BN | string,
+    x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 
   sqrtBabylonian(
-    x: number | BN | string,
+    x: number | BigNumber | string,
     txDetails?: Truffle.TransactionDetails
-  ): Promise<BN>;
+  ): Promise<BigNumber>;
 }
 
 export interface TokenModuleInstance extends Truffle.ContractInstance {
@@ -11729,37 +11883,39 @@ export interface TokenModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11816,37 +11972,39 @@ export interface VotesModuleInstance extends Truffle.ContractInstance {
   };
 
   setPool: {
-    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      _pool: string | BN,
+      _pool: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   transferOwnership: {
-    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      newOwner: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      newOwner: string | BN,
+      newOwner: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11863,42 +12021,44 @@ export interface VotesModuleInstance extends Truffle.ContractInstance {
 
 export interface WhitelistAdminRoleInstance extends Truffle.ContractInstance {
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isWhitelistAdmin(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   addWhitelistAdmin: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -11915,25 +12075,26 @@ export interface WhitelistAdminRoleInstance extends Truffle.ContractInstance {
 
 export interface WhitelistedRoleInstance extends Truffle.ContractInstance {
   addWhitelistAdmin: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isWhitelistAdmin(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
@@ -11947,60 +12108,63 @@ export interface WhitelistedRoleInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      sender: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      sender: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   isWhitelisted(
-    account: string | BN,
+    account: string | BigNumber,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
 
   addWhitelisted: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
 
   removeWhitelisted: {
-    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      account: string | BigNumber,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      account: string | BN,
+      account: string | BigNumber,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
