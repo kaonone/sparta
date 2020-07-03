@@ -7,6 +7,7 @@ import "../interfaces/defi/IYErc20.sol";
 import "../interfaces/defi/ICurveFiSwap.sol";
 import "../interfaces/defi/ICurveFiDeposit.sol";
 import "../common/Base.sol";
+import "./CurveFiSwapStub.sol";
 
 contract CurveFiDepositStub is Base, ICurveFiDeposit {
     using SafeMath for uint256;

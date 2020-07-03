@@ -18,13 +18,11 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
     ERC20Mintable public underlying;
     uint256 created;
 
-
-
-    function initialize(ERC20Mintable _underlying, string uName, uint8 uDecimals) public initializer {
+    function initialize(ERC20Mintable _underlying, string memory uName, uint8 uDecimals) public initializer {
         Base.initialize();
-        if(_underlying == address(0)){
+        if(address(_underlying) == address(0)){
             underlying = new ERC20Mintable();
-            underlying.initialize();
+            underlying.initialize(_msgSender());
         }
         ERC20Detailed.initialize(
             string(abi.encodePacked("iearn ", uName)),
@@ -36,13 +34,13 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
 
     //yToken functions
     function deposit(uint256 amount) external {
-        underlying.transferFrom(_msgSender(), address(this), mintAmount);
-        uint256 amount = mintAmount.mul(EXP_SCALE).div(_exchangeRate());
-        _mint(_msgSender(), amount);
+        underlying.transferFrom(_msgSender(), address(this), amount);
+        uint256 shares = amount.mul(EXP_SCALE).div(_exchangeRate());
+        _mint(_msgSender(), shares);
     }
     function withdraw(uint256 shares) external {
-        uint256 redeemAmount = redeemTokens.mul(_exchangeRate()).div(EXP_SCALE);
-        _burn(_msgSender(), redeemTokens);
+        uint256 redeemAmount = shares.mul(_exchangeRate()).div(EXP_SCALE);
+        _burn(_msgSender(), shares);
         _sendUnderlyuing(_msgSender(), redeemAmount);
     }
     function getPricePerFullShare() external view returns (uint256) {
@@ -52,8 +50,8 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
     function _sendUnderlyuing(address recipient, uint256 amount) internal {
         uint256 underlyingBalance = underlying.balanceOf(address(this));
         if (amount > underlyingBalance) {
-            underlying.mint(amount - underlyingBalance);
-        }
+            underlying.mint(address(this), amount - underlyingBalance);
+        } 
         underlying.transfer(recipient, amount);
     }
 
