@@ -33,16 +33,22 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
     }
 
     //yToken functions
+    function token() external returns(address){
+        return address(underlying);
+    }
+
     function deposit(uint256 amount) external {
         underlying.transferFrom(_msgSender(), address(this), amount);
         uint256 shares = amount.mul(EXP_SCALE).div(_exchangeRate());
         _mint(_msgSender(), shares);
     }
+
     function withdraw(uint256 shares) external {
         uint256 redeemAmount = shares.mul(_exchangeRate()).div(EXP_SCALE);
         _burn(_msgSender(), shares);
         _sendUnderlyuing(_msgSender(), redeemAmount);
     }
+
     function getPricePerFullShare() external view returns (uint256) {
         return _exchangeRate();
     }

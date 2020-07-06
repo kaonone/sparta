@@ -19,4 +19,6 @@ contract IYErc20 {
     function withdraw(uint256 shares) external;
     function getPricePerFullShare() external view returns (uint256);
 
+    function token() external returns(address);
+
 }

@@ -21,10 +21,12 @@ contract CurveFiYModule is DefiModuleBase {
     ICurveFiSwap public curveFiSwap;
     ICurveFiDeposit public curveFiDeposit;
     address[] _registeredTokens;
+    uint256 public slippageMultiplier; //Multiplier to work-around slippage when witharawing one token
 
     function initialize(address _pool) public initializer {
         DefiModuleBase.initialize(_pool);
         _registeredTokens = new address[](N_COINS);
+        slippageMultiplier = 1.01*1e18;     //Max slippage - 1%, if more - tx will fail
     }
 
     function setCurveFi(address deposit) public onlyDefiOperator {
@@ -49,6 +51,11 @@ contract CurveFiYModule is DefiModuleBase {
         }
     }
 
+    function setSlippageMultiplier(uint256 _slippageMultiplier) public onlyDefiOperator {
+        require(_slippageMultiplier >= 1e18, "CurveFiYModule: multiplier should be > 1");
+        slippageMultiplier = _slippageMultiplier;
+    }
+
     function registeredTokens() public view returns(address[] memory){
         return _registeredTokens;
     }
@@ -65,21 +72,49 @@ contract CurveFiYModule is DefiModuleBase {
         return tokenIdx;
     }
 
+    function withdrawAll() public onlyOwner {
+        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
+        uint256 curveFiTokenBalance = curveFiToken.balanceOf(address(this));
+        curveFiDeposit.remove_liquidity(curveFiTokenBalance, [uint256(0), uint256(0), uint256(0)]);
+        for(uint256 i=0; i < _registeredTokens.length; i++){
+            IERC20 ltoken = IERC20(_registeredTokens[i]);
+            uint256 amount = ltoken.balanceOf(address(this));
+            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
+        }            
+    }
+
     function handleDepositInternal(address token, address, uint256 amount) internal {
+        uint256[] memory originalBalances = yCurveFiUnderlyingBalances();
         uint256[N_COINS] memory amounts = [uint256(0), uint256(0), uint256(0)];
         for(uint256 i=0; i < _registeredTokens.length; i++){
-            amounts[i] = (_registeredTokens[i] == token)?amount:0;
+            amounts[i] = IERC20(_registeredTokens[i]).balanceOf(address(this)); // Check balance which is left after previous withdrawal
+            //amounts[i] = (_registeredTokens[i] == token)?amount:0;
+            if(_registeredTokens[i] == token) {
+                require(amounts[i] >= amount, "CurveFiYModule: requested amount is not deposited");
+            }
         }
         curveFiDeposit.add_liquidity(amounts, 0);
+        rebalanceDepositsAndWithdrawals(token, amount, true, originalBalances);
     }
 
     function withdrawInternal(address token, address beneficiary, uint256 amount) internal {
+        uint256[] memory originalBalances = yCurveFiUnderlyingBalances();
         uint256 tokenIdx = getTokenIndex(token);
-        uint256 yAmount = curveFiDeposit.calc_withdraw_one_coin(amount, int128(tokenIdx));
-        curveFiDeposit.remove_liquidity_one_coin(yAmount, int128(tokenIdx), amount, DONATE_DUST);
+        uint256 available = IERC20(_registeredTokens[tokenIdx]).balanceOf(address(this));
+        amount = amount.sub(available); //Count tokens left after previous withdrawal
+        IYErc20 yToken = IYErc20(curveFiDeposit.coins(int128(tokenIdx)));
+        uint256 yAmount = amount.mul(1e18).div(yToken.getPricePerFullShare());
+
+        uint256[N_COINS] memory amounts = [uint256(0), uint256(0), uint256(0)];
+        amounts[tokenIdx] = yAmount;
+        uint256 shares = curveFiSwap.calc_token_amount(amounts, false);
+        shares = shares.mul(slippageMultiplier).div(1e18);
+
+        curveFiDeposit.remove_liquidity_one_coin(shares, int128(tokenIdx), amount, DONATE_DUST);
 
         IERC20 ltoken = IERC20(token);
         ltoken.transfer(beneficiary, amount);
+        rebalanceDepositsAndWithdrawals(token, amount, false, originalBalances);
     }
 
     function poolBalanceOf(address token) internal returns(uint256) {
@@ -96,18 +131,41 @@ contract CurveFiYModule is DefiModuleBase {
 
         return tokenBalance;
     }
-
-    function withdrawAll() public onlyOwner {
-        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
-        uint256 curveFiTokenBalance = curveFiToken.balanceOf(address(this));
-        curveFiDeposit.remove_liquidity(curveFiTokenBalance, [uint256(0), uint256(0), uint256(0)]);
-        for(uint256 i=0; i < _registeredTokens.length; i++){
-            IERC20 ltoken = IERC20(_registeredTokens[i]);
-            uint256 amount = ltoken.balanceOf(address(this));
-            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
-        }            
-    }
     
+    function rebalanceDepositsAndWithdrawals(address token, uint256 originalAmount, bool deposit, uint256[] memory originalBalances) internal {
+        uint256[] memory currentBalances = yCurveFiUnderlyingBalances();
+        if(deposit) {
+            depositsSinceLastDistribution[token] = depositsSinceLastDistribution[token].sub(originalAmount);
+        }else{
+            withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].sub(originalAmount);
+        }
+        for(uint256 i=0; i < _registeredTokens.length; i++){
+            address tkn = _registeredTokens[i];
+            uint256 diff;
+            if(currentBalances[i] >= originalBalances[i]){
+                diff = currentBalances[i].sub(originalBalances[i]);
+                depositsSinceLastDistribution[tkn] = depositsSinceLastDistribution[tkn].add(diff);
+            }else{
+                diff = originalBalances[i].sub(currentBalances[i]);
+                withdrawalsSinceLastDistribution[tkn] = withdrawalsSinceLastDistribution[tkn].add(diff);
+            }
+        }
+    }
+
+    function yCurveFiUnderlyingBalances() internal view returns(uint256[] memory balances) {
+        IERC20 cfToken = IERC20(curveFiDeposit.token());
+        uint256 cfBalance = cfToken.balanceOf(address(this));
+        uint256 cfTotalSupply = cfToken.totalSupply();
+
+        balances = new uint256[](_registeredTokens.length);
+        for(uint256 i=0; i < _registeredTokens.length; i++){
+            uint256 ycfBalance = curveFiSwap.balances(int128(i));
+            uint256 yShares = ycfBalance.mul(cfBalance).div(cfTotalSupply);
+            IYErc20 yToken = IYErc20(curveFiDeposit.coins(int128(i)));
+            balances[i] = yToken.getPricePerFullShare().mul(yShares).div(1e18); //getPricePerFullShare() returns balance of underlying token multiplied by 1e18
+        }
+    }
+
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
     }
