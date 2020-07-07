@@ -1,5 +1,6 @@
 import { 
     FreeDAIContract, FreeDAIInstance,
+    MintableTokenContract, MintableTokenInstance,
     PoolContract, PoolInstance, 
     PTokenContract, PTokenInstance, 
     FundsModuleStubContract, FundsModuleStubInstance,
@@ -7,6 +8,11 @@ import {
     CompoundModuleContract, CompoundModuleInstance,
     RAYStubContract, RAYStubInstance,
     RAYModuleContract, RAYModuleInstance,
+    YTokenStubContract, YTokenStubInstance,
+    CurveFiTokenStubContract, CurveFiTokenStubInstance,
+    CurveFiSwapStubContract, CurveFiSwapStubInstance,
+    CurveFiDepositStubContract, CurveFiDepositStubInstance,
+    CurveFiYModuleContract, CurveFiYModuleInstance,
     IDefiModuleInstance
 } from "../types/truffle-contracts/index";
 
@@ -19,6 +25,7 @@ const w3random = require("./utils/w3random");
 const expectEqualBN = require("./utils/expectEqualBN");
 
 const FreeDAI = artifacts.require("FreeDAI");
+const MintableToken = artifacts.require("MintableToken");
 const Pool = artifacts.require("Pool");
 const PToken = artifacts.require("PToken");
 const FundsModuleStub = artifacts.require("FundsModuleStub");
@@ -26,6 +33,11 @@ const CErc20Stub = artifacts.require("CErc20Stub");
 const CompoundModule = artifacts.require("CompoundModule");
 const RAYStub = artifacts.require("RAYStub");
 const RAYModule = artifacts.require("RAYModule");
+const YTokenStub = artifacts.require("YTokenStub");
+const CurveFiSwapStub = artifacts.require("CurveFiSwapStub");
+const CurveFiDepositStub = artifacts.require("CurveFiDepositStub");
+const CurveFiTokenStub = artifacts.require("CurveFiTokenStub");
+const CurveFiYModule = artifacts.require("CurveFiYModule");
 const BN1E18 = (new BN('10')).pow(new BN(18));
 
 
@@ -94,6 +106,53 @@ describe("DeFi modules", function(){
                 if(rayTokenId == '0x0000000000000000000000000000000000000000000000000000000000000000') return new BN(0);
                 let balances = await protocol.getTokenValueStub(rayTokenId);
                 return balances[0];
+            }
+        },   
+        {module: "Curve.Fi yDAI/yUSDC/yUSDT", 
+            before: async function(token:FreeDAIInstance, pool:PoolInstance, owner:string):Promise<[IDefiModuleInstance, string, BN]>{
+                let usdc, usdt: FreeDAIInstance;
+                let yDAI, yUSDC, yUSDT: YTokenStubInstance;
+                let curveFiSwap: CurveFiSwapStubInstance;
+                let curveFiDeposit: CurveFiDepositStubInstance;
+                let defi: CurveFiYModuleInstance;
+
+                yDAI = await YTokenStub.new();
+                await (<any> yDAI).methods['initialize(address,string,uint8)'](token.address, "DAI", 18, {from: owner});
+
+                usdc = await MintableToken.new();
+                await (<any> usdc).methods['initialize(string,uint8)']("USDC", 6, {from: owner});
+                yUSDC = await YTokenStub.new();
+                await (<any> yDAI).methods['initialize(address,string,uint8)'](token.address, "USDC", 6, {from: owner});
+
+                usdt = await MintableToken.new();
+                await (<any> usdt).methods['initialize(string,uint8)']("USDT", 6, {from: owner});
+                yUSDT = await YTokenStub.new();
+                await (<any> yDAI).methods['initialize(address,string,uint8)'](token.address, "USDT", 6, {from: owner});
+
+                curveFiSwap = await CurveFiSwapStub.new();
+                await (<any> curveFiSwap).methods['initialize(address[3])']([token.address, usdc.address, usdt.address], {from: owner});
+                await pool.set('curveFiSwap', curveFiSwap.address, false, {from: owner});
+                curveFiDeposit = await CurveFiDepositStub.new();
+                await (<any> curveFiDeposit).methods['initialize(address)'](curveFiSwap.address, {from: owner});
+                await pool.set('curveFiDeposit', curveFiDeposit.address, false, {from: owner});
+
+                defi = await CurveFiYModule.new();
+                await (<any> defi).methods['initialize(address)'](pool.address, {from: owner});
+
+                await defi.setCurveFi(curveFiDeposit.address);
+
+                let interesRate = await yDAI.INTEREST_RATE();
+
+                return [defi, yDAI.address, interesRate];
+            },
+            protocolBalanceOf: async function(defiModuleAddress:string, protocolAddress:string, tokenAddress:string):Promise<BN> {
+                //TODO: correct calculations
+                return this.underlyingBalanceOf(defiModuleAddress, protocolAddress, tokenAddress);
+            },
+            underlyingBalanceOf: async function(defiModuleAddress:string, protocolAddress:string, tokenAddress:string):Promise<BN> {
+                //let yDAI = await YTokenStub.at(protocolAddress);
+                let dai = await MintableToken.at(tokenAddress);
+                return await dai.balanceOf(protocolAddress);
             }
         }   
     ];

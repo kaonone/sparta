@@ -22,6 +22,16 @@ declare global {
       require(name: "CompoundModule"): TruffleContracts.CompoundModuleContract;
       require(name: "Context"): TruffleContracts.ContextContract;
       require(name: "CoreInterface"): TruffleContracts.CoreInterfaceContract;
+      require(
+        name: "CurveFiDepositStub"
+      ): TruffleContracts.CurveFiDepositStubContract;
+      require(
+        name: "CurveFiSwapStub"
+      ): TruffleContracts.CurveFiSwapStubContract;
+      require(
+        name: "CurveFiTokenStub"
+      ): TruffleContracts.CurveFiTokenStubContract;
+      require(name: "CurveFiYModule"): TruffleContracts.CurveFiYModuleContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
       require(
         name: "DefiFundsModule"
@@ -52,6 +62,10 @@ declare global {
       ): TruffleContracts.FundsOperatorRoleContract;
       require(name: "IAccessModule"): TruffleContracts.IAccessModuleContract;
       require(name: "ICErc20"): TruffleContracts.ICErc20Contract;
+      require(
+        name: "ICurveFiDeposit"
+      ): TruffleContracts.ICurveFiDepositContract;
+      require(name: "ICurveFiSwap"): TruffleContracts.ICurveFiSwapContract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
       require(name: "IDefiModule"): TruffleContracts.IDefiModuleContract;
       require(name: "IERC165"): TruffleContracts.IERC165Contract;
@@ -75,7 +89,6 @@ declare global {
         name: "ILoanProposalsModule"
       ): TruffleContracts.ILoanProposalsModuleContract;
       require(name: "IPToken"): TruffleContracts.IPTokenContract;
-      require(name: "IRAY"): TruffleContracts.IRAYContract;
       require(
         name: "IRAYNAVCalculator"
       ): TruffleContracts.IRAYNAVCalculatorContract;
@@ -86,6 +99,7 @@ declare global {
       require(
         name: "ITestnetCompoundDAI"
       ): TruffleContracts.ITestnetCompoundDAIContract;
+      require(name: "IYErc20"): TruffleContracts.IYErc20Contract;
       require(
         name: "LiquidityModule"
       ): TruffleContracts.LiquidityModuleContract;
@@ -97,6 +111,7 @@ declare global {
       require(
         name: "LoanProposalsModule"
       ): TruffleContracts.LoanProposalsModuleContract;
+      require(name: "MintableToken"): TruffleContracts.MintableTokenContract;
       require(name: "MinterRole"): TruffleContracts.MinterRoleContract;
       require(name: "Module"): TruffleContracts.ModuleContract;
       require(name: "Ownable"): TruffleContracts.OwnableContract;
@@ -121,6 +136,7 @@ declare global {
       require(
         name: "WhitelistedRole"
       ): TruffleContracts.WhitelistedRoleContract;
+      require(name: "YTokenStub"): TruffleContracts.YTokenStubContract;
     }
   }
 }
