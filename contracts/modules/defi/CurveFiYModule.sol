@@ -9,7 +9,9 @@ import "../../interfaces/defi/IYErc20.sol";
 import "./DefiModuleBase.sol";
 
 contract CurveFiYModule is DefiModuleBase {
-    bool public constant DONATE_DUST = true;    // Withdrawing one token form Curve.fi pool may lead to small amount of pool token may left unused on Deposit contract. If DONATE_DUST = true, it will be left there and donated to curve.fi, otherwise we will use gas to transfer it back
+    // Withdrawing one token form Curve.fi pool may lead to small amount of pool token may left unused on Deposit contract. 
+    // If DONATE_DUST = true, it will be left there and donated to curve.fi, otherwise we will use gas to transfer it back.
+    bool public constant DONATE_DUST = true;    
     uint256 constant N_COINS = 3;
 
     using SafeMath for uint256;
@@ -33,7 +35,7 @@ contract CurveFiYModule is DefiModuleBase {
         if (address(curveFiDeposit) != address(0)) {
             //We need to unregister tokens first
             for (uint256 i=0; i < _registeredTokens.length; i++){
-                if(_registeredTokens[i] != address(0)) {
+                if (_registeredTokens[i] != address(0)) {
                     _unregisterToken(_registeredTokens[i]);
                     _registeredTokens[i] = address(0);
                 }
@@ -44,7 +46,7 @@ contract CurveFiYModule is DefiModuleBase {
         address curveFiToken = curveFiDeposit.token();
         IERC20(curveFiToken).approve(address(curveFiDeposit), 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
         emit CurveFiYSetup(address(curveFiSwap), address(curveFiDeposit));
-        for(uint256 i=0; i < _registeredTokens.length; i++){
+        for (uint256 i=0; i < _registeredTokens.length; i++){
             address token = curveFiDeposit.underlying_coins(int128(i));
             _registeredTokens[i] = token;
             _registerToken(token);
@@ -56,14 +58,25 @@ contract CurveFiYModule is DefiModuleBase {
         slippageMultiplier = _slippageMultiplier;
     }
 
+    function withdrawAll() public onlyOwner {
+        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
+        uint256 curveFiTokenBalance = curveFiToken.balanceOf(address(this));
+        curveFiDeposit.remove_liquidity(curveFiTokenBalance, [uint256(0), uint256(0), uint256(0)]);
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            IERC20 ltoken = IERC20(_registeredTokens[i]);
+            uint256 amount = ltoken.balanceOf(address(this));
+            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
+        }            
+    }
+
     function registeredTokens() public view returns(address[] memory){
         return _registeredTokens;
     }
 
     function getTokenIndex(address token) public view returns(uint256) {
         uint256 tokenIdx = _registeredTokens.length;
-        for(uint256 i=0; i < _registeredTokens.length; i++){
-            if(_registeredTokens[i] == token){
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            if (_registeredTokens[i] == token){
                 tokenIdx = i;
                 break;
             }
@@ -72,24 +85,13 @@ contract CurveFiYModule is DefiModuleBase {
         return tokenIdx;
     }
 
-    function withdrawAll() public onlyOwner {
-        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
-        uint256 curveFiTokenBalance = curveFiToken.balanceOf(address(this));
-        curveFiDeposit.remove_liquidity(curveFiTokenBalance, [uint256(0), uint256(0), uint256(0)]);
-        for(uint256 i=0; i < _registeredTokens.length; i++){
-            IERC20 ltoken = IERC20(_registeredTokens[i]);
-            uint256 amount = ltoken.balanceOf(address(this));
-            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
-        }            
-    }
-
     function handleDepositInternal(address token, address, uint256 amount) internal {
         uint256[] memory originalBalances = yCurveFiUnderlyingBalances();
         uint256[N_COINS] memory amounts = [uint256(0), uint256(0), uint256(0)];
-        for(uint256 i=0; i < _registeredTokens.length; i++){
+        for (uint256 i=0; i < _registeredTokens.length; i++){
             amounts[i] = IERC20(_registeredTokens[i]).balanceOf(address(this)); // Check balance which is left after previous withdrawal
             //amounts[i] = (_registeredTokens[i] == token)?amount:0;
-            if(_registeredTokens[i] == token) {
+            if (_registeredTokens[i] == token) {
                 require(amounts[i] >= amount, "CurveFiYModule: requested amount is not deposited");
             }
         }
@@ -134,18 +136,18 @@ contract CurveFiYModule is DefiModuleBase {
     
     function rebalanceDepositsAndWithdrawals(address token, uint256 originalAmount, bool deposit, uint256[] memory originalBalances) internal {
         uint256[] memory currentBalances = yCurveFiUnderlyingBalances();
-        if(deposit) {
+        if (deposit) {
             depositsSinceLastDistribution[token] = depositsSinceLastDistribution[token].sub(originalAmount);
-        }else{
+        } else {
             withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].sub(originalAmount);
         }
-        for(uint256 i=0; i < _registeredTokens.length; i++){
+        for (uint256 i=0; i < _registeredTokens.length; i++){
             address tkn = _registeredTokens[i];
             uint256 diff;
-            if(currentBalances[i] >= originalBalances[i]){
+            if (currentBalances[i] >= originalBalances[i]){
                 diff = currentBalances[i].sub(originalBalances[i]);
                 depositsSinceLastDistribution[tkn] = depositsSinceLastDistribution[tkn].add(diff);
-            }else{
+            } else {
                 diff = originalBalances[i].sub(currentBalances[i]);
                 withdrawalsSinceLastDistribution[tkn] = withdrawalsSinceLastDistribution[tkn].add(diff);
             }
@@ -158,7 +160,7 @@ contract CurveFiYModule is DefiModuleBase {
         uint256 cfTotalSupply = cfToken.totalSupply();
 
         balances = new uint256[](_registeredTokens.length);
-        for(uint256 i=0; i < _registeredTokens.length; i++){
+        for (uint256 i=0; i < _registeredTokens.length; i++){
             uint256 ycfBalance = curveFiSwap.balances(int128(i));
             uint256 yShares = ycfBalance.mul(cfBalance).div(cfTotalSupply);
             IYErc20 yToken = IYErc20(curveFiDeposit.coins(int128(i)));

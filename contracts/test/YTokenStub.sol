@@ -11,7 +11,7 @@ import "../common/Base.sol";
 contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
     //Stub internals
     uint256 constant EXP_SCALE = 1e18;  //Exponential scale (see Compound Exponential)
-    uint256 constant INTEREST_RATE = 10 * EXP_SCALE / 100;  // Annual interest 10%
+    uint256 public constant INTEREST_RATE = 10 * EXP_SCALE / 100;  // Annual interest 10%
     uint256 constant INITIAL_RATE = 1 * EXP_SCALE;
     uint256 constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
 
@@ -20,7 +20,7 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
 
     function initialize(ERC20Mintable _underlying, string memory uName, uint8 uDecimals) public initializer {
         Base.initialize();
-        if(address(_underlying) == address(0)){
+        if (address(_underlying) == address(0)){
             underlying = new ERC20Mintable();
             underlying.initialize(_msgSender());
         }
@@ -33,23 +33,23 @@ contract YTokenStub is IYErc20, Base, ERC20, ERC20Detailed {
     }
 
     //yToken functions
-    function token() external returns(address){
+    function token() public returns(address){
         return address(underlying);
     }
 
-    function deposit(uint256 amount) external {
+    function deposit(uint256 amount) public {
         underlying.transferFrom(_msgSender(), address(this), amount);
         uint256 shares = amount.mul(EXP_SCALE).div(_exchangeRate());
         _mint(_msgSender(), shares);
     }
 
-    function withdraw(uint256 shares) external {
+    function withdraw(uint256 shares) public {
         uint256 redeemAmount = shares.mul(_exchangeRate()).div(EXP_SCALE);
         _burn(_msgSender(), shares);
         _sendUnderlyuing(_msgSender(), redeemAmount);
     }
 
-    function getPricePerFullShare() external view returns (uint256) {
+    function getPricePerFullShare() public view returns (uint256) {
         return _exchangeRate();
     }
 

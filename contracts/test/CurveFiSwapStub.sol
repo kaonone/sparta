@@ -24,28 +24,26 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         token.initialize();
     }
 
-
-    function add_liquidity (uint256[3] calldata amounts, uint256 min_mint_amount) external {
+    function add_liquidity (uint256[3] memory amounts, uint256 min_mint_amount) public {
         uint256 fullAmount;
-        for(uint256 i=0; i< N_COINS; i++){
+        for (uint256 i=0; i < N_COINS; i++){
             IERC20(_coins[i]).transferFrom(_msgSender(), address(this), amounts[i]);
             fullAmount = fullAmount.add(normalizeAmount(_coins[i], amounts[i]));
         }
         (uint256 fee, bool bonus) = calculateExchangeFee(amounts, false);
-        if(bonus) {
+        if (bonus) {
             fullAmount = fullAmount.add(fee);
-        }else{
+        } else {
             fullAmount = fullAmount.sub(fee);
         }
         require(fullAmount >= min_mint_amount, "CurveFiSwapStub: Requested mint amount is too high");
         require(token.mint(_msgSender(), fullAmount), "CurveFiSwapStub: Mint failed");
     }
 
-
-    function remove_liquidity (uint256 _amount, uint256[3] calldata min_amounts) external {
+    function remove_liquidity (uint256 _amount, uint256[3] memory min_amounts) public {
         uint256 totalSupply = token.totalSupply();
         uint256[] memory amounts = new uint256[](_coins.length);
-        for(uint256 i=0; i < _coins.length; i++){
+        for (uint256 i=0; i < _coins.length; i++){
             uint256 balance = balances(int128(i));
             amounts[i] = _amount.mul(balance).div(totalSupply);
             require(amounts[i] >= min_amounts[i], "CurveFiSwapStub: Requested amount is too high");
@@ -54,9 +52,9 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         token.burnFrom(_msgSender(), _amount);
     }
 
-    function remove_liquidity_imbalance(uint256[3] calldata amounts, uint256 max_burn_amount) external {
+    function remove_liquidity_imbalance(uint256[3] memory amounts, uint256 max_burn_amount) public {
         uint256 fullAmount = calc_token_amount(amounts, false);
-        for(uint256 i=0; i< _coins.length; i++){
+        for (uint256 i=0; i < _coins.length; i++){
             IERC20(_coins[i]).transfer(_msgSender(), amounts[i]);
         }
         require(max_burn_amount == 0 || fullAmount <= max_burn_amount, "CurveFiSwapStub: Allowed burn amount is not enough");
@@ -66,14 +64,14 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
     function calc_token_amount(uint256[3] memory amounts, bool deposit) public view returns(uint256) {
         (uint256 fee, bool bonus) = calculateExchangeFee(amounts, deposit);
         uint256 fullAmount;
-        for(uint256 i=0; i< _coins.length; i++){
+        for (uint256 i=0; i < _coins.length; i++){
             uint256 balance = balances(int128(i));
             require(balance >= amounts[i], "CurveFiSwapStub: Not enough supply");
             fullAmount = fullAmount.add(amounts[i]);
         }
-        if(bonus) {
+        if (bonus) {
             fullAmount = fullAmount.sub(fee);
-        }else{
+        } else {
             fullAmount = fullAmount.add(fee);
         }
         return fullAmount;
@@ -83,27 +81,28 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         return IERC20(_coins[uint256(i)]).balanceOf(address(this));
     }
 
-    function A() external view returns(uint256) {
+    function A() public view returns(uint256) {
         return 0;
     }
 
-    function fee() external view returns(uint256) {
+    function fee() public view returns(uint256) {
         return 0;
     }
-    function coins(int128 i) external view returns (address) {
+
+    function coins(int128 i) public view returns (address) {
         return _coins[uint256(i)];
     }
 
     function calculateExchangeFee(uint256[3] memory diff, bool deposit) internal view returns(uint256 fullFee, bool bonus){
         uint256 averageAmount = 0;
         uint256[] memory _balances = new uint256[](_coins.length);
-        for(uint256 i=0; i < _coins.length; i++){
+        for (uint256 i=0; i < _coins.length; i++){
             _balances[i] = balances(int128(i));
             averageAmount = averageAmount.add(_balances[i]);
         }
         averageAmount = averageAmount.div(_coins.length);
         int256 totalFee;
-        for(uint256 i=0; i < _coins.length; i++){
+        for (uint256 i=0; i < _coins.length; i++){
             int256 oldDiff = int256(_balances[i]) - int256(averageAmount);
             int256 newDiff;
             if (deposit) {
@@ -115,20 +114,20 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
 
             uint256 maxFee = diff[i].mul(MAX_EXCHANGE_FEE).div(1e18);
             int256 _fee;
-            if(oldDiff == 0) {
+            if (oldDiff == 0) {
                 _fee = 0;
-            }else {
+            } else {
                 if (deposit){
                     _fee = int256(MAX_EXCHANGE_FEE)*int256(diff[i]) / oldDiff;
                 } else {
                     _fee = -1*int256(MAX_EXCHANGE_FEE)*int256(diff[i]) / oldDiff;
                 }
             }
-            if(_fee >  0 && _fee > int256(maxFee)) _fee = int256(maxFee);
-            if(_fee <  0 && -1*_fee > int256(maxFee)) _fee = -1*int256(maxFee);
+            if (_fee > 0 && _fee > int256(maxFee)) _fee = int256(maxFee);
+            if (_fee < 0 && -1*_fee > int256(maxFee)) _fee = -1*int256(maxFee);
             totalFee += _fee;
         }
-        if(totalFee < 0){
+        if (totalFee < 0){
             bonus = true;
             fullFee = uint256(-1*totalFee);
         } else {
@@ -141,7 +140,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         uint8 decimals = ERC20Detailed(coin).decimals();
         if (decimals < 18) {
             return amount * uint256(10)**(18-decimals);
-        } else if(decimals > 18) {
+        } else if (decimals > 18) {
             return amount / uint256(10)**(decimals-18);
         } else {
             return amount;
