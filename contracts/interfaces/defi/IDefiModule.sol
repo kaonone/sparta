@@ -2,8 +2,8 @@ pragma solidity ^0.5.12;
 
 //solhint-disable func-order
 interface IDefiModule { 
-    event Deposit(uint256 amount);
-    event Withdraw(uint256 amount);
+    event Deposit(address indexed token, uint256 amount);
+    event Withdraw(address indexed token, uint256 amount);
     event WithdrawInterest(address indexed account, address indexed token, uint256 amount);
     event PTKBalanceUpdated(address indexed account, uint256 amount);
     event InvestmentDistributionCreated(uint256 idx, address indexed token, uint256 amount, uint256 currentBalance, uint256 totalShares);

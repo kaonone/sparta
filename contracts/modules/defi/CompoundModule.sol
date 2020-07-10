@@ -86,12 +86,5 @@ contract CompoundModule is DefiModuleBase {
         ICErc20 ctoken = ICErc20(tokens[token].cToken);
         return ctoken.balanceOfUnderlying(address(this));
     }
-    
-    function totalSupplyOfPTK() internal view returns(uint256) {
-        return pToken().distributionTotalSupply();
-    }
-
-    function pToken() private view returns(IPToken){
-        return IPToken(getModuleAddress(MODULE_PTOKEN));
-    }
+  
 }

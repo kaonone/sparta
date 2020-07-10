@@ -2,6 +2,7 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/defi/IDefiModule.sol";
+import "../../interfaces/token/IPToken.sol";
 import "../../common/Module.sol";
 import "./DefiOperatorRole.sol";
 
@@ -40,7 +41,6 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function handleDepositInternal(address token, address sender, uint256 amount) internal;
     function withdrawInternal(address token, address beneficiary, uint256 amount) internal;
     function poolBalanceOf(address token) internal /*view*/ returns(uint256); //This is not a view function because cheking cDAI balance may update it
-    function totalSupplyOfPTK() internal view returns(uint256);
 
     // == Initialization functions
     function initialize(address _pool) public initializer {
@@ -53,13 +53,13 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     function handleDeposit(address token, address sender, uint256 amount) public onlyDefiOperator {
         depositsSinceLastDistribution[token] = depositsSinceLastDistribution[token].add(amount);
         handleDepositInternal(token, sender, amount);
-        emit Deposit(amount);
+        emit Deposit(token, amount);
     }
 
     function withdraw(address token, address beneficiary, uint256 amount) public onlyDefiOperator {
         withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].add(amount);
         withdrawInternal(token, beneficiary, amount);
-        emit Withdraw(amount);
+        emit Withdraw(token, amount);
     }
 
     function withdrawInterest() public {
@@ -140,6 +140,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     // == Internal functions of DefiModule
+    function totalSupplyOfPTK() internal view returns(uint256) {
+        return pToken().distributionTotalSupply();
+    }
+
     function _createInitialDistribution() internal {
         assert(distributions.length == 0);
         uint256 totalPTK = 0; //totalSupplyOfPTK();
@@ -241,5 +245,9 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
             next++;
         }
         return totalInterest;
+    }
+
+    function pToken() private view returns(IPToken){
+        return IPToken(getModuleAddress(MODULE_PTOKEN));
     }
 }
