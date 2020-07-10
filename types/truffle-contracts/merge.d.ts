@@ -10,6 +10,9 @@ declare global {
     interface Artifacts {
       require(name: "AccessModule"): TruffleContracts.AccessModuleContract;
       require(name: "AccountsModule"): TruffleContracts.AccountsModuleContract;
+      require(
+        name: "APYBalancedDefiModule"
+      ): TruffleContracts.APYBalancedDefiModuleContract;
       require(name: "Base"): TruffleContracts.BaseContract;
       require(
         name: "BaseFundsModule"
@@ -32,6 +35,9 @@ declare global {
         name: "CurveFiTokenStub"
       ): TruffleContracts.CurveFiTokenStubContract;
       require(name: "CurveFiYModule"): TruffleContracts.CurveFiYModuleContract;
+      require(
+        name: "CurveFiYProtocol"
+      ): TruffleContracts.CurveFiYProtocolContract;
       require(name: "CurveModule"): TruffleContracts.CurveModuleContract;
       require(
         name: "DefiFundsModule"
@@ -68,6 +74,7 @@ declare global {
       require(name: "ICurveFiSwap"): TruffleContracts.ICurveFiSwapContract;
       require(name: "ICurveModule"): TruffleContracts.ICurveModuleContract;
       require(name: "IDefiModule"): TruffleContracts.IDefiModuleContract;
+      require(name: "IDefiProtocol"): TruffleContracts.IDefiProtocolContract;
       require(name: "IERC165"): TruffleContracts.IERC165Contract;
       require(name: "IERC20"): TruffleContracts.IERC20Contract;
       require(name: "IERC721"): TruffleContracts.IERC721Contract;
@@ -120,6 +127,7 @@ declare global {
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "RAYModule"): TruffleContracts.RAYModuleContract;
+      require(name: "RAYProtocol"): TruffleContracts.RAYProtocolContract;
       require(name: "RAYStub"): TruffleContracts.RAYStubContract;
       require(
         name: "TestAddressList"
