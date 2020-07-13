@@ -21,7 +21,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         uint256 balance;    //Amount of this tokens on Pool balance
     }
 
-    uint256 private __old__lBalance;        // OLD: Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
+    uint256 private lBalance;               //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
     mapping(address=>uint256) pBalances;    // Stores how many pTokens is locked in FundsModule by user
     address[] public registeredLTokens;     // Array of registered LTokens (oreder is not significant and may change during removals)
     mapping(address=>LTokenData) public lTokens;   // Info about supported lTokens and their balances in Pool
@@ -37,9 +37,10 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param from Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      */
-    function depositLTokens(address token, address from, uint256 amount) public onlyFundsOperator {
-        lTokens[token].balance = lTokens[token].balance.add(amount);
-        lTransferToFunds(token, from, amount);
+    function depositLTokens(address token, address from, uint256 dnlAmount) public onlyFundsOperator {
+        uint256 amount = normalizeLTokenValue(dnlAmount)
+        lBalance = lBalance.add(amount);
+        lTransferToFunds(token, from, dnlAmount);
         emitStatus();
     }
 
@@ -48,8 +49,8 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      */
-    function withdrawLTokens(address token, address to, uint256 amount) public onlyFundsOperator {
-        withdrawLTokens(token, to, amount, 0);
+    function withdrawLTokens(address to, uint256 amount) public onlyFundsOperator {
+        withdrawLTokens(to, amount, 0);
     }
 
     /**
@@ -58,13 +59,13 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      * @param poolFee Pool fee will be sent to pool owner
      */
-    function withdrawLTokens(address token, address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
+    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
-            lTokens[token].balance = lTokens[token].balance.sub(amount);
+            lBalance = lBalance.sub(amount);
             lTransferFromFunds(token, to, amount);
         }
         if (poolFee > 0) {
-            lTokens[token].balance = lTokens[token].balance.sub(poolFee);
+            lBalance = lBalance.sub(poolFee);
             lTransferFromFunds(token, owner(), poolFee);
         }
         emitStatus();
@@ -223,16 +224,6 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         return lTotal;
     }
 
-    function getPrefferableTokenForWithdraw(uint256 lAmount) public view returns(address){
-        //Use simplest strategy: return first one with enough liquitdity
-        for (uint256 i = 0; i < registeredLTokens.length; i++) {
-            LTokenData storage data = lTokens[registeredLTokens[i]];
-            if (data.balance > lAmount) return registeredLTokens[i];
-        }
-        //If not found, just return first one
-        return registeredLTokens[0];
-    }
-
     /**
      * @return Amount of pTokens locked in FundsModule by account
      */
@@ -316,12 +307,23 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         return curveModule().calculateExitInverseWithFee(lBalance().sub(lProposals), pAmount);
     }
 
-    function lTransferToFunds(address token, address from, uint256 amount) internal {
-        require(IERC20(token).transferFrom(from, address(this), amount), "BaseFundsModule: incoming transfer failed");
+    function lTransferToFunds(address token, address from, uint256 dnlAmount) internal {
+        require(IERC20(token).transferFrom(from, address(this), dnlAmount), "BaseFundsModule: incoming transfer failed");
     }
 
-    function lTransferFromFunds(address token, address to, uint256 amount) internal {
+    function lTransferFromFunds(address to, uint256 amount) internal {
+        address token = getPrefferableTokenForWithdraw(amount);
         require(IERC20(token).transfer(to, amount), "BaseFundsModule: outgoing transfer failed");
+    }
+
+    function getPrefferableTokenForWithdraw(uint256 lAmount) internal view returns(address){
+        //Use simplest strategy: return first one with enough liquitdity
+        for (uint256 i = 0; i < registeredLTokens.length; i++) {
+            uint256 balance = IERC20(registeredLTokens[i]).balanceOf(address(this));
+            if (balance > lAmount) return registeredLTokens[i];
+        }
+        //If not found, just return first one
+        return registeredLTokens[0];
     }
 
     function emitStatus() private {

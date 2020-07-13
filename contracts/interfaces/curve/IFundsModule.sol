@@ -26,7 +26,7 @@ interface IFundsModule {
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      */
-    function withdrawLTokens(address token, address to, uint256 amount) external;
+    function withdrawLTokens(address to, uint256 amount) external;
 
     /**
      * @notice Withdraw liquid tokens from the pool
@@ -34,7 +34,7 @@ interface IFundsModule {
      * @param amount Amount of tokens to deposit
      * @param poolFee Pool fee will be sent to pool owner
      */
-    function withdrawLTokens(address token, address to, uint256 amount, uint256 poolFee) external;
+    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) external;
 
     /**
      * @notice Deposit pool tokens to the pool
@@ -141,9 +141,6 @@ interface IFundsModule {
      */
     function lBalance() external view returns(uint256);
 
-
-    function getPrefferableTokenForWithdraw(uint256) external view returns(address);
-    
     /**
      * @return Amount of pTokens locked in FundsModule by account
      */

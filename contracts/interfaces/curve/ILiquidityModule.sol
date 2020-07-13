@@ -18,10 +18,9 @@ interface ILiquidityModule {
 
     /**
      * @notice Withdraw amount of lToken and burn pTokens
-     * @param pAmount Amount of pTokens to send
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
-    function withdraw(uint256 pAmount, address token, uint256 lAmountMin) external;
+    function withdraw(uint256 pAmount, uint256 lAmountMin) external;
 
     /**
      * @notice Simulate withdrawal for loan repay with PTK

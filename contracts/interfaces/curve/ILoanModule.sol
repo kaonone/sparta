@@ -17,7 +17,7 @@ interface ILoanModule {
      * @param lAmount Amount of the loan
      * @return Index of created Debt
      */
-    function createDebt(address borrower, uint256 proposal, address token, uint256 lAmount) external returns(uint256);
+    function createDebt(address borrower, uint256 proposal, uint256 lAmount) external returns(uint256);
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens

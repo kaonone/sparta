@@ -37,7 +37,6 @@ contract LoanModule is Module, ILoanModule {
     uint256 private lDebts;
 
     mapping(address=>uint256) public activeDebts;           // Counts how many active debts the address has 
-    mapping(address=>address[]) public debtToken;           // Stores which token was used for a debt
 
     modifier operationAllowed(IAccessModule.Operation operation) {
         IAccessModule am = IAccessModule(getModuleAddress(MODULE_ACCESS));
@@ -54,16 +53,11 @@ contract LoanModule is Module, ILoanModule {
      * @dev Creates Debt using data of DebtProposal
      * @param borrower Address of borrower
      * @param proposal Index of DebtProposal
-     * @param dnlAmount Amount of the loan
+     * @param lAmount Amount of the loan
      * @return Index of created Debt
      */
-    function createDebt(address borrower, uint256 proposal, address token, uint256 dnlAmount) public returns(uint256) {
+    function createDebt(address borrower, uint256 proposal, uint256 lAmount) public returns(uint256) {
         require(_msgSender() == getModuleAddress(MODULE_LOAN_PROPOSALS), "LoanModule: requests only accepted from LoanProposalsModule");
-        require(fundsModule().isLTokenRegistered(token), "LoanProposalsModule: token not registered");
-
-        uint256 availableLiquidity = fundsModule().lBalance(token);
-        require(dnlAmount <= availableLiquidity, "LoanModule: not enough liquidity");
-        uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 
         //TODO: check there is no debt for this proposal
         debts[borrower].push(Debt({
@@ -85,7 +79,7 @@ contract LoanModule is Module, ILoanModule {
         //Move locked pTokens to Funds - done in LoanProposals
 
         increaseActiveDebts(borrower);
-        fundsModule().withdrawLTokens(token, borrower, dnlAmount);
+        fundsModule().withdrawLTokens(borrower, lAmount);
         return debtIdx;
     }
 
@@ -99,7 +93,6 @@ contract LoanModule is Module, ILoanModule {
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
         require(!_isDebtDefaultTimeReached(d), "LoanModule: debt is already defaulted");
 
-        require(token == debtToken[_msgSender()][debt], "LoanModule: should repay in same token as debt taken");
         uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 
         (, uint256 lCovered, , uint256 interest, uint256 pledgeLAmount, )

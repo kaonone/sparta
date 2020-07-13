@@ -16,9 +16,8 @@ contract DefiFundsModule is BaseFundsModule {
         BaseFundsModule.initialize(_pool);
     }
 
-    function withdrawAllFromDefi(address token) public onlyFundsOperator {
-        uint256 amount = defiModule().poolBalance(token);
-        defiModule().withdraw(token, address(this), amount);
+    function withdrawAllFromDefi() public onlyFundsOperator {
+        defiModule().withdrawAll();
     }
 
     function depositAllToDefi(address token) public onlyFundsOperator {
