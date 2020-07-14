@@ -46,7 +46,7 @@ jspm_packages/
 typings/
 
 # TypeChain Generation
-types
+# types
 
 # Optional npm cache directory
 .npm
