@@ -2651,10 +2651,10 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
   ): Promise<BN>;
 
   calculatePoolEnter(
-    lAmount: number | BN | string
-  ): // liquidityCorrection: number | BN | string,
-  // txDetails?: Truffle.TransactionDetails
-  Promise<BN>;
+    lAmount: number | BN | string,
+    liquidityCorrection: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<BN>;
 
   calculatePoolExit(
     lAmount: number | BN | string,

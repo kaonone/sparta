@@ -24,6 +24,10 @@ contract GSNContext is Initializable {
         _upgradeRelayHub(0xD216153c06E857cD7f72665E0aF1d7D82172F494);
     }
 
+    function setRelayHub(address RelayHub) public {
+        _upgradeRelayHub(RelayHub);
+    }
+
     // Default RelayHub address, deployed on mainnet and all testnets at the same address
     address private _relayHub;
 
