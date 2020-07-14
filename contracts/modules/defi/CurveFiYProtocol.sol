@@ -104,8 +104,13 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
     }
 
     function withdraw(address beneficiary, uint256[] memory amounts) public {
-        curveFiDeposit.remove_liquidity_imbalance(amounts, 0);
-        for (uint256 i=0; i < _registeredTokens.length; i++){
+        uint256[N_COINS] memory amnts = [uint256(0), uint256(0), uint256(0)];
+        uint256 i;
+        for (i=0; i < _registeredTokens.length; i++){
+            amnts[i] = amounts[i];
+        }
+        curveFiDeposit.remove_liquidity_imbalance(amnts, 0);
+        for (i=0; i < _registeredTokens.length; i++){
             IERC20 ltoken = IERC20(_registeredTokens[i]);
             ltoken.transfer(beneficiary, amounts[i]);
         }

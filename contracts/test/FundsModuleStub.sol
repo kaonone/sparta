@@ -29,11 +29,11 @@ contract FundsModuleStub is Module, IFundsModule {
         this;
     }
 
-    function withdrawLTokens(address, address, uint256) external {
+    function withdrawLTokens(address, uint256) external {
         this;
     }
 
-    function withdrawLTokens(address, address, uint256, uint256) external {
+    function withdrawLTokens(address, uint256, uint256) external {
         this;
     }
 
@@ -75,10 +75,6 @@ contract FundsModuleStub is Module, IFundsModule {
 
     function emitStatusEvent() external {
         this;
-    }
-
-    function lBalance(address) external view returns(uint256) {
-        return 0;
     }
 
     function allRegisteredLTokens() external view returns(address[] memory) {
@@ -128,10 +124,6 @@ contract FundsModuleStub is Module, IFundsModule {
 
     function pBalanceOf(address) external view returns(uint256){
         return 0;
-    }
-
-    function getPrefferableTokenForWithdraw(uint256) external view returns(address) {
-        return address(0);
     }
 
     function pToken() private view returns(IPToken){

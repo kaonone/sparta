@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IDefiModule.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
 import "../../common/Module.sol";
@@ -32,6 +33,11 @@ contract APYBalancedDefiModule is DefiModuleBase {
 
     function initialize(address _pool) public initializer {
         DefiModuleBase.initialize(_pool);
+    }
+
+    function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
+        withdrawInternal(address(0), beneficiary, amount);
+        emit Withdraw(address(0), amount);
     }
 
     function registerProtocol(IDefiProtocol protocol) public onlyDefiOperator {
@@ -73,19 +79,30 @@ contract APYBalancedDefiModule is DefiModuleBase {
         }        
     }
 
-    // function withdrawInternal(address token, address beneficiary, uint256 amount) internal {
-    //     uint256[] memory amounts = splitByProtocolsForWithdraw(token, amount);
-    //     for (uint256 i = 0; i < registeredProtocols.length; i++){
-    //         if (amounts[i] == 0) continue;
-    //         IDefiProtocol protocol = registeredProtocols[i];
-    //         uint256[] memory balancesBefore = protocol.balanceOfAll();
-    //         protocol.withdraw(beneficiary, token, amounts[i]);
-    //         uint256[] memory balancesAfter = protocol.balanceOfAll();
-    //         updateSaldo(protocol, balancesBefore, balancesAfter);
-    //     }        
-    // }
     function withdrawInternal(address, address beneficiary, uint256 amount) internal {
-        withdrawFromAllProtocols(beneficiary, amount)
+        uint256[][] memory balancesBefore = new uint256[][](registeredProtocols.length);
+        uint256[][] memory balancesAfter = new uint256[][](registeredProtocols.length);
+        uint256[] memory balances;
+        uint256 i; 
+        uint256 j;
+        for (i = 0; i < registeredProtocols.length; i++){
+            IDefiProtocol protocol = registeredProtocols[i];
+            balances = protocol.balanceOfAll();
+            balancesBefore[i] = new uint256[](balances.length);
+            for (j = 0; j < balances.length; j++) {
+                balancesBefore[i][j] = balances[j];
+            }
+        }        
+        withdrawFromAllProtocols(beneficiary, amount);
+        for (i = 0; i < registeredProtocols.length; i++){
+            IDefiProtocol protocol = registeredProtocols[i];
+            balances = protocol.balanceOfAll();
+            balancesAfter[i] = new uint256[](balances.length);
+            for (j = 0; j < balances.length; j++) {
+                balancesAfter[i][j] = balances[j];
+            }
+            updateSaldo(protocol, balancesBefore[i], balancesAfter[i]);
+        }        
     }
 
     function poolBalanceOf(address token) internal returns(uint256) {
@@ -140,50 +157,6 @@ contract APYBalancedDefiModule is DefiModuleBase {
         }
     }
 
-    function worstAPYProtocolIdx() internal returns(uint256) {
-        uint256 worstProtocolIdx;
-        uint256 worstAPY = MAX_UINT256;
-        uint256 i;
-        IDefiProtocol protocol;
-        for (i = 0; i < registeredProtocols.length; i++){
-            protocol = registeredProtocols[i];
-            uint256 apy = tokens[token].protocols[address(protocol)].previousPeriodAPY;
-            if (apy < worstAPY) {
-                worstProtocolIdx = i;
-                worstAPY = apy;
-            }
-        }
-        return worstProtocolIdx;
-    }
-
-    function splitByProtocolsForWithdraw(address token, uint256 amount) internal returns(uint256[] memory amounts) {
-        require(registeredProtocols.length > 0, "APYBalancedDefiModule: no protocols registered");
-        uint256 worstProtocolIdx = worstAPYProtocolIdx();
-        IDefiProtocol protocol = registeredProtocols[worstProtocolIdx];
-        uint256 balance = protocol.balanceOf(token);
-        if (balance >= amount){
-            amounts[worstProtocolIdx] = amount;
-        }else{
-            amounts[worstProtocolIdx] = balance;
-            amount = amount.sub(balance);
-            for (uint256 i = 0; i < registeredProtocols.length; i++){
-                if (i == worstProtocolIdx) continue;
-                protocol = registeredProtocols[i];
-                balance = protocol.balanceOf(token);
-                if (balance >= amount) {
-                    amounts[i] = amount;
-                    amount = 0;
-                    break;
-                } else {
-                    amounts[i] = balance;
-                    amount = amount.sub(balance);
-                    if (amount == 0) break;
-                }
-            }
-            require(amount == 0, "APYBalancedDefiModule: not enough balance on all protocols");
-        }
-    }
-
     function withdrawFromAllProtocols(address beneficiary, uint256 amount) internal {
         uint256[] memory totalBalances = new uint256[](_registeredTokens.length);
         uint256 i; 
@@ -195,20 +168,20 @@ contract APYBalancedDefiModule is DefiModuleBase {
                 IDefiProtocol protocol = registeredProtocols[i];
                 dnAmount = dnAmount.add(protocol.balanceOf(_registeredTokens[i]));
             }
-            totalBalances[i] = normalizeAmount(dnAmount);
+            totalBalances[i] = normalizeAmount(_registeredTokens[i], dnAmount);
             fullBalance = fullBalance.add(totalBalances[i]);
         }
         uint256[] memory amountByTokens = new uint256[](_registeredTokens.length);
         for (i = 0; i < _registeredTokens.length; i++){
             uint256 nAmount = amount.mul(totalBalances[i]).div(fullBalance);
-            amountByTokens = denormalizeAmount(_registeredTokens[i], nAmount);
+            amountByTokens[i] = denormalizeAmount(_registeredTokens[i], nAmount);
         }
         withdrawFromAllProtocolsByTokens(beneficiary, amountByTokens);
     }
 
     function withdrawFromAllProtocolsByTokens(address beneficiary, uint256[] memory amountByTokens) internal {
-        uint256[] flexBalances = new uint256[](_registeredTokens.length);   //Max amount on flexible protocol
-        uint256[] flexProtocols = new uint256[](_registeredTokens.length);  //Index of flexible protocol for token
+        uint256[] memory flexBalances = new uint256[](_registeredTokens.length);   //Max amount on flexible protocol
+        uint256[] memory flexProtocols = new uint256[](_registeredTokens.length);  //Index of flexible protocol for token
         uint256[][] memory protocolAmounts = new uint256[][](registeredProtocols.length); //array of amounts by tokens for each protocol
         uint256 i;
         //First pass to fill unflexible protocols and prepare flexible
@@ -229,8 +202,8 @@ contract APYBalancedDefiModule is DefiModuleBase {
                 for (uint256 j = 0; j < protocolTokens.length; j++) {
                     uint256 tokenIdx = tokenIndex(protocolTokens[j]);
                     protocolBalance[j] = protocol.balanceOf(protocolTokens[j]);
-                    if (amountByTokens[tokenIdx] <= protocolBalance) {
-                        uint256 atb = EXP.mul(amountByTokens[tokenIdx]).div(protocolBalance);
+                    if (amountByTokens[tokenIdx] <= protocolBalance[j]) {
+                        uint256 atb = EXP.mul(amountByTokens[tokenIdx]).div(protocolBalance[j]);
                         if(atb > maxAmountToBalance) maxAmountToBalance = atb;
                     }else{
                         //atb = 1* EXP;

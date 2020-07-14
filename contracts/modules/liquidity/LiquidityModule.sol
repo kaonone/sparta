@@ -46,23 +46,17 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @notice Withdraw amount of lToken and burn pTokens
      * @dev This operation also repays all interest on all debts
      * @param pAmount Amount of pTokens to send (this amount does not include pTokens used to pay interest)
-     * @param dnlAmountMin Minimal amount of liquid tokens to withdraw
+     * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
-    function withdraw(uint256 pAmount, uint256 dnlAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
+    function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
         loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
-        uint256 lAmountMin = fundsModule().normalizeLTokenValue(token, dnlAmountMin);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
 
-        uint256 dnlAmount = fundsModule().denormalizeLTokenValue(token, lAmountT);
-
-        uint256 availableLiquidity = fundsModule().lBalance(token);
-        require(dnlAmount <= availableLiquidity, "LiquidityModule: not enough liquidity");
-
         fundsModule().burnPTokens(_msgSender(), pAmount);
-        fundsModule().withdrawLTokens(token, _msgSender(), lAmountU, lAmountP);
+        fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
     }
 
@@ -76,7 +70,6 @@ contract LiquidityModule is Module, ILiquidityModule {
         require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         //require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin"); //Limit disabled, because this is actually repay
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
-        address token = fundsModule().getPrefferableTokenForWithdraw(lAmountP);
         fundsModule().burnPTokens(borrower, pAmount);           //We just burn pTokens, withous sending lTokens to _msgSender()
         fundsModule().withdrawLTokens(borrower, 0, lAmountP);   //This call is required to send pool fee
         emit Withdraw(borrower, lAmountT, lAmountU, pAmount);

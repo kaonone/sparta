@@ -74,8 +74,6 @@ contract LoanModule is Module, ILoanModule {
         lDebts = lDebts.add(lAmount);
         require(lDebts <= maxDebts, "LoanModule: Debt can not be created now because of debt loan limit");
 
-        debtToken[borrower].push(token);    //Store token used for this debt
-
         //Move locked pTokens to Funds - done in LoanProposals
 
         increaseActiveDebts(borrower);

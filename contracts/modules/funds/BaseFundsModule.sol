@@ -17,11 +17,11 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     uint256 private constant STATUS_PRICE_AMOUNT = 10**18;  // Used to calculate price for Status event, should represent 1 DAI
 
     struct LTokenData {
-        uint256 rate;   // Rate of the target token value to 1 USD, multiplied by MULTIPLIER. For DAI = 1e18, for USDC (6 decimals) = 1e30
-        uint256 balance;    //Amount of this tokens on Pool balance
+        uint256 rate;       // Rate of the target token value to 1 USD, multiplied by MULTIPLIER. For DAI = 1e18, for USDC (6 decimals) = 1e30
+        uint256 balance;    // Amount of this tokens on Pool balance
     }
 
-    uint256 private lBalance;               //Tracked balance of liquid token, may be less or equal to lToken.balanceOf(address(this))
+    uint256 public lBalance;                // Tracked balance (normalized value)
     mapping(address=>uint256) pBalances;    // Stores how many pTokens is locked in FundsModule by user
     address[] public registeredLTokens;     // Array of registered LTokens (oreder is not significant and may change during removals)
     mapping(address=>LTokenData) public lTokens;   // Info about supported lTokens and their balances in Pool
@@ -35,10 +35,10 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     /**
      * @notice Deposit liquid tokens to the pool
      * @param from Address of the user, who sends tokens. Should have enough allowance.
-     * @param amount Amount of tokens to deposit
+     * @param dnlAmount Amount of tokens to deposit
      */
     function depositLTokens(address token, address from, uint256 dnlAmount) public onlyFundsOperator {
-        uint256 amount = normalizeLTokenValue(dnlAmount)
+        uint256 amount = normalizeLTokenValue(token, dnlAmount);
         lBalance = lBalance.add(amount);
         lTransferToFunds(token, from, dnlAmount);
         emitStatus();
@@ -62,11 +62,11 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
         if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
             lBalance = lBalance.sub(amount);
-            lTransferFromFunds(token, to, amount);
+            lTransferFromFunds(to, amount);
         }
         if (poolFee > 0) {
             lBalance = lBalance.sub(poolFee);
-            lTransferFromFunds(token, owner(), poolFee);
+            lTransferFromFunds(owner(), poolFee);
         }
         emitStatus();
     }
@@ -207,23 +207,6 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         emitStatus();
     }
 
-    function lBalance(address token) public view returns(uint256){
-        return lTokens[token].balance;
-    }
-    
-    /**
-     * Summmary balance of all lTokens, converted to USD multiplied by 1e18
-     */
-    function lBalance() public view returns(uint256) {
-        uint256 lTotal;
-        for (uint256 i = 0; i < registeredLTokens.length; i++) {
-            LTokenData storage data = lTokens[registeredLTokens[i]];
-            uint256 normalizedBalance = data.balance.mul(data.rate).div(MULTIPLIER);
-            lTotal = lTotal.add(normalizedBalance);
-        }
-        return lTotal;
-    }
-
     /**
      * @return Amount of pTokens locked in FundsModule by account
      */
@@ -252,7 +235,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolEnter(uint256 lAmount) public view returns(uint256) {
         uint256 lDebts = loanModule().totalLDebts();
-        return curveModule().calculateEnter(lBalance(), lDebts, lAmount);
+        return curveModule().calculateEnter(lBalance, lDebts, lAmount);
     }
 
     /**
@@ -263,7 +246,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolEnter(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
         uint256 lDebts = loanModule().totalLDebts();
-        return curveModule().calculateEnter(lBalance().sub(liquidityCorrection), lDebts, lAmount);
+        return curveModule().calculateEnter(lBalance.sub(liquidityCorrection), lDebts, lAmount);
     }
 
     /**
@@ -273,7 +256,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolExit(uint256 lAmount) public view returns(uint256) {
         uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExit(lBalance().sub(lProposals), lAmount);
+        return curveModule().calculateExit(lBalance.sub(lProposals), lAmount);
     }
 
     /**
@@ -283,7 +266,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolExitWithFee(uint256 lAmount) public view returns(uint256) {
         uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitWithFee(lBalance().sub(lProposals), lAmount);
+        return curveModule().calculateExitWithFee(lBalance.sub(lProposals), lAmount);
     }
 
     /**
@@ -294,7 +277,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolExitWithFee(uint256 lAmount, uint256 liquidityCorrection) public view returns(uint256) {
         uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitWithFee(lBalance().sub(liquidityCorrection).sub(lProposals), lAmount);
+        return curveModule().calculateExitWithFee(lBalance.sub(liquidityCorrection).sub(lProposals), lAmount);
     }
 
     /**
@@ -304,7 +287,7 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      */
     function calculatePoolExitInverse(uint256 pAmount) public view returns(uint256, uint256, uint256) {
         uint256 lProposals = loanProposalsModule().totalLProposals();
-        return curveModule().calculateExitInverseWithFee(lBalance().sub(lProposals), pAmount);
+        return curveModule().calculateExitInverseWithFee(lBalance.sub(lProposals), pAmount);
     }
 
     function lTransferToFunds(address token, address from, uint256 dnlAmount) internal {
@@ -327,17 +310,16 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function emitStatus() private {
-        uint256 lBalanc = lBalance();
         uint256 lDebts = loanModule().totalLDebts();
         uint256 lProposals = loanProposalsModule().totalLProposals();
-        uint256 pEnterPrice = curveModule().calculateEnter(lBalanc, lDebts, STATUS_PRICE_AMOUNT);
+        uint256 pEnterPrice = curveModule().calculateEnter(lBalance, lDebts, STATUS_PRICE_AMOUNT);
         uint256 pExitPrice; // = 0; //0 is default value
-        if (lBalanc >= STATUS_PRICE_AMOUNT) {
-            pExitPrice = curveModule().calculateExit(lBalanc.sub(lProposals), STATUS_PRICE_AMOUNT);
+        if (lBalance >= STATUS_PRICE_AMOUNT) {
+            pExitPrice = curveModule().calculateExit(lBalance.sub(lProposals), STATUS_PRICE_AMOUNT);
         } else {
             pExitPrice = 0;
         }
-        emit Status(lBalanc, lDebts, lProposals, pEnterPrice, pExitPrice);
+        emit Status(lBalance, lDebts, lProposals, pEnterPrice, pExitPrice);
     }
 
     function curveModule() private view returns(ICurveModule) {

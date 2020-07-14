@@ -57,14 +57,14 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     }
 
     function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
-        address token = registeredTokens()[0];
+        address token = getPrefferableTokenForWithdraw(amount);
         withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].add(amount);
         withdrawInternal(token, beneficiary, amount);
         emit Withdraw(token, amount);
     }
 
     function withdrawAll() public onlyDefiOperator {
-        address[] memory registeredTokens = registeredTokens();
+        address[] memory _registeredTokens = registeredTokens();
         for (uint256 i = 0; i<_registeredTokens.length; i++) {
             address token = _registeredTokens[i];
             uint256 balance = poolBalanceOf(token);
@@ -152,6 +152,17 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     // == Internal functions of DefiModule
     function totalSupplyOfPTK() internal view returns(uint256) {
         return pToken().distributionTotalSupply();
+    }
+
+    function getPrefferableTokenForWithdraw(uint256 lAmount) internal returns(address){
+        address[] memory tokens = registeredTokens();
+        //Use simplest strategy: return first one with enough liquitdity
+        for (uint256 i = 0; i < tokens.length; i++) {
+            uint256 balance = poolBalanceOf(tokens[i]);
+            if (balance > lAmount) return tokens[i];
+        }
+        //If not found, just return first one
+        return tokens[0];
     }
 
     function _createInitialDistribution() internal {

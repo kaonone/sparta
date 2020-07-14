@@ -183,7 +183,9 @@ contract CurveFiYModule is DefiModuleBase {
 
         //TODO: ensure there is no interest on this token which is wating to be withdrawn
         if (balance > 0){
-            withdraw(token, getModuleAddress(MODULE_FUNDS), balance);   //This updates withdrawalsSinceLastDistribution
+            withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].add(balance);
+            withdrawInternal(token, getModuleAddress(MODULE_FUNDS), balance);
+            emit Withdraw(token, balance);
         }
         emit TokenUnregistered(token);
     }

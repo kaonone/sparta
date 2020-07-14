@@ -80,8 +80,6 @@ interface IFundsModule {
 
     function emitStatusEvent() external;
 
-    function lBalance(address token) external view returns(uint256);
-
     function allRegisteredLTokens() external view returns(address[] memory);
     
     function isLTokenRegistered(address token) external view returns(bool);
