@@ -16,10 +16,11 @@ interface ILoanProposalsModule {
      * @param debtLAmount Amount of debt in liquid tokens
      * @param interest Annual interest rate multiplied by INTEREST_MULTIPLIER (to allow decimal numbers)
      * @param pAmountMax Max amount of pTokens to use as collateral
+     * @param creditTerm Credit term in seconds. After this amount of seconds credit may be defaulted even if interest is paid. 0 means no term
      * @param descriptionHash Hash of loan description
      * @return Index of created DebtProposal
      */
-    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, bytes32 descriptionHash) external returns(uint256);
+    function createDebtProposal(uint256 debtLAmount, uint256 interest, uint256 pAmountMax, uint256 creditTerm, bytes32 descriptionHash) external returns(uint256);
 
     /**
      * @notice Add pledge to DebtProposal
@@ -63,6 +64,9 @@ interface ILoanProposalsModule {
      */
     function getProposalAndPledgeInfo(address borrower, uint256 proposal, address supporter) external view
     returns(uint256 lAmount, uint256 lCovered, uint256 pCollected, uint256 interest, uint256 lPledge, uint256 pPledge);
+
+    function getProposalCreditTerm(address borrower, uint256 proposal) external view returns(uint256);
+
 
     /**
     * @dev Returns interest rate of proposal. Usefull when only this value is required

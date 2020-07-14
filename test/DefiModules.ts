@@ -232,7 +232,7 @@ describe("DeFi modules", function(){
                 };
                 let amount = w3random.intervalBN(before.protocolDai.divn(3), before.protocolDai.divn(2));
 
-                let receipt = await defim.withdraw(dai.address, user, amount, {from: owner});
+                let receipt = await defim.withdraw(user, amount, {from: owner});
                 expectEvent(receipt, 'Withdraw', {'amount':amount});
 
                 let after = {

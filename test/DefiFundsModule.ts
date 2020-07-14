@@ -133,7 +133,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         let amount = w3random.intervalBN(before.cDaiDai.divn(3), before.cDaiDai.divn(2));
 
-        let receipt = await funds.withdrawLTokens(dai.address, user, amount, new BN(0), {from: owner});
+        let receipt = await funds.withdrawLTokens(user, amount, new BN(0), {from: owner});
 
         let after = {
             userDai: await dai.balanceOf(user),
@@ -168,7 +168,7 @@ contract("DefiFundsModule", async ([_, owner, user, ...otherAccounts]) => {
         };
         expect(afterTimeShift.cDaiUnderlying).to.be.bignumber.gt(beforeTimeShift.cDaiUnderlying);
 
-        let receipt = await funds.withdrawAllFromDefi(dai.address, {from: owner});
+        let receipt = await funds.withdrawAllFromDefi({from: owner});
 
         let afterWithdraw = {
             fundsDai: await dai.balanceOf(funds.address),

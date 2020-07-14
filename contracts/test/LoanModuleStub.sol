@@ -20,7 +20,7 @@ contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
         Module.initialize(_pool);
     }
 
-    function createDebtProposal(uint256 debtLAmount, uint256, uint256, bytes32) public returns(uint256){
+    function createDebtProposal(uint256 debtLAmount, uint256, uint256, uint256, bytes32) public returns(uint256){
         lDebts = debtLAmount;
     }
 
@@ -77,6 +77,10 @@ contract LoanModuleStub is Module, ILoanModule, ILoanProposalsModule {
     }
 
     function getProposalInterestRate(address, uint256) public view returns(uint256){
+        return 0;
+    }
+
+    function getProposalCreditTerm(address, uint256) public view returns(uint256){
         return 0;
     }
 
