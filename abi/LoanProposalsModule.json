@@ -586,6 +586,27 @@
         "internalType": "uint256",
         "name": "proposal",
         "type": "uint256"
+      }
+    ],
+    "name": "executeDebtProposal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposal",
+        "type": "uint256"
       },
       {
         "internalType": "address",

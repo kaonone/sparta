@@ -237,32 +237,6 @@
         "type": "uint256"
       }
     ],
-    "name": "debtToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
     "name": "debts",
     "outputs": [
       {
@@ -438,13 +412,8 @@
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "dnlAmount",
+        "name": "lAmount",
         "type": "uint256"
       }
     ],

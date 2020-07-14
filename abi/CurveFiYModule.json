@@ -698,11 +698,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "beneficiary",
         "type": "address"
       },

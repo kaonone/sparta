@@ -646,11 +646,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "beneficiary",
         "type": "address"
       },
@@ -661,6 +656,15 @@
       }
     ],
     "name": "withdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "withdrawAll",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

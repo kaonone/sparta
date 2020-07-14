@@ -403,7 +403,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "dnlAmount",
         "type": "uint256"
       }
     ],
@@ -482,27 +482,6 @@
     "constant": true,
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "lAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "getPrefferableTokenForWithdraw",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -559,27 +538,6 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "lBalance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
     "name": "lBalance",
     "outputs": [
       {
@@ -924,11 +882,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "to",
         "type": "address"
       },
@@ -952,11 +905,6 @@
   {
     "constant": false,
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
       {
         "internalType": "address",
         "name": "to",
@@ -1020,13 +968,7 @@
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "withdrawAllFromDefi",
     "outputs": [],
     "payable": false,
