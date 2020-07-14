@@ -18,6 +18,13 @@ interface IDefiProtocol {
     function withdraw(address beneficiary, address token, uint256 amount) external;
 
     /**
+     * @notice Transfer tokens from DeFi protocol to beneficiary
+     * @param amounts Array of amounts to withdraw, in order of supportedTokens()
+     * @return new balances of each token
+     */
+    function withdraw(address beneficiary, uint256[] calldata amounts) external;
+
+    /**
      * @dev This function is not view because on some protocols 
      * (Compound, RAY with Compound oportunity) it may cause storage writes
      */

@@ -56,7 +56,8 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         emit Deposit(token, amount);
     }
 
-    function withdraw(address token, address beneficiary, uint256 amount) public onlyDefiOperator {
+    function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
+        address token = registeredTokens()[0];
         withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].add(amount);
         withdrawInternal(token, beneficiary, amount);
         emit Withdraw(token, amount);
@@ -67,7 +68,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         for (uint256 i = 0; i<_registeredTokens.length; i++) {
             address token = _registeredTokens[i];
             uint256 balance = poolBalanceOf(token);
-            withdraw(token, getModuleAddress(MODULE_FUNDS), balance);
+            withdrawInternal(token, getModuleAddress(MODULE_FUNDS), balance);
         }
     }
 

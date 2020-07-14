@@ -103,6 +103,14 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         ltoken.transfer(beneficiary, amount);
     }
 
+    function withdraw(address beneficiary, uint256[] memory amounts) public {
+        curveFiDeposit.remove_liquidity_imbalance(amounts, 0);
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            IERC20 ltoken = IERC20(_registeredTokens[i]);
+            ltoken.transfer(beneficiary, amounts[i]);
+        }
+    }
+
     function balanceOf(address token) public returns(uint256) {
         uint256 tokenIdx = getTokenIndex(token);
 
