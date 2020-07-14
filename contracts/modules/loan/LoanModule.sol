@@ -92,7 +92,7 @@ contract LoanModule is Module, ILoanModule {
     function repay(uint256 debt, address token, uint256 dnlAmount) public operationAllowed(IAccessModule.Operation.Repay) {
         Debt storage d = debts[_msgSender()][debt];
         require(d.lAmount > 0, "LoanModule: Debt is already fully repaid"); //Or wrong debt index
-        require(!_isDebtDefaultTimeReached(borrower, debt, d), "LoanModule: debt is already defaulted");
+        require(!_isDebtDefaultTimeReached(_msgSender(), debt, d), "LoanModule: debt is already defaulted");
 
         uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 

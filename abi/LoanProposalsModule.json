@@ -281,6 +281,32 @@
         "type": "uint256"
       }
     ],
+    "name": "creditTerms",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "debtProposals",
     "outputs": [
       {
@@ -492,6 +518,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "creditTerm",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes32",
         "name": "descriptionHash",
         "type": "bytes32"
@@ -697,6 +728,32 @@
       }
     ],
     "name": "getProposalInterestRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "proposal",
+        "type": "uint256"
+      }
+    ],
+    "name": "getProposalCreditTerm",
     "outputs": [
       {
         "internalType": "uint256",
