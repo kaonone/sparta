@@ -109,7 +109,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         for (i=0; i < _registeredTokens.length; i++){
             amnts[i] = amounts[i];
         }
-        curveFiDeposit.remove_liquidity_imbalance(amnts, 0);
+        curveFiDeposit.remove_liquidity_imbalance(amnts, MAX_UINT256);
         for (i=0; i < _registeredTokens.length; i++){
             IERC20 ltoken = IERC20(_registeredTokens[i]);
             ltoken.transfer(beneficiary, amounts[i]);
