@@ -49,7 +49,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
         address[] memory supportedTokens = protocol.supportedTokens();
         for (i = 0; i < supportedTokens.length; i++){
             address tkn = supportedTokens[i];
-            if(!isTokenRegistered(tkn)){
+            if (!isTokenRegistered(tkn)){
                 _registeredTokens.push(tkn);
             }
             tokens[tkn].protocols[address(protocol)] = ProtocolInfo({
@@ -189,7 +189,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
             IDefiProtocol protocol = registeredProtocols[i];
             address[] memory protocolTokens = protocol.supportedTokens();
             protocolAmounts[i] = new uint256[](protocolTokens.length);
-            if(protocolTokens.length == 1) {
+            if (protocolTokens.length == 1) {
                 uint256 tokenIdx = tokenIndex(protocolTokens[0]);
                 uint256 protocolBalance = protocol.balanceOf(protocolTokens[0]);
                 if (protocolBalance > flexBalances[tokenIdx]) { //Store index of flex protocol with highest balance
@@ -204,10 +204,10 @@ contract APYBalancedDefiModule is DefiModuleBase {
                     protocolBalance[j] = protocol.balanceOf(protocolTokens[j]);
                     if (amountByTokens[tokenIdx] <= protocolBalance[j]) {
                         uint256 atb = EXP.mul(amountByTokens[tokenIdx]).div(protocolBalance[j]);
-                        if(atb > maxAmountToBalance) maxAmountToBalance = atb;
-                    }else{
+                        if (atb > maxAmountToBalance) maxAmountToBalance = atb;
+                    } else {
                         //atb = 1* EXP;
-                        if(EXP > maxAmountToBalance) maxAmountToBalance = EXP;
+                        if (EXP > maxAmountToBalance) maxAmountToBalance = EXP;
                     }
                 }
                 for (uint256 j = 0; j < protocolTokens.length; j++) {
@@ -219,7 +219,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
         }
         // Second pass to fill flexible
         for (i = 0; i < _registeredTokens.length; i++){
-            if(amountByTokens[i] > 0) {
+            if (amountByTokens[i] > 0) {
                 uint256 protocolIdx = flexProtocols[i];
                 protocolAmounts[protocolIdx][0] = amountByTokens[i];
             }
@@ -229,7 +229,6 @@ contract APYBalancedDefiModule is DefiModuleBase {
             registeredProtocols[i].withdraw(beneficiary, protocolAmounts[i]);
         }
     }
-
 
     function _createDistribution() internal {
         for (uint256 i = 0; i < _registeredTokens.length; i++){
@@ -268,14 +267,14 @@ contract APYBalancedDefiModule is DefiModuleBase {
 
     function isTokenRegistered(address token) internal view returns(bool) {
         for (uint256 i = 0; i < _registeredTokens.length; i++){
-            if(_registeredTokens[i] == token) return true;
+            if (_registeredTokens[i] == token) return true;
         }
         return false;
     }
 
     function tokenIndex(address token) internal view returns(uint256) {
         for (uint256 i = 0; i < _registeredTokens.length; i++){
-            if(_registeredTokens[i] == token) return i;
+            if (_registeredTokens[i] == token) return i;
         }
         revert("APYBalancedDefiModule: token not registered");
     }

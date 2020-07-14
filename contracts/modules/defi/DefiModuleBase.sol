@@ -65,7 +65,7 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
 
     function withdrawAll() public onlyDefiOperator {
         address[] memory _registeredTokens = registeredTokens();
-        for (uint256 i = 0; i<_registeredTokens.length; i++) {
+        for (uint256 i = 0; i < _registeredTokens.length; i++) {
             address token = _registeredTokens[i];
             uint256 balance = poolBalanceOf(token);
             withdrawInternal(token, getModuleAddress(MODULE_FUNDS), balance);
