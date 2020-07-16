@@ -22,7 +22,7 @@ contract DefiModuleStub is Module, IDefiModule {
         this;
     }
 
-    function withdraw(address, uint256) external {
+    function withdraw(address, address, uint256) external {
         this;
     }
 

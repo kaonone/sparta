@@ -33,7 +33,7 @@ contract FundsModuleStub is Module, IFundsModule {
         this;
     }
 
-    function withdrawLTokens(address, uint256, uint256) external {
+    function withdrawLTokens(address, address, uint256, uint256) external {
         this;
     }
 

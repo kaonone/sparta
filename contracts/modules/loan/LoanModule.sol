@@ -53,13 +53,17 @@ contract LoanModule is Module, ILoanModule {
     /**
      * @notice Execute DebtProposal
      * @dev Creates Debt using data of DebtProposal
+     * @param token Address of the token to send to user (fee may be paid by user for conversions) or 0 to send all tokens without fee
      * @param borrower Address of borrower
      * @param proposal Index of DebtProposal
-     * @param lAmount Amount of the loan
+     * @param token Token to use for withdrawal or 0
+     * @param dnlAmount Amount of the loan (denormalized)
      * @return Index of created Debt
      */
-    function createDebt(address borrower, uint256 proposal, uint256 lAmount) public returns(uint256) {
+    function createDebt(address borrower, uint256 proposal, address token, uint256 dnlAmount) public returns(uint256) {
         require(_msgSender() == getModuleAddress(MODULE_LOAN_PROPOSALS), "LoanModule: requests only accepted from LoanProposalsModule");
+
+        uint256 lAmount = fundsModule().normalizeLTokenValue(token, dnlAmount);
 
         //TODO: check there is no debt for this proposal
         debts[borrower].push(Debt({
@@ -80,7 +84,7 @@ contract LoanModule is Module, ILoanModule {
         //Move locked pTokens to Funds - done in LoanProposals
 
         increaseActiveDebts(borrower);
-        fundsModule().withdrawLTokens(borrower, lAmount);
+        fundsModule().withdrawLTokens(token, borrower, dnlAmount, 0);
         return debtIdx;
     }
 

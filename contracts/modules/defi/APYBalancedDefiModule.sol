@@ -35,9 +35,18 @@ contract APYBalancedDefiModule is DefiModuleBase {
         DefiModuleBase.initialize(_pool);
     }
 
-    function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
-        withdrawInternal(address(0), beneficiary, amount);
-        emit Withdraw(address(0), amount);
+    function handleDeposit(address token, address sender, uint256 amount) public onlyDefiOperator {
+        handleDepositInternal(token, sender, amount);
+        emit Deposit(token, amount);
+    }
+
+    function withdraw(address token, address beneficiary, uint256 amount) public onlyDefiOperator {
+        if (token != address(0)){
+            withdrawInternal(token, beneficiary, amount);
+        } else {
+            withdrawInternalMultiToken(beneficiary, amount);
+        }
+        emit Withdraw(token, amount);
     }
 
     function registerProtocol(IDefiProtocol protocol) public onlyDefiOperator {
@@ -79,7 +88,89 @@ contract APYBalancedDefiModule is DefiModuleBase {
         }        
     }
 
-    function withdrawInternal(address, address beneficiary, uint256 amount) internal {
+    function withdrawInternal(address token, address beneficiary, uint256 amount) internal {
+        uint256[][] memory balancesBefore = new uint256[][](registeredProtocols.length);
+        uint256[][] memory balancesAfter = new uint256[][](registeredProtocols.length);
+        uint256[] memory balances;
+        uint256 i;
+        uint256 j;
+
+        for (i = 0; i < registeredProtocols.length; i++){
+            IDefiProtocol protocol = registeredProtocols[i];
+            balances = protocol.balanceOfAll();
+            balancesBefore[i] = new uint256[](balances.length);
+            for (j = 0; j < balances.length; j++) {
+                balancesBefore[i][j] = balances[j];
+            }
+        }        
+
+        //Check if we can do it fast
+        uint256 worstIdx = worstAPYProtocolIdx(token);
+        if (registeredProtocols[worstIdx].canSwapToToken(token)){
+            uint256 protocolBalance = registeredProtocols[worstIdx].normalizedBalance();
+            if (protocolBalance > 0){
+                uint256 protocolWithdraw = (amount >= protocolBalance) ? amount : protocolBalance;
+                amount = amount.sub(protocolWithdraw);
+                uint256 dnWithdraw = denormalizeAmount(token, protocolWithdraw);
+                registeredProtocols[worstIdx].withdraw(beneficiary, token, dnWithdraw);
+            }
+        }
+        //Proceed long way with rest
+        if (amount > 0) {
+            withdrawInternalFromAllProtocols(token, beneficiary, amount);
+        }
+
+        for (i = 0; i < registeredProtocols.length; i++){
+            IDefiProtocol protocol = registeredProtocols[i];
+            balances = protocol.balanceOfAll();
+            for (j = 0; j < balances.length; j++) {
+                balancesAfter[i][j] = balances[j];
+            }
+            updateSaldo(protocol, balancesBefore[i], balancesAfter[i]);
+        }        
+    }
+
+    function withdrawInternalFromAllProtocols(address token, address beneficiary, uint256 amount) internal {
+        uint256 i;
+        IDefiProtocol protocol;
+        // Withdraw form all protocols what we can
+        for (i = 0; i < registeredProtocols.length; i++){
+            protocol = registeredProtocols[i];
+            if (!protocol.canSwapToToken(token)) continue;
+            uint256 protocolBalance = protocol.normalizedBalance();
+            if (protocolBalance > 0) {
+                uint256 protocolWithdraw = (amount >= protocolBalance) ? amount : protocolBalance;
+                amount = amount.sub(protocolWithdraw);
+                uint256 dnWithdraw = denormalizeAmount(token, protocolWithdraw);
+                protocol.withdraw(beneficiary, token, dnWithdraw);
+                if (amount == 0) return;
+            }
+        }
+        //Convert rest using liquidity from 1-token protocols
+        uint256 converterIdx = converterToTokenProtocolIdx(token);
+        IDefiProtocol converter = registeredProtocols[converterIdx];
+        uint256 amountToMove = amount;
+        for (i = 0; i < registeredProtocols.length; i++){
+            if (i == converterIdx) continue; //Skip converter protocol
+            protocol = registeredProtocols[i];
+            // Move required liquidity from this protocol to converter
+            address[] memory supportedTokens = protocol.supportedTokens();
+            for (uint256 j = 0; j < supportedTokens.length; j++) {
+                uint256 dnAmount = denormalizeAmount(supportedTokens[j], amountToMove);
+                uint256 dnProtocolBalance = protocol.balanceOf(supportedTokens[j]);
+                uint256 dnProtocolWithdraw = (dnAmount >= dnProtocolBalance) ? dnAmount : dnProtocolBalance;
+                amountToMove = amountToMove.sub(normalizeAmount(supportedTokens[j], dnProtocolWithdraw));
+                protocol.withdraw(address(this), supportedTokens[j], dnProtocolWithdraw);
+                converter.deposit(supportedTokens[j], dnProtocolWithdraw);
+                if (amountToMove == 0) break;
+            }
+            if (amountToMove == 0) break;
+        }
+        require(amountToMove == 0, "APYBalancedDefiModule: can't find enough liquidity");
+        converter.withdraw(beneficiary, token, amount);
+    }
+
+    function withdrawInternalMultiToken(address beneficiary, uint256 amount) internal {
         uint256[][] memory balancesBefore = new uint256[][](registeredProtocols.length);
         uint256[][] memory balancesAfter = new uint256[][](registeredProtocols.length);
         uint256[] memory balances;
@@ -263,6 +354,31 @@ contract APYBalancedDefiModule is DefiModuleBase {
             withdrawalsSinceLastDistribution[token] = totalWithdraws;
         }        
         super._createDistribution();
+    }
+
+    function worstAPYProtocolIdx(address token) internal view returns(uint256) {
+        uint256 worstProtocolIdx;
+        uint256 worstAPY = MAX_UINT256;
+        uint256 i;
+        IDefiProtocol protocol;
+        for (i = 0; i < registeredProtocols.length; i++){
+            protocol = registeredProtocols[i];
+            uint256 apy = tokens[token].protocols[address(protocol)].previousPeriodAPY;
+            if (apy < worstAPY) {
+                worstProtocolIdx = i;
+                worstAPY = apy;
+            }
+        }
+        return worstProtocolIdx;
+    }
+
+    function converterToTokenProtocolIdx(address token) internal view returns(uint256) {
+        for (uint256 i = 0; i < registeredProtocols.length; i++){
+            IDefiProtocol protocol = registeredProtocols[i];
+            if (!protocol.canSwapToToken(token)) continue;
+            if (protocol.supportedTokensCount() > 1) return i;
+        }
+        revert("APYBalancedDefiModule: no multitoken protocol available for requested token");
     }
 
     function isTokenRegistered(address token) internal view returns(bool) {

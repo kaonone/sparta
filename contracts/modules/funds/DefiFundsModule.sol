@@ -31,8 +31,8 @@ contract DefiFundsModule is BaseFundsModule {
         defiModule().handleDeposit(token, from, amount);
     }
 
-    function lTransferFromFunds(address to, uint256 amount) internal {
-        defiModule().withdraw(to, amount);
+    function lTransferFromFunds(address token, address to, uint256 amount) internal {
+        defiModule().withdraw(token, to, amount);
     }
 
     function defiModule() private view returns(IDefiModule) {

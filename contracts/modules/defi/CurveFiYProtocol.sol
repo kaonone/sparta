@@ -3,6 +3,7 @@ pragma solidity ^0.5.12;
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "../../interfaces/token/IPToken.sol";
+import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
 import "../../interfaces/defi/ICurveFiDeposit.sol";
 import "../../interfaces/defi/ICurveFiSwap.sol";
@@ -73,37 +74,44 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         }            
     }
 
-    function deposit(address token, uint256 amount) public {
+    function deposit(address token, uint256 amount) public onlyDefiOperator {
         uint256[N_COINS] memory amounts = [uint256(0), uint256(0), uint256(0)];
         for (uint256 i=0; i < _registeredTokens.length; i++){
             amounts[i] = IERC20(_registeredTokens[i]).balanceOf(address(this)); // Check balance which is left after previous withdrawal
             //amounts[i] = (_registeredTokens[i] == token)?amount:0;
             if (_registeredTokens[i] == token) {
-                require(amounts[i] >= amount, "CurveFiYModule: requested amount is not deposited");
+                require(amounts[i] >= amount, "CurveFiYProtocol: requested amount is not deposited");
             }
         }
         curveFiDeposit.add_liquidity(amounts, 0);
     }
 
-    function withdraw(address beneficiary, address token, uint256 amount) public {
+    /** 
+    * @dev With this function beneficiary pays sleepage and fees (he will receive less tokens)
+    */
+    function withdraw(address beneficiary, address token, uint256 amount) public onlyDefiOperator {
         uint256 tokenIdx = getTokenIndex(token);
-        uint256 available = IERC20(_registeredTokens[tokenIdx]).balanceOf(address(this));
+        uint256 available = IERC20(token).balanceOf(address(this));
         amount = amount.sub(available); //Count tokens left after previous withdrawal
-        IYErc20 yToken = IYErc20(curveFiDeposit.coins(int128(tokenIdx)));
-        uint256 yAmount = amount.mul(1e18).div(yToken.getPricePerFullShare());
 
-        uint256[N_COINS] memory amounts = [uint256(0), uint256(0), uint256(0)];
-        amounts[tokenIdx] = yAmount;
-        uint256 shares = curveFiSwap.calc_token_amount(amounts, false);
-        shares = shares.mul(slippageMultiplier).div(1e18);
+        // count shares for proportional withdraw
+        uint256 nAmount = normalizeAmount(token, amount);
+        uint256 nBalance = normalizedBalance();
 
-        curveFiDeposit.remove_liquidity_one_coin(shares, int128(tokenIdx), amount, DONATE_DUST);
+        IERC20 curveFiToken = IERC20(curveFiDeposit.token());
+        uint256 poolShares = curveFiToken.balanceOf(address(this));
+        uint256 withdrawShares = poolShares.mul(nAmount).div(nBalance);
 
+        uint256 minAmount = amount.mul(1e18).div(slippageMultiplier);
+        curveFiDeposit.remove_liquidity_one_coin(withdrawShares, int128(tokenIdx), minAmount, DONATE_DUST);
+
+        available = IERC20(token).balanceOf(address(this));
         IERC20 ltoken = IERC20(token);
-        ltoken.transfer(beneficiary, amount);
+        ltoken.transfer(beneficiary, available);
     }
 
-    function withdraw(address beneficiary, uint256[] memory amounts) public {
+    function withdraw(address beneficiary, uint256[] memory amounts) public onlyDefiOperator {
+        require(amounts.length == N_COINS, "CurveFiYProtocol: wrong amounts array length");
         uint256[N_COINS] memory amnts = [uint256(0), uint256(0), uint256(0)];
         uint256 i;
         for (i = 0; i < _registeredTokens.length; i++){
@@ -145,20 +153,51 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         }
     }
 
-    function registeredTokens() public view returns(address[] memory){
+    function normalizedBalance() public returns(uint256) {
+        uint256[] memory balances = balanceOfAll();
+        uint256 summ;
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            summ = summ.add(normalizeAmount(_registeredTokens[i], balances[i]));
+        }
+        return summ;
+    }
+
+    function supportedTokens() public view returns(address[] memory){
         return _registeredTokens;
     }
 
+    function supportedTokensCount() public view returns(uint256) {
+        return _registeredTokens.length;
+    }
+
     function getTokenIndex(address token) public view returns(uint256) {
-        uint256 tokenIdx = _registeredTokens.length;
         for (uint256 i=0; i < _registeredTokens.length; i++){
             if (_registeredTokens[i] == token){
-                tokenIdx = i;
-                break;
+                return i;
             }
         }
-        require(tokenIdx < _registeredTokens.length, "CurveFiYModule: token not registered");
-        return tokenIdx;
+        revert("CurveFiYProtocol: token not registered");
+    }
+
+    function canSwapToToken(address token) public view returns(bool) {
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            if (_registeredTokens[i] == token){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function normalizeAmount(address token, uint256 value) internal view returns(uint256) {
+        return fundsModule().normalizeLTokenValue(token, value);
+    }
+
+    function denormalizeAmount(address token, uint256 value) internal view returns(uint256) {
+        return fundsModule().denormalizeLTokenValue(token, value);
+    }
+
+    function fundsModule() internal view returns(IFundsModule) {
+        return IFundsModule(getModuleAddress(MODULE_FUNDS));
     }
 
     function _registerToken(address token) private {

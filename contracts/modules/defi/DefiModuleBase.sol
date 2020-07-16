@@ -56,8 +56,10 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
         emit Deposit(token, amount);
     }
 
-    function withdraw(address beneficiary, uint256 amount) public onlyDefiOperator {
-        address token = getPrefferableTokenForWithdraw(amount);
+    function withdraw(address token, address beneficiary, uint256 amount) public onlyDefiOperator {
+        if (token == address(0)) {
+            token = getPrefferableTokenForWithdraw(amount);
+        }
         withdrawalsSinceLastDistribution[token] = withdrawalsSinceLastDistribution[token].add(amount);
         withdrawInternal(token, beneficiary, amount);
         emit Withdraw(token, amount);

@@ -37,7 +37,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         require(lAmount >= limits.lDepositMin, "LiquidityModule: amount should be >= lDepositMin");
         uint pAmount = fundsModule().calculatePoolEnter(lAmount);
         require(pAmount >= pAmountMin, "LiquidityModule: Minimal amount is too high");
-        fundsModule().depositLTokens(token, _msgSender(), lAmount);
+        fundsModule().depositLTokens(token, _msgSender(), dnlAmount);
         fundsModule().mintPTokens(_msgSender(), pAmount);
         emit Deposit(_msgSender(), lAmount, pAmount);
     }
@@ -49,14 +49,26 @@ contract LiquidityModule is Module, ILiquidityModule {
      * @param lAmountMin Minimal amount of liquid tokens to withdraw
      */
     function withdraw(uint256 pAmount, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
+        withdraw(pAmount, address(0), lAmountMin);
+    }
+
+    function withdraw(uint256 pAmount, address token, uint256 lAmountMin) public operationAllowed(IAccessModule.Operation.Withdraw) {
         require(pAmount > 0, "LiquidityModule: pAmount should not be 0");
         require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin");
         loanModule().repayAllInterest(_msgSender());
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         require(lAmountU >= lAmountMin, "LiquidityModule: Minimal amount is too high");
 
+        uint256 availableLiquidity = fundsModule().lBalance();
+        require(lAmountT <= availableLiquidity, "LiquidityModule: not enough liquidity");
+
+        uint256 dnlAmount = fundsModule().denormalizeLTokenValue(token, lAmountT);
+
+        dnlAmount = fundsModule().denormalizeLTokenValue(token, lAmountU);
+        uint256 dnlAmountP = fundsModule().denormalizeLTokenValue(token, lAmountP);
+
         fundsModule().burnPTokens(_msgSender(), pAmount);
-        fundsModule().withdrawLTokens(_msgSender(), lAmountU, lAmountP);
+        fundsModule().withdrawLTokens(token, _msgSender(), dnlAmount, dnlAmountP);
         emit Withdraw(_msgSender(), lAmountT, lAmountU, pAmount);
     }
 
@@ -71,7 +83,7 @@ contract LiquidityModule is Module, ILiquidityModule {
         //require(pAmount >= limits.pWithdrawMin, "LiquidityModule: amount should be >= pWithdrawMin"); //Limit disabled, because this is actually repay
         (uint256 lAmountT, uint256 lAmountU, uint256 lAmountP) = fundsModule().calculatePoolExitInverse(pAmount);
         fundsModule().burnPTokens(borrower, pAmount);           //We just burn pTokens, withous sending lTokens to _msgSender()
-        fundsModule().withdrawLTokens(borrower, 0, lAmountP);   //This call is required to send pool fee
+        fundsModule().withdrawLTokens(address(0), borrower, 0, lAmountP);   //This call is required to send pool fee
         emit Withdraw(borrower, lAmountT, lAmountU, pAmount);
     }
 

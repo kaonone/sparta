@@ -23,7 +23,7 @@ interface IDefiModule {
 
     //Actions for DefiOperator (FundsModule)
     function handleDeposit(address token, address sender, uint256 amount) external;
-    function withdraw(address beneficiary, uint256 amount) external;
+    function withdraw(address token, address beneficiary, uint256 amount) external;
     function withdrawAll() external;
 
     //Actions for DefiOperator (PToken)

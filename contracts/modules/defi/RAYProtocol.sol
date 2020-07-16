@@ -3,6 +3,7 @@ pragma solidity ^0.5.12;
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/IERC721Receiver.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
+import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IRAYStorage.sol";
 import "../../interfaces/defi/IRAYPortfolioManager.sol";
 import "../../interfaces/defi/IRAYNAVCalculator.sol";
@@ -49,8 +50,15 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
     }
 
     function withdraw(address beneficiary, address token, uint256 amount) public onlyDefiOperator {
+        require(token == address(baseToken), "RAYProtocol: token not supported");
         rayPortfolioManager().redeem(rayTokenId, amount, address(0));
         IERC20(token).transfer(beneficiary, amount);
+    }
+
+    function withdraw(address beneficiary, uint256[] memory amounts) public onlyDefiOperator {
+        require(amounts.length == 1, "RAYProtocol: wrong amounts array length");
+        rayPortfolioManager().redeem(rayTokenId, amounts[0], address(0));
+        IERC20(baseToken).transfer(beneficiary, amounts[0]);
     }
 
     function balanceOf(address token) public returns(uint256) {
@@ -66,10 +74,34 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
         return balances;
     }
 
+    function normalizedBalance() public returns(uint256) {
+        return normalizeAmount(address(baseToken), balanceOf(address(baseToken)));
+    }
+
+    function canSwapToToken(address token) public view returns(bool) {
+        return (token == address(baseToken));
+    }    
+
     function supportedTokens() public view returns(address[] memory){
         address[] memory tokens = new address[](1);
         tokens[0] = address(baseToken);
         return tokens;
+    }
+
+    function supportedTokensCount() public view returns(uint256) {
+        return 1;
+    }
+
+    function normalizeAmount(address token, uint256 value) internal view returns(uint256) {
+        return fundsModule().normalizeLTokenValue(token, value);
+    }
+
+    function denormalizeAmount(address token, uint256 value) internal view returns(uint256) {
+        return fundsModule().denormalizeLTokenValue(token, value);
+    }
+
+    function fundsModule() internal view returns(IFundsModule) {
+        return IFundsModule(getModuleAddress(MODULE_FUNDS));
     }
 
     function rayPortfolioManager() private view returns(IRAYPortfolioManager){
@@ -91,5 +123,4 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
     function rayStorage() private view returns(IRAYStorage){
         return IRAYStorage(getModuleAddress(MODULE_RAY));
     }
-
 }

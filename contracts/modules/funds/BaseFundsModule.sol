@@ -50,23 +50,26 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
      * @param amount Amount of tokens to deposit
      */
     function withdrawLTokens(address to, uint256 amount) public onlyFundsOperator {
-        withdrawLTokens(to, amount, 0);
+        withdrawLTokens(address(0), to, amount, 0);
     }
 
     /**
      * @notice Withdraw liquid tokens from the pool
+     * @param token Address of the token (fee may be paid by user for conversions) or 0 to withdraw in all tokens without fee
      * @param to Address of the user, who sends tokens. Should have enough allowance.
-     * @param amount Amount of tokens to deposit
-     * @param poolFee Pool fee will be sent to pool owner
+     * @param dnlAmount Amount of tokens to deposit
+     * @param dnPoolFee Pool fee will be sent to pool owner
      */
-    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) public onlyFundsOperator {
+    function withdrawLTokens(address token, address to, uint256 dnlAmount, uint256 dnPoolFee) public onlyFundsOperator {
+        uint256 amount = normalizeLTokenValue(token, dnlAmount);
         if (amount > 0) { //This will be false for "fee only" withdrawal in LiquidityModule.withdrawForRepay()
             lBalance = lBalance.sub(amount);
-            lTransferFromFunds(to, amount);
+            lTransferFromFunds(token, to, dnlAmount);
         }
-        if (poolFee > 0) {
+        if (dnPoolFee > 0) {
+            uint256 poolFee = normalizeLTokenValue(token, dnPoolFee);
             lBalance = lBalance.sub(poolFee);
-            lTransferFromFunds(owner(), poolFee);
+            lTransferFromFunds(address(0), owner(), poolFee);
         }
         emitStatus();
     }
@@ -219,11 +222,13 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
     }
 
     function normalizeLTokenValue(address token, uint256 value) public view returns(uint256) {
+        if (token == address(0)) return value;
         LTokenData storage data = lTokens[token];
         return value.mul(data.rate).div(MULTIPLIER);     
     }
 
     function denormalizeLTokenValue(address token, uint256 value) public view returns(uint256) {
+        if (token == address(0)) return value;
         LTokenData storage data = lTokens[token];
         return value.mul(MULTIPLIER).div(data.rate);     
     }
@@ -294,9 +299,11 @@ contract BaseFundsModule is Module, IFundsModule, FundsOperatorRole {
         require(IERC20(token).transferFrom(from, address(this), dnlAmount), "BaseFundsModule: incoming transfer failed");
     }
 
-    function lTransferFromFunds(address to, uint256 amount) internal {
-        address token = getPrefferableTokenForWithdraw(amount);
-        require(IERC20(token).transfer(to, amount), "BaseFundsModule: outgoing transfer failed");
+    function lTransferFromFunds(address token, address to, uint256 dnlAmount) internal {
+        if (token == address(0)) {
+            token = getPrefferableTokenForWithdraw(dnlAmount);
+        }
+        require(IERC20(token).transfer(to, dnlAmount), "BaseFundsModule: outgoing transfer failed");
     }
 
     function getPrefferableTokenForWithdraw(uint256 lAmount) internal view returns(address){

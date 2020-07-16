@@ -18,9 +18,10 @@ interface IFundsModule {
     /**
      * @notice Deposit liquid tokens to the pool
      * @param from Address of the user, who sends tokens. Should have enough allowance.
-     * @param amount Amount of tokens to deposit
+     * @param amount Amount of tokens to deposit (denormalized)
      */
     function depositLTokens(address token, address from, uint256 amount) external;
+
     /**
      * @notice Withdraw liquid tokens from the pool
      * @param to Address of the user, who sends tokens. Should have enough allowance.
@@ -28,13 +29,15 @@ interface IFundsModule {
      */
     function withdrawLTokens(address to, uint256 amount) external;
 
+
     /**
      * @notice Withdraw liquid tokens from the pool
+     * @param token Address of the token (fee may be paid by user for conversions) or 0 to withdraw in all tokens without fee
      * @param to Address of the user, who sends tokens. Should have enough allowance.
      * @param amount Amount of tokens to deposit
      * @param poolFee Pool fee will be sent to pool owner
      */
-    function withdrawLTokens(address to, uint256 amount, uint256 poolFee) external;
+    function withdrawLTokens(address token, address to, uint256 amount, uint256 poolFee) external;
 
     /**
      * @notice Deposit pool tokens to the pool

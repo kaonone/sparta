@@ -11,13 +11,14 @@ interface ILoanModule {
 
     /**
      * @notice Creates Debt from proposal
-     * @dev Used by LoanProposalModule to create debt
+     * @dev Used by LoanProposalModule to create debt. Should not be called by anyone else.
      * @param borrower Address of borrower
      * @param proposal Index of DebtProposal
+     * @param token Address of the token to send to user (fee may be paid by user for conversions) or 0 to send all tokens without fee
      * @param lAmount Amount of the loan
      * @return Index of created Debt
      */
-    function createDebt(address borrower, uint256 proposal, uint256 lAmount) external returns(uint256);
+    function createDebt(address borrower, uint256 proposal, address token, uint256 lAmount) external returns(uint256);
 
     /**
      * @notice Repay amount of liquidToken and unlock pTokens
