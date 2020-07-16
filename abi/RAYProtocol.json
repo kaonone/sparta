@@ -209,7 +209,13 @@
   },
   {
     "constant": false,
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
     "name": "initialize",
     "outputs": [],
     "payable": false,
@@ -243,13 +249,7 @@
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "initialize",
     "outputs": [],
     "payable": false,
@@ -346,14 +346,9 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
       }
     ],
     "name": "withdraw",
@@ -371,9 +366,14 @@
         "type": "address"
       },
       {
-        "internalType": "uint256[]",
-        "name": "amounts",
-        "type": "uint256[]"
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
     "name": "withdraw",
@@ -419,6 +419,42 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [],
+    "name": "normalizedBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "canSwapToToken",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "supportedTokens",
@@ -427,6 +463,21 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "supportedTokensCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "payable": false,

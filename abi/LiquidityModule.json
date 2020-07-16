@@ -285,6 +285,31 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "pAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lAmountMin",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "internalType": "address",
         "name": "borrower",
         "type": "address"

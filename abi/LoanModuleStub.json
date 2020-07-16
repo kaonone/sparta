@@ -558,27 +558,12 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
+        "name": "proposal",
         "type": "uint256"
       }
     ],
-    "name": "createDebt",
+    "name": "executeDebtProposal",
     "outputs": [
       {
         "internalType": "uint256",
@@ -595,17 +580,22 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "borrower",
+        "name": "",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "proposal",
+        "name": "",
         "type": "uint256"
       },
       {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "lAmount",
+        "name": "",
         "type": "uint256"
       }
     ],
