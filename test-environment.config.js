@@ -1,4 +1,20 @@
+const fs = require("fs");
+
 module.exports = {
+  node: {
+    logger: {
+      log: function (...args) {
+        fs.writeFile("./logs.txt", args, function (err) {
+          if (err) {
+            return console.log(err);
+          }
+          console.log("The file was saved!");
+        });
+      },
+    },
+    debug: true,
+  },
+
   accounts: {
     ether: 1e6,
   },

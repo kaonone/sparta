@@ -1,21 +1,7 @@
 {
-    "extends": "solhint:default",
-    "rules": {
-        "avoid-low-level-calls": "off",
-        "avoid-tx-origin": "warn",
-        "bracket-align": "off",
-        "code-complexity": "off",
-        "compiler-fixed": "off",
-        "const-name-snakecase": "error",
-        "expression-indent": "error",
-        "function-max-lines": "off",
-        "func-order": "error",
-        "indent": ["error", 4],
-        "max-line-length": ["warn", 180],
-        "no-inline-assembly": "off",
-        "quotes": ["error", "double"],
-        "separate-by-one-line-in-contract": "error",
-        "space-after-comma": "error",
-        "statement-indent": "error"
-    }
+  "extends": "solhint:recommended",
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "plugins": ["prettier"]
 }
