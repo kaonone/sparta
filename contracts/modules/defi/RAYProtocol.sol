@@ -2,6 +2,7 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/SafeERC20.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IRAYStorage.sol";
@@ -19,6 +20,8 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
     bytes32 internal constant NAV_CALCULATOR_CONTRACT = keccak256("NAVCalculatorContract");
     bytes32 internal constant RAY_TOKEN_CONTRACT = keccak256("RAYTokenContract");
     bytes4 internal constant ERC721_RECEIVER = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
+
+    using SafeERC20 for IERC20;
 
     IERC20 baseToken;
     bytes32 portfolioId;
@@ -41,7 +44,7 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
         require(token == address(baseToken), "RAYProtocol: token not supported");
         IERC20(token).transferFrom(_msgSender(), address(this), amount);
         IRAYPortfolioManager pm = rayPortfolioManager();
-        IERC20(token).approve(address(pm), amount);
+        IERC20(token).safeApprove(address(pm), amount);
         if (rayTokenId == 0x0) {
             rayTokenId = pm.mint(portfolioId, address(this), amount);
         } else {

@@ -2,6 +2,7 @@ pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/SafeERC20.sol";
 import "../../interfaces/token/IPToken.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
@@ -19,6 +20,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
     uint256 constant N_COINS = 3;
 
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     event CurveFiYSetup(address swap, address deposit);
     event TokenRegistered(address indexed token);
@@ -49,7 +51,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         curveFiDeposit = ICurveFiDeposit(deposit);
         curveFiSwap = ICurveFiSwap(curveFiDeposit.curve());
         address curveFiToken = curveFiDeposit.token();
-        IERC20(curveFiToken).approve(address(curveFiDeposit), MAX_UINT256);
+        IERC20(curveFiToken).safeApprove(address(curveFiDeposit), MAX_UINT256);
         emit CurveFiYSetup(address(curveFiSwap), address(curveFiDeposit));
         for (uint256 i=0; i < _registeredTokens.length; i++){
             address token = curveFiDeposit.underlying_coins(int128(i));
@@ -70,7 +72,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         for (uint256 i=0; i < _registeredTokens.length; i++){
             IERC20 ltoken = IERC20(_registeredTokens[i]);
             uint256 amount = ltoken.balanceOf(address(this));
-            ltoken.transfer(getModuleAddress(MODULE_FUNDS), amount);
+            ltoken.safeTransfer(getModuleAddress(MODULE_FUNDS), amount);
         }            
     }
 
@@ -107,7 +109,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
 
         available = IERC20(token).balanceOf(address(this));
         IERC20 ltoken = IERC20(token);
-        ltoken.transfer(beneficiary, available);
+        ltoken.safeTransfer(beneficiary, available);
     }
 
     function withdraw(address beneficiary, uint256[] memory amounts) public onlyDefiOperator {
@@ -120,7 +122,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         curveFiDeposit.remove_liquidity_imbalance(amnts, MAX_UINT256);
         for (i = 0; i < _registeredTokens.length; i++){
             IERC20 ltoken = IERC20(_registeredTokens[i]);
-            ltoken.transfer(beneficiary, amounts[i]);
+            ltoken.safeTransfer(beneficiary, amounts[i]);
         }
     }
 
