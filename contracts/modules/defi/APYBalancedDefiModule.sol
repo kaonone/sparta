@@ -109,7 +109,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
         if (registeredProtocols[worstIdx].canSwapToToken(token)){
             uint256 protocolBalance = registeredProtocols[worstIdx].normalizedBalance();
             if (protocolBalance > 0){
-                uint256 protocolWithdraw = (amount >= protocolBalance) ? amount : protocolBalance;
+                uint256 protocolWithdraw = (amount <= protocolBalance) ? amount : protocolBalance;
                 amount = amount.sub(protocolWithdraw);
                 uint256 dnWithdraw = denormalizeAmount(token, protocolWithdraw);
                 registeredProtocols[worstIdx].withdraw(beneficiary, token, dnWithdraw);
@@ -139,7 +139,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
             if (!protocol.canSwapToToken(token)) continue;
             uint256 protocolBalance = protocol.normalizedBalance();
             if (protocolBalance > 0) {
-                uint256 protocolWithdraw = (amount >= protocolBalance) ? amount : protocolBalance;
+                uint256 protocolWithdraw = (amount <= protocolBalance) ? amount : protocolBalance;
                 amount = amount.sub(protocolWithdraw);
                 uint256 dnWithdraw = denormalizeAmount(token, protocolWithdraw);
                 protocol.withdraw(beneficiary, token, dnWithdraw);
