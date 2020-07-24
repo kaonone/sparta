@@ -40,7 +40,7 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
         return ERC721_RECEIVER;
     }
 
-    function deposit(address token, address, uint256 amount) public onlyDefiOperator {
+    function deposit(address token, uint256 amount) public onlyDefiOperator {
         require(token == address(baseToken), "RAYProtocol: token not supported");
         IERC20(token).transferFrom(_msgSender(), address(this), amount);
         IRAYPortfolioManager pm = rayPortfolioManager();
