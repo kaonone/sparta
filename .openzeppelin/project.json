@@ -1,28 +1,35 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "PToken": "PToken",
     "Pool": "Pool",
-    "RAYModule": "RAYModule",
-    "DefiFundsModule": "DefiFundsModule",
-    "CurveModule": "CurveModule",
     "AccessModule": "AccessModule",
+    "PToken": "PToken",
+    "FundsModule": "FundsModule",
+    "CurveModule": "CurveModule",
     "LiquidityModule": "LiquidityModule",
     "LoanLimitsModule": "LoanLimitsModule",
     "LoanProposalsModule": "LoanProposalsModule",
-    "LoanModule": "LoanModule"
+    "LoanModule": "LoanModule",
+    "APYBalancedDefiModule": "APYBalancedDefiModule",
+    "CurveFiYProtocol": "CurveFiYProtocol",
+    "RAYProtocol_DAI": "RAYProtocol_DAI",
+    "RAYModule": "RAYModule",
+    "DefiFundsModule": "DefiFundsModule"
   },
   "dependencies": {},
   "name": "akropolis-pool",
   "version": "1.0.0",
   "compiler": {
-    "manager": "truffle",
     "compilerSettings": {
       "optimizer": {
-        "enabled": true,
+        "enabled": false,
         "runs": "200"
       }
     },
+    "typechain": {
+      "enabled": false
+    },
+    "manager": "truffle",
     "artifactsDir": "build\\contracts",
     "contractsDir": "contracts"
   },
