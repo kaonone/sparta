@@ -400,7 +400,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
 
     function isProtocolRegistered(address protocol) internal view returns(bool) {
         for (uint256 i = 0; i < registeredProtocols.length; i++){
-            if(address(registeredProtocols[i]) == protocol) return true;
+            if (address(registeredProtocols[i]) == protocol) return true;
         }
         return false;
     }
