@@ -158,7 +158,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
             for (uint256 j = 0; j < supportedTokens.length; j++) {
                 uint256 dnAmount = denormalizeAmount(supportedTokens[j], amountToMove);
                 uint256 dnProtocolBalance = protocol.balanceOf(supportedTokens[j]);
-                uint256 dnProtocolWithdraw = (dnAmount >= dnProtocolBalance) ? dnAmount : dnProtocolBalance;
+                uint256 dnProtocolWithdraw = (dnAmount <= dnProtocolBalance) ? dnAmount : dnProtocolBalance;
                 amountToMove = amountToMove.sub(normalizeAmount(supportedTokens[j], dnProtocolWithdraw));
                 protocol.withdraw(address(this), supportedTokens[j], dnProtocolWithdraw);
                 converter.deposit(supportedTokens[j], dnProtocolWithdraw);
@@ -341,7 +341,7 @@ contract APYBalancedDefiModule is DefiModuleBase {
                     //if our balance actually decreased, we count this as 0 profit
                     pi.previousPeriodAPY = 0;
                 }
-                
+
                 //Update accumulator
                 totalDeposits = totalDeposits.add(pi.depositsSincePeriodStart);
                 totalWithdraws = totalWithdraws.add(pi.withdrawalsSincePeriodStart);
