@@ -103,6 +103,7 @@ contract LoanProposalsModule is Module, ILoanProposalsModule {
         prop.lCovered = prop.lCovered.add(clAmount);
         prop.pCollected = prop.pCollected.add(cpAmount);
         lProposals = lProposals.add(clAmount); //This is ok only while COLLATERAL_TO_DEBT_RATIO == 1
+        require(lProposals <= fundsModule().lBalance(), "LoanProposalsModule: not enough liquidity");
 
         fundsModule().depositPTokens(_msgSender(), cpAmount);
         emit PledgeAdded(_msgSender(), _msgSender(), proposalIndex, clAmount, cpAmount);
