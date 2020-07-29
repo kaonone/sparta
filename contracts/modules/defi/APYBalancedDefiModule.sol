@@ -341,15 +341,18 @@ contract APYBalancedDefiModule is DefiModuleBase {
                     //if our balance actually decreased, we count this as 0 profit
                     pi.previousPeriodAPY = 0;
                 }
+                
+                //Update accumulator
+                totalDeposits = totalDeposits.add(pi.depositsSincePeriodStart);
+                totalWithdraws = totalWithdraws.add(pi.withdrawalsSincePeriodStart);
                 // New period
                 pi.periodStartTimestamp = now;
                 pi.periodStartBalance = currentBalance;
                 pi.depositsSincePeriodStart = 0;
                 pi.withdrawalsSincePeriodStart = 0;
                 emit APYUpdated(token, address(protocol), pi.previousPeriodAPY);
-                totalDeposits = totalDeposits.add(pi.depositsSincePeriodStart);
-                totalWithdraws = totalWithdraws.add(pi.withdrawalsSincePeriodStart);
-            }        
+            }
+            // Update DefiModuleBase info
             depositsSinceLastDistribution[token] = totalDeposits;
             withdrawalsSinceLastDistribution[token] = totalWithdraws;
         }        
