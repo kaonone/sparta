@@ -127,6 +127,9 @@ declare global {
       require(name: "Pool"): TruffleContracts.PoolContract;
       require(name: "PToken"): TruffleContracts.PTokenContract;
       require(name: "RAYModule"): TruffleContracts.RAYModuleContract;
+      require(
+        name: "RAYProtocol_DAI"
+      ): TruffleContracts.RAYProtocol_DAIContract;
       require(name: "RAYProtocol"): TruffleContracts.RAYProtocolContract;
       require(name: "RAYStub"): TruffleContracts.RAYStubContract;
       require(

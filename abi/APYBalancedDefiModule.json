@@ -521,6 +521,27 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "registeredProtocols",
+    "outputs": [
+      {
+        "internalType": "contract IDefiProtocol",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [],
     "name": "renounceDefiOperator",
@@ -690,6 +711,31 @@
       }
     ],
     "name": "registerProtocol",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "protocol",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newApproval",
+        "type": "uint256"
+      }
+    ],
+    "name": "resetProtocolApproval",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

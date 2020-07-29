@@ -351,6 +351,11 @@ export interface RAYModuleContract extends Truffle.Contract<RAYModuleInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<RAYModuleInstance>;
 }
 
+export interface RAYProtocol_DAIContract
+  extends Truffle.Contract<RAYProtocol_DAIInstance> {
+  "new"(meta?: Truffle.TransactionDetails): Promise<RAYProtocol_DAIInstance>;
+}
+
 export interface RAYProtocolContract
   extends Truffle.Contract<RAYProtocolInstance> {
   "new"(meta?: Truffle.TransactionDetails): Promise<RAYProtocolInstance>;
@@ -765,6 +770,11 @@ export interface APYBalancedDefiModuleInstance
     ): Promise<number>;
   };
 
+  registeredProtocols(
+    arg0: number | BN | string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
   renounceDefiOperator: {
     (txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse
@@ -937,6 +947,33 @@ export interface APYBalancedDefiModuleInstance
     ): Promise<string>;
     estimateGas(
       protocol: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  resetProtocolApproval: {
+    (
+      protocol: string | BN,
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      protocol: string | BN,
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      protocol: string | BN,
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      protocol: string | BN,
+      token: string | BN,
+      newApproval: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -3646,9 +3683,37 @@ export interface CurveFiYProtocolInstance extends Truffle.ContractInstance {
     estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
   };
 
+  resetCurveFiDepositApproval: {
+    (
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      token: string | BN,
+      newApproval: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   supportedTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   supportedTokensCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  isSupportedToken(
+    token: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
 
   getTokenIndex(
     token: string | BN,
@@ -7057,27 +7122,31 @@ export interface FundsModuleInstance extends Truffle.ContractInstance {
 
   withdrawLTokens: {
     (
+      token: string | BN,
       to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      dnlAmount: number | BN | string,
+      dnPoolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
+      token: string | BN,
       to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      dnlAmount: number | BN | string,
+      dnPoolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
+      token: string | BN,
       to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      dnlAmount: number | BN | string,
+      dnPoolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
+      token: string | BN,
       to: string | BN,
-      amount: number | BN | string,
-      poolFee: number | BN | string,
+      dnlAmount: number | BN | string,
+      dnPoolFee: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -8235,6 +8304,11 @@ export interface IDefiProtocolInstance extends Truffle.ContractInstance {
   supportedTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 
   supportedTokensCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  isSupportedToken(
+    token: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
 
   canSwapToToken(
     token: string | BN,
@@ -12656,6 +12730,248 @@ export interface RAYModuleInstance extends Truffle.ContractInstance {
   registeredTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
 }
 
+export interface RAYProtocol_DAIInstance extends Truffle.ContractInstance {
+  PORTFOLIO_ID(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  addDefiOperator: {
+    (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      account: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      account: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      account: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  balanceOf: {
+    (token: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BN>;
+    sendTransaction(
+      token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  balanceOfAll: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BN[]>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  canSwapToToken(
+    token: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
+  deposit: {
+    (
+      token: string | BN,
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      token: string | BN,
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      token: string | BN,
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      token: string | BN,
+      amount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  getModuleAddress(
+    module: string,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<string>;
+
+  isDefiOperator(
+    account: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
+  isOwner(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  isSupportedToken(
+    token: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
+  normalizedBalance: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  onERC721Received: {
+    (
+      arg0: string | BN,
+      arg1: string | BN,
+      arg2: number | BN | string,
+      arg3: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      arg0: string | BN,
+      arg1: string | BN,
+      arg2: number | BN | string,
+      arg3: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    sendTransaction(
+      arg0: string | BN,
+      arg1: string | BN,
+      arg2: number | BN | string,
+      arg3: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      arg0: string | BN,
+      arg1: string | BN,
+      arg2: number | BN | string,
+      arg3: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  pool(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  renounceDefiOperator: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  renounceOwnership: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  setPool: {
+    (_pool: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _pool: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  supportedTokens(txDetails?: Truffle.TransactionDetails): Promise<string[]>;
+
+  supportedTokensCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
+
+  transferOwnership: {
+    (newOwner: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse
+    >;
+    call(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      newOwner: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  withdraw: {
+    (
+      beneficiary: string | BN,
+      amounts: (number | BN | string)[],
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      beneficiary: string | BN,
+      amounts: (number | BN | string)[],
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      beneficiary: string | BN,
+      amounts: (number | BN | string)[],
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      beneficiary: string | BN,
+      amounts: (number | BN | string)[],
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  initialize: {
+    (
+      _pool: string | BN,
+      _token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
+    call(
+      _pool: string | BN,
+      _token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _pool: string | BN,
+      _token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _pool: string | BN,
+      _token: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+}
+
 export interface RAYProtocolInstance extends Truffle.ContractInstance {
   addDefiOperator: {
     (account: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
@@ -12746,19 +13062,28 @@ export interface RAYProtocolInstance extends Truffle.ContractInstance {
   };
 
   initialize: {
-    (sender: string | BN, txDetails?: Truffle.TransactionDetails): Promise<
-      Truffle.TransactionResponse
-    >;
+    (
+      _pool: string | BN,
+      _token: string | BN,
+      _portfolioId: string | BN,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse>;
     call(
-      sender: string | BN,
+      _pool: string | BN,
+      _token: string | BN,
+      _portfolioId: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
-      sender: string | BN,
+      _pool: string | BN,
+      _token: string | BN,
+      _portfolioId: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
-      sender: string | BN,
+      _pool: string | BN,
+      _token: string | BN,
+      _portfolioId: string | BN,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -12820,22 +13145,26 @@ export interface RAYProtocolInstance extends Truffle.ContractInstance {
   withdraw: {
     (
       beneficiary: string | BN,
-      amounts: (number | BN | string)[],
+      token: string | BN,
+      amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<Truffle.TransactionResponse>;
     call(
       beneficiary: string | BN,
-      amounts: (number | BN | string)[],
+      token: string | BN,
+      amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<void>;
     sendTransaction(
       beneficiary: string | BN,
-      amounts: (number | BN | string)[],
+      token: string | BN,
+      amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
     estimateGas(
       beneficiary: string | BN,
-      amounts: (number | BN | string)[],
+      token: string | BN,
+      amount: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -12877,6 +13206,11 @@ export interface RAYProtocolInstance extends Truffle.ContractInstance {
   };
 
   canSwapToToken(
+    token: string | BN,
+    txDetails?: Truffle.TransactionDetails
+  ): Promise<boolean>;
+
+  isSupportedToken(
     token: string | BN,
     txDetails?: Truffle.TransactionDetails
   ): Promise<boolean>;
