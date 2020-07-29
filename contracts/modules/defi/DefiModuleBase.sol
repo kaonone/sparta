@@ -32,8 +32,8 @@ contract DefiModuleBase is Module, DefiOperatorRole, IDefiModule {
     Distribution[] public distributions;                            // Array of all distributions
     uint256 public nextDistributionTimestamp;                       // Timestamp when next distribuition should be fired
     mapping(address => InvestmentBalance) public balances;          // Map account to first distribution not yet processed
-    mapping(address => uint256) depositsSinceLastDistribution;      // Amount DAI deposited since last distribution;
-    mapping(address => uint256) withdrawalsSinceLastDistribution;   // Amount DAI withdrawn since last distribution;
+    mapping(address => uint256) internal depositsSinceLastDistribution;      // Amount DAI deposited since last distribution;
+    mapping(address => uint256) internal withdrawalsSinceLastDistribution;   // Amount DAI withdrawn since last distribution;
 
 
     // == Abstract functions to be defined in realization ==

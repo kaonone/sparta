@@ -27,9 +27,9 @@ contract APYBalancedDefiModule is DefiModuleBase {
         mapping(address => ProtocolInfo) protocols; //mapping of protocol to data we need to calculate APY
     }
 
-    address[] _registeredTokens;
-    IDefiProtocol[] registeredProtocols;
-    mapping(address => TokenData) tokens;
+    address[] internal _registeredTokens;
+    IDefiProtocol[] public registeredProtocols;
+    mapping(address => TokenData) internal tokens;
 
     function initialize(address _pool) public initializer {
         DefiModuleBase.initialize(_pool);
