@@ -85,6 +85,10 @@ contract RAYProtocol is Module, DefiOperatorRole, IERC721Receiver, IDefiProtocol
         return (token == address(baseToken));
     }    
 
+    function isSupportedToken(address token) public view returns(bool) {
+        return (token == address(baseToken));
+    }
+
     function supportedTokens() public view returns(address[] memory){
         address[] memory tokens = new address[](1);
         tokens[0] = address(baseToken);

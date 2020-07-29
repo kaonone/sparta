@@ -164,12 +164,24 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
         return summ;
     }
 
+    function resetCurveFiDepositApproval(address token, uint256 newApproval) public onlyDefiOperator {
+        require(isSupportedToken(token), "CurveFiYProtocol: token not supported");
+        IERC20(token).safeApprove(address(curveFiDeposit), newApproval);
+    }
+
     function supportedTokens() public view returns(address[] memory){
         return _registeredTokens;
     }
 
     function supportedTokensCount() public view returns(uint256) {
         return _registeredTokens.length;
+    }
+
+    function isSupportedToken(address token) public view returns(bool) {
+        for (uint256 i=0; i < _registeredTokens.length; i++){
+            if (_registeredTokens[i] == token) return true;
+        }
+        return false;
     }
 
     function getTokenIndex(address token) public view returns(uint256) {
@@ -182,12 +194,7 @@ contract CurveFiYProtocol is Module, DefiOperatorRole, IDefiProtocol {
     }
 
     function canSwapToToken(address token) public view returns(bool) {
-        for (uint256 i=0; i < _registeredTokens.length; i++){
-            if (_registeredTokens[i] == token){
-                return true;
-            }
-        }
-        return false;
+        return isSupportedToken(token);
     }
 
     function normalizeAmount(address token, uint256 value) internal view returns(uint256) {

@@ -1,6 +1,8 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/SafeERC20.sol";
 import "../../interfaces/curve/IFundsModule.sol";
 import "../../interfaces/defi/IDefiModule.sol";
 import "../../interfaces/defi/IDefiProtocol.sol";
@@ -11,7 +13,9 @@ contract APYBalancedDefiModule is DefiModuleBase {
     uint256 constant MAX_UINT256 = uint256(-1);
     uint256 constant ANNUAL_SECONDS = 365*24*60*60+(24*60*60/4);  // Seconds in a year + 1/4 day to compensate leap years
     uint256 constant EXP = 1e18;
+
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     event APYUpdated(address token, address protocol, uint256 newAPY);
 
@@ -50,13 +54,10 @@ contract APYBalancedDefiModule is DefiModuleBase {
     }
 
     function registerProtocol(IDefiProtocol protocol) public onlyDefiOperator {
-        uint256 i;
-        for (i = 0; i < registeredProtocols.length; i++){
-            if (address(registeredProtocols[i]) == address(protocol)) revert("APYBalancedDefiModule: protocol already registered");
-        }
+        require(!isProtocolRegistered(address(protocol)), "APYBalancedDefiModule: protocol already registered");
         registeredProtocols.push(protocol);
         address[] memory supportedTokens = protocol.supportedTokens();
-        for (i = 0; i < supportedTokens.length; i++){
+        for (uint256 i = 0; i < supportedTokens.length; i++){
             address tkn = supportedTokens[i];
             if (!isTokenRegistered(tkn)){
                 _registeredTokens.push(tkn);
@@ -68,8 +69,14 @@ contract APYBalancedDefiModule is DefiModuleBase {
                 depositsSincePeriodStart: 0,
                 withdrawalsSincePeriodStart: 0
             });
-            IERC20(tkn).approve(address(protocol), MAX_UINT256);
+            IERC20(tkn).safeApprove(address(protocol), MAX_UINT256);
         }
+    }
+
+    function resetProtocolApproval(address protocol, address token, uint256 newApproval) public onlyDefiOperator {
+        require(isProtocolRegistered(protocol), "APYBalancedDefiModule: protocol not registered");
+        require(IDefiProtocol(protocol).isSupportedToken(token), "APYBalancedDefiModule: token not supported by protocol");
+        IERC20(token).safeApprove(protocol, newApproval);
     }
 
     function registeredTokens() public view returns(address[] memory) {
@@ -387,6 +394,13 @@ contract APYBalancedDefiModule is DefiModuleBase {
     function isTokenRegistered(address token) internal view returns(bool) {
         for (uint256 i = 0; i < _registeredTokens.length; i++){
             if (_registeredTokens[i] == token) return true;
+        }
+        return false;
+    }
+
+    function isProtocolRegistered(address protocol) internal view returns(bool) {
+        for (uint256 i = 0; i < registeredProtocols.length; i++){
+            if(address(registeredProtocols[i]) == protocol) return true;
         }
         return false;
     }

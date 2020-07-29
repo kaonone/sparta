@@ -43,9 +43,20 @@ interface IDefiProtocol {
     */
     function normalizedBalance() external returns(uint256);
 
+    /**
+     * @notice Returns list of tokens supported by this protocol
+     */
     function supportedTokens() external view returns(address[] memory);
 
+    /**
+     * @notice Returns count of tokens supported by this protocol
+     */
     function supportedTokensCount() external view returns(uint256);
+
+    /**
+     * @notice Returns if token is supported by this protocol
+     */
+    function isSupportedToken(address token) external view returns(bool);
 
     /**
      * @notice Returns if this protocol can swap all it's normalizedBalance() to specified token
