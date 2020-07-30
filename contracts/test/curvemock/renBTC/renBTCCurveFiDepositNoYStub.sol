@@ -394,67 +394,23 @@ library SafeMath {
     }
 }
 
-// File: contracts/interfaces/defi/IYErc20.sol
-
-pragma solidity ^0.5.12;
-
-//solhint-disable func-order
-contract IYErc20 {
-    //ERC20 functions
-    function totalSupply() external view returns (uint256);
-
-    function balanceOf(address account) external view returns (uint256);
-
-    function transfer(address recipient, uint256 amount)
-        external
-        returns (bool);
-
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
-
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    function name() external view returns (string memory);
-
-    function symbol() external view returns (string memory);
-
-    function decimals() external view returns (uint8);
-
-    //yToken functions
-    function deposit(uint256 amount) external;
-
-    function withdraw(uint256 shares) external;
-
-    function getPricePerFullShare() external view returns (uint256);
-
-    function token() external returns (address);
-}
-
 // File: contracts/interfaces/defi/ICurveFiSwap.sol
 
 pragma solidity ^0.5.12;
 
 interface ICurveFiSwap {
-    function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount)
+    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount)
         external;
 
-    function remove_liquidity(uint256 _amount, uint256[4] calldata min_amounts)
+    function remove_liquidity(uint256 _amount, uint256[2] calldata min_amounts)
         external;
 
     function remove_liquidity_imbalance(
-        uint256[4] calldata amounts,
+        uint256[2] calldata amounts,
         uint256 max_burn_amount
     ) external;
 
-    function calc_token_amount(uint256[4] calldata amounts, bool deposit)
+    function calc_token_amount(uint256[2] calldata amounts, bool deposit)
         external
         view
         returns (uint256);
@@ -466,6 +422,53 @@ interface ICurveFiSwap {
     function fee() external view returns (uint256);
 
     function coins(int128 i) external view returns (address);
+}
+
+// File: contracts/interfaces/defi/ICurveFiDeposit.sol
+
+pragma solidity ^0.5.12;
+
+contract ICurveFiDeposit {
+    function add_liquidity(
+        uint256[2] calldata uamounts,
+        uint256 min_mint_amount
+    ) external;
+
+    function remove_liquidity(uint256 _amount, uint256[2] calldata min_uamounts)
+        external;
+
+    function remove_liquidity_imbalance(
+        uint256[2] calldata uamounts,
+        uint256 max_burn_amount
+    ) external;
+
+    function remove_liquidity_one_coin(
+        uint256 _token_amount,
+        int128 i,
+        uint256 min_uamount
+    ) external;
+
+    function remove_liquidity_one_coin(
+        uint256 _token_amount,
+        int128 i,
+        uint256 min_uamount,
+        bool donate_dust
+    ) external;
+
+    function withdraw_donated_dust() external;
+
+    function coins(int128 i) external view returns (address);
+
+    function underlying_coins(int128 i) external view returns (address);
+
+    function curve() external view returns (address);
+
+    function token() external view returns (address);
+
+    function calc_withdraw_one_coin(uint256 _token_amount, int128 i)
+        external
+        view
+        returns (uint256);
 }
 
 // File: @openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol
@@ -598,6 +601,50 @@ contract Base is Initializable, Context, Ownable {
     function initialize() public initializer {
         Ownable.initialize(_msgSender());
     }
+}
+
+// File: contracts/interfaces/defi/IYErc20.sol
+
+pragma solidity ^0.5.12;
+
+//solhint-disable func-order
+contract IYErc20 {
+    //ERC20 functions
+    function totalSupply() external view returns (uint256);
+
+    function balanceOf(address account) external view returns (uint256);
+
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
+
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
+
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
+
+    function name() external view returns (string memory);
+
+    function symbol() external view returns (string memory);
+
+    function decimals() external view returns (uint8);
+
+    //yToken functions
+    function deposit(uint256 amount) external;
+
+    function withdraw(uint256 shares) external;
+
+    function getPricePerFullShare() external view returns (uint256);
+
+    function token() external returns (address);
 }
 
 // File: @openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol
@@ -1064,20 +1111,20 @@ pragma solidity ^0.5.12;
 
 contract CurveFiSwapStub is Base, ICurveFiSwap {
     using SafeMath for uint256;
-    uint256 public constant N_COINS = 4;
+    uint256 public constant N_COINS = 2;
     uint256 constant MAX_EXCHANGE_FEE = 0.05 * 1e18;
 
     CurveFiTokenStub public token;
-    address[4] _coins;
+    address[2] _coins;
 
-    function initialize(address[4] memory __coins) public initializer {
+    function initialize(address[2] memory __coins) public initializer {
         Base.initialize();
         _coins = __coins;
         token = new CurveFiTokenStub();
         token.initialize();
     }
 
-    function add_liquidity(uint256[4] memory amounts, uint256 min_mint_amount)
+    function add_liquidity(uint256[2] memory amounts, uint256 min_mint_amount)
         public
     {
         uint256 fullAmount;
@@ -1106,7 +1153,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
     }
 
     function add_liquidity_transferFromOnly(
-        uint256[4] memory amounts,
+        uint256[2] memory amounts,
         uint256 min_mint_amount
     ) public {
         for (uint256 i = 0; i < N_COINS; i++) {
@@ -1118,7 +1165,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         }
     }
 
-    function remove_liquidity(uint256 _amount, uint256[4] memory min_amounts)
+    function remove_liquidity(uint256 _amount, uint256[2] memory min_amounts)
         public
     {
         uint256 totalSupply = token.totalSupply();
@@ -1136,7 +1183,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
     }
 
     function remove_liquidity_imbalance(
-        uint256[4] memory amounts,
+        uint256[2] memory amounts,
         uint256 max_burn_amount
     ) public {
         uint256 fullAmount = calc_token_amount(amounts, false);
@@ -1150,7 +1197,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         token.burnFrom(_msgSender(), fullAmount);
     }
 
-    function calc_token_amount(uint256[4] memory amounts, bool deposit)
+    function calc_token_amount(uint256[2] memory amounts, bool deposit)
         public
         view
         returns (uint256)
@@ -1189,7 +1236,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         return _coins[uint256(i)];
     }
 
-    function calculateExchangeFee(uint256[4] memory diff, bool deposit)
+    function calculateExchangeFee(uint256[2] memory diff, bool deposit)
         internal
         view
         returns (uint256 fullFee, bool bonus)
@@ -1252,6 +1299,203 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
             return amount / uint256(10)**(decimals - 18);
         } else {
             return amount;
+        }
+    }
+}
+
+// File: contracts/test/CurveFiDepositNoYStub.sol
+
+pragma solidity ^0.5.12;
+
+//import "../interfaces/defi/IYErc20.sol";
+
+contract CurveFiDepositNoYStub is Base, ICurveFiDeposit {
+    using SafeMath for uint256;
+
+    uint256 constant EXP_SCALE = 1e18; //Exponential scale (see Compound Exponential)
+
+    uint256 public constant N_COINS = 2;
+
+    CurveFiSwapStub public curveFiSwap;
+
+    CurveFiTokenStub public token;
+
+    address[2] _coins;
+
+    address[2] underlying;
+
+    function initialize(address _curveFiSwap) public initializer {
+        Base.initialize();
+
+        curveFiSwap = CurveFiSwapStub(_curveFiSwap);
+
+        token = CurveFiTokenStub(curveFiSwap.token());
+
+        for (uint256 i = 0; i < N_COINS; i++) {
+            _coins[i] = curveFiSwap.coins(int128(i));
+
+            underlying[i] = _coins[i]; //IYErc20(_coins[i]).token();
+        }
+    }
+
+    function add_liquidity(uint256[2] memory uamounts, uint256 min_mint_amount)
+        public
+    {
+        uint256[2] memory amounts = [uint256(0), uint256(0)];
+
+        for (uint256 i = 0; i < uamounts.length; i++) {
+            require(
+                IERC20(underlying[i]).transferFrom(
+                    _msgSender(),
+                    address(this),
+                    uamounts[i]
+                ),
+                "CurveFiDepositStub: failed to transfer underlying"
+            );
+
+            IYErc20(_coins[i]).deposit(uamounts[i]);
+
+            //amounts[i] = IYErc20(_coins[i]).balanceOf(address(this));
+
+            amounts[i] = IERC20(_coins[i]).balanceOf(address(this));
+        }
+
+        curveFiSwap.add_liquidity(amounts, min_mint_amount);
+
+        uint256 shares = token.balanceOf(address(this));
+
+        token.transfer(_msgSender(), shares);
+    }
+
+    function remove_liquidity(uint256 _amount, uint256[2] memory min_uamounts)
+        public
+    {
+        token.transferFrom(_msgSender(), address(this), _amount);
+
+        curveFiSwap.remove_liquidity(_amount, [uint256(0), uint256(0)]);
+
+        send_all(_msgSender(), min_uamounts);
+    }
+
+    function remove_liquidity_imbalance(
+        uint256[2] memory uamounts,
+        uint256 max_burn_amount
+    ) public {
+        uint256[2] memory amounts = [uint256(0), uint256(0)];
+
+        for (uint256 i = 0; i < uamounts.length; i++) {
+            //amounts[i] = uamounts[i];.mul(EXP_SCALE).div(IYErc20(_coins[i]).getPricePerFullShare());
+
+            amounts[i] = uamounts[i];
+        }
+
+        uint256 shares = token.balanceOf(_msgSender());
+
+        if (shares > max_burn_amount) shares = max_burn_amount;
+
+        token.transferFrom(_msgSender(), address(this), shares);
+
+        curveFiSwap.remove_liquidity_imbalance(amounts, shares);
+
+        shares = token.balanceOf(_msgSender());
+
+        token.transfer(_msgSender(), shares); // Return unused
+
+        send_all(_msgSender(), [uint256(0), uint256(0)]);
+    }
+
+    function remove_liquidity_one_coin(
+        uint256 _token_amount,
+        int128 i,
+        uint256 min_uamount
+    ) public {
+        remove_liquidity_one_coin(_token_amount, i, min_uamount, false);
+    }
+
+    function remove_liquidity_one_coin(
+        uint256 _token_amount,
+        int128 _i,
+        uint256 min_uamount,
+        bool donate_dust
+    ) public {
+        uint256[2] memory amounts = [uint256(0), uint256(0)];
+
+        uint256 i = uint256(_i);
+
+        //amounts[i] = min_uamount.mul(EXP_SCALE).div(IYErc20(_coins[i]).getPricePerFullShare());
+
+        amounts[i] = min_uamount;
+
+        curveFiSwap.remove_liquidity_imbalance(amounts, _token_amount);
+
+        uint256[2] memory uamounts = [uint256(0), uint256(0)];
+
+        uamounts[i] = min_uamount;
+
+        send_all(_msgSender(), uamounts);
+
+        if (!donate_dust) {
+            uint256 shares = token.balanceOf(address(this));
+
+            token.transfer(_msgSender(), shares);
+        }
+    }
+
+    function withdraw_donated_dust() public onlyOwner {
+        uint256 shares = token.balanceOf(address(this));
+
+        token.transfer(owner(), shares);
+    }
+
+    function coins(int128 i) public view returns (address) {
+        return _coins[uint256(i)];
+    }
+
+    function underlying_coins(int128 i) public view returns (address) {
+        return underlying[uint256(i)];
+    }
+
+    function curve() public view returns (address) {
+        return address(curveFiSwap);
+    }
+
+    function calc_withdraw_one_coin(uint256 _token_amount, int128 i)
+        public
+        view
+        returns (uint256)
+    {
+        return uint256(0).mul(_token_amount.mul(uint256(i))); //we do not use this
+    }
+
+    function send_all(address beneficiary, uint256[2] memory min_uamounts)
+        internal
+    {
+        for (uint256 i = 0; i < _coins.length; i++) {
+            //uint256 shares = IYErc20(_coins[i]).balanceOf(address(this));
+
+            uint256 shares = IERC20(_coins[i]).balanceOf(address(this));
+
+            if (shares == 0) {
+                require(
+                    min_uamounts[i] == 0,
+                    "CurveFiDepositStub: nothing to withdraw"
+                );
+
+                continue;
+            }
+
+            //IYErc20(_coins[i]).withdraw(shares);
+
+            uint256 uamount = IERC20(underlying[i]).balanceOf(address(this));
+
+            require(
+                uamount >= min_uamounts[i],
+                "CurveFiDepositStub: requested amount is too high"
+            );
+
+            if (uamount > 0) {
+                IERC20(underlying[i]).transfer(beneficiary, uamount);
+            }
         }
     }
 }

@@ -443,18 +443,18 @@ contract IYErc20 {
 pragma solidity ^0.5.12;
 
 interface ICurveFiSwap {
-    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount)
+    function add_liquidity(uint256[3] calldata amounts, uint256 min_mint_amount)
         external;
 
-    function remove_liquidity(uint256 _amount, uint256[2] calldata min_amounts)
+    function remove_liquidity(uint256 _amount, uint256[3] calldata min_amounts)
         external;
 
     function remove_liquidity_imbalance(
-        uint256[2] calldata amounts,
+        uint256[3] calldata amounts,
         uint256 max_burn_amount
     ) external;
 
-    function calc_token_amount(uint256[2] calldata amounts, bool deposit)
+    function calc_token_amount(uint256[3] calldata amounts, bool deposit)
         external
         view
         returns (uint256);
@@ -1054,7 +1054,11 @@ contract CurveFiTokenStub is
 {
     function initialize() public initializer {
         Base.initialize();
-        ERC20Detailed.initialize("curve.fi token", "yDAI/yUSDC/yUSDT", 18);
+        ERC20Detailed.initialize(
+            "curve.fi token",
+            "Curve.fi renBTC/wBTC/sBTC",
+            18
+        );
     }
 }
 
@@ -1064,20 +1068,20 @@ pragma solidity ^0.5.12;
 
 contract CurveFiSwapStub is Base, ICurveFiSwap {
     using SafeMath for uint256;
-    uint256 public constant N_COINS = 2;
+    uint256 public constant N_COINS = 3;
     uint256 constant MAX_EXCHANGE_FEE = 0.05 * 1e18;
 
     CurveFiTokenStub public token;
-    address[2] _coins;
+    address[3] _coins;
 
-    function initialize(address[2] memory __coins) public initializer {
+    function initialize(address[3] memory __coins) public initializer {
         Base.initialize();
         _coins = __coins;
         token = new CurveFiTokenStub();
         token.initialize();
     }
 
-    function add_liquidity(uint256[2] memory amounts, uint256 min_mint_amount)
+    function add_liquidity(uint256[3] memory amounts, uint256 min_mint_amount)
         public
     {
         uint256 fullAmount;
@@ -1106,7 +1110,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
     }
 
     function add_liquidity_transferFromOnly(
-        uint256[2] memory amounts,
+        uint256[3] memory amounts,
         uint256 min_mint_amount
     ) public {
         for (uint256 i = 0; i < N_COINS; i++) {
@@ -1118,7 +1122,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         }
     }
 
-    function remove_liquidity(uint256 _amount, uint256[2] memory min_amounts)
+    function remove_liquidity(uint256 _amount, uint256[3] memory min_amounts)
         public
     {
         uint256 totalSupply = token.totalSupply();
@@ -1136,7 +1140,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
     }
 
     function remove_liquidity_imbalance(
-        uint256[2] memory amounts,
+        uint256[3] memory amounts,
         uint256 max_burn_amount
     ) public {
         uint256 fullAmount = calc_token_amount(amounts, false);
@@ -1150,7 +1154,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         token.burnFrom(_msgSender(), fullAmount);
     }
 
-    function calc_token_amount(uint256[2] memory amounts, bool deposit)
+    function calc_token_amount(uint256[3] memory amounts, bool deposit)
         public
         view
         returns (uint256)
@@ -1189,7 +1193,7 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         return _coins[uint256(i)];
     }
 
-    function calculateExchangeFee(uint256[2] memory diff, bool deposit)
+    function calculateExchangeFee(uint256[3] memory diff, bool deposit)
         internal
         view
         returns (uint256 fullFee, bool bonus)

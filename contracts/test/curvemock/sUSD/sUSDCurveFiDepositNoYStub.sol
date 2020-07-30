@@ -1111,13 +1111,13 @@ pragma solidity ^0.5.12;
 
 contract CurveFiSwapStub is Base, ICurveFiSwap {
     using SafeMath for uint256;
-    uint256 public constant N_COINS = 2;
+    uint256 public constant N_COINS = 4;
     uint256 constant MAX_EXCHANGE_FEE = 0.05 * 1e18;
 
     CurveFiTokenStub public token;
-    address[2] _coins;
+    address[4] _coins;
 
-    function initialize(address[2] memory __coins) public initializer {
+    function initialize(address[4] memory __coins) public initializer {
         Base.initialize();
         _coins = __coins;
         token = new CurveFiTokenStub();
