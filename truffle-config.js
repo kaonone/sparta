@@ -25,27 +25,26 @@
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 require("ts-node/register");
-require('dotenv').config();
+require("dotenv").config();
 
 const { toHex, toWei } = require("web3-utils");
 
-const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
 const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
 const mochaGasSettings = {
-  reporter: 'eth-gas-reporter',
-  reporterOptions : {
-    currency: 'USD',
-    gasPrice: 21
-  }
-}
+  reporter: "eth-gas-reporter",
+  reporterOptions: {
+    currency: "USD",
+    gasPrice: 21,
+  },
+};
 
+const mocha = process.env.GAS_REPORTER ? mochaGasSettings : {};
 
-const mocha = process.env.GAS_REPORTER ? mochaGasSettings : {}
+// ["0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa", "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b", "0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02", "0x15129620e32336438B396ce3825BcDc8Cef4B8eB"]
 
 module.exports = {
-
-
   plugins: ["truffle-security", "solidity-coverage", "truffle-contract-size"],
 
   test_file_extension_regexp: /.*\.ts$/,
@@ -65,7 +64,7 @@ module.exports = {
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
-    
+
     development: {
       host: "127.0.0.1",
       gas: "6000000",
@@ -77,45 +76,49 @@ module.exports = {
     soliditycoverage: {
       host: "localhost",
       network_id: "*",
-      port: 8555,         // <-- If you change this, also set the port option in .solcover.js.
+      port: 8555, // <-- If you change this, also set the port option in .solcover.js.
       gas: 0xfffffffffff, // <-- Use this high gas value
-      gasPrice: 0x01      // <-- Use this low gas price
+      gasPrice: 0x01, // <-- Use this low gas price
     },
     rinkeby: {
-      provider: () => new HDWalletProvider(process.env.DEV_MNEMONIC, "https://rinkeby.infura.io/v3/" + infuraProjectId),
-      networkId: 4,       // Rinkeby's id
+      provider: () =>
+        new HDWalletProvider(
+          process.env.DEV_MNEMONIC,
+          "https://rinkeby.infura.io/v3/" + infuraProjectId
+        ),
+      networkId: 4, // Rinkeby's id
     },
-    
+
     // Another network with more advanced options...
     // advanced: {
-      // port: 8777,             // Custom port
-      // network_id: 1342,       // Custom network
-      // gas: 8500000,           // Gas sent with each transaction (default: ~6700000)
-      // gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
-      // from: <address>,        // Account to send txs from (default: accounts[0])
-      // websockets: true        // Enable EventEmitter interface for web3 (default: false)
+    // port: 8777,             // Custom port
+    // network_id: 1342,       // Custom network
+    // gas: 8500000,           // Gas sent with each transaction (default: ~6700000)
+    // gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
+    // from: <address>,        // Account to send txs from (default: accounts[0])
+    // websockets: true        // Enable EventEmitter interface for web3 (default: false)
     // },
 
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     // ropsten: {
-      // provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/YOUR-PROJECT-ID`),
-      // network_id: 3,       // Ropsten's id
-      // gas: 5500000,        // Ropsten has a lower block limit than mainnet
-      // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
-      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    // provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/YOUR-PROJECT-ID`),
+    // network_id: 3,       // Ropsten's id
+    // gas: 5500000,        // Ropsten has a lower block limit than mainnet
+    // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+    // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+    // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     // },
 
     // Useful for private networks
     // private: {
-      // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
-      // network_id: 2111,   // This network is yours, in the cloud.
-      // production: true    // Treats this network as if it was a public net. (default: false)
+    // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
+    // network_id: 2111,   // This network is yours, in the cloud.
+    // production: true    // Treats this network as if it was a public net. (default: false)
     // }
   },
   // Set default mocha options here, use special reporters etc.
-  mocha, 
+  mocha,
   // Configure your compilers
   compilers: {
     solc: {
@@ -127,5 +130,5 @@ module.exports = {
         },
       },
     },
-  }
-}
+  },
+};

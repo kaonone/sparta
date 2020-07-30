@@ -8,11 +8,10 @@ import "../interfaces/defi/ICurveFiSwap.sol";
 import "../common/Base.sol";
 import "./CurveFiTokenStub.sol";
 
-
 contract CurveFiSwapStub is Base, ICurveFiSwap {
     using SafeMath for uint256;
     uint256 public constant N_COINS = 3;
-    uint256 constant MAX_EXCHANGE_FEE = 0.05*1e18;
+    uint256 constant MAX_EXCHANGE_FEE = 0.05 * 1e18;
 
     CurveFiTokenStub public token;
     address[3] _coins;
@@ -24,10 +23,16 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         token.initialize();
     }
 
-    function add_liquidity (uint256[3] memory amounts, uint256 min_mint_amount) public {
+    function add_liquidity(uint256[3] memory amounts, uint256 min_mint_amount)
+        public
+    {
         uint256 fullAmount;
-        for (uint256 i=0; i < N_COINS; i++){
-            IERC20(_coins[i]).transferFrom(_msgSender(), address(this), amounts[i]);
+        for (uint256 i = 0; i < N_COINS; i++) {
+            IERC20(_coins[i]).transferFrom(
+                _msgSender(),
+                address(this),
+                amounts[i]
+            );
             fullAmount = fullAmount.add(normalizeAmount(_coins[i], amounts[i]));
         }
         (uint256 fee, bool bonus) = calculateExchangeFee(amounts, false);
@@ -36,37 +41,68 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         } else {
             fullAmount = fullAmount.sub(fee);
         }
-        require(fullAmount >= min_mint_amount, "CurveFiSwapStub: Requested mint amount is too high");
-        require(token.mint(_msgSender(), fullAmount), "CurveFiSwapStub: Mint failed");
+        require(
+            fullAmount >= min_mint_amount,
+            "CurveFiSwapStub: Requested mint amount is too high"
+        );
+        require(
+            token.mint(_msgSender(), fullAmount),
+            "CurveFiSwapStub: Mint failed"
+        );
     }
 
-    function remove_liquidity (uint256 _amount, uint256[3] memory min_amounts) public {
+    function add_liquidity_transferFromOnly(
+        uint256[3] memory amounts,
+        uint256 min_mint_amount
+    ) public {
+        IERC20(_coins[i]).transferFrom(_msgSender(), address(this), amounts[i]);
+    }
+
+    function remove_liquidity(uint256 _amount, uint256[3] memory min_amounts)
+        public
+    {
         uint256 totalSupply = token.totalSupply();
         uint256[] memory amounts = new uint256[](_coins.length);
-        for (uint256 i=0; i < _coins.length; i++){
+        for (uint256 i = 0; i < _coins.length; i++) {
             uint256 balance = balances(int128(i));
             amounts[i] = _amount.mul(balance).div(totalSupply);
-            require(amounts[i] >= min_amounts[i], "CurveFiSwapStub: Requested amount is too high");
+            require(
+                amounts[i] >= min_amounts[i],
+                "CurveFiSwapStub: Requested amount is too high"
+            );
             IERC20(_coins[i]).transfer(_msgSender(), amounts[i]);
         }
         token.burnFrom(_msgSender(), _amount);
     }
 
-    function remove_liquidity_imbalance(uint256[3] memory amounts, uint256 max_burn_amount) public {
+    function remove_liquidity_imbalance(
+        uint256[3] memory amounts,
+        uint256 max_burn_amount
+    ) public {
         uint256 fullAmount = calc_token_amount(amounts, false);
-        for (uint256 i=0; i < _coins.length; i++){
+        for (uint256 i = 0; i < _coins.length; i++) {
             IERC20(_coins[i]).transfer(_msgSender(), amounts[i]);
         }
-        require(max_burn_amount == 0 || fullAmount <= max_burn_amount, "CurveFiSwapStub: Allowed burn amount is not enough");
+        require(
+            max_burn_amount == 0 || fullAmount <= max_burn_amount,
+            "CurveFiSwapStub: Allowed burn amount is not enough"
+        );
         token.burnFrom(_msgSender(), fullAmount);
     }
 
-    function calc_token_amount(uint256[3] memory amounts, bool deposit) public view returns(uint256) {
+    function calc_token_amount(uint256[3] memory amounts, bool deposit)
+        public
+        view
+        returns (uint256)
+    {
         (uint256 fee, bool bonus) = calculateExchangeFee(amounts, deposit);
         uint256 fullAmount;
-        for (uint256 i=0; i < _coins.length; i++){
+        for (uint256 i = 0; i < _coins.length; i++) {
             uint256 balance = balances(int128(i));
-            require(balance >= amounts[i], "CurveFiSwapStub: Not enough supply");
+            require(
+                balance >= amounts[i],
+                "CurveFiSwapStub: Not enough supply"
+            );
             fullAmount = fullAmount.add(amounts[i]);
         }
         if (bonus) {
@@ -77,15 +113,15 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         return fullAmount;
     }
 
-    function balances(int128 i) public view returns(uint256) {
+    function balances(int128 i) public view returns (uint256) {
         return IERC20(_coins[uint256(i)]).balanceOf(address(this));
     }
 
-    function A() public view returns(uint256) {
+    function A() public view returns (uint256) {
         return 0;
     }
 
-    function fee() public view returns(uint256) {
+    function fee() public view returns (uint256) {
         return 0;
     }
 
@@ -93,16 +129,20 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
         return _coins[uint256(i)];
     }
 
-    function calculateExchangeFee(uint256[3] memory diff, bool deposit) internal view returns(uint256 fullFee, bool bonus){
+    function calculateExchangeFee(uint256[3] memory diff, bool deposit)
+        internal
+        view
+        returns (uint256 fullFee, bool bonus)
+    {
         uint256 averageAmount = 0;
         uint256[] memory _balances = new uint256[](_coins.length);
-        for (uint256 i=0; i < _coins.length; i++){
+        for (uint256 i = 0; i < _coins.length; i++) {
             _balances[i] = balances(int128(i));
             averageAmount = averageAmount.add(_balances[i]);
         }
         averageAmount = averageAmount.div(_coins.length);
         int256 totalFee;
-        for (uint256 i=0; i < _coins.length; i++){
+        for (uint256 i = 0; i < _coins.length; i++) {
             int256 oldDiff = int256(_balances[i]) - int256(averageAmount);
             int256 newDiff;
             if (deposit) {
@@ -110,38 +150,46 @@ contract CurveFiSwapStub is Base, ICurveFiSwap {
             } else {
                 newDiff = oldDiff - int256(diff[i]);
             }
-             
 
             uint256 maxFee = diff[i].mul(MAX_EXCHANGE_FEE).div(1e18);
             int256 _fee;
             if (oldDiff == 0) {
                 _fee = 0;
             } else {
-                if (deposit){
-                    _fee = int256(MAX_EXCHANGE_FEE)*int256(diff[i]) / oldDiff;
+                if (deposit) {
+                    _fee =
+                        (int256(MAX_EXCHANGE_FEE) * int256(diff[i])) /
+                        oldDiff;
                 } else {
-                    _fee = -1*int256(MAX_EXCHANGE_FEE)*int256(diff[i]) / oldDiff;
+                    _fee =
+                        (-1 * int256(MAX_EXCHANGE_FEE) * int256(diff[i])) /
+                        oldDiff;
                 }
             }
             if (_fee > 0 && _fee > int256(maxFee)) _fee = int256(maxFee);
-            if (_fee < 0 && -1*_fee > int256(maxFee)) _fee = -1*int256(maxFee);
+            if (_fee < 0 && -1 * _fee > int256(maxFee))
+                _fee = -1 * int256(maxFee);
             totalFee += _fee;
         }
-        if (totalFee < 0){
+        if (totalFee < 0) {
             bonus = true;
-            fullFee = uint256(-1*totalFee);
+            fullFee = uint256(-1 * totalFee);
         } else {
             bonus = false;
             fullFee = uint256(totalFee);
         }
     }
 
-    function normalizeAmount(address coin, uint256 amount) internal view returns(uint256){
+    function normalizeAmount(address coin, uint256 amount)
+        internal
+        view
+        returns (uint256)
+    {
         uint8 decimals = ERC20Detailed(coin).decimals();
         if (decimals < 18) {
-            return amount * uint256(10)**(18-decimals);
+            return amount * uint256(10)**(18 - decimals);
         } else if (decimals > 18) {
-            return amount / uint256(10)**(decimals-18);
+            return amount / uint256(10)**(decimals - 18);
         } else {
             return amount;
         }

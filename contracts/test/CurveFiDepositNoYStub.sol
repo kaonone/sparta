@@ -1,33 +1,49 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
+
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20Detailed.sol";
+
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
-import "../interfaces/defi/IYErc20.sol";
+
+//import "../interfaces/defi/IYErc20.sol";
+
 import "../interfaces/defi/ICurveFiSwap.sol";
+
 import "../interfaces/defi/ICurveFiDeposit.sol";
+
 import "../common/Base.sol";
+
 import "./CurveFiSwapStub.sol";
+
 import "./CurveFiTokenStub.sol";
 
-contract CurveFiDepositStub is Base, ICurveFiDeposit {
+contract CurveFiDepositNoYStub is Base, ICurveFiDeposit {
     using SafeMath for uint256;
+
     uint256 constant EXP_SCALE = 1e18; //Exponential scale (see Compound Exponential)
-    uint256 public constant N_COINS = 3;
+
+    uint256 public constant N_COINS = 4;
 
     CurveFiSwapStub public curveFiSwap;
+
     CurveFiTokenStub public token;
+
     address[3] _coins;
 
-    // address[3] underlying;
+    address[3] underlying;
 
     function initialize(address _curveFiSwap) public initializer {
         Base.initialize();
+
         curveFiSwap = CurveFiSwapStub(_curveFiSwap);
+
         token = CurveFiTokenStub(curveFiSwap.token());
+
         for (uint256 i = 0; i < N_COINS; i++) {
             _coins[i] = curveFiSwap.coins(int128(i));
-            // underlying[i] = IYErc20(_coins[i]).token();
+
+            underlying[i] = coins[i]; //IYErc20(_coins[i]).token();
         }
     }
 
@@ -35,20 +51,28 @@ contract CurveFiDepositStub is Base, ICurveFiDeposit {
         public
     {
         uint256[3] memory amounts = [uint256(0), uint256(0), uint256(0)];
+
         for (uint256 i = 0; i < uamounts.length; i++) {
             require(
-                IERC20(_coins[i]).transferFrom(
+                IERC20(underlying[i]).transferFrom(
                     _msgSender(),
                     address(this),
                     uamounts[i]
                 ),
                 "CurveFiDepositStub: failed to transfer underlying"
             );
-            // IYErc20(_coins[i]).deposit(uamounts[i]);
-            amounts[i] = IYErc20(_coins[i]).balanceOf(address(this));
+
+            IYErc20(_coins[i]).deposit(uamounts[i]);
+
+            //amounts[i] = IYErc20(_coins[i]).balanceOf(address(this));
+
+            amounts[i] = IERC20(_coins[i]).balanceOf(address(this));
         }
-        curveFiSwap.add_liquidity(uamounts, min_mint_amount);
+
+        curveFiSwap.add_liquidity(amounts, min_mint_amount);
+
         uint256 shares = token.balanceOf(address(this));
+
         token.transfer(_msgSender(), shares);
     }
 
@@ -56,10 +80,12 @@ contract CurveFiDepositStub is Base, ICurveFiDeposit {
         public
     {
         token.transferFrom(_msgSender(), address(this), _amount);
+
         curveFiSwap.remove_liquidity(
             _amount,
             [uint256(0), uint256(0), uint256(0)]
         );
+
         send_all(_msgSender(), min_uamounts);
     }
 
@@ -68,20 +94,25 @@ contract CurveFiDepositStub is Base, ICurveFiDeposit {
         uint256 max_burn_amount
     ) public {
         uint256[3] memory amounts = [uint256(0), uint256(0), uint256(0)];
+
         for (uint256 i = 0; i < uamounts.length; i++) {
-            amounts[i] = uamounts[i].mul(EXP_SCALE).div(
-                IYErc20(_coins[i]).getPricePerFullShare()
-            );
+            //amounts[i] = uamounts[i];.mul(EXP_SCALE).div(IYErc20(_coins[i]).getPricePerFullShare());
+
+            amounts[i] = uamounts[i];
         }
 
         uint256 shares = token.balanceOf(_msgSender());
+
         if (shares > max_burn_amount) shares = max_burn_amount;
 
         token.transferFrom(_msgSender(), address(this), shares);
+
         curveFiSwap.remove_liquidity_imbalance(amounts, shares);
 
         shares = token.balanceOf(_msgSender());
+
         token.transfer(_msgSender(), shares); // Return unused
+
         send_all(_msgSender(), [uint256(0), uint256(0), uint256(0)]);
     }
 
@@ -100,23 +131,31 @@ contract CurveFiDepositStub is Base, ICurveFiDeposit {
         bool donate_dust
     ) public {
         uint256[3] memory amounts = [uint256(0), uint256(0), uint256(0)];
+
         uint256 i = uint256(_i);
-        amounts[i] = min_uamount.mul(EXP_SCALE).div(
-            IYErc20(_coins[i]).getPricePerFullShare()
-        );
+
+        //amounts[i] = min_uamount.mul(EXP_SCALE).div(IYErc20(_coins[i]).getPricePerFullShare());
+
+        amounts[i] = min_uamount;
+
         curveFiSwap.remove_liquidity_imbalance(amounts, _token_amount);
 
         uint256[3] memory uamounts = [uint256(0), uint256(0), uint256(0)];
+
         uamounts[i] = min_uamount;
+
         send_all(_msgSender(), uamounts);
+
         if (!donate_dust) {
             uint256 shares = token.balanceOf(address(this));
+
             token.transfer(_msgSender(), shares);
         }
     }
 
     function withdraw_donated_dust() public onlyOwner {
         uint256 shares = token.balanceOf(address(this));
+
         token.transfer(owner(), shares);
     }
 
@@ -144,20 +183,28 @@ contract CurveFiDepositStub is Base, ICurveFiDeposit {
         internal
     {
         for (uint256 i = 0; i < _coins.length; i++) {
-            uint256 shares = IYErc20(_coins[i]).balanceOf(address(this));
+            //uint256 shares = IYErc20(_coins[i]).balanceOf(address(this));
+
+            uint256 shares = IERC20(_coins[i]).balanceOf(address(this));
+
             if (shares == 0) {
                 require(
                     min_uamounts[i] == 0,
                     "CurveFiDepositStub: nothing to withdraw"
                 );
+
                 continue;
             }
-            IYErc20(_coins[i]).withdraw(shares);
+
+            //IYErc20(_coins[i]).withdraw(shares);
+
             uint256 uamount = IERC20(underlying[i]).balanceOf(address(this));
+
             require(
                 uamount >= min_uamounts[i],
                 "CurveFiDepositStub: requested amount is too high"
             );
+
             if (uamount > 0) {
                 IERC20(underlying[i]).transfer(beneficiary, uamount);
             }
