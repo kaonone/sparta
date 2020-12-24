@@ -63,6 +63,26 @@ contract("AccessModule", async ([_, owner, ...otherAccounts]) => {
             'WhitelistAdminRole: caller does not have the WhitelistAdmin role'
         );
     });
+
+    it('should not disable operations from unauthorized user', async () => {
+        await expectRevert(
+            access.setOperationDisabled(Operation.Deposit, true, {from:otherAccounts[0]}),
+            'WhitelistAdminRole: caller does not have the WhitelistAdmin role'
+        );
+    });
+
+    it('should not allow disabled ops', async () => {
+        await access.setOperationDisabled(Operation.Deposit, true, {from:owner});
+        let disabled = await access.isOperationDisabled(Operation.Deposit); 
+        expect(disabled).to.be.true;
+        let allowed = await access.isOperationAllowed(Operation.Deposit, otherAccounts[0]);
+        expect(allowed).to.be.false;
+        await access.setOperationDisabled(Operation.Deposit, false, {from:owner});
+        disabled = await access.isOperationDisabled(Operation.Deposit); 
+        expect(disabled).to.be.false;
+    });
+
+
     it('should enable/disable whitelist', async () => {
         let recept = await access.enableWhitelist({from:owner});
         expectEvent(recept, 'WhitelistEnabled');
