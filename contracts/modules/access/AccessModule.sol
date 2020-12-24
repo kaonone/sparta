@@ -10,6 +10,8 @@ contract AccessModule is Module, IAccessModule, Pausable, WhitelistedRole {
     event WhitelistDisabled();
 
     bool public whitelistEnabled;
+    mapping(uint256=>bool) public disabledOperations;
+
 
     function initialize(address _pool) public initializer {
         Module.initialize(_pool);
@@ -28,16 +30,26 @@ contract AccessModule is Module, IAccessModule, Pausable, WhitelistedRole {
         emit WhitelistDisabled();
     }
 
+    function setOperationDisabled(Operation operation, bool disabled) public onlyWhitelistAdmin {
+        uint256 opNum = uint256(operation);
+        disabledOperations[opNum] = disabled;
+    }
+
+    function isOperationDisabled(Operation operation) public view returns(bool){
+        uint256 opNum = uint256(operation);
+        return disabledOperations[opNum];
+    }
+
     function isOperationAllowed(Operation operation, address sender) public view returns(bool) {
         if (paused()) return false;
         if (!whitelistEnabled) {
-            return true;
+            return !isOperationDisabled(operation);
         } else if (
             // This operations are allowed even if sender is not whitelisted
             (operation == Operation.Repay) ||               // allowed to prevent unnecessary defaults and interest payments
             (operation == Operation.WithdrawUnlockedPledge) // allowed because repay() calls withdrawUnlockedPledge() after full repay
         ) {
-            return true;   
+            return !isOperationDisabled(operation);   
         } else {
             return isWhitelisted(sender);
         }
