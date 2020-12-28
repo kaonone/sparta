@@ -12,7 +12,8 @@
         "lint": "solhint -c .solhint.json contracts/**/*.sol",
         "analyze": "npx truffle run verify",
         "coverage": "npx truffle run coverage",
-        "deploy": "scripts/deploy.sh"
+        "deploy": "scripts/deploy.sh",
+		"export-loans":"truffle exec scripts/export_loans.js --network mainnet"
     },
     "dependencies": {
         "@codechecks/client": "^0.1.10",
