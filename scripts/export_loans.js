@@ -1,4 +1,5 @@
 const commandLineArgs = require('command-line-args');
+const write = require('write');
 
 const Pool = artifacts.require("Pool");
 const LoanModule = artifacts.require("LoanModule");
@@ -8,7 +9,26 @@ const LoanLimitsModule = artifacts.require("LoanLimitsModule");
 const POOL_ADDRESS = `0x73067fdd366Cb678E9b539788F4C0f34C5700246`;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-async function main() {
+const OPTION_DEFINITIONS = [
+  { name: 'outfile', alias: 'o', type: String },
+  { name: 'expiredOnly', alias: 'e', type: Boolean }
+];
+
+const CSV_OPTIONS = {
+    printHeader: true,
+    separator: "\t",
+    lineSeparator: "\n",
+    columns: [
+        {title:"borrower", field:"borrower"},
+        {title:"debt", field:"debt"},
+        {title:"borrowed", field:"lAmountBorrowed", convert: convertE18BNToString},
+        {title:"unpaid", field:"lAmountLeft", convert: convertE18BNToString},
+        {title:"lastPayment", field:"lastPayment", convert: convertTimestampToString},
+        {title:"expired", field:"isExpired", convert: convertBooleanToString},
+    ]    
+};
+
+async function main(options) {
     const pool = await Pool.at(POOL_ADDRESS);
     let loanModuleAddress = await pool.get('loan', {from:ZERO_ADDRESS});
     //let loanLimitsModuleAddress = await pool.get('loan_limits');
@@ -38,16 +58,70 @@ async function main() {
         dbt.lAmountLeft = dbtInfo.lAmount;
         dbt.lastPayment = dbtInfo.lastPayment;
         dbt.defaultExecuted = dbtInfo.defaultExecuted;
-        dbt.isExpired = (Number(dbt.lastPayment) < lastPaymentDeadline);
+        dbt.isExpired = (dbt.lAmountLeft != 0) && (Number(dbt.lastPayment) < lastPaymentDeadline);
         debts.push(dbt);
-        console.log('Loan', dbt);
+        //console.log('Loan', dbt);
+    }
+
+    let csv; let loansListName;
+    if(options.expiredOnly) {
+        loansListName = "Expired loans";
+        csv = printLoansCSV(debts.filter(d=>d.isExpired), CSV_OPTIONS);
+    }else{
+        loansListName = "Loans";
+        csv = printLoansCSV(debts, CSV_OPTIONS);
+    }
+    if(!options.outfile){
+        console.log(`${loansListName}:\n`, csv);
+    }else{
+        write.sync(options.outfile, csv, {overwrite: true});
+        console.log(`${loansListName} list saved to ${options.outfile}`);
     }
 }
+function printLoansCSV(debts, opts){
+    let csv = "";
+    if(opts.printHeader){
+        for(let i = 0; i < opts.columns.length; i++){
+            let col = opts.columns[i];
+            csv += col.title;
+            if(i != opts.columns.length){
+                csv += opts.separator;
+            }
+        }
+        csv += opts.lineSeparator;
+    }
+    for(d of debts) {
+        for(let i = 0; i < opts.columns.length; i++){
+            let col = opts.columns[i];
+            let data = d[col.field];
+            if(typeof col.convert == 'function'){
+                data = col.convert(data);
+            }
+            csv += data;
+            if(i != opts.columns.length){
+                csv += opts.separator;
+            }
+        }
+        csv += opts.lineSeparator;
+    }
+    return csv;
+}
 
+function convertE18BNToString(bn) {
+    return web3.utils.fromWei(bn);
+}
+function convertTimestampToString(t){
+    let d = new Date(Number(t)*1000);
+    return d.toISOString();
+}
+function convertBooleanToString(b){
+    return b?'yes':'no';
+}
 
 module.exports = async (callback) => {
     try{
-        await main();
+        let opts = commandLineArgs(OPTION_DEFINITIONS, {partial:true});
+        await main(opts);
         callback();
     }catch(e){callback(e)}
 }
