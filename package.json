@@ -14,7 +14,7 @@
         "coverage": "npx truffle run coverage",
         "deploy": "scripts/deploy.sh",
 		"export-loans":"truffle exec scripts/export_loans.js --network mainnet",
-		"export-loans-expired":"truffle exec scripts/export_loans.js --network mainnet -o expired_loans.csv -e"
+		"export-loans-expired":"truffle exec scripts/export_loans.js --network mainnet -o expired_loans.csv -d"
     },
     "dependencies": {
         "@codechecks/client": "^0.1.10",

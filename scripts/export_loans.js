@@ -11,7 +11,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const OPTION_DEFINITIONS = [
   { name: 'outfile', alias: 'o', type: String },
-  { name: 'expiredOnly', alias: 'e', type: Boolean }
+  { name: 'defaultableOnly', alias: 'd', type: Boolean }
 ];
 
 const CSV_OPTIONS = {
@@ -24,7 +24,8 @@ const CSV_OPTIONS = {
         {title:"borrowed", field:"lAmountBorrowed", convert: convertE18BNToString},
         {title:"unpaid", field:"lAmountLeft", convert: convertE18BNToString},
         {title:"lastPayment", field:"lastPayment", convert: convertTimestampToString},
-        {title:"expired", field:"isExpired", convert: convertBooleanToString},
+        {title:"defaulted", field:"defaultExecuted", convert: convertBooleanToString},
+        {title:"defaultable", field:"toBeDefaulted", convert: convertBooleanToString},
     ]    
 };
 
@@ -58,15 +59,15 @@ async function main(options) {
         dbt.lAmountLeft = dbtInfo.lAmount;
         dbt.lastPayment = dbtInfo.lastPayment;
         dbt.defaultExecuted = dbtInfo.defaultExecuted;
-        dbt.isExpired = (dbt.lAmountLeft != 0) && (Number(dbt.lastPayment) < lastPaymentDeadline);
+        dbt.toBeDefaulted = !dbt.defaultExecuted && (dbt.lAmountLeft != 0) && (Number(dbt.lastPayment) < lastPaymentDeadline);
         debts.push(dbt);
         //console.log('Loan', dbt);
     }
 
     let csv; let loansListName;
-    if(options.expiredOnly) {
-        loansListName = "Expired loans";
-        csv = printLoansCSV(debts.filter(d=>d.isExpired), CSV_OPTIONS);
+    if(options.defaultableOnly) {
+        loansListName = "Defaultable loans";
+        csv = printLoansCSV(debts.filter(d=>d.toBeDefaulted), CSV_OPTIONS);
     }else{
         loansListName = "Loans";
         csv = printLoansCSV(debts, CSV_OPTIONS);
