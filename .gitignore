@@ -76,9 +76,6 @@ coverage
 
 .openzeppelin/.session
 
-# OpenZeppelin deployed contract info
-.openzeppelin
-
 # project artifacts
 bin/*
 build/*
