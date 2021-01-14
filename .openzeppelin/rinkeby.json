@@ -2802,7 +2802,7 @@
       {
         "address": "0x5BC84B4C30625362eD9a02A86C48544b94074f4B",
         "version": "1.0.0",
-        "implementation": "0x063AFB1d8b70D8F70b5E5A24eBc22F666cCd647b",
+        "implementation": "0x3d9134A66CF44405fE62473d5951E0B78d8Ac6F1",
         "admin": "0xBE78c06Dc4A39eA3B6545354cf1F1C9b4901Dc86",
         "kind": "Upgradeable"
       }
