@@ -17,7 +17,7 @@
     "dependencies": {
         "@codechecks/client": "^0.1.10",
         "@openzeppelin/cli": "^2.6.0",
-        "@openzeppelin/contracts": "^2.4.0",
+        "@openzeppelin/contracts": "^4.4.2",
         "@openzeppelin/contracts-ethereum-package": "^2.4.0",
         "@openzeppelin/test-helpers": "^0.5.4",
         "@openzeppelin/upgrades": "^2.6.0",
